@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archer - Offline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .retry-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .retry-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .cached-pages {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .cached-pages h3 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .cached-list {
+            list-style: none;
+        }
+
+        .cached-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cached-list li:last-child {
+            border-bottom: none;
+        }
+
+        .cached-list a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .cached-list a:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1>You're Offline</h1>
+        <p>
+            It looks like you've lost your internet connection. 
+            Don't worry - some parts of Archer are still available offline.
+        </p>
+        
+        <button class="retry-button" onclick="retryConnection()">
+            Try Again
+        </button>
+        
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Checking connection...</span>
+        </div>
+
+        <div class="cached-pages">
+            <h3>Available Offline:</h3>
+            <ul class="cached-list">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/tasks">Tasks</a></li>
+                <li><a href="/chat">Chat (Recent)</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let retryCount = 0;
+        const maxRetries = 5;
+
+        function retryConnection() {
+            retryCount++;
+            const statusElement = document.querySelector('.status-indicator span');
+            const retryButton = document.querySelector('.retry-button');
+            
+            statusElement.textContent = `Attempting to reconnect... (${retryCount}/${maxRetries})`;
+            retryButton.disabled = true;
+            retryButton.textContent = 'Connecting...';
+
+            // Check if we're back online
+            if (navigator.onLine) {
+                statusElement.textContent = 'Connected! Redirecting...';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                return;
+            }
+
+            // If not online and we haven't exceeded max retries
+            if (retryCount < maxRetries) {
+                setTimeout(() => {
+                    retryButton.disabled = false;
+                    retryButton.textContent = 'Try Again';
+                    statusElement.textContent = 'Still offline. Try again?';
+                }, 2000);
+            } else {
+                statusElement.textContent = 'Unable to connect. Please check your internet.';
+                retryButton.textContent = 'Refresh Page';
+                retryButton.onclick = () => window.location.reload();
+            }
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', () => {
+            const statusElement = document.querySelector('.status-indicator span');
+            statusElement.textContent = 'Connected! Redirecting...';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+
+        window.addEventListener('offline', () => {
+            const statusElement = document.querySelector('.status-indicator span');
+            statusElement.textContent = 'Connection lost';
+        });
+
+        // Auto-retry every 10 seconds
+        setInterval(() => {
+            if (navigator.onLine && retryCount > 0) {
+                window.location.reload();
+            }
+        }, 10000);
+
+        // Check connection status on load
+        if (navigator.onLine) {
+            window.location.reload();
+        }
+    </script>
+</body>
+</html> 
