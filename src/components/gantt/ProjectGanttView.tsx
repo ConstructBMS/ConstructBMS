@@ -1,4 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { 
+  DocumentTextIcon,
+  FolderOpenIcon,
+  DocumentArrowDownIcon,
+  PrinterIcon,
+  XMarkIcon,
+  InformationCircleIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 import { GanttRibbon } from './GanttRibbon';
 import { TaskGrid } from './TaskGrid';
 import { TimelineChart } from './TimelineChart';
@@ -20,6 +30,13 @@ export const ProjectGanttView: React.FC = () => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [clipboardContent, setClipboardContent] = useState<Task[]>([]);
   const [lastActionResult, setLastActionResult] = useState<string | null>(null);
+  
+  // File Menu state
+  const [showFileMenu, setShowFileMenu] = useState(false);
+  const [fileMenuStatus, setFileMenuStatus] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
   
   // Project info state
   const [projectInfo, setProjectInfo] = useState({
@@ -192,6 +209,78 @@ export const ProjectGanttView: React.FC = () => {
     setEditingTask(null);
   };
 
+  // Handle file menu actions
+  const handleFileAction = (action: string) => {
+    setShowFileMenu(false);
+
+    try {
+      switch (action) {
+        case 'new':
+          console.log('Create new programme');
+          setFileMenuStatus({
+            type: 'success',
+            message: 'New programme created successfully'
+          });
+          break;
+        case 'open':
+          console.log('Open existing programme');
+          setFileMenuStatus({
+            type: 'info',
+            message: 'Opening programme... (File dialog would appear here)'
+          });
+          break;
+        case 'save':
+          console.log('Save programme');
+          setFileMenuStatus({
+            type: 'success',
+            message: 'Programme saved successfully'
+          });
+          break;
+        case 'save-as':
+          console.log('Save as...');
+          setFileMenuStatus({
+            type: 'info',
+            message: 'Save As dialog opened'
+          });
+          break;
+        case 'print':
+          console.log('Print project');
+          setFileMenuStatus({
+            type: 'success',
+            message: 'Print dialog opened'
+          });
+          break;
+        case 'export':
+          console.log('Export to PDF');
+          setFileMenuStatus({
+            type: 'success',
+            message: 'Exporting to PDF...'
+          });
+          break;
+        case 'close':
+          console.log('Close project');
+          setFileMenuStatus({
+            type: 'info',
+            message: 'Closing programme...'
+          });
+          break;
+        default:
+          setFileMenuStatus({
+            type: 'error',
+            message: 'Unknown file action'
+          });
+      }
+    } catch (error) {
+      setFileMenuStatus({
+        type: 'error',
+        message: `File action failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      });
+    }
+
+    // Clear status message after 3 seconds
+    setTimeout(() => setFileMenuStatus(null), 3000);
+  };
+
   // Handle expand/collapse all tasks
   const handleExpandCollapseAll = (expand: boolean) => {
     const updatedTasks = tasks.map(task => ({
@@ -273,6 +362,23 @@ export const ProjectGanttView: React.FC = () => {
     }
   }, [isResizing]);
 
+  // Close file menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showFileMenu && !target.closest('.file-menu-container')) {
+        setShowFileMenu(false);
+      }
+    };
+
+    if (showFileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showFileMenu]);
+
   return (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Ribbon */}
@@ -287,6 +393,71 @@ export const ProjectGanttView: React.FC = () => {
         onResetLayout={handleResetLayout}
       />
 
+      {/* File Menu Dropdown */}
+      <div className="relative bg-white border-b border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-between">
+          <div className="relative file-menu-container">
+            <button
+              onClick={() => setShowFileMenu(!showFileMenu)}
+              className="w-8 h-8 bg-red-500 rounded-sm flex items-center justify-center hover:bg-red-600 transition-colors"
+              title="File Menu"
+            >
+              <span className="text-white text-xs font-bold">P</span>
+            </button>
+
+            {showFileMenu && (
+              <div className="absolute top-10 left-0 bg-white shadow-lg border border-gray-300 z-50 w-56 rounded-sm text-sm">
+                {/* Programme Management */}
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('new')}>
+                  <DocumentTextIcon className="h-4 w-4 text-gray-600" />
+                  <span>New Programme</span>
+                </div>
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('open')}>
+                  <FolderOpenIcon className="h-4 w-4 text-gray-600" />
+                  <span>Open Programme...</span>
+                </div>
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('save')}>
+                  <DocumentTextIcon className="h-4 w-4 text-gray-600" />
+                  <span>Save</span>
+                </div>
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('save-as')}>
+                  <DocumentArrowDownIcon className="h-4 w-4 text-gray-600" />
+                  <span>Save As...</span>
+                </div>
+                
+                <hr className="my-1 border-gray-200" />
+                
+                {/* Output */}
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('print')}>
+                  <PrinterIcon className="h-4 w-4 text-gray-600" />
+                  <span>Print</span>
+                </div>
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('export')}>
+                  <DocumentArrowDownIcon className="h-4 w-4 text-gray-600" />
+                  <span>Export as PDF</span>
+                </div>
+                
+                <hr className="my-1 border-gray-200" />
+                
+                {/* Control */}
+                <div className="p-2 hover:bg-gray-100 cursor-pointer flex items-center space-x-2" onClick={() => handleFileAction('close')}>
+                  <XMarkIcon className="h-4 w-4 text-gray-600" />
+                  <span>Close Programme</span>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Project Title */}
+          <div className="flex-1 text-center">
+            <h1 className="text-lg font-semibold text-gray-800">{projectInfo.name}</h1>
+          </div>
+          
+          {/* Right side placeholder */}
+          <div className="w-8"></div>
+        </div>
+      </div>
+
       {/* Action Result Message */}
       {lastActionResult && (
         <div className={`px-4 py-2 text-sm font-medium ${
@@ -295,6 +466,28 @@ export const ProjectGanttView: React.FC = () => {
             : 'bg-green-100 text-green-700 border-b border-green-200'
         }`}>
           {lastActionResult}
+        </div>
+      )}
+
+      {/* File Menu Status Message */}
+      {fileMenuStatus && (
+        <div className={`px-4 py-2 text-sm font-medium ${
+          fileMenuStatus.type === 'success' 
+            ? 'bg-green-100 text-green-700 border-b border-green-200' 
+            : fileMenuStatus.type === 'error'
+            ? 'bg-red-100 text-red-700 border-b border-red-200'
+            : 'bg-blue-100 text-blue-700 border-b border-blue-200'
+        }`}>
+          <div className="flex items-center space-x-2">
+            {fileMenuStatus.type === 'success' ? (
+              <CheckCircleIcon className="h-4 w-4" />
+            ) : fileMenuStatus.type === 'error' ? (
+              <ExclamationTriangleIcon className="h-4 w-4" />
+            ) : (
+              <InformationCircleIcon className="h-4 w-4" />
+            )}
+            <span>{fileMenuStatus.message}</span>
+          </div>
         </div>
       )}
 
