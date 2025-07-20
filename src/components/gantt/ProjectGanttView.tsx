@@ -4,6 +4,7 @@ import { TaskGrid } from './TaskGrid';
 import { TimelineChart } from './TimelineChart';
 import { TimelineZoomControls } from './TimelineZoomControls';
 import { TaskEditorModal } from './TaskEditorModal';
+import { Model4DView } from './4DModelView';
 import { ganttTaskService } from '../../services/ganttTaskService';
 import { ganttRibbonService } from '../../services/ganttRibbonService';
 import { useProjectView } from '../../contexts/ProjectViewContext';
@@ -361,6 +362,13 @@ export const ProjectGanttView: React.FC = () => {
               leftPaneWidth={leftPaneWidth}
             />
           </div>
+
+          {/* 4D Model View - Show when 4D tab is active */}
+          {activeTab === '4d' && (
+            <div className="h-64 border-t border-gray-300">
+              <Model4DView />
+            </div>
+          )}
         </div>
       </div>
 
