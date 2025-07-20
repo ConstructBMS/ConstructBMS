@@ -111,6 +111,26 @@ export class GanttRibbonService {
         case 'advanced-filter':
           return this.advancedFilter();
 
+        // Tools operations
+        case 'move-to-start':
+          return this.moveToStart(taskIds || []);
+        case 'move-to-end':
+          return this.moveToEnd(taskIds || []);
+        case 'align-starts':
+          return this.alignStarts(taskIds || []);
+        case 'align-ends':
+          return this.alignEnds(taskIds || []);
+        case 'link-tasks':
+          return this.linkTasks(taskIds || []);
+        case 'unlink-tasks':
+          return this.unlinkTasks(taskIds || []);
+        case 'remove-gaps':
+          return this.removeGaps(taskIds || []);
+        case 'clear-slack':
+          return this.clearSlack(taskIds || []);
+        case 'check-links':
+          return this.checkLinks(taskIds || []);
+
         default:
           return {
             success: false,
@@ -632,6 +652,229 @@ export class GanttRibbonService {
    */
   isLastOperationCut(): boolean {
     return this.isCutOperation;
+  }
+
+  // Tools operations
+  private moveToStart(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for move operation'
+      };
+    }
+
+    const projectStart = new Date();
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task) {
+        ganttTaskService.updateTask(id, {
+          startDate: projectStart,
+          endDate: new Date(projectStart.getTime() + task.duration * 24 * 60 * 60 * 1000)
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: `Moved ${taskIds.length} task(s) to project start date`
+    };
+  }
+
+  private moveToEnd(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for move operation'
+      };
+    }
+
+    const projectEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task) {
+        ganttTaskService.updateTask(id, {
+          endDate: projectEnd,
+          startDate: new Date(projectEnd.getTime() - task.duration * 24 * 60 * 60 * 1000)
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: `Moved ${taskIds.length} task(s) to project end date`
+    };
+  }
+
+  private alignStarts(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for alignment'
+      };
+    }
+
+    const firstTask = ganttTaskService.getTask(taskIds[0]);
+    if (!firstTask) {
+      return {
+        success: false,
+        message: 'Could not find reference task for alignment'
+      };
+    }
+
+    const alignStartDate = firstTask.startDate;
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task) {
+        ganttTaskService.updateTask(id, {
+          startDate: alignStartDate,
+          endDate: new Date(alignStartDate.getTime() + task.duration * 24 * 60 * 60 * 1000)
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: `Aligned start dates for ${taskIds.length} task(s)`
+    };
+  }
+
+  private alignEnds(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for alignment'
+      };
+    }
+
+    const firstTask = ganttTaskService.getTask(taskIds[0]);
+    if (!firstTask) {
+      return {
+        success: false,
+        message: 'Could not find reference task for alignment'
+      };
+    }
+
+    const alignEndDate = firstTask.endDate;
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task) {
+        ganttTaskService.updateTask(id, {
+          endDate: alignEndDate,
+          startDate: new Date(alignEndDate.getTime() - task.duration * 24 * 60 * 60 * 1000)
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: `Aligned end dates for ${taskIds.length} task(s)`
+    };
+  }
+
+  private removeGaps(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length < 2) {
+      return {
+        success: false,
+        message: 'At least 2 tasks required to remove gaps'
+      };
+    }
+
+    const tasks = taskIds
+      .map(id => ganttTaskService.getTask(id))
+      .filter(Boolean) as Task[];
+    
+    const sortedTasks = tasks.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+    
+    for (let i = 1; i < sortedTasks.length; i++) {
+      const prevTask = sortedTasks[i - 1];
+      const currTask = sortedTasks[i];
+      const gap = currTask.startDate.getTime() - prevTask.endDate.getTime();
+      
+      if (gap > 0) {
+        ganttTaskService.updateTask(currTask.id, {
+          startDate: new Date(prevTask.endDate),
+          endDate: new Date(prevTask.endDate.getTime() + currTask.duration * 24 * 60 * 60 * 1000)
+        });
+      }
+    }
+
+    return {
+      success: true,
+      message: `Removed gaps between ${taskIds.length} task(s)`
+    };
+  }
+
+  private clearSlack(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for slack clearing'
+      };
+    }
+
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task && task.predecessors?.length) {
+        const latestPredecessorEnd = Math.max(
+          ...task.predecessors.map(p => {
+            const predTask = ganttTaskService.getTask(p.id);
+            return predTask ? predTask.endDate.getTime() : 0;
+          })
+        );
+        
+        if (latestPredecessorEnd > task.startDate.getTime()) {
+          ganttTaskService.updateTask(id, {
+            startDate: new Date(latestPredecessorEnd),
+            endDate: new Date(latestPredecessorEnd + task.duration * 24 * 60 * 60 * 1000)
+          });
+        }
+      }
+    });
+
+    return {
+      success: true,
+      message: `Cleared slack for ${taskIds.length} task(s)`
+    };
+  }
+
+  private checkLinks(taskIds: string[]): RibbonActionResult {
+    if (taskIds.length === 0) {
+      return {
+        success: false,
+        message: 'No tasks selected for link validation'
+      };
+    }
+
+    const linkErrors: string[] = [];
+    taskIds.forEach(id => {
+      const task = ganttTaskService.getTask(id);
+      if (task) {
+        // Check for circular dependencies
+        if (task.predecessors?.some(p => p.id === id)) {
+          linkErrors.push(`Circular dependency detected in task: ${task.name}`);
+        }
+        
+        // Check for invalid predecessor references
+        task.predecessors?.forEach(pred => {
+          const predTask = ganttTaskService.getTask(pred.id);
+          if (!predTask) {
+            linkErrors.push(`Invalid predecessor reference in task: ${task.name}`);
+          }
+        });
+      }
+    });
+    
+    if (linkErrors.length > 0) {
+      return {
+        success: false,
+        message: `Link validation found ${linkErrors.length} error(s): ${linkErrors.join(', ')}`
+      };
+    }
+
+    return {
+      success: true,
+      message: `Link validation passed for ${taskIds.length} task(s)`
+    };
   }
 }
 
