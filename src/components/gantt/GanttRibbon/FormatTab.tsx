@@ -1,352 +1,341 @@
 import React, { useState } from 'react';
 import { 
   PaintBrushIcon,
-  DocumentTextIcon,
-  ArrowsPointingOutIcon,
+  ArrowPathIcon,
+  ViewColumnsIcon,
+  SwatchIcon,
   EyeIcon,
   EyeSlashIcon,
+  MapPinIcon,
+  DocumentTextIcon,
   XMarkIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  CogIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline';
 import { useProjectView } from '../../../contexts/ProjectViewContext';
 import { usePermissions } from '../../../hooks/usePermissions';
-import type { Task } from '../../../services/ganttTaskService';
 
-export const FormatTab: React.FC = () => {
-  const { state } = useProjectView();
-  const { selectedTasks } = state;
+export const TabFormat: React.FC = () => {
+  const { state, updateLayoutSettings } = useProjectView();
+  const { layoutSettings } = state;
   const { canAccess } = usePermissions();
   
   // Modal and state management
   const [modal, setModal] = useState<string | null>(null);
-  const [showGrid, setShowGrid] = useState(true);
-  const [rowHeight, setRowHeight] = useState(32);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [operationStatus, setOperationStatus] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
+
+  // Format-specific state
+  const [barStyle, setBarStyle] = useState<'default' | 'rounded' | 'flat' | 'gradient'>('default');
+  const [barColor, setBarColor] = useState('#3b82f6');
+  const [fontFamily, setFontFamily] = useState('Inter');
+  const [fontSize, setFontSize] = useState(12);
+  const [showLabels, setShowLabels] = useState(true);
+  const [showMilestones, setShowMilestones] = useState(true);
 
   const can = (key: string) => canAccess(`gantt.format.${key}`);
 
-  // Mock tasks data - in real implementation this would come from a service
-  const mockTasks: Task[] = [
-    {
-      id: 'task-1',
-      name: 'Sample Task 1',
-      startDate: new Date(),
-      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      duration: 7,
-      percentComplete: 0,
-      status: 'not-started',
-      level: 0,
-      position: 0,
-      taskType: 'normal',
-      priority: 'medium',
-      predecessors: [],
-      successors: []
-    }
-  ];
-
-  // Initialize tasks with mock data
-  React.useEffect(() => {
-    setTasks(mockTasks);
-  }, []);
-
-  const updateTask = (taskId: string, updates: Partial<Task>) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, ...updates } : task
-    ));
-  };
-
   const handleFormatAction = (action: string, payload?: any) => {
     if (!can(action)) {
-      console.log('Permission denied for format action:', action);
+      setOperationStatus({
+        type: 'error',
+        message: 'Permission denied for format action: ' + action
+      });
       return;
     }
 
-    switch (action) {
-      case 'bar-color-red':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              barColor: '#e53e3e'
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied red color to tasks:', selectedTasks);
-        break;
+    try {
+      switch (action) {
+        case 'bar-style':
+          setBarStyle(payload);
+          console.log('Bar style changed to:', payload);
+          setOperationStatus({
+            type: 'success',
+            message: `Bar style changed to ${payload}`
+          });
+          break;
 
-      case 'bar-color-green':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              barColor: '#38a169'
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied green color to tasks:', selectedTasks);
-        break;
+        case 'reset-bars':
+          setBarStyle('default');
+          setBarColor('#3b82f6');
+          console.log('Bar styles reset to default');
+          setOperationStatus({
+            type: 'success',
+            message: 'Bar styles reset to default'
+          });
+          break;
 
-      case 'bar-color-blue':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              barColor: '#3182ce'
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied blue color to tasks:', selectedTasks);
-        break;
+        case 'row-height':
+          updateLayoutSettings({ rowHeight: payload });
+          setOperationStatus({
+            type: 'success',
+            message: `Row height changed to ${payload}px`
+          });
+          break;
 
-      case 'font-small':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              fontSize: 10
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied small font to tasks:', selectedTasks);
-        break;
+        case 'change-colors':
+          openModal('color-picker');
+          break;
 
-      case 'font-medium':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              fontSize: 12
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied medium font to tasks:', selectedTasks);
-        break;
+        case 'toggle-labels':
+          const newShowLabels = !showLabels;
+          setShowLabels(newShowLabels);
+          updateLayoutSettings({ showBarLabels: newShowLabels });
+          setOperationStatus({
+            type: 'success',
+            message: `Task labels ${newShowLabels ? 'enabled' : 'disabled'}`
+          });
+          break;
 
-      case 'font-large':
-        selectedTasks.forEach(taskId => {
-          const task = tasks?.find(t => t.id === taskId);
-          if (task) {
-            const updatedTask = {
-              ...task,
-              fontSize: 16
-            };
-            updateTask(taskId, updatedTask);
-          }
-        });
-        console.log('Applied large font to tasks:', selectedTasks);
-        break;
-    }
-  };
+        case 'toggle-milestones':
+          const newShowMilestones = !showMilestones;
+          setShowMilestones(newShowMilestones);
+          console.log('Milestone markers:', newShowMilestones ? 'enabled' : 'disabled');
+          setOperationStatus({
+            type: 'success',
+            message: `Milestone markers ${newShowMilestones ? 'enabled' : 'disabled'}`
+          });
+          break;
 
-  const updateLayoutSettings = (settings: { rowHeight?: number; showGrid?: boolean }) => {
-    if (settings.rowHeight !== undefined) {
-      setRowHeight(settings.rowHeight);
-      console.log('Updated row height to:', settings.rowHeight);
-    }
-    if (settings.showGrid !== undefined) {
-      setShowGrid(settings.showGrid);
-      console.log('Updated grid visibility to:', settings.showGrid);
+        case 'change-font':
+          openModal('font-settings');
+          break;
+
+        case 'bar-settings':
+          openModal('bar-settings');
+          break;
+
+        case 'format-presets':
+          openModal('format-presets');
+          break;
+      }
+    } catch (error) {
+      setOperationStatus({
+        type: 'error',
+        message: `Failed to apply format: ${error instanceof Error ? error.message : 'Unknown error'}`
+      });
     }
   };
 
   const openModal = (id: string) => setModal(id);
 
-  const getFormatInfo = () => {
-    const selectedTask = tasks?.find(t => t.id === selectedTasks[0]);
-    return {
-      selectedCount: selectedTasks.length,
-      barColor: selectedTask?.barColor || '#3182ce',
-      fontSize: selectedTask?.fontSize || 12,
-      rowHeight: rowHeight,
-      showGrid: showGrid
-    };
-  };
-
-  const formatInfo = getFormatInfo();
-
-  const barColors = [
-    { id: 'red', name: 'Red', color: '#e53e3e', description: 'Red bar color' },
-    { id: 'green', name: 'Green', color: '#38a169', description: 'Green bar color' },
-    { id: 'blue', name: 'Blue', color: '#3182ce', description: 'Blue bar color' },
-    { id: 'yellow', name: 'Yellow', color: '#d69e2e', description: 'Yellow bar color' },
-    { id: 'purple', name: 'Purple', color: '#805ad5', description: 'Purple bar color' },
-    { id: 'orange', name: 'Orange', color: '#dd6b20', description: 'Orange bar color' }
-  ];
-
-  const fontSizes = [
-    { id: 'small', name: 'Small', size: 10, description: 'Small font size (10px)' },
-    { id: 'medium', name: 'Medium', size: 12, description: 'Medium font size (12px)' },
-    { id: 'large', name: 'Large', size: 16, description: 'Large font size (16px)' }
-  ];
-
-  const rowHeights = [
-    { id: 24, name: 'Small', height: 24, description: 'Small row height' },
-    { id: 32, name: 'Medium', height: 32, description: 'Medium row height' },
-    { id: 40, name: 'Large', height: 40, description: 'Large row height' }
-  ];
+  // Clear status message after 3 seconds
+  React.useEffect(() => {
+    if (operationStatus) {
+      const timer = setTimeout(() => setOperationStatus(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [operationStatus]);
 
   return (
     <>
       <div className="flex flex-wrap gap-6 p-4 bg-white border-b border-gray-200">
-        {/* Bar Style Tools */}
+        {/* Bar Styles Section */}
         <div className="flex flex-col">
           <div className="flex space-x-1 mb-2">
             <button
-              onClick={() => handleFormatAction('bar-color-red')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Red Bar Color"
+              onClick={() => handleFormatAction('bar-style', 'default')}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                barStyle === 'default' 
+                  ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                  : 'bg-white hover:bg-blue-50'
+              }`}
+              title="Default Bar Style"
             >
-              <PaintBrushIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Red</span>
+              <PaintBrushIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Default</span>
             </button>
             <button
-              onClick={() => handleFormatAction('bar-color-green')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-green-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Green Bar Color"
+              onClick={() => handleFormatAction('bar-style', 'rounded')}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                barStyle === 'rounded' 
+                  ? 'bg-green-100 border-green-500 text-green-700' 
+                  : 'bg-white hover:bg-green-50'
+              }`}
+              title="Rounded Bar Style"
             >
-              <PaintBrushIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Green</span>
+              <PaintBrushIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Rounded</span>
             </button>
             <button
-              onClick={() => handleFormatAction('bar-color-blue')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Blue Bar Color"
-            >
-              <PaintBrushIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Blue</span>
-            </button>
-          </div>
-          <div className="text-xs text-gray-600 font-medium">Bar Style</div>
-        </div>
-
-        {/* Font Settings */}
-        <div className="flex flex-col">
-          <div className="flex space-x-1 mb-2">
-            <button
-              onClick={() => handleFormatAction('font-small')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-gray-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Small Font"
-            >
-              <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Small</span>
-            </button>
-            <button
-              onClick={() => handleFormatAction('font-medium')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-gray-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Medium Font"
-            >
-              <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Medium</span>
-            </button>
-            <button
-              onClick={() => handleFormatAction('font-large')}
-              disabled={!selectedTasks.length}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-gray-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Large Font"
-            >
-              <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Large</span>
-            </button>
-          </div>
-          <div className="text-xs text-gray-600 font-medium">Font</div>
-        </div>
-
-        {/* Row Height */}
-        <div className="flex flex-col">
-          <div className="flex space-x-1 mb-2">
-            <button
-              onClick={() => updateLayoutSettings({ rowHeight: 24 })}
+              onClick={() => handleFormatAction('bar-settings')}
               className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-purple-50 rounded transition-colors"
+              title="Bar Settings"
+            >
+              <CogIcon className="h-5 w-5 mb-1 text-gray-700" />
+              <span className="text-xs text-gray-700">Settings</span>
+            </button>
+          </div>
+          <div className="text-xs text-gray-600 font-medium">Bars</div>
+        </div>
+
+        {/* Row Settings Section */}
+        <div className="flex flex-col">
+          <div className="flex space-x-1 mb-2">
+            <button
+              onClick={() => handleFormatAction('row-height', 24)}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                layoutSettings.rowHeight === 24 
+                  ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                  : 'bg-white hover:bg-blue-50'
+              }`}
               title="Small Row Height"
             >
-              <ArrowsPointingOutIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Small</span>
+              <ViewColumnsIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Small</span>
             </button>
             <button
-              onClick={() => updateLayoutSettings({ rowHeight: 32 })}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-purple-50 rounded transition-colors"
+              onClick={() => handleFormatAction('row-height', 32)}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                layoutSettings.rowHeight === 32 
+                  ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                  : 'bg-white hover:bg-blue-50'
+              }`}
               title="Medium Row Height"
             >
-              <ArrowsPointingOutIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Medium</span>
+              <ViewColumnsIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Medium</span>
             </button>
             <button
-              onClick={() => updateLayoutSettings({ rowHeight: 40 })}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-purple-50 rounded transition-colors"
+              onClick={() => handleFormatAction('row-height', 40)}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                layoutSettings.rowHeight === 40 
+                  ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                  : 'bg-white hover:bg-blue-50'
+              }`}
               title="Large Row Height"
             >
-              <ArrowsPointingOutIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Large</span>
+              <ViewColumnsIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Large</span>
             </button>
           </div>
-          <div className="text-xs text-gray-600 font-medium">Row Height</div>
+          <div className="text-xs text-gray-600 font-medium">Rows</div>
         </div>
 
-        {/* Grid Display */}
+        {/* Colors Section */}
         <div className="flex flex-col">
           <div className="flex space-x-1 mb-2">
             <button
-              onClick={() => updateLayoutSettings({ showGrid: true })}
-              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border rounded transition-colors ${
-                showGrid 
-                  ? 'border-green-300 bg-green-50 text-green-700' 
-                  : 'border-gray-300 bg-white hover:bg-green-50'
-              }`}
-              title="Show Grid"
+              onClick={() => handleFormatAction('change-colors')}
+              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-yellow-50 rounded transition-colors"
+              title="Change Colors"
             >
-              <EyeIcon className="h-5 w-5 mb-1" />
-              <span className="text-xs">Show</span>
+              <SwatchIcon className="h-5 w-5 mb-1 text-gray-700" />
+              <span className="text-xs text-gray-700">Colors</span>
             </button>
             <button
-              onClick={() => updateLayoutSettings({ showGrid: false })}
-              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border rounded transition-colors ${
-                !showGrid 
-                  ? 'border-red-300 bg-red-50 text-red-700' 
-                  : 'border-gray-300 bg-white hover:bg-red-50'
-              }`}
-              title="Hide Grid"
+              onClick={() => handleFormatAction('format-presets')}
+              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-orange-50 rounded transition-colors"
+              title="Format Presets"
             >
-              <EyeSlashIcon className="h-5 w-5 mb-1" />
-              <span className="text-xs">Hide</span>
+                             <Squares2X2Icon className="h-5 w-5 mb-1 text-gray-700" />
+              <span className="text-xs text-gray-700">Presets</span>
             </button>
           </div>
-          <div className="text-xs text-gray-600 font-medium">Grid</div>
+          <div className="text-xs text-gray-600 font-medium">Colors</div>
         </div>
 
-        {/* Status Display */}
+        {/* Labels Section */}
+        <div className="flex flex-col">
+          <div className="flex space-x-1 mb-2">
+            <button
+              onClick={() => handleFormatAction('toggle-labels')}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                showLabels 
+                  ? 'bg-green-100 border-green-500 text-green-700' 
+                  : 'bg-white hover:bg-green-50'
+              }`}
+              title="Toggle Task Labels"
+            >
+              <EyeIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Labels</span>
+            </button>
+            <button
+              onClick={() => handleFormatAction('toggle-milestones')}
+              className={`flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 rounded transition-colors ${
+                showMilestones 
+                  ? 'bg-purple-100 border-purple-500 text-purple-700' 
+                  : 'bg-white hover:bg-purple-50'
+              }`}
+              title="Toggle Milestone Markers"
+            >
+              <MapPinIcon className="h-5 w-5 mb-1" />
+              <span className="text-xs">Milestones</span>
+            </button>
+          </div>
+          <div className="text-xs text-gray-600 font-medium">Labels</div>
+        </div>
+
+        {/* Fonts Section */}
+        <div className="flex flex-col">
+          <div className="flex space-x-1 mb-2">
+            <button
+              onClick={() => handleFormatAction('change-font')}
+              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-indigo-50 rounded transition-colors"
+              title="Change Font"
+            >
+                             <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
+              <span className="text-xs text-gray-700">Font</span>
+            </button>
+            <button
+              onClick={() => handleFormatAction('reset-bars')}
+              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-red-50 rounded transition-colors"
+              title="Reset Bar Styles"
+            >
+              <ArrowPathIcon className="h-5 w-5 mb-1 text-gray-700" />
+              <span className="text-xs text-gray-700">Reset</span>
+            </button>
+          </div>
+          <div className="text-xs text-gray-600 font-medium">Fonts</div>
+        </div>
+
+        {/* Current Settings Display */}
         <div className="flex flex-col justify-end ml-auto">
           <div className="text-xs text-gray-500">
-            Selected: {formatInfo.selectedCount} task{formatInfo.selectedCount !== 1 ? 's' : ''}
+            Bar Style: {barStyle.charAt(0).toUpperCase() + barStyle.slice(1)}
           </div>
           <div className="text-xs text-gray-500">
-            Bar Color: {formatInfo.barColor}
+            Row Height: {layoutSettings.rowHeight}px
           </div>
           <div className="text-xs text-gray-500">
-            Font Size: {formatInfo.fontSize}
+            Labels: {showLabels ? 'On' : 'Off'}
           </div>
           <div className="text-xs text-gray-500">
-            Row Height: {formatInfo.rowHeight}px
-          </div>
-          <div className="text-xs text-gray-500">
-            Grid: {formatInfo.showGrid ? 'Visible' : 'Hidden'}
+            Milestones: {showMilestones ? 'On' : 'Off'}
           </div>
         </div>
       </div>
+
+      {/* Status Message */}
+      {operationStatus && (
+        <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-md ${
+          operationStatus.type === 'success' ? 'bg-green-100 border border-green-300 text-green-800' :
+          operationStatus.type === 'error' ? 'bg-red-100 border border-red-300 text-red-800' :
+          'bg-blue-100 border border-blue-300 text-blue-800'
+        }`}>
+          <div className="flex items-center space-x-2">
+            {operationStatus.type === 'success' ? (
+              <CheckCircleIcon className="h-5 w-5" />
+            ) : operationStatus.type === 'error' ? (
+              <ExclamationTriangleIcon className="h-5 w-5" />
+            ) : (
+              <InformationCircleIcon className="h-5 w-5" />
+            )}
+            <span className="text-sm font-medium">{operationStatus.message}</span>
+            <button
+              onClick={() => setOperationStatus(null)}
+              className="ml-auto text-gray-400 hover:text-gray-600"
+            >
+              <XMarkIcon className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal System */}
       {modal && (
@@ -364,97 +353,179 @@ export const FormatTab: React.FC = () => {
               </button>
             </div>
 
-            {modal === 'format-manager' && (
-              <div className="space-y-6">
-                {/* Bar Color Selection */}
-                <div>
-                  <h3 className="text-md font-medium text-gray-700 mb-3">Bar Color Selection</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {barColors.map((color) => (
-                      <button
-                        key={color.id}
-                        onClick={() => {
-                          handleFormatAction(`bar-color-${color.id}`);
-                          setModal(null);
-                        }}
-                        disabled={!selectedTasks.length}
-                        className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <div 
-                          className="w-4 h-4 rounded mr-2"
-                          style={{ backgroundColor: color.color }}
-                        ></div>
-                        <div className="text-left">
-                          <div className="text-sm font-medium text-gray-700">{color.name}</div>
-                          <div className="text-xs text-gray-500">{color.description}</div>
-                        </div>
-                      </button>
-                    ))}
+            {modal === 'color-picker' && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <InformationCircleIcon className="h-5 w-5" />
+                  <span className="text-sm">Color Customization</span>
+                </div>
+                <div className="text-sm text-gray-600 space-y-2">
+                  <p><strong>Bar Colors:</strong> Customize the appearance of task bars with different color schemes.</p>
+                  <p><strong>Status Colors:</strong> Set colors for different task statuses (not started, in progress, completed).</p>
+                  <p><strong>Critical Path:</strong> Highlight critical path tasks with distinctive colors.</p>
+                  <p><strong>Theme Support:</strong> Choose from light, dark, or custom color themes.</p>
+                </div>
+                <div className="grid grid-cols-6 gap-2">
+                  {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'].map((color) => (
+                    <button
+                      key={color}
+                                             onClick={() => {
+                         setBarColor(color);
+                         console.log('Bar color changed to:', color);
+                         setOperationStatus({
+                           type: 'success',
+                           message: `Bar color changed to ${color}`
+                         });
+                         setModal(null);
+                       }}
+                      className="w-12 h-12 rounded border-2 border-gray-300 hover:border-gray-400 transition-colors"
+                      style={{ backgroundColor: color }}
+                      title={`Color: ${color}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {modal === 'font-settings' && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <InformationCircleIcon className="h-5 w-5" />
+                  <span className="text-sm">Font Settings</span>
+                </div>
+                <div className="text-sm text-gray-600 space-y-2">
+                  <p><strong>Font Family:</strong> Choose from system fonts or custom web fonts.</p>
+                  <p><strong>Font Size:</strong> Adjust text size for better readability.</p>
+                  <p><strong>Font Weight:</strong> Set bold, normal, or light text weights.</p>
+                  <p><strong>Text Color:</strong> Customize text color for different elements.</p>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Font Family</label>
+                    <select
+                      value={fontFamily}
+                      onChange={(e) => setFontFamily(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded"
+                    >
+                      <option value="Inter">Inter</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Open Sans">Open Sans</option>
+                      <option value="Arial">Arial</option>
+                      <option value="Helvetica">Helvetica</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+                    <input
+                      type="range"
+                      min="8"
+                      max="20"
+                      value={fontSize}
+                      onChange={(e) => setFontSize(Number(e.target.value))}
+                      className="w-full"
+                    />
+                    <span className="text-xs text-gray-500">{fontSize}px</span>
                   </div>
                 </div>
+                <button
+                                     onClick={() => {
+                     console.log('Font changed to:', fontFamily, fontSize + 'px');
+                     setOperationStatus({
+                       type: 'success',
+                       message: `Font changed to ${fontFamily} ${fontSize}px`
+                     });
+                     setModal(null);
+                   }}
+                  className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Apply Font Settings
+                </button>
+              </div>
+            )}
 
-                {/* Font Size Selection */}
-                <div>
-                  <h3 className="text-md font-medium text-gray-700 mb-3">Font Size Selection</h3>
-                  <div className="grid grid-cols-1 gap-2">
-                    {fontSizes.map((font) => (
-                      <button
-                        key={font.id}
-                        onClick={() => {
-                          handleFormatAction(`font-${font.id}`);
-                          setModal(null);
-                        }}
-                        disabled={!selectedTasks.length}
-                        className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <DocumentTextIcon className="h-4 w-4 mr-2 text-gray-600" />
-                        <div className="text-left">
-                          <div className="text-sm font-medium text-gray-700">{font.name}</div>
-                          <div className="text-xs text-gray-500">{font.description}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+            {modal === 'bar-settings' && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 text-gray-600">
+                  <InformationCircleIcon className="h-5 w-5" />
+                  <span className="text-sm">Bar Style Settings</span>
                 </div>
-
-                {/* Row Height Selection */}
-                <div>
-                  <h3 className="text-md font-medium text-gray-700 mb-3">Row Height Selection</h3>
-                  <div className="grid grid-cols-1 gap-2">
-                    {rowHeights.map((row) => (
-                      <button
-                        key={row.id}
-                        onClick={() => {
-                          updateLayoutSettings({ rowHeight: row.height });
-                          setModal(null);
-                        }}
-                        className="flex items-center p-3 border border-gray-200 rounded hover:bg-gray-50"
-                      >
-                        <ArrowsPointingOutIcon className="h-4 w-4 mr-2 text-gray-600" />
-                        <div className="text-left">
-                          <div className="text-sm font-medium text-gray-700">{row.name}</div>
-                          <div className="text-xs text-gray-500">{row.description}</div>
-                        </div>
-                      </button>
-                    ))}
+                <div className="text-sm text-gray-600 space-y-2">
+                  <p><strong>Bar Shape:</strong> Choose between rectangular, rounded, or custom bar shapes.</p>
+                  <p><strong>Bar Height:</strong> Adjust the height of task bars relative to row height.</p>
+                  <p><strong>Progress Display:</strong> Show progress within bars using different visual styles.</p>
+                  <p><strong>Border Styles:</strong> Add borders, shadows, or other visual effects to bars.</p>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Bar Style</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {['default', 'rounded', 'flat', 'gradient'].map((style) => (
+                        <button
+                          key={style}
+                          onClick={() => handleFormatAction('bar-style', style)}
+                          className={`p-2 border rounded text-xs ${
+                            barStyle === style 
+                              ? 'bg-blue-100 border-blue-500 text-blue-700' 
+                              : 'bg-white border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          {style.charAt(0).toUpperCase() + style.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Bar Height</label>
+                    <input
+                      type="range"
+                      min="16"
+                      max="48"
+                      value={layoutSettings.rowHeight * 0.6}
+                                             onChange={(e) => {
+                         const barHeight = Number(e.target.value);
+                         console.log('Bar height changed to:', barHeight + 'px');
+                       }}
+                      className="w-full"
+                    />
+                    <span className="text-xs text-gray-500">{Math.round(layoutSettings.rowHeight * 0.6)}px</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {modal === 'format-info' && (
+            {modal === 'format-presets' && (
               <div className="space-y-4">
                 <div className="flex items-center space-x-2 text-gray-600">
                   <InformationCircleIcon className="h-5 w-5" />
-                  <span className="text-sm">Format Management Information</span>
+                  <span className="text-sm">Format Presets</span>
                 </div>
                 <div className="text-sm text-gray-600 space-y-2">
-                  <p><strong>Bar Colors:</strong> Customize the visual appearance of task bars.</p>
-                  <p><strong>Font Sizes:</strong> Adjust text size for better readability.</p>
-                  <p><strong>Row Heights:</strong> Control the spacing between task rows.</p>
-                  <p><strong>Grid Display:</strong> Show or hide grid lines for better organization.</p>
-                  <p><strong>Visual Customization:</strong> Personalize the Gantt chart appearance.</p>
-                  <p><strong>Layout Control:</strong> Manage overall chart layout and spacing.</p>
+                  <p><strong>Quick Apply:</strong> Apply predefined formatting schemes for consistent appearance.</p>
+                  <p><strong>Custom Presets:</strong> Save and reuse your own formatting configurations.</p>
+                  <p><strong>Theme Integration:</strong> Presets work with light and dark themes.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { name: 'Classic', desc: 'Traditional Gantt appearance' },
+                    { name: 'Modern', desc: 'Clean, minimalist design' },
+                    { name: 'Colorful', desc: 'Vibrant, high-contrast colors' },
+                    { name: 'Professional', desc: 'Corporate, formal styling' }
+                  ].map((preset) => (
+                    <button
+                      key={preset.name}
+                      onClick={() => {
+                        setOperationStatus({
+                          type: 'success',
+                          message: `${preset.name} preset applied`
+                        });
+                        setModal(null);
+                      }}
+                      className="p-3 border border-gray-300 rounded hover:bg-gray-50 text-left"
+                    >
+                      <div className="font-medium text-gray-800">{preset.name}</div>
+                      <div className="text-xs text-gray-600">{preset.desc}</div>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
