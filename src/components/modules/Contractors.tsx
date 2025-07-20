@@ -22,145 +22,48 @@ import {
   Activity,
   X,
 } from 'lucide-react';
-import { emailIntegrationService } from '../../services/emailIntegration';
+
 import {
   emailIntelligenceService,
-  EmailMessage,
 } from '../../services/emailIntelligence';
+import type { EmailMessage } from '../../services/emailIntelligence';
 
 interface Contractor {
-  id: number;
-  name: string;
   company: string;
-  email: string;
-  phone: string;
-  location: string;
-  status: string;
   complianceStatus: string;
-  lastUpdated: string;
   documents: number;
-  expiryDate: string;
-  specializations: string[];
-  hourlyRate: string;
-  insuranceExpiry: string;
-  notes?: string;
-  tasks?: Array<{
-    id: string;
-    title: string;
-    description: string;
-    status: 'pending' | 'in-progress' | 'completed';
-    dueDate: string;
-    priority: 'low' | 'medium' | 'high';
-  }>;
   documentsList?: Array<{
     id: string;
     name: string;
-    type: string;
     size: number;
+    type: string;
     uploadedAt: string;
     url: string;
+}>;
+  email: string;
+  expiryDate: string;
+  hourlyRate: string;
+  id: number;
+  insuranceExpiry: string;
+  lastUpdated: string;
+  location: string;
+  name: string;
+  notes?: string;
+  phone: string;
+  specializations: string[];
+  status: string;
+  tasks?: Array<{
+    description: string;
+    dueDate: string;
+    id: string;
+    priority: 'low' | 'medium' | 'high';
+    status: 'pending' | 'in-progress' | 'completed';
+    title: string;
   }>;
 }
 
-// Mock data for contractors
-const mockContractors = [
-  {
-    id: 1,
-    name: 'John Smith',
-    company: 'Smith Construction Ltd',
-    email: 'john@smithconstruction.com',
-    phone: '+44 7700 900123',
-    location: 'Manchester, UK',
-    status: 'active',
-    complianceStatus: 'compliant',
-    lastUpdated: '2024-01-15',
-    documents: 8,
-    expiryDate: '2024-12-31',
-    specializations: ['Plumbing', 'Electrical'],
-    hourlyRate: '£45',
-    insuranceExpiry: '2024-06-30',
-  },
-  {
-    id: 2,
-    name: 'Sarah Johnson',
-    company: 'Johnson Builders',
-    email: 'sarah@johnsonbuilders.co.uk',
-    phone: '+44 7700 900456',
-    location: 'Birmingham, UK',
-    status: 'active',
-    complianceStatus: 'pending',
-    lastUpdated: '2024-01-10',
-    documents: 5,
-    expiryDate: '2024-08-15',
-    specializations: ['Carpentry', 'Joinery'],
-    hourlyRate: '£38',
-    insuranceExpiry: '2024-04-15',
-  },
-  {
-    id: 3,
-    name: 'Michael Wilson',
-    company: 'Wilson Contracting Ltd',
-    email: 'michael@wilsoncontracting.co.uk',
-    phone: '+44 7700 900789',
-    location: 'Leeds, UK',
-    status: 'inactive',
-    complianceStatus: 'expired',
-    lastUpdated: '2023-12-20',
-    documents: 3,
-    expiryDate: '2023-11-30',
-    specializations: ['Roofing', 'Guttering'],
-    hourlyRate: '£42',
-    insuranceExpiry: '2023-10-31',
-  },
-  {
-    id: 4,
-    name: 'Emma Davis',
-    company: 'Davis Renovations',
-    email: 'emma@davisrenovations.co.uk',
-    phone: '+44 7700 900012',
-    location: 'Liverpool, UK',
-    status: 'active',
-    complianceStatus: 'compliant',
-    lastUpdated: '2024-01-12',
-    documents: 12,
-    expiryDate: '2025-02-28',
-    specializations: ['Interior Design', 'Painting'],
-    hourlyRate: '£35',
-    insuranceExpiry: '2024-09-30',
-  },
-  {
-    id: 5,
-    name: 'David Brown',
-    company: 'Brown & Sons Ltd',
-    email: 'david@brownandsons.co.uk',
-    phone: '+44 7700 900345',
-    location: 'Sheffield, UK',
-    status: 'active',
-    complianceStatus: 'warning',
-    lastUpdated: '2024-01-08',
-    documents: 7,
-    expiryDate: '2024-03-15',
-    specializations: ['Bricklaying', 'Stonework'],
-    hourlyRate: '£40',
-    insuranceExpiry: '2024-02-28',
-  },
-  {
-    id: 6,
-    name: 'Lisa Thompson',
-    company: 'Thompson Electrical',
-    email: 'lisa@thompsonelectrical.co.uk',
-    phone: '+44 7700 900678',
-    location: 'Newcastle, UK',
-    status: 'active',
-    complianceStatus: 'compliant',
-    lastUpdated: '2024-01-14',
-    documents: 10,
-    expiryDate: '2024-11-30',
-    specializations: ['Electrical', 'Security Systems'],
-    hourlyRate: '£48',
-    insuranceExpiry: '2024-08-31',
-  },
-];
+// Mock data for contractors - empty for now
+const mockContractors: any[] = [];
 
 const Contractors: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'contractors' | 'sub-contractors'>(
@@ -277,14 +180,11 @@ const Contractors: React.FC = () => {
 
   useEffect(() => {
     if (selectedContractor) {
-      // Get all email integrations for this contractor
-      const integrations = emailIntegrationService
-        .getIntegrations()
-        .filter(i => i.customerId === `contractor_${selectedContractor.id}`);
-      // Get all emails for these integrations
-      const emailIds = integrations.map(i => i.emailId);
+      // Get all emails for this contractor
       const allEmails = emailIntelligenceService.getEmails();
-      const relatedEmails = allEmails.filter(e => emailIds.includes(e.id));
+      const relatedEmails = allEmails.filter(
+        e => e.customerId === `contractor_${selectedContractor.id}`
+      );
       setContractorEmails(relatedEmails);
     } else {
       setContractorEmails([]);
@@ -427,17 +327,19 @@ const Contractors: React.FC = () => {
               {/* Actions */}
               <div className='flex gap-2'>
                 <button
-                  className='flex-1 px-3 py-2 bg-archer-neon text-black text-sm font-medium rounded-lg hover:bg-archer-neon/90 transition-colors'
+                  className='flex-1 px-3 py-2 bg-constructbms-blue text-black text-sm font-medium rounded-lg hover:bg-constructbms-blue/90 transition-colors'
                   onClick={e => {
                     e.stopPropagation();
                     openDetailsModal(contractor);
                   }}
+                  title='View Contractor Details'
                 >
                   View Details
                 </button>
                 <button
                   className='px-3 py-2 text-gray-600 hover:text-gray-800'
                   onClick={e => e.stopPropagation()}
+                  title='Download Contractor Information'
                 >
                   <Download size={16} />
                 </button>
@@ -733,7 +635,7 @@ const Contractors: React.FC = () => {
                           )}
                           {contractorEmails.length > 5 && (
                             <div className='text-center'>
-                              <button className='text-sm text-archer-neon hover:text-archer-neon/80'>
+                              <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80'>
                                 View all {contractorEmails.length} emails
                               </button>
                             </div>
@@ -761,7 +663,7 @@ const Contractors: React.FC = () => {
                               })
                             }
                             rows={4}
-                            className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                            className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                             placeholder='Add notes about this contractor...'
                           />
                         ) : (
@@ -780,7 +682,7 @@ const Contractors: React.FC = () => {
                           </h4>
                           <button
                             onClick={() => setShowAddTaskModal(true)}
-                            className='text-sm text-archer-neon hover:text-archer-neon/80'
+                            className='text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                           >
                             <Plus size={16} />
                           </button>
@@ -835,7 +737,7 @@ const Contractors: React.FC = () => {
                           </h4>
                           <button
                             onClick={() => setShowAddDocumentModal(true)}
-                            className='text-sm text-archer-neon hover:text-archer-neon/80'
+                            className='text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                           >
                             <Plus size={16} />
                           </button>
@@ -868,7 +770,7 @@ const Contractors: React.FC = () => {
                                   </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                  <button className='text-sm text-archer-neon hover:text-archer-neon/80'>
+                                  <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80'>
                                     <Download size={16} />
                                   </button>
                                 </div>
@@ -942,7 +844,7 @@ const Contractors: React.FC = () => {
                     ) : (
                       <>
                         <button
-                          className='flex-1 px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-neon/90 transition-colors'
+                          className='flex-1 px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-blue/90 transition-colors'
                           onClick={handleEditContractor}
                         >
                           Edit
@@ -990,7 +892,7 @@ const Contractors: React.FC = () => {
                 <input
                   type='text'
                   defaultValue={selectedEmailForAction.subject}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   placeholder='Enter task title'
                 />
               </div>
@@ -1005,7 +907,7 @@ const Contractors: React.FC = () => {
                     0,
                     200
                   )}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   placeholder='Enter task description'
                 />
               </div>
@@ -1016,7 +918,7 @@ const Contractors: React.FC = () => {
                 </label>
                 <input
                   type='date'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
 
@@ -1024,7 +926,7 @@ const Contractors: React.FC = () => {
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
                   Priority
                 </label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                   <option value='low'>Low</option>
                   <option value='medium' selected>
                     Medium
@@ -1053,7 +955,7 @@ const Contractors: React.FC = () => {
                     priority: 'medium',
                   })
                 }
-                className='flex-1 px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-neon/90 transition-colors'
+                className='flex-1 px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-blue/90 transition-colors'
               >
                 Create Task
               </button>
@@ -1086,7 +988,7 @@ const Contractors: React.FC = () => {
                 <label className='block text-sm font-medium text-gray-700 mb-2'>
                   Event Type
                 </label>
-                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                   <option value='meeting'>Meeting</option>
                   <option value='call'>Call</option>
                   <option value='site-visit'>Site Visit</option>
@@ -1101,7 +1003,7 @@ const Contractors: React.FC = () => {
                 <input
                   type='text'
                   defaultValue={selectedEmailForAction.subject}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   placeholder='Enter event title'
                 />
               </div>
@@ -1116,7 +1018,7 @@ const Contractors: React.FC = () => {
                     0,
                     200
                   )}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   placeholder='Enter event description'
                 />
               </div>
@@ -1128,7 +1030,7 @@ const Contractors: React.FC = () => {
                   </label>
                   <input
                     type='date'
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
                 <div>
@@ -1137,7 +1039,7 @@ const Contractors: React.FC = () => {
                   </label>
                   <input
                     type='time'
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
               </div>
@@ -1149,7 +1051,7 @@ const Contractors: React.FC = () => {
                   </label>
                   <input
                     type='date'
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
                 <div>
@@ -1158,7 +1060,7 @@ const Contractors: React.FC = () => {
                   </label>
                   <input
                     type='time'
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
               </div>
@@ -1186,7 +1088,7 @@ const Contractors: React.FC = () => {
                     endTime: '10:00',
                   })
                 }
-                className='flex-1 px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-neon/90 transition-colors'
+                className='flex-1 px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-blue/90 transition-colors'
               >
                 Create Event
               </button>
@@ -1208,7 +1110,7 @@ const Contractors: React.FC = () => {
           >
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-archer-neon rounded-full flex items-center justify-center'>
+                <div className='w-12 h-12 bg-constructbms-blue rounded-full flex items-center justify-center'>
                   <span className='text-black font-semibold text-lg'>
                     {contractor.name
                       .split(' ')
@@ -1242,7 +1144,7 @@ const Contractors: React.FC = () => {
                   </span>
                 </div>
                 <button
-                  className='px-3 py-1 bg-archer-neon text-black text-sm font-medium rounded hover:bg-archer-neon/90'
+                  className='px-3 py-1 bg-constructbms-blue text-black text-sm font-medium rounded hover:bg-constructbms-blue/90'
                   onClick={e => {
                     e.stopPropagation();
                     openDetailsModal(contractor);
@@ -1332,7 +1234,7 @@ const Contractors: React.FC = () => {
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                   <button
-                    className='text-archer-neon hover:text-archer-neon/80'
+                    className='text-constructbms-blue hover:text-constructbms-blue/80'
                     onClick={e => {
                       e.stopPropagation();
                       openDetailsModal(contractor);
@@ -1461,7 +1363,7 @@ const Contractors: React.FC = () => {
             </p>
           </div>
           <div className='flex items-center gap-3'>
-            <button className='px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-neon/90 flex items-center gap-2'>
+            <button className='px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-blue/90 flex items-center gap-2'>
               <UserPlus size={16} />
               Add{' '}
               {activeTab === 'contractors' ? 'Contractor' : 'Sub-Contractor'}
@@ -1477,13 +1379,13 @@ const Contractors: React.FC = () => {
       <div className='bg-white border-b px-6 py-2'>
         <div className='flex space-x-2'>
           <button
-            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'contractors' ? 'bg-archer-neon text-black' : 'bg-gray-100 text-gray-600'}`}
+            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'contractors' ? 'bg-constructbms-blue text-black' : 'bg-gray-100 text-gray-600'}`}
             onClick={() => setActiveTab('contractors')}
           >
             Contractors
           </button>
           <button
-            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'sub-contractors' ? 'bg-archer-neon text-black' : 'bg-gray-100 text-gray-600'}`}
+            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'sub-contractors' ? 'bg-constructbms-blue text-black' : 'bg-gray-100 text-gray-600'}`}
             onClick={() => setActiveTab('sub-contractors')}
           >
             Sub-Contractors
@@ -1501,32 +1403,32 @@ const Contractors: React.FC = () => {
           <input
             type='text'
             placeholder={`Search ${activeTab}...`}
-            className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+            className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
         <div className='flex border border-gray-300 rounded-lg'>
           <button
-            className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+            className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
             onClick={() => setViewMode('grid')}
           >
             <Grid size={16} />
           </button>
           <button
-            className={`px-3 py-2 ${viewMode === 'list' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+            className={`px-3 py-2 ${viewMode === 'list' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
             onClick={() => setViewMode('list')}
           >
             <List size={16} />
           </button>
           <button
-            className={`px-3 py-2 ${viewMode === 'table' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+            className={`px-3 py-2 ${viewMode === 'table' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
             onClick={() => setViewMode('table')}
           >
             <Table size={16} />
           </button>
           <button
-            className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+            className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
             onClick={() => setViewMode('kanban')}
           >
             <Columns size={16} />
@@ -1554,8 +1456,8 @@ const Contractors: React.FC = () => {
             <div className='grid grid-cols-1 md:grid-cols-4 gap-6 animate-in slide-in-from-top-2 duration-200 mb-6'>
               <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-100'>
                 <div className='flex items-center space-x-3'>
-                  <div className='w-10 h-10 bg-archer-grey rounded-lg flex items-center justify-center'>
-                    <UserPlus className='h-5 w-5 text-archer-neon' />
+                  <div className='w-10 h-10 bg-constructbms-grey rounded-lg flex items-center justify-center'>
+                    <UserPlus className='h-5 w-5 text-constructbms-blue' />
                   </div>
                   <div>
                     <p className='text-sm text-gray-600'>

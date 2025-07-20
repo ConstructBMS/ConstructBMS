@@ -1,80 +1,75 @@
 import { supabase } from './supabase';
 
 export interface Workflow {
-  id?: string;
-  name: string;
-  description: string;
   category: string;
-  is_active: boolean;
-  created_by: string;
   created_at?: string;
+  created_by: string;
+  description: string;
+  id?: string;
+  is_active: boolean;
+  name: string;
   updated_at?: string;
 }
 
 export interface WorkflowStage {
-  id?: string;
-  workflow_id: string;
-  stage_number: number;
-  name: string;
-  description: string;
-  required_roles: string[];
-  required_approvers: number;
   auto_approve: boolean;
-  timeout_hours?: number;
   created_at?: string;
+  description: string;
+  id?: string;
+  name: string;
+  required_approvers: number;
+  required_roles: string[];
+  stage_number: number;
+  timeout_hours?: number;
+  workflow_id: string;
 }
 
 export interface DocumentWorkflow {
-  id?: string;
-  document_id: string;
-  workflow_id: string;
-  current_stage: number;
-  status: 'pending' | 'in_progress' | 'approved' | 'rejected' | 'cancelled';
-  initiated_by: string;
-  initiated_at: string;
   completed_at?: string;
   created_at?: string;
+  current_stage: number;
+  document_id: string;
+  id?: string;
+  initiated_at: string;
+  initiated_by: string;
+  status: 'pending' | 'in_progress' | 'approved' | 'rejected' | 'cancelled';
   updated_at?: string;
+  workflow_id: string;
 }
 
 export interface WorkflowApproval {
-  id?: string;
-  document_workflow_id: string;
-  stage_number: number;
+  action: 'approve' | 'reject' | 'request_changes';
+  approved_at?: string;
   approver_id: string;
   approver_role: string;
-  action: 'approve' | 'reject' | 'request_changes';
   comments?: string;
-  approved_at?: string;
   created_at?: string;
+  document_workflow_id: string;
+  id?: string;
+  stage_number: number;
 }
 
 export interface WorkflowNotification {
-  id?: string;
-  document_workflow_id: string;
-  recipient_id: string;
-  notification_type:
-    | 'approval_request'
-    | 'approval_completed'
-    | 'workflow_completed'
-    | 'workflow_rejected'
-    | 'reminder';
-  title: string;
-  message: string;
-  is_read: boolean;
-  sent_at: string;
   created_at?: string;
+  document_workflow_id: string;
+  id?: string;
+  is_read: boolean;
+  message: string;
+  notification_type: 'approval_request' | 'approval_completed' | 'workflow_completed' | 'workflow_rejected' | 'reminder';
+  recipient_id: string;
+  sent_at: string;
+  title: string;
 }
 
 export interface WorkflowTemplate {
-  id?: string;
-  name: string;
-  description: string;
   category: string;
-  stages: Omit<WorkflowStage, 'id' | 'workflow_id' | 'created_at'>[];
-  created_by: string;
-  is_default: boolean;
   created_at?: string;
+  created_by: string;
+  description: string;
+  id?: string;
+  is_default: boolean;
+  name: string;
+  stages: Omit<WorkflowStage, 'id' | 'workflow_id' | 'created_at'>[];
 }
 
 class WorkflowService {
@@ -246,10 +241,10 @@ class WorkflowService {
 
   // Get document workflow with details
   async getDocumentWorkflowDetails(documentWorkflowId: string): Promise<{
-    workflow: DocumentWorkflow;
-    stages: WorkflowStage[];
     approvals: WorkflowApproval[];
     notifications: WorkflowNotification[];
+    stages: WorkflowStage[];
+    workflow: DocumentWorkflow;
   } | null> {
     try {
       const { data: workflow, error: workflowError } = await supabase
@@ -354,10 +349,10 @@ class WorkflowService {
   // Get user's pending approvals
   async getUserPendingApprovals(userId: string): Promise<
     {
-      document_workflow: DocumentWorkflow;
-      workflow: Workflow;
-      stage: WorkflowStage;
       document: any;
+      document_workflow: DocumentWorkflow;
+      stage: WorkflowStage;
+      workflow: Workflow;
     }[]
   > {
     try {
@@ -572,11 +567,11 @@ class WorkflowService {
 
   // Get workflow statistics
   async getWorkflowStats(userId?: string): Promise<{
-    total_workflows: number;
     active_workflows: number;
-    pending_approvals: number;
-    completed_this_month: number;
     avg_completion_time: number;
+    completed_this_month: number;
+    pending_approvals: number;
+    total_workflows: number;
   }> {
     try {
       const {

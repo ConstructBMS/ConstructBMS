@@ -35,24 +35,24 @@ interface EmailAnalyticsModalProps {
 }
 
 interface AnalyticsData {
-  emailVolume: { date: string; count: number }[];
-  responseTime: { category: string; avgHours: number }[];
-  categoryDistribution: {
     category: string;
+  categoryDistribution: {
     count: number;
     percentage: number;
-  }[];
-  priorityBreakdown: { priority: string; count: number; color: string }[];
-  senderActivity: { sender: string; count: number; lastActivity: string }[];
-  timeOfDay: { hour: number; count: number }[];
-  weeklyTrends: { week: string; sent: number; received: number }[];
+}[];
+  emailVolume: { count: number, date: string; }[];
   performanceMetrics: {
+    attachmentCount: number;
     avgResponseTime: number;
+    flaggedCount: number;
     totalEmails: number;
     unreadCount: number;
-    flaggedCount: number;
-    attachmentCount: number;
   };
+  priorityBreakdown: { color: string, count: number; priority: string; }[];
+  responseTime: { avgHours: number, category: string; }[];
+  senderActivity: { count: number; lastActivity: string, sender: string; }[];
+  timeOfDay: { count: number, hour: number; }[];
+  weeklyTrends: { received: number, sent: number; week: string; }[];
 }
 
 const EmailAnalyticsModal: React.FC<EmailAnalyticsModalProps> = ({
@@ -64,64 +64,19 @@ const EmailAnalyticsModal: React.FC<EmailAnalyticsModalProps> = ({
   const [chartType, setChartType] = useState('bar');
   const [showCustomization, setShowCustomization] = useState(false);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
-    emailVolume: [
-      { date: '2024-01-01', count: 45 },
-      { date: '2024-01-02', count: 52 },
-      { date: '2024-01-03', count: 38 },
-      { date: '2024-01-04', count: 67 },
-      { date: '2024-01-05', count: 41 },
-      { date: '2024-01-06', count: 29 },
-      { date: '2024-01-07', count: 33 },
-    ],
-    responseTime: [
-      { category: 'Critical', avgHours: 2.5 },
-      { category: 'High', avgHours: 4.2 },
-      { category: 'Medium', avgHours: 8.7 },
-      { category: 'Low', avgHours: 24.3 },
-    ],
-    categoryDistribution: [
-      { category: 'Project-related', count: 156, percentage: 35 },
-      { category: 'Client Communication', count: 89, percentage: 20 },
-      { category: 'Internal Team', count: 78, percentage: 18 },
-      { category: 'Invoice/Payment', count: 67, percentage: 15 },
-      { category: 'Urgent/Actionable', count: 44, percentage: 12 },
-    ],
-    priorityBreakdown: [
-      { priority: 'Critical', count: 23, color: '#ef4444' },
-      { priority: 'High', count: 67, color: '#f97316' },
-      { priority: 'Medium', count: 189, color: '#eab308' },
-      { priority: 'Low', count: 156, color: '#22c55e' },
-    ],
-    senderActivity: [
-      { sender: 'TechCorp Solutions', count: 45, lastActivity: '2 hours ago' },
-      { sender: 'Project Manager', count: 38, lastActivity: '1 day ago' },
-      { sender: 'Client Support', count: 32, lastActivity: '3 hours ago' },
-      { sender: 'Finance Team', count: 28, lastActivity: '5 hours ago' },
-      { sender: 'Development Team', count: 25, lastActivity: '1 day ago' },
-    ],
-    timeOfDay: [
-      { hour: 9, count: 45 },
-      { hour: 10, count: 67 },
-      { hour: 11, count: 52 },
-      { hour: 12, count: 38 },
-      { hour: 13, count: 41 },
-      { hour: 14, count: 58 },
-      { hour: 15, count: 63 },
-      { hour: 16, count: 49 },
-      { hour: 17, count: 34 },
-    ],
-    weeklyTrends: [
-      { week: 'Week 1', sent: 45, received: 67 },
-      { week: 'Week 2', sent: 52, received: 73 },
-      { week: 'Week 3', sent: 38, received: 58 },
-      { week: 'Week 4', sent: 67, received: 89 },
-    ],
+    emailVolume: [],
+    responseTime: [],
+    categoryDistribution: [],
+    priorityBreakdown: [],
+    senderActivity: [],
+    timeOfDay: [],
+    weeklyTrends: [],
     performanceMetrics: {
-      avgResponseTime: 6.2,
-      totalEmails: 435,
-      unreadCount: 23,
-      flaggedCount: 12,
-      attachmentCount: 89,
+      avgResponseTime: 0,
+      totalEmails: 0,
+      unreadCount: 0,
+      flaggedCount: 0,
+      attachmentCount: 0,
     },
   });
 
@@ -206,7 +161,7 @@ const EmailAnalyticsModal: React.FC<EmailAnalyticsModalProps> = ({
           <div className='flex items-center space-x-2'>
             <button
               onClick={exportData}
-              className='flex items-center space-x-2 px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-opacity-90 transition-colors'
+              className='flex items-center space-x-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-opacity-90 transition-colors'
             >
               <Download className='w-4 h-4' />
               <span>Export</span>
@@ -274,7 +229,7 @@ const EmailAnalyticsModal: React.FC<EmailAnalyticsModalProps> = ({
                     onClick={() => setActiveTab(tab.key)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                       activeTab === tab.key
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'hover:bg-gray-200'
                     }`}
                   >

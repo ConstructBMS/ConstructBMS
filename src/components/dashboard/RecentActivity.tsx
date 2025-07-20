@@ -7,20 +7,24 @@ import {
   User,
   Clock,
 } from 'lucide-react';
-import { demoDataService } from '../../services/demoData';
+import { dataSourceService } from '../../services/dataSourceService';
 
 interface Activity {
-  id: number;
-  type: 'document' | 'message' | 'task' | 'alert' | 'user';
-  title: string;
-  description: string;
-  time: string;
-  icon: React.ComponentType<{ className?: string }>;
   color: string;
+  description: string;
+  icon: any;
+  id: number;
+  time: string;
+  title: string;
+  type: 'document' | 'message' | 'task' | 'alert' | 'user';
+  projectData?: any;
+  taskData?: any;
+  clientData?: any;
+  dealData?: any;
 }
 
 interface RecentActivityProps {
-  onNavigateToModule?: (module: string) => void;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }
 
 const RecentActivity: React.FC<RecentActivityProps> = ({
@@ -31,10 +35,10 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
   useEffect(() => {
     const generateActivities = async () => {
       try {
-        const projects = await demoDataService.getProjects();
-        const tasks = await demoDataService.getTasks();
-        const deals = await demoDataService.getDeals();
-        const clients = await demoDataService.getClients();
+        const projects = await dataSourceService.getProjects();
+        const tasks = await dataSourceService.getTasks();
+        const deals = await dataSourceService.getDeals();
+        const clients = await dataSourceService.getCustomers();
 
         const newActivities: Activity[] = [];
 
@@ -45,10 +49,11 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
             id: 1,
             type: 'document',
             title: 'Project update',
-            description: `${recentProject.name} progress updated to ${recentProject.progress}%`,
+            description: `${recentProject.name} progress updated to ${Math.round(recentProject.progress * 100) / 100}%`,
             time: '2 hours ago',
             icon: FileText,
             color: 'green',
+            projectData: recentProject,
           });
         }
 
@@ -66,7 +71,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
         }
 
         if (tasks.length > 0) {
-          const completedTask = tasks.find(t => t.status === 'completed');
+          const completedTask = tasks.find((t: any) => t.status === 'completed');
           if (completedTask) {
             newActivities.push({
               id: 3,
@@ -76,6 +81,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
               time: '6 hours ago',
               icon: CheckCircle,
               color: 'green',
+              taskData: completedTask,
             });
           }
         }
@@ -93,6 +99,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
               time: '8 hours ago',
               icon: AlertTriangle,
               color: 'orange',
+              projectData: behindScheduleProject,
             });
           }
         }
@@ -133,7 +140,9 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
   const handleActivityClick = (activity: Activity) => {
     switch (activity.type) {
       case 'document':
-        if (onNavigateToModule) {
+        if (onNavigateToModule && activity.projectData) {
+          onNavigateToModule('projects', { openProject: activity.projectData });
+        } else if (onNavigateToModule) {
           onNavigateToModule('projects');
         }
         break;
@@ -143,12 +152,16 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
         }
         break;
       case 'task':
-        if (onNavigateToModule) {
+        if (onNavigateToModule && activity.taskData) {
+          onNavigateToModule('tasks', { openTask: activity.taskData });
+        } else if (onNavigateToModule) {
           onNavigateToModule('tasks');
         }
         break;
       case 'alert':
-        if (onNavigateToModule) {
+        if (onNavigateToModule && activity.projectData) {
+          onNavigateToModule('projects', { openProject: activity.projectData });
+        } else if (onNavigateToModule) {
           onNavigateToModule('notifications');
         }
         break;
@@ -163,17 +176,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
   };
 
   return (
-    <div className='bg-white rounded-xl p-4 shadow-sm border border-gray-100 h-full flex flex-col'>
-      <div className='flex items-center justify-between mb-4'>
-        <h3 className='text-lg font-semibold text-gray-900'>Recent Activity</h3>
-        <button
-          onClick={handleViewAll}
-          className='text-archer-green hover:text-archer-neon text-sm font-medium'
-        >
-          View All
-        </button>
-      </div>
-
+    <div className='h-full flex flex-col'>
       <div className='space-y-3 flex-1 overflow-y-auto'>
         {activities.length > 0 ? (
           activities.map(activity => (

@@ -1,17 +1,19 @@
 @echo off
-REM Archer Project Quick Commands
+setlocal enabledelayedexpansion
+
+REM ConstructBMS Development Script
 REM Usage: dev [command]
 
 if "%1"=="" (
-    echo Archer Project Quick Commands
-    echo ===========================
+    echo ConstructBMS Development Commands
+    echo ================================
     echo.
     echo Available commands:
-    echo   start     - Start development server
-    echo   tunnel    - Start dev server + ngrok tunnel
+    echo   start     - Start development server only
+    echo   full      - Start both frontend and backend servers
     echo   kill      - Kill all Node.js processes
     echo   restart   - Kill processes and restart dev server
-    echo   clean     - Clean build artifacts
+    echo   clean     - Clean build artifacts and node_modules
     echo   install   - Install dependencies
     echo   build     - Build for production
     echo   lint      - Run ESLint
@@ -19,10 +21,18 @@ if "%1"=="" (
     echo.
     echo Examples:
     echo   dev start
-    echo   dev tunnel
+    echo   dev full
     echo   dev restart
     goto :eof
 )
+
+REM Function to kill Node processes
+:kill_processes
+echo Stopping Node.js processes...
+taskkill /f /im node.exe >nul 2>&1
+timeout /t 2 /nobreak >nul
+echo ✓ Processes stopped
+goto :eof
 
 if "%1"=="start" (
     echo Starting development server...
@@ -30,29 +40,54 @@ if "%1"=="start" (
     goto :eof
 )
 
-if "%1"=="tunnel" (
-    echo Starting development server with ngrok tunnel...
-    npm run dev:tunnel
+if "%1"=="full" (
+    echo Starting full development environment...
+    echo.
+    call :kill_processes
+    echo.
+    echo Starting backend server...
+    start /b cmd /c "npm run server"
+    timeout /t 3 /nobreak >nul
+    echo ✓ Backend started on port 3001
+    echo.
+    echo Starting frontend server...
+    start /b cmd /c "npm run dev"
+    timeout /t 3 /nobreak >nul
+    echo ✓ Frontend started on port 5173
+    echo.
+    echo Opening browser...
+    timeout /t 2 /nobreak >nul
+    start http://localhost:5173
+    echo ✓ Browser opened
+    echo.
+    echo 🎉 Development environment ready!
+    echo Frontend: http://localhost:5173
+    echo Backend:  http://localhost:3001/api/health
+    echo.
+    echo Servers are running in background. Use 'dev kill' to stop them.
     goto :eof
 )
 
 if "%1"=="kill" (
-    echo Stopping all Node.js processes...
-    npm run kill
+    call :kill_processes
     goto :eof
 )
 
 if "%1"=="restart" (
     echo Restarting development server...
-    npm run kill
-    timeout /t 2 /nobreak >nul
+    call :kill_processes
+    echo.
+    echo Starting development server...
     npm run dev
     goto :eof
 )
 
 if "%1"=="clean" (
     echo Cleaning build artifacts...
-    npm run clean
+    if exist "dist" rmdir /s /q "dist"
+    if exist "node_modules\.vite" rmdir /s /q "node_modules\.vite"
+    if exist ".vite" rmdir /s /q ".vite"
+    echo ✓ Cleaned build artifacts
     goto :eof
 )
 

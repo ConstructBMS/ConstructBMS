@@ -54,8 +54,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
@@ -67,17 +67,17 @@ import { CSS } from '@dnd-kit/utilities';
 import { persistentStorage } from '../../services/persistentStorage';
 
 interface MenuItem {
-  id: string;
-  name: string;
-  icon: string;
-  path: string;
   badge?: string | null;
   children?: MenuItem[];
-  isVisible: boolean;
-  isSubmenu: boolean;
-  parentId?: string | null;
+  icon: string;
+  id: string;
   isCore: boolean;
+  isSubmenu: boolean;
+  isVisible: boolean;
+  name: string;
   orderIndex: number;
+  parentId?: string | null;
+  path: string;
   requiredPermissions?: string[];
 }
 
@@ -85,18 +85,18 @@ interface SidebarSettingsProps {}
 
 // Sortable menu item component
 const SortableMenuItem: React.FC<{
-  item: MenuItem;
-  canEdit: boolean;
-  onEdit: (item: MenuItem) => void;
-  onDelete: (id: string) => void;
-  onToggleVisibility: (id: string) => void;
-  onMoveToParent: (id: string, parentId: string | null) => void;
-  onToggleCore: (id: string) => void;
   allItems: MenuItem[];
-  isEditing: boolean;
+  canEdit: boolean;
   editingItem: MenuItem | null;
-  onSaveEdit: (item: MenuItem) => void;
+  isEditing: boolean;
+  item: MenuItem;
   onCancelEdit: () => void;
+  onDelete: (id: string) => void;
+  onEdit: (item: MenuItem) => void;
+  onMoveToParent: (id: string, parentId: string | null) => void;
+  onSaveEdit: (item: MenuItem) => void;
+  onToggleCore: (id: string) => void;
+  onToggleVisibility: (id: string) => void;
 }> = ({
   item,
   canEdit,
@@ -1362,7 +1362,6 @@ const SidebarSettings: React.FC<SidebarSettingsProps> = () => {
 
 // Create Menu Modal Component
 const CreateMenuModal: React.FC<{
-  type: 'parent' | 'child';
   availableParents: MenuItem[];
   onClose: () => void;
   onCreate: (
@@ -1371,6 +1370,7 @@ const CreateMenuModal: React.FC<{
     icon: string,
     parentId?: string
   ) => void;
+  type: 'parent' | 'child';
 }> = ({ type, availableParents, onClose, onCreate }) => {
   const [name, setName] = useState('');
   const [path, setPath] = useState('');

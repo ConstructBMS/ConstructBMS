@@ -2,23 +2,23 @@ import { EmailProvider, EmailConfiguration } from '../types/email';
 
 // Auto-detection and configuration for email providers
 export interface EmailProviderConfig {
-  provider: EmailProvider;
-  name: string;
-  icon: string;
   color: string;
   domains: string[];
-  imapSettings: {
     host: string;
+  icon: string;
+  imapSettings: {
     port: number;
     secure: boolean;
-  };
+};
+  name: string;
+  oauthSupported: boolean;
+  provider: EmailProvider;
+  setupSteps: string[];
   smtpSettings: {
     host: string;
     port: number;
     secure: boolean;
   };
-  oauthSupported: boolean;
-  setupSteps: string[];
 }
 
 // Pre-configured email providers
@@ -183,9 +183,9 @@ export function autoConfigureEmail(
 
 // Validate email configuration
 export async function validateEmailConfig(config: EmailConfiguration): Promise<{
-  success: boolean;
   error?: string;
   provider?: EmailProviderConfig;
+  success: boolean;
 }> {
   try {
     // For demo purposes, simulate validation
@@ -221,9 +221,9 @@ export async function validateEmailConfig(config: EmailConfiguration): Promise<{
 
 // Get setup instructions for provider
 export function getSetupInstructions(provider: EmailProvider): {
-  title: string;
   steps: string[];
   tips: string[];
+  title: string;
   troubleshooting: string[];
 } {
   const config = getProviderConfig(provider);

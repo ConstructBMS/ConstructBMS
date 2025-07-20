@@ -1,5 +1,5 @@
 import { supabase } from './supabaseAuth';
-import {
+import type {
   ChatUser,
   ChatMessage,
   ChatChannel,
@@ -11,6 +11,8 @@ import {
 class ChatService {
   private static instance: ChatService;
   private listeners: Map<string, ((data: any) => void)[]> = new Map();
+  private isInitialized: boolean = false;
+  private initializationPromise: Promise<void> | null = null;
 
   static getInstance(): ChatService {
     if (!ChatService.instance) {
@@ -20,63 +22,96 @@ class ChatService {
   }
 
   async initialize(): Promise<void> {
-    try {
-      console.log('✅ Initializing chat service with Supabase...');
+    // Prevent duplicate initialization
+    if (this.isInitialized) {
+  
+      return;
+    }
 
-      // Set up real-time subscriptions
+    // If initialization is already in progress, wait for it
+    if (this.initializationPromise) {
+      console.log('⏳ Chat service initialization already in progress, waiting...');
+      return this.initializationPromise;
+    }
+
+    this.initializationPromise = this._initialize();
+    return this.initializationPromise;
+  }
+
+  private async _initialize(): Promise<void> {
+    try {
+  
+
+      // Set up real-time subscriptions with better error handling
       this.setupRealtimeSubscriptions();
 
-      console.log('✅ Chat service initialized successfully');
+      this.isInitialized = true;
+  
     } catch (error) {
-      console.error('Failed to initialize chat service:', error);
+      console.error('❌ Failed to initialize chat service:', error);
+      this.isInitialized = false;
+      this.initializationPromise = null;
       throw error;
     }
   }
 
   private setupRealtimeSubscriptions(): void {
     try {
-      // Subscribe to new messages
-      const messagesSubscription = supabase
+      // Set up real-time subscriptions for chat messages
+      const messagesChannel = supabase
         .channel('chat_messages')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'chat_messages' },
-          payload => {
-            console.log('📨 New message received:', payload.new);
+          {
+            event: '*',
+            schema: 'public',
+            table: 'chat_messages',
+          },
+          (payload) => {
+            console.log('📨 Real-time message update:', payload);
             this.notifyListeners('chat:newMessage', payload.new);
           }
         )
-        .subscribe();
-
-      // Subscribe to presence updates
-      const presenceSubscription = supabase
-        .channel('chat_presence')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'chat_presence' },
-          payload => {
-            console.log('👤 Presence update:', payload.new);
-            this.notifyListeners('chat:presenceUpdate', payload.new);
-          }
-        )
-        .subscribe();
-
-      // Subscribe to channel updates
-      const channelsSubscription = supabase
-        .channel('chat_channels')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'chat_channels' },
-          payload => {
-            console.log('📢 Channel update:', payload.new);
+          {
+            event: '*',
+            schema: 'public',
+            table: 'chat_channels',
+          },
+          (payload) => {
+            console.log('📢 Real-time channel update:', payload);
             this.notifyListeners('chat:channelUpdate', payload.new);
           }
         )
-        .subscribe();
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'chat_presence',
+          },
+          (payload) => {
+            console.log('👤 Real-time presence update:', payload);
+            this.notifyListeners('chat:presenceUpdate', payload.new);
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('✅ Chat real-time subscription connected');
+          } else if (status === 'CHANNEL_ERROR') {
+            console.warn('⚠️ Chat real-time subscription failed - using local data only');
+            // Don't retry automatically to prevent spam
+          } else if (status === 'TIMED_OUT') {
+            console.warn('⚠️ Chat real-time subscription timed out - using local data only');
+            // Don't retry automatically to prevent spam
+          }
+        });
 
-      console.log('✅ Real-time subscriptions set up');
+
     } catch (error) {
-      console.error('Failed to set up real-time subscriptions:', error);
+      console.warn('⚠️ Failed to set up real-time subscriptions:', error);
+      // Don't throw here, as the service can still work without real-time
     }
   }
 
@@ -93,29 +128,36 @@ class ChatService {
       }
 
       // Transform database format to ChatChannel type
-      const channels: ChatChannel[] = (data || []).map((dbChannel: any) => ({
-        id: dbChannel.id,
-        name: dbChannel.name,
-        type: dbChannel.type,
-        description: dbChannel.description,
-        projectId: dbChannel.project_id,
-        members: dbChannel.members || [],
-        admins: dbChannel.admins || [],
-        isPrivate: dbChannel.is_private,
-        createdAt: new Date(dbChannel.created_at),
-        lastMessage: undefined, // Will be loaded separately
-        unreadCount: 0, // Will be calculated separately
-        pinnedMessages: [],
-        settings: dbChannel.settings || {
-          allowFileUploads: true,
-          allowReactions: true,
-          allowThreading: true,
-          slowMode: false,
-          slowModeInterval: 0,
-        },
-      }));
+      const channels: ChatChannel[] = (data || []).map((dbChannel: any) => {
+        const channel: ChatChannel = {
+          id: dbChannel.id,
+          name: dbChannel.name,
+          type: dbChannel.type,
+          description: dbChannel.description,
+          projectId: dbChannel.project_id,
+          members: dbChannel.members || [],
+          admins: dbChannel.admins || [],
+          isPrivate: dbChannel.is_private,
+          createdAt: new Date(dbChannel.created_at),
+          unreadCount: 0, // Will be calculated separately
+          pinnedMessages: [],
+          settings: dbChannel.settings || {
+            allowFileUploads: true,
+            allowReactions: true,
+            allowThreading: true,
+            slowMode: false,
+            slowModeInterval: 0,
+          },
+        };
+        
+        // Only add lastMessage if it exists
+        if (dbChannel.last_message) {
+          channel.lastMessage = dbChannel.last_message;
+        }
+        
+        return channel;
+      });
 
-      console.log('✅ Loaded channels:', channels.length);
       return channels;
     } catch (error) {
       console.error('Failed to load channels:', error);
@@ -138,30 +180,30 @@ class ChatService {
       }
 
       // Transform database format to ChatMessage type
-      const messages: ChatMessage[] = (data || []).map((dbMessage: any) => ({
-        id: dbMessage.id,
-        channelId: dbMessage.channel_id,
-        senderId: dbMessage.sender_id,
-        content: dbMessage.content,
-        timestamp: new Date(dbMessage.created_at),
-        type: dbMessage.message_type,
-        mentions: dbMessage.mentions || [],
-        replyTo: dbMessage.reply_to_id,
-        edited: dbMessage.edited,
-        editedAt: dbMessage.edited_at
-          ? new Date(dbMessage.edited_at)
-          : undefined,
-        attachments: dbMessage.attachments || [],
-        reactions: dbMessage.reactions || [],
-        isDeleted: dbMessage.is_deleted,
-      }));
+      const messages: ChatMessage[] = (data || []).map((dbMessage: any) => {
+        const message: ChatMessage = {
+          id: dbMessage.id,
+          channelId: dbMessage.channel_id,
+          senderId: dbMessage.sender_id,
+          content: dbMessage.content,
+          timestamp: new Date(dbMessage.created_at),
+          type: dbMessage.message_type,
+          mentions: dbMessage.mentions || [],
+          replyTo: dbMessage.reply_to_id,
+          edited: dbMessage.edited,
+          attachments: dbMessage.attachments || [],
+          reactions: dbMessage.reactions || [],
+          isDeleted: dbMessage.is_deleted,
+        };
+        
+        // Only add editedAt if it exists
+        if (dbMessage.edited_at) {
+          message.editedAt = new Date(dbMessage.edited_at);
+        }
+        
+        return message;
+      });
 
-      console.log(
-        '✅ Loaded messages for channel',
-        channelId,
-        ':',
-        messages.length
-      );
       return messages;
     } catch (error) {
       console.error('Failed to load messages:', error);
@@ -206,13 +248,12 @@ class ChatService {
         type: data.message_type,
         mentions: data.mentions || [],
         edited: data.edited,
-        editedAt: data.edited_at ? new Date(data.edited_at) : undefined,
+        ...(data.edited_at && { editedAt: new Date(data.edited_at) }),
         attachments: data.attachments || [],
         reactions: data.reactions || [],
         isDeleted: data.is_deleted,
       };
 
-      console.log('✅ Message sent:', message.id);
       return message;
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -261,13 +302,12 @@ class ChatService {
         mentions: data.mentions || [],
         replyTo: data.reply_to_id,
         edited: data.edited,
-        editedAt: data.edited_at ? new Date(data.edited_at) : undefined,
+        ...(data.edited_at && { editedAt: new Date(data.edited_at) }),
         attachments: data.attachments || [],
         reactions: data.reactions || [],
         isDeleted: data.is_deleted,
       };
 
-      console.log('✅ Message sent with mentions:', message.id);
       return message;
     } catch (error) {
       console.error('Failed to send message with mentions:', error);
@@ -322,7 +362,6 @@ class ChatService {
         admins: data.admins || [],
         isPrivate: data.is_private,
         createdAt: new Date(data.created_at),
-        lastMessage: undefined,
         unreadCount: 0,
         pinnedMessages: [],
         settings: data.settings || {
@@ -334,7 +373,6 @@ class ChatService {
         },
       };
 
-      console.log('✅ Channel created:', channel.id);
       return channel;
     } catch (error) {
       console.error('Failed to create channel:', error);
@@ -357,7 +395,6 @@ class ChatService {
         },
       ];
 
-      console.log('✅ Loaded users:', demoUsers.length);
       return demoUsers;
     } catch (error) {
       console.error('Failed to load users:', error);
@@ -383,8 +420,6 @@ class ChatService {
         console.error('Error updating presence:', error);
         throw error;
       }
-
-      console.log('✅ Presence updated:', status);
     } catch (error) {
       console.error('Failed to update presence:', error);
       throw error;
@@ -395,35 +430,9 @@ class ChatService {
     try {
       const userId = (await supabase.auth.getUser()).data.user?.id;
 
-      const { data, error } = await supabase
-        .from('chat_notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('read', false)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading notifications:', error);
-        throw error;
-      }
-
-      // Transform to ChatNotification type
-      const notifications: ChatNotification[] = (data || []).map(
-        (dbNotification: any) => ({
-          id: dbNotification.id,
-          userId: dbNotification.user_id,
-          type: dbNotification.type,
-          channelId: dbNotification.channel_id,
-          messageId: dbNotification.message_id,
-          senderId: dbNotification.sender_id,
-          content: dbNotification.content || '',
-          timestamp: new Date(dbNotification.created_at),
-          isRead: dbNotification.read,
-        })
-      );
-
-      console.log('✅ Loaded notifications:', notifications.length);
-      return notifications;
+      // For now, return empty array to prevent false notification badges
+      // In a real app, you'd query the chat_notifications table
+      return [];
     } catch (error) {
       console.error('Failed to load notifications:', error);
       throw error;
@@ -441,8 +450,6 @@ class ChatService {
         console.error('Error marking notifications as read:', error);
         throw error;
       }
-
-      console.log('✅ Marked notifications as read:', notificationIds);
     } catch (error) {
       console.error('Failed to mark notifications as read:', error);
       throw error;
@@ -475,15 +482,12 @@ class ChatService {
         mentions: dbMessage.mentions || [],
         replyTo: dbMessage.reply_to_id,
         edited: dbMessage.edited,
-        editedAt: dbMessage.edited_at
-          ? new Date(dbMessage.edited_at)
-          : undefined,
+        ...(dbMessage.edited_at && { editedAt: new Date(dbMessage.edited_at) }),
         attachments: dbMessage.attachments || [],
         reactions: dbMessage.reactions || [],
         isDeleted: dbMessage.is_deleted,
       }));
 
-      console.log('✅ Search results:', messages.length);
       return messages;
     } catch (error) {
       console.error('Failed to search messages:', error);
@@ -495,7 +499,6 @@ class ChatService {
     try {
       // Clean up real-time subscriptions
       await supabase.removeAllChannels();
-      console.log('✅ Chat service cleaned up');
     } catch (error) {
       console.error('Failed to cleanup chat service:', error);
     }

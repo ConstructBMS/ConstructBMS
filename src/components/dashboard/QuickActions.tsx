@@ -75,9 +75,9 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigateToModule }) => {
       name: 'Create Estimate',
       icon: FileText,
       color: 'green',
-      bgColor: 'bg-archer-green/10',
-      textColor: 'text-archer-green',
-      hoverBg: 'hover:bg-archer-green/20',
+      bgColor: 'bg-constructbms-green/10',
+      textColor: 'text-constructbms-green',
+      hoverBg: 'hover:bg-constructbms-green/20',
     },
     {
       name: 'Add Client',
@@ -114,22 +114,20 @@ const QuickActions: React.FC<QuickActionsProps> = ({ onNavigateToModule }) => {
   ];
 
   return (
-    <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-100'>
-      <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-        Quick Actions
-      </h3>
+    <div className='h-full flex flex-col'>
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
         {actions.map(action => (
           <button
             key={action.name}
             onClick={() => handleAction(action.name)}
-            className={`flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 ${action.bgColor} ${action.hoverBg} hover:border-archer-neon transition-all duration-200 group`}
+            className={`flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 ${action.bgColor} ${action.hoverBg} hover:border-constructbms-blue transition-all duration-200 group`}
+            title={action.name}
           >
             <action.icon
-              className={`h-6 w-6 ${action.textColor} mb-2 group-hover:scale-110 group-hover:text-archer-neon transition-all duration-200`}
+              className={`h-6 w-6 ${action.textColor} mb-2 group-hover:scale-110 group-hover:text-constructbms-blue transition-all duration-200`}
             />
             <span
-              className={`text-sm font-medium ${action.textColor} group-hover:text-archer-neon`}
+              className={`text-sm font-medium ${action.textColor} group-hover:text-constructbms-blue`}
             >
               {action.name}
             </span>

@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
 import { supabase } from '../../services/supabase';
+import { validatePassword } from '../../utils/devHelpers';
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handlePasswordChange = (newPassword: string) => {
+    setPassword(newPassword);
+    const validation = validatePassword(newPassword);
+    setPasswordErrors(validation.errors);
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate password before submission
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setPasswordErrors(passwordValidation.errors);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -31,7 +47,7 @@ const SignUpForm: React.FC = () => {
             'Please enter a valid email address. Some domains may be restricted for security reasons. Try using a common domain like gmail.com, outlook.com, or yahoo.com.'
           );
         } else if (error.message.includes('password')) {
-          setError('Password must be at least 6 characters long.');
+          setError('Password does not meet security requirements.');
         } else if (error.message.includes('rate limit')) {
           setError('Too many sign-up attempts. Please try again later.');
         } else if (error.message.includes('already registered')) {
@@ -69,7 +85,7 @@ const SignUpForm: React.FC = () => {
       const { data: org, error: orgError } = await supabase
         .from('organizations')
         .select('*')
-        .eq('name', 'Archer Build Ltd')
+        .eq('name', 'ConstructBMS Ltd')
         .single();
 
       if (orgError) {
@@ -139,7 +155,7 @@ const SignUpForm: React.FC = () => {
     <div className='min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-md w-full space-y-8 bg-white rounded-xl shadow border border-gray-100 p-8'>
         <div className='flex flex-col items-center mb-4'>
-          {/* Archer Logo SVG */}
+          {/* ConstructBMS Logo SVG */}
           <svg
             width='48'
             height='48'
@@ -155,7 +171,7 @@ const SignUpForm: React.FC = () => {
             />
           </svg>
           <h2 className='text-2xl font-extrabold text-black tracking-tight'>
-            Sign Up for Archer
+            Sign Up for ConstructBMS
           </h2>
         </div>
 
@@ -175,7 +191,7 @@ const SignUpForm: React.FC = () => {
               <label className='block text-gray-700 mb-1'>Email</label>
               <input
                 type='email'
-                className='w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-archer-neon'
+                className='w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-constructbms-blue'
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
@@ -187,14 +203,24 @@ const SignUpForm: React.FC = () => {
               <label className='block text-gray-700 mb-1'>Password</label>
               <input
                 type='password'
-                className='w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-archer-neon'
+                className={`w-full border rounded px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-constructbms-blue ${
+                  passwordErrors.length > 0 ? 'border-red-300' : 'border-gray-300'
+                }`}
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => handlePasswordChange(e.target.value)}
                 required
                 autoComplete='new-password'
-                minLength={6}
-                placeholder='Enter your password (min 6 characters)'
+                placeholder='Enter your password (min 8 characters with uppercase, lowercase, number, and special character)'
               />
+              {passwordErrors.length > 0 && (
+                <div className='mt-2 text-sm text-red-600'>
+                  <ul className='list-disc list-inside space-y-1'>
+                    {passwordErrors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             {error && (
               <div className='text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200'>
@@ -203,7 +229,7 @@ const SignUpForm: React.FC = () => {
             )}
             <button
               type='submit'
-              className='w-full bg-archer-neon text-black py-2 rounded font-bold hover:bg-black hover:text-white transition-colors text-lg shadow'
+              className='w-full bg-constructbms-blue text-black py-2 rounded font-bold hover:bg-black hover:text-white transition-colors text-lg shadow'
               disabled={loading}
             >
               {loading ? 'Signing Up...' : 'Sign Up'}
@@ -212,7 +238,7 @@ const SignUpForm: React.FC = () => {
         )}
         {/* Placeholder for admin notification */}
         {success && (
-          <div className='mt-6 text-sm text-black bg-archer-neon bg-opacity-20 p-3 rounded'>
+          <div className='mt-6 text-sm text-black bg-constructbms-blue bg-opacity-20 p-3 rounded'>
             <strong>Admin notification:</strong> A new user has signed up with
             the default role.
             <br />

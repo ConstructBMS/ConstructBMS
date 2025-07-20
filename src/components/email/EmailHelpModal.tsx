@@ -43,13 +43,13 @@ interface EmailHelpModalProps {
 }
 
 interface HelpArticle {
-  id: string;
-  title: string;
   category: string;
   content: string;
-  tags: string[];
-  videoUrl?: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  id: string;
+  tags: string[];
+  title: string;
+  videoUrl?: string;
 }
 
 const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
@@ -602,7 +602,7 @@ const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
                 placeholder='Search help articles...'
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
           </div>
@@ -630,7 +630,7 @@ const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
                   onClick={() => setActiveCategory('all')}
                   className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                     activeCategory === 'all'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-200'
                   }`}
                 >
@@ -645,7 +645,7 @@ const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
                       onClick={() => setActiveCategory(category.key)}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                         activeCategory === category.key
-                          ? 'bg-archer-neon text-black'
+                          ? 'bg-constructbms-blue text-black'
                           : 'hover:bg-gray-200'
                       }`}
                     >
@@ -669,7 +669,7 @@ const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
                     onClick={() => setSelectedArticle(article)}
                     className={`w-full text-left p-3 rounded-lg border transition-colors ${
                       selectedArticle?.id === article.id
-                        ? 'border-archer-neon bg-archer-neon bg-opacity-10'
+                        ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-white'
                     }`}
                   >

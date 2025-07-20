@@ -2,10 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ||
+  import.meta.env['VITE_SUPABASE_URL'] ||
   'https://rleprzlnxhhckdzbptzm.supabase.co';
 const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  import.meta.env['VITE_SUPABASE_ANON_KEY'] ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsZXByemxueGhoY2tkemJwdHptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE0NjMxOTcsImV4cCI6MjA2NzAzOTE5N30.Aw-dM-8TKqUfBTm7Er-apo6xvhKTfDW98l1pK_kdWRA';
 
 // Create Supabase client
@@ -19,15 +19,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Types for the user roles response
 export interface UserRole {
+    description: string;
+    id: string;
+    is_active: boolean;
+    is_system_role: boolean;
+    name: string;
+    permissions: string[];
   role_id: string;
   roles: {
-    id: string;
-    name: string;
-    description: string;
-    permissions: string[];
-    is_system_role: boolean;
-    is_active: boolean;
-  };
+};
 }
 
 // Function to get the current user's JWT token
@@ -90,7 +90,6 @@ export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
     const endpoint = `user_roles?select=role_id,roles(id,name,description,permissions,is_system_role,is_active)&user_id=eq.${userId}`;
 
     const roles = await makeAuthenticatedRequest(endpoint);
-    console.log('✅ Successfully loaded user roles via REST API:', roles);
     return roles;
   } catch (error) {
     console.error('❌ Failed to load user roles:', error);
@@ -111,9 +110,6 @@ export const signInWithPassword = async (email: string, password: string) => {
       throw error;
     }
 
-    console.log('✅ User signed in successfully');
-    console.log('JWT access token:', data.session?.access_token);
-
     return data;
   } catch (error) {
     console.error('Sign-in failed:', error);
@@ -131,7 +127,6 @@ export const signOut = async () => {
       throw error;
     }
 
-    console.log('✅ User signed out successfully');
   } catch (error) {
     console.error('Sign-out failed:', error);
     throw error;

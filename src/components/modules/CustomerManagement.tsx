@@ -37,8 +37,9 @@ import {
   Plus,
   Upload as UploadIcon,
 } from 'lucide-react';
-import { demoDataService, Client } from '../../services/demoData';
-import {
+import { demoDataService } from '../../services/demoData';
+import type { Client } from '../../services/demoData';
+import type {
   Customer,
   Company,
   Interaction,
@@ -46,325 +47,20 @@ import {
   Opportunity,
   Task,
   Document,
-  DEFAULT_UK_ADDRESS,
 } from '../../types';
-import { emailIntegrationService } from '../../services/emailIntegration';
+import { DEFAULT_UK_ADDRESS } from '../../types';
+
 import {
   emailIntelligenceService,
-  EmailMessage,
 } from '../../services/emailIntelligence';
+import type { EmailMessage } from '../../services/emailIntelligence';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
 // Types imported from shared types file
 
-const mockCompanies: Company[] = [
-  {
-    id: '1',
-    name: 'London Tech Solutions',
-    industry: 'Technology',
-    size: 'enterprise',
-    website: 'www.londontechsolutions.co.uk',
-    phone: '+44 20 7123 4567',
-    email: 'contact@londontechsolutions.co.uk',
-    address: {
-      street: '123 Canary Wharf',
-      city: 'London',
-      state: 'Greater London',
-      zip: 'E14 5AB',
-      country: 'UK',
-    },
-    status: 'active',
-    annualRevenue: 50000000,
-    employeeCount: 500,
-    founded: '2010',
-    description:
-      'Leading technology solutions provider specializing in enterprise software and cloud services.',
-    contacts: [],
-    deals: [],
-    lastContact: '2024-01-20',
-    assignedTo: 'Michael Chen',
-    tags: ['Enterprise', 'Technology', 'High-Value'],
-    notes: 'Key enterprise client. Very interested in our enterprise solution.',
-    opportunities: [
-      {
-        id: '1',
-        title: 'Enterprise Software License',
-        value: 500000,
-        stage: 'Negotiation',
-        probability: 75,
-        closeDate: '2024-03-30',
-        description: 'Enterprise software licensing agreement',
-        source: 'Direct',
-        assignedTo: 'Michael Chen',
-        createdAt: '2024-01-15',
-        lastActivity: '2024-01-20',
-      },
-    ],
-    tasks: [
-      {
-        id: '1',
-        title: 'Contract review',
-        description: 'Review and finalize contract terms',
-        status: 'in-progress',
-        priority: 'high',
-        dueDate: '2024-02-15',
-        assignedTo: 'Michael Chen',
-        createdAt: '2024-01-20',
-      },
-    ],
-    documents: [
-      {
-        id: '1',
-        name: 'Proposal Document',
-        type: 'proposal',
-        url: '/documents/londontech-proposal.pdf',
-        uploadedAt: '2024-01-20',
-        uploadedBy: 'Michael Chen',
-        size: 1024000,
-      },
-    ],
-    socialMedia: {
-      linkedin: 'linkedin.com/company/london-tech-solutions',
-      twitter: '@londontech',
-    },
-    customFields: {},
-  },
-  {
-    id: '2',
-    name: 'Manchester Manufacturing Ltd',
-    industry: 'Manufacturing',
-    size: 'sme',
-    website: 'www.manchestermanufacturing.co.uk',
-    phone: '+44 161 987 6543',
-    email: 'info@manchestermanufacturing.co.uk',
-    address: {
-      street: '456 Trafford Park',
-      city: 'Manchester',
-      state: 'Greater Manchester',
-      zip: 'M17 1WA',
-      country: 'UK',
-    },
-    status: 'prospect',
-    annualRevenue: 15000000,
-    employeeCount: 150,
-    founded: '1995',
-    description:
-      'Manufacturing company looking to modernize their legacy systems.',
-    contacts: [],
-    deals: [],
-    lastContact: '2024-01-25',
-    assignedTo: 'Lisa Wang',
-    tags: ['Legacy', 'Migration', 'Manufacturing'],
-    notes: 'Looking to modernize their legacy systems.',
-    opportunities: [
-      {
-        id: '2',
-        title: 'Legacy System Modernization',
-        value: 300000,
-        stage: 'Discovery',
-        probability: 50,
-        closeDate: '2024-05-30',
-        description: 'Complete modernization of legacy systems',
-        source: 'Referral',
-        assignedTo: 'Lisa Wang',
-        createdAt: '2024-01-25',
-        lastActivity: '2024-01-25',
-      },
-    ],
-    tasks: [
-      {
-        id: '2',
-        title: 'Initial assessment',
-        description: 'Conduct initial system assessment',
-        status: 'pending',
-        priority: 'medium',
-        dueDate: '2024-02-10',
-        assignedTo: 'Lisa Wang',
-        createdAt: '2024-01-25',
-      },
-    ],
-    documents: [],
-    socialMedia: {
-      linkedin: 'linkedin.com/company/manchester-manufacturing-ltd',
-    },
-    customFields: {},
-  },
-];
+const mockCompanies: Company[] = [];
 
-const mockCustomers: Customer[] = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@londontechsolutions.co.uk',
-    phone: '+44 20 7123 4567',
-    company: 'London Tech Solutions',
-    position: 'CTO',
-    status: 'active',
-    source: 'Website',
-    tags: ['Enterprise', 'Technology', 'High-Value'],
-    address: {
-      street: '123 Canary Wharf',
-      city: 'London',
-      state: 'Greater London',
-      zip: 'E14 5AB',
-      country: 'UK',
-    },
-    totalRevenue: 125000,
-    lastPurchase: '2024-01-15',
-    nextFollowUp: '2024-02-15',
-    notes: 'Key decision maker. Very interested in our enterprise solution.',
-    assignedTo: 'Michael Chen',
-    createdAt: '2023-06-15',
-    lastContact: '2024-01-20',
-    priority: 'high',
-    industry: 'Technology',
-    website: 'www.londontechsolutions.co.uk',
-    socialMedia: {
-      linkedin: 'linkedin.com/in/sarahjohnson',
-      twitter: '@sarahj_tech',
-    },
-    interactions: [
-      {
-        id: '1',
-        type: 'meeting',
-        date: '2024-01-20',
-        description: 'Product demo and Q&A session',
-        outcome: 'Very positive feedback, interested in pilot program',
-        nextAction: 'Send proposal by end of week',
-      },
-    ],
-    deals: [
-      {
-        id: '1',
-        title: 'Enterprise CRM Implementation',
-        value: 125000,
-        stage: 'Proposal',
-        probability: 85,
-        closeDate: '2024-03-15',
-      },
-    ],
-    opportunities: [
-      {
-        id: '1',
-        title: 'Enterprise CRM Implementation',
-        value: 125000,
-        stage: 'Proposal',
-        probability: 85,
-        closeDate: '2024-03-15',
-        description: 'Full CRM implementation for enterprise client',
-        source: 'Website',
-        assignedTo: 'Michael Chen',
-        createdAt: '2024-01-15',
-        lastActivity: '2024-01-20',
-      },
-    ],
-    tasks: [
-      {
-        id: '1',
-        title: 'Send proposal',
-        description:
-          'Prepare and send detailed proposal for CRM implementation',
-        status: 'pending',
-        priority: 'high',
-        dueDate: '2024-01-25',
-        assignedTo: 'Mike Chen',
-        createdAt: '2024-01-20',
-      },
-    ],
-    documents: [
-      {
-        id: '1',
-        name: 'Initial Meeting Notes',
-        type: 'report',
-        url: '/documents/meeting-notes-2024-01-20.pdf',
-        uploadedAt: '2024-01-20',
-        uploadedBy: 'Mike Chen',
-        size: 245760,
-      },
-    ],
-    customFields: {},
-  },
-  {
-    id: '2',
-    name: 'James Wilson',
-    email: 'james.wilson@legacysystems.co.uk',
-    phone: '+44 161 234 5678',
-    company: 'Legacy Systems Ltd',
-    position: 'IT Director',
-    status: 'lead',
-    source: 'Referral',
-    tags: ['Legacy', 'Migration', 'Enterprise'],
-    address: {
-      street: '456 Oxford Road',
-      city: 'Manchester',
-      state: 'Greater Manchester',
-      zip: 'M13 9PL',
-      country: 'UK',
-    },
-    totalRevenue: 0,
-    lastPurchase: '',
-    nextFollowUp: '2024-02-10',
-    notes: 'Looking to modernize their legacy systems.',
-    assignedTo: 'Lisa Wang',
-    createdAt: '2024-01-10',
-    lastContact: '2024-01-25',
-    priority: 'medium',
-    industry: 'Manufacturing',
-    website: 'www.legacysystems.com',
-    socialMedia: {
-      linkedin: 'linkedin.com/in/davidrodriguez',
-    },
-    interactions: [
-      {
-        id: '1',
-        type: 'call',
-        date: '2024-01-25',
-        description: 'Initial discovery call',
-        outcome: 'Confirmed budget and timeline',
-        nextAction: 'Schedule technical assessment',
-      },
-    ],
-    deals: [
-      {
-        id: '2',
-        title: 'Cloud Migration Project',
-        value: 200000,
-        stage: 'Qualification',
-        probability: 60,
-        closeDate: '2024-06-30',
-      },
-    ],
-    opportunities: [
-      {
-        id: '2',
-        title: 'Cloud Migration Project',
-        value: 200000,
-        stage: 'Qualification',
-        probability: 60,
-        closeDate: '2024-06-30',
-        description: 'Complete cloud migration for legacy systems',
-        source: 'Referral',
-        assignedTo: 'Lisa Wang',
-        createdAt: '2024-01-10',
-        lastActivity: '2024-01-25',
-      },
-    ],
-    tasks: [
-      {
-        id: '2',
-        title: 'Technical assessment',
-        description: 'Conduct technical assessment of current systems',
-        status: 'pending',
-        priority: 'medium',
-        dueDate: '2024-02-05',
-        assignedTo: 'Lisa Wang',
-        createdAt: '2024-01-25',
-      },
-    ],
-    documents: [],
-    customFields: {},
-  },
-];
+const mockCustomers: Customer[] = [];
 
 const CustomerManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'customers' | 'companies'>(
@@ -506,16 +202,32 @@ const CustomerManagement: React.FC = () => {
     loadClients();
   }, []);
 
+  // Listen for demo data refresh events
+  useEffect(() => {
+    const handleDemoDataRefresh = async () => {
+      console.log('🔄 CustomerManagement: Demo data refresh event received');
+      try {
+        const clientsData = await demoDataService.getClients();
+        setClients(clientsData || []);
+  
+      } catch (error) {
+        console.warn('Failed to refresh clients:', error);
+        setClients([]);
+      }
+    };
+
+    window.addEventListener('demoDataRefreshed', handleDemoDataRefresh);
+    
+    return () => {
+      window.removeEventListener('demoDataRefreshed', handleDemoDataRefresh);
+    };
+  }, []);
+
   useEffect(() => {
     if (editingCustomer) {
-      // Get all email integrations for this customer
-      const integrations = emailIntegrationService
-        .getIntegrations()
-        .filter(i => i.customerId === `cust_${editingCustomer.id}`);
-      // Get all emails for these integrations
-      const emailIds = integrations.map(i => i.emailId);
+      // Get all emails for this customer
       const allEmails = emailIntelligenceService.getEmails();
-      const relatedEmails = allEmails.filter(e => emailIds.includes(e.id));
+      const relatedEmails = allEmails.filter(e => e.customerId === `cust_${editingCustomer.id}`);
       setCustomerEmails(relatedEmails);
     } else {
       setCustomerEmails([]);
@@ -1233,6 +945,7 @@ const CustomerManagement: React.FC = () => {
             <button
               className='px-4 py-2 text-gray-600 hover:text-gray-800 flex items-center gap-2'
               onClick={() => setShowExportModal(true)}
+              title='Export Data'
             >
               <Download size={16} />
               Export
@@ -1240,17 +953,19 @@ const CustomerManagement: React.FC = () => {
             <button
               className='px-4 py-2 text-gray-600 hover:text-gray-800 flex items-center gap-2'
               onClick={() => setShowImportModal(true)}
+              title='Import Data'
             >
               <Upload size={16} />
               Import
             </button>
             <button
-              className='px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-neon/90 flex items-center gap-2'
+              className='px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-blue/90 flex items-center gap-2'
               onClick={() =>
                 activeTab === 'customers'
                   ? setShowAddCustomerModal(true)
                   : setShowAddCompany(true)
               }
+              title={`Add ${activeTab === 'customers' ? 'Customer' : 'Company'}`}
             >
               <UserPlus size={16} />
               Add {activeTab === 'customers' ? 'Customer' : 'Company'}
@@ -1258,6 +973,7 @@ const CustomerManagement: React.FC = () => {
             <button
               className='px-4 py-2 text-gray-600 hover:text-gray-800'
               onClick={() => setShowSettingsModal(true)}
+              title='Settings'
             >
               <Settings size={16} />
             </button>
@@ -1269,13 +985,13 @@ const CustomerManagement: React.FC = () => {
       <div className='bg-white border-b px-6 py-2'>
         <div className='flex space-x-2'>
           <button
-            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'customers' ? 'bg-archer-neon text-black' : 'bg-gray-100 text-gray-600'}`}
+            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'customers' ? 'bg-constructbms-blue text-black' : 'bg-gray-100 text-gray-600'}`}
             onClick={() => setActiveTab('customers')}
           >
             Customers
           </button>
           <button
-            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'companies' ? 'bg-archer-neon text-black' : 'bg-gray-100 text-gray-600'}`}
+            className={`px-4 py-2 rounded-t-lg font-semibold ${activeTab === 'companies' ? 'bg-constructbms-blue text-black' : 'bg-gray-100 text-gray-600'}`}
             onClick={() => setActiveTab('companies')}
           >
             Companies
@@ -1296,7 +1012,7 @@ const CustomerManagement: React.FC = () => {
               <input
                 type='text'
                 placeholder='Search customers...'
-                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
@@ -1386,26 +1102,30 @@ const CustomerManagement: React.FC = () => {
             {/* View toggles */}
             <div className='flex border border-gray-300 rounded-lg ml-2'>
               <button
-                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('grid')}
+                title='Grid View'
               >
                 <Grid size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('list')}
+                title='List View'
               >
                 <List size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'table' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'table' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('table')}
+                title='Table View'
               >
                 <Table size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('kanban')}
+                title='Kanban View'
               >
                 <Columns size={16} />
               </button>
@@ -1427,7 +1147,7 @@ const CustomerManagement: React.FC = () => {
               <input
                 type='text'
                 placeholder='Search companies...'
-                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
@@ -1493,26 +1213,30 @@ const CustomerManagement: React.FC = () => {
             {/* View toggles */}
             <div className='flex border border-gray-300 rounded-lg ml-2'>
               <button
-                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('grid')}
+                title='Grid View'
               >
                 <Grid size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('list')}
+                title='List View'
               >
                 <List size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'table' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'table' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('table')}
+                title='Table View'
               >
                 <Table size={16} />
               </button>
               <button
-                className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-archer-neon text-black' : 'bg-white text-gray-600'}`}
+                className={`px-3 py-2 ${viewMode === 'kanban' ? 'bg-constructbms-blue text-black' : 'bg-white text-gray-600'}`}
                 onClick={() => setViewMode('kanban')}
+                title='Kanban View'
               >
                 <Columns size={16} />
               </button>
@@ -1628,10 +1352,10 @@ const CustomerManagement: React.FC = () => {
                         Last contact: {formatDate(customer.lastContact)}
                       </div>
                       <div className='flex items-center gap-1'>
-                        <button className='p-1 text-gray-400 hover:text-archer-neon'>
+                        <button className='p-1 text-gray-400 hover:text-constructbms-blue'>
                           <Eye size={14} />
                         </button>
-                        <button className='p-1 text-gray-400 hover:text-archer-neon'>
+                        <button className='p-1 text-gray-400 hover:text-constructbms-blue'>
                           <Edit2 size={14} />
                         </button>
                         <button className='p-1 text-gray-400 hover:text-red-600'>
@@ -1736,7 +1460,7 @@ const CustomerManagement: React.FC = () => {
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                         <div className='flex items-center gap-2'>
-                          <button className='text-archer-neon hover:text-archer-neon/80'>
+                          <button className='text-constructbms-blue hover:text-constructbms-blue/80'>
                             <Eye size={16} />
                           </button>
                           <button className='text-gray-400 hover:text-gray-600'>
@@ -1768,7 +1492,7 @@ const CustomerManagement: React.FC = () => {
                 >
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center space-x-4'>
-                      <div className='w-12 h-12 bg-archer-neon rounded-full flex items-center justify-center'>
+                      <div className='w-12 h-12 bg-constructbms-blue rounded-full flex items-center justify-center'>
                         <span className='text-black font-semibold text-lg'>
                           {customer.name.charAt(0).toUpperCase()}
                         </span>
@@ -1964,10 +1688,10 @@ const CustomerManagement: React.FC = () => {
                         Last contact: {formatDate(company.lastContact)}
                       </div>
                       <div className='flex items-center gap-1'>
-                        <button className='p-1 text-gray-400 hover:text-archer-neon'>
+                        <button className='p-1 text-gray-400 hover:text-constructbms-blue'>
                           <Eye size={14} />
                         </button>
-                        <button className='p-1 text-gray-400 hover:text-archer-neon'>
+                        <button className='p-1 text-gray-400 hover:text-constructbms-blue'>
                           <Edit2 size={14} />
                         </button>
                         <button className='p-1 text-gray-400 hover:text-red-600'>
@@ -2067,7 +1791,7 @@ const CustomerManagement: React.FC = () => {
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                         <div className='flex items-center gap-2'>
-                          <button className='text-archer-neon hover:text-archer-neon/80'>
+                          <button className='text-constructbms-blue hover:text-constructbms-blue/80'>
                             <Eye size={16} />
                           </button>
                           <button className='text-gray-400 hover:text-gray-600'>
@@ -2099,7 +1823,7 @@ const CustomerManagement: React.FC = () => {
                 >
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center space-x-4'>
-                      <div className='w-12 h-12 bg-archer-neon rounded-full flex items-center justify-center'>
+                      <div className='w-12 h-12 bg-constructbms-blue rounded-full flex items-center justify-center'>
                         <span className='text-black font-semibold text-lg'>
                           {company.name.charAt(0).toUpperCase()}
                         </span>
@@ -2237,7 +1961,7 @@ const CustomerManagement: React.FC = () => {
                               name: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCompany.name}</p>
@@ -2259,7 +1983,7 @@ const CustomerManagement: React.FC = () => {
                               industry: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2283,7 +2007,7 @@ const CustomerManagement: React.FC = () => {
                               website: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2307,7 +2031,7 @@ const CustomerManagement: React.FC = () => {
                               founded: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2329,7 +2053,7 @@ const CustomerManagement: React.FC = () => {
                               email: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCompany.email}</p>
@@ -2349,7 +2073,7 @@ const CustomerManagement: React.FC = () => {
                               phone: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCompany.phone}</p>
@@ -2393,7 +2117,7 @@ const CustomerManagement: React.FC = () => {
                         })
                       }
                       rows={4}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     />
                   ) : (
                     <p className='text-gray-900'>
@@ -2429,7 +2153,7 @@ const CustomerManagement: React.FC = () => {
                                 | 'prospect',
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         >
                           <option value='active'>Active</option>
                           <option value='inactive'>Inactive</option>
@@ -2459,7 +2183,7 @@ const CustomerManagement: React.FC = () => {
                                 | 'enterprise',
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         >
                           <option value='startup'>Startup</option>
                           <option value='sme'>SME</option>
@@ -2490,7 +2214,7 @@ const CustomerManagement: React.FC = () => {
                               assignedTo: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2525,7 +2249,7 @@ const CustomerManagement: React.FC = () => {
                               annualRevenue: Number(e.target.value),
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-lg font-semibold text-green-600'>
@@ -2550,7 +2274,7 @@ const CustomerManagement: React.FC = () => {
                               employeeCount: Number(e.target.value),
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2575,7 +2299,7 @@ const CustomerManagement: React.FC = () => {
                               lastContact: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2600,7 +2324,7 @@ const CustomerManagement: React.FC = () => {
                               setCompanyFormData({ ...companyFormData, tags })
                           )
                         }
-                        className='ml-auto text-sm text-archer-neon hover:text-archer-neon/80'
+                        className='ml-auto text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                       >
                         Manage
                       </button>
@@ -2646,7 +2370,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2675,7 +2399,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2704,7 +2428,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2734,7 +2458,7 @@ const CustomerManagement: React.FC = () => {
                       })
                     }
                     rows={4}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 ) : (
                   <p className='text-gray-900'>{editingCompany.notes}</p>
@@ -2771,7 +2495,7 @@ const CustomerManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={handleEditCompany}
-                    className='flex-1 bg-archer-neon text-black py-2 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                    className='flex-1 bg-constructbms-blue text-black py-2 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
                   >
                     Edit Company
                   </button>
@@ -2794,7 +2518,7 @@ const CustomerManagement: React.FC = () => {
             <div className='flex space-x-3 pt-4'>
               <button
                 onClick={() => setEditingClient(null)}
-                className='flex-1 bg-archer-neon text-black py-2 px-4 rounded-lg hover:bg-archer-green transition-colors font-medium'
+                className='flex-1 bg-constructbms-blue text-black py-2 px-4 rounded-lg hover:bg-constructbms-green transition-colors font-medium'
               >
                 Close
               </button>
@@ -2825,7 +2549,7 @@ const CustomerManagement: React.FC = () => {
                 {!isEditingCustomer && (
                   <button
                     onClick={handleEditCustomer}
-                    className='flex items-center gap-2 px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                    className='flex items-center gap-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
                   >
                     <Edit2 size={16} />
                     Edit Customer
@@ -2867,7 +2591,7 @@ const CustomerManagement: React.FC = () => {
                               name: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCustomer.name}</p>
@@ -2890,7 +2614,7 @@ const CustomerManagement: React.FC = () => {
                               position: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2914,7 +2638,7 @@ const CustomerManagement: React.FC = () => {
                               email: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCustomer.email}</p>
@@ -2936,7 +2660,7 @@ const CustomerManagement: React.FC = () => {
                               phone: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>{editingCustomer.phone}</p>
@@ -2958,7 +2682,7 @@ const CustomerManagement: React.FC = () => {
                               company: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -2983,7 +2707,7 @@ const CustomerManagement: React.FC = () => {
                               industry: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3064,7 +2788,7 @@ const CustomerManagement: React.FC = () => {
                                 | 'lead',
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         >
                           <option value='active'>Active</option>
                           <option value='inactive'>Inactive</option>
@@ -3098,7 +2822,7 @@ const CustomerManagement: React.FC = () => {
                                 | 'high',
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         >
                           <option value='low'>Low</option>
                           <option value='medium'>Medium</option>
@@ -3129,7 +2853,7 @@ const CustomerManagement: React.FC = () => {
                               assignedTo: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3164,7 +2888,7 @@ const CustomerManagement: React.FC = () => {
                               totalRevenue: Number(e.target.value),
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-lg font-semibold text-green-600'>
@@ -3189,7 +2913,7 @@ const CustomerManagement: React.FC = () => {
                               lastPurchase: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3216,7 +2940,7 @@ const CustomerManagement: React.FC = () => {
                               nextFollowUp: e.target.value,
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3241,7 +2965,7 @@ const CustomerManagement: React.FC = () => {
                               setCustomerFormData({ ...customerFormData, tags })
                           )
                         }
-                        className='ml-auto text-sm text-archer-neon hover:text-archer-neon/80'
+                        className='ml-auto text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                       >
                         Manage
                       </button>
@@ -3289,7 +3013,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3318,7 +3042,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3347,7 +3071,7 @@ const CustomerManagement: React.FC = () => {
                               },
                             })
                           }
-                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                          className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         />
                       ) : (
                         <p className='text-gray-900'>
@@ -3456,7 +3180,7 @@ const CustomerManagement: React.FC = () => {
                   )}
                   {customerEmails.length > 5 && (
                     <div className='text-center'>
-                      <button className='text-sm text-archer-neon hover:text-archer-neon/80'>
+                      <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80'>
                         View all {customerEmails.length} emails
                       </button>
                     </div>
@@ -3485,7 +3209,7 @@ const CustomerManagement: React.FC = () => {
                           assignedTo: editingCustomer.assignedTo,
                         })
                       }
-                      className='ml-auto text-sm text-archer-neon hover:text-archer-neon/80'
+                      className='ml-auto text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                     >
                       Add New
                     </button>
@@ -3499,7 +3223,7 @@ const CustomerManagement: React.FC = () => {
                     >
                       <div className='flex items-center justify-between mb-2'>
                         <h5
-                          className='font-medium text-gray-900 hover:text-archer-neon'
+                          className='font-medium text-gray-900 hover:text-constructbms-blue'
                           onClick={() =>
                             handleNavigateToOpportunity(opportunity.id)
                           }
@@ -3544,7 +3268,7 @@ const CustomerManagement: React.FC = () => {
                           assignedTo: editingCustomer.assignedTo,
                         })
                       }
-                      className='ml-auto text-sm text-archer-neon hover:text-archer-neon/80'
+                      className='ml-auto text-sm text-constructbms-blue hover:text-constructbms-blue/80'
                     >
                       Add New
                     </button>
@@ -3558,7 +3282,7 @@ const CustomerManagement: React.FC = () => {
                     >
                       <div className='flex items-center justify-between mb-2'>
                         <h5
-                          className='font-medium text-gray-900 hover:text-archer-neon'
+                          className='font-medium text-gray-900 hover:text-constructbms-blue'
                           onClick={() => handleNavigateToTask(task.id)}
                         >
                           {task.title}
@@ -3604,7 +3328,7 @@ const CustomerManagement: React.FC = () => {
                     >
                       <div className='flex items-center justify-between mb-2'>
                         <h5
-                          className='font-medium text-gray-900 hover:text-archer-neon'
+                          className='font-medium text-gray-900 hover:text-constructbms-blue'
                           onClick={() => handleNavigateToDocument(document.id)}
                         >
                           {document.name}
@@ -3653,7 +3377,7 @@ const CustomerManagement: React.FC = () => {
                   </button>
                   <button
                     onClick={handleEditCustomer}
-                    className='flex-1 bg-archer-neon text-black py-2 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                    className='flex-1 bg-constructbms-blue text-black py-2 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
                   >
                     Edit Customer
                   </button>
@@ -3688,7 +3412,7 @@ const CustomerManagement: React.FC = () => {
                   {editingTags.map(tag => (
                     <span
                       key={tag}
-                      className='px-3 py-1 bg-archer-neon text-black text-sm rounded-full flex items-center gap-2'
+                      className='px-3 py-1 bg-constructbms-blue text-black text-sm rounded-full flex items-center gap-2'
                     >
                       {tag}
                       <button
@@ -3729,7 +3453,7 @@ const CustomerManagement: React.FC = () => {
                   <input
                     type='text'
                     placeholder='Enter new tag name'
-                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     onKeyPress={e => {
                       if (e.key === 'Enter') {
                         const input = e.target as HTMLInputElement;
@@ -3745,7 +3469,7 @@ const CustomerManagement: React.FC = () => {
                       handleAddNewTag(input.value);
                       input.value = '';
                     }}
-                    className='px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-archer-neon/90 transition-colors'
+                    className='px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-blue/90 transition-colors'
                   >
                     Add
                   </button>
@@ -3766,7 +3490,7 @@ const CustomerManagement: React.FC = () => {
                     setCustomerFormData({ ...customerFormData, tags })
                   )
                 }
-                className='flex-1 bg-archer-neon text-black py-2 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                className='flex-1 bg-constructbms-blue text-black py-2 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
               >
                 Save Tags
               </button>
@@ -3909,7 +3633,7 @@ const CustomerManagement: React.FC = () => {
               >
                 Close
               </button>
-              <button className='flex-1 bg-archer-neon text-black py-2 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'>
+              <button className='flex-1 bg-constructbms-blue text-black py-2 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'>
                 Edit Opportunity
               </button>
             </div>
@@ -3942,7 +3666,7 @@ const CustomerManagement: React.FC = () => {
                 Cancel
               </button>
               <button
-                className='flex-1 bg-archer-neon text-black py-2 rounded'
+                className='flex-1 bg-constructbms-blue text-black py-2 rounded'
                 onClick={handleExport}
               >
                 Export
@@ -3970,7 +3694,7 @@ const CustomerManagement: React.FC = () => {
                 Cancel
               </button>
               <button
-                className='flex-1 bg-archer-neon text-black py-2 rounded'
+                className='flex-1 bg-constructbms-blue text-black py-2 rounded'
                 onClick={handleImport}
               >
                 Import
@@ -4017,7 +3741,7 @@ const CustomerManagement: React.FC = () => {
                       <input
                         type='text'
                         required
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Enter full name'
                         value={newCustomerData.name || ''}
                         onChange={e =>
@@ -4035,7 +3759,7 @@ const CustomerManagement: React.FC = () => {
                       <input
                         type='email'
                         required
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='email@example.com'
                         value={newCustomerData.email || ''}
                         onChange={e =>
@@ -4052,7 +3776,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='tel'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='+1 (555) 123-4567'
                         value={newCustomerData.phone || ''}
                         onChange={e =>
@@ -4069,7 +3793,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='e.g., CEO, Manager, Director'
                         value={newCustomerData.position || ''}
                         onChange={e =>
@@ -4086,7 +3810,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Company name'
                         value={newCustomerData.company || ''}
                         onChange={e =>
@@ -4103,7 +3827,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://example.com'
                         value={newCustomerData.website || ''}
                         onChange={e =>
@@ -4129,7 +3853,7 @@ const CustomerManagement: React.FC = () => {
                         Industry
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.industry || ''}
                         onChange={e =>
                           setNewCustomerData({
@@ -4155,7 +3879,7 @@ const CustomerManagement: React.FC = () => {
                         Status
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.status || 'prospect'}
                         onChange={e =>
                           setNewCustomerData({
@@ -4179,7 +3903,7 @@ const CustomerManagement: React.FC = () => {
                         Priority
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.priority || 'medium'}
                         onChange={e =>
                           setNewCustomerData({
@@ -4201,7 +3925,7 @@ const CustomerManagement: React.FC = () => {
                         Source
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.source || ''}
                         onChange={e =>
                           setNewCustomerData({
@@ -4225,7 +3949,7 @@ const CustomerManagement: React.FC = () => {
                         Assigned To
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.assignedTo || ''}
                         onChange={e =>
                           setNewCustomerData({
@@ -4248,7 +3972,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='date'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.nextFollowUp || ''}
                         onChange={e =>
                           setNewCustomerData({
@@ -4274,7 +3998,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='123 Main Street'
                         value={newCustomerData.address?.street || ''}
                         onChange={e =>
@@ -4288,7 +4012,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='City'
                         value={newCustomerData.address?.city || ''}
                         onChange={e =>
@@ -4302,7 +4026,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='State'
                         value={newCustomerData.address?.state || ''}
                         onChange={e =>
@@ -4316,7 +4040,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='ZIP Code'
                         value={newCustomerData.address?.zip || ''}
                         onChange={e =>
@@ -4329,7 +4053,7 @@ const CustomerManagement: React.FC = () => {
                         Country
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCustomerData.address?.country || ''}
                         onChange={e =>
                           updateCustomerAddress('country', e.target.value)
@@ -4361,7 +4085,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://linkedin.com/in/username'
                         value={newCustomerData.socialMedia?.linkedin || ''}
                         onChange={e =>
@@ -4381,7 +4105,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://twitter.com/username'
                         value={newCustomerData.socialMedia?.twitter || ''}
                         onChange={e =>
@@ -4401,7 +4125,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://facebook.com/username'
                         value={newCustomerData.socialMedia?.facebook || ''}
                         onChange={e =>
@@ -4433,7 +4157,7 @@ const CustomerManagement: React.FC = () => {
                         {newCustomerData.tags?.map(tag => (
                           <span
                             key={tag}
-                            className='px-2 py-1 bg-archer-neon text-black text-sm rounded-full flex items-center gap-1'
+                            className='px-2 py-1 bg-constructbms-blue text-black text-sm rounded-full flex items-center gap-1'
                           >
                             {tag}
                             <button
@@ -4482,7 +4206,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <textarea
                         rows={4}
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Add any additional notes about this customer...'
                         value={newCustomerData.notes || ''}
                         onChange={e =>
@@ -4507,7 +4231,7 @@ const CustomerManagement: React.FC = () => {
                   </button>
                   <button
                     type='submit'
-                    className='flex-1 bg-archer-neon text-black py-3 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                    className='flex-1 bg-constructbms-blue text-black py-3 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
                   >
                     Add Customer
                   </button>
@@ -4556,7 +4280,7 @@ const CustomerManagement: React.FC = () => {
                       <input
                         type='text'
                         required
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Enter company name'
                         value={newCompanyData.name || ''}
                         onChange={e =>
@@ -4573,7 +4297,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <select
                         required
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.industry || ''}
                         onChange={e =>
                           setNewCompanyData({
@@ -4599,7 +4323,7 @@ const CustomerManagement: React.FC = () => {
                         Company Size
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.size || 'sme'}
                         onChange={e =>
                           setNewCompanyData({
@@ -4622,7 +4346,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://example.com'
                         value={newCompanyData.website || ''}
                         onChange={e =>
@@ -4639,7 +4363,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='tel'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='+1 (555) 123-4567'
                         value={newCompanyData.phone || ''}
                         onChange={e =>
@@ -4656,7 +4380,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='email'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='contact@company.com'
                         value={newCompanyData.email || ''}
                         onChange={e =>
@@ -4683,7 +4407,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='number'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='1000000'
                         value={newCompanyData.annualRevenue || ''}
                         onChange={e =>
@@ -4700,7 +4424,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='number'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='50'
                         value={newCompanyData.employeeCount || ''}
                         onChange={e =>
@@ -4719,7 +4443,7 @@ const CustomerManagement: React.FC = () => {
                         type='number'
                         min='1800'
                         max={new Date().getFullYear()}
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='2020'
                         value={newCompanyData.founded || ''}
                         onChange={e =>
@@ -4735,7 +4459,7 @@ const CustomerManagement: React.FC = () => {
                         Status
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.status || 'prospect'}
                         onChange={e =>
                           setNewCompanyData({
@@ -4757,7 +4481,7 @@ const CustomerManagement: React.FC = () => {
                         Assigned To
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.assignedTo || ''}
                         onChange={e =>
                           setNewCompanyData({
@@ -4780,7 +4504,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='date'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.lastContact || ''}
                         onChange={e =>
                           setNewCompanyData({
@@ -4806,7 +4530,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='123 Business Street'
                         value={newCompanyData.address?.street || ''}
                         onChange={e =>
@@ -4820,7 +4544,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='City'
                         value={newCompanyData.address?.city || ''}
                         onChange={e =>
@@ -4834,7 +4558,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='State'
                         value={newCompanyData.address?.state || ''}
                         onChange={e =>
@@ -4848,7 +4572,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='text'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='ZIP Code'
                         value={newCompanyData.address?.zip || ''}
                         onChange={e =>
@@ -4861,7 +4585,7 @@ const CustomerManagement: React.FC = () => {
                         Country
                       </label>
                       <select
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         value={newCompanyData.address?.country || ''}
                         onChange={e =>
                           updateCompanyAddress('country', e.target.value)
@@ -4893,7 +4617,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://linkedin.com/company/company-name'
                         value={newCompanyData.socialMedia?.linkedin || ''}
                         onChange={e =>
@@ -4913,7 +4637,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://twitter.com/company'
                         value={newCompanyData.socialMedia?.twitter || ''}
                         onChange={e =>
@@ -4933,7 +4657,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <input
                         type='url'
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='https://facebook.com/company'
                         value={newCompanyData.socialMedia?.facebook || ''}
                         onChange={e =>
@@ -4963,7 +4687,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <textarea
                         rows={4}
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Brief description of the company, their business model, and key offerings...'
                         value={newCompanyData.description || ''}
                         onChange={e =>
@@ -4982,7 +4706,7 @@ const CustomerManagement: React.FC = () => {
                         {newCompanyData.tags?.map(tag => (
                           <span
                             key={tag}
-                            className='px-2 py-1 bg-archer-neon text-black text-sm rounded-full flex items-center gap-1'
+                            className='px-2 py-1 bg-constructbms-blue text-black text-sm rounded-full flex items-center gap-1'
                           >
                             {tag}
                             <button
@@ -5031,7 +4755,7 @@ const CustomerManagement: React.FC = () => {
                       </label>
                       <textarea
                         rows={4}
-                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                        className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                         placeholder='Add any additional notes about this company...'
                         value={newCompanyData.notes || ''}
                         onChange={e =>
@@ -5056,7 +4780,7 @@ const CustomerManagement: React.FC = () => {
                   </button>
                   <button
                     type='submit'
-                    className='flex-1 bg-archer-neon text-black py-3 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'
+                    className='flex-1 bg-constructbms-blue text-black py-3 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'
                   >
                     Add Company
                   </button>
@@ -5101,7 +4825,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Default View Mode
                         </label>
-                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                           <option value='grid'>Grid View</option>
                           <option value='list'>List View</option>
                           <option value='table'>Table View</option>
@@ -5112,7 +4836,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Items Per Page
                         </label>
-                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                           <option value='10'>10 items</option>
                           <option value='25'>25 items</option>
                           <option value='50'>50 items</option>
@@ -5123,7 +4847,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Default Sort Field
                         </label>
-                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                           <option value='name'>Name</option>
                           <option value='createdAt'>Date Created</option>
                           <option value='lastContact'>Last Contact</option>
@@ -5162,7 +4886,7 @@ const CustomerManagement: React.FC = () => {
                             className='sr-only peer'
                             defaultChecked
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-archer-neon/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-archer-neon"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-constructbms-blue/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-constructbms-blue"></div>
                         </label>
                       </div>
                       <div className='flex items-center justify-between'>
@@ -5180,7 +4904,7 @@ const CustomerManagement: React.FC = () => {
                             className='sr-only peer'
                             defaultChecked
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-archer-neon/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-archer-neon"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-constructbms-blue/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-constructbms-blue"></div>
                         </label>
                       </div>
                       <div className='flex items-center justify-between'>
@@ -5194,7 +4918,7 @@ const CustomerManagement: React.FC = () => {
                         </div>
                         <label className='relative inline-flex items-center cursor-pointer'>
                           <input type='checkbox' className='sr-only peer' />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-archer-neon/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-archer-neon"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-constructbms-blue/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-constructbms-blue"></div>
                         </label>
                       </div>
                     </div>
@@ -5219,7 +4943,7 @@ const CustomerManagement: React.FC = () => {
                             <label key={field} className='flex items-center'>
                               <input
                                 type='checkbox'
-                                className='rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                                className='rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
                                 defaultChecked={['name', 'email'].includes(
                                   field
                                 )}
@@ -5235,7 +4959,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Custom Fields
                         </label>
-                        <button className='w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-gray-500 hover:border-archer-neon hover:text-archer-neon transition-colors'>
+                        <button className='w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-gray-500 hover:border-constructbms-blue hover:text-constructbms-blue transition-colors'>
                           + Add Custom Field
                         </button>
                       </div>
@@ -5263,7 +4987,7 @@ const CustomerManagement: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <button className='text-sm text-archer-neon hover:text-archer-neon/80 font-medium'>
+                        <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80 font-medium'>
                           Configure
                         </button>
                       </div>
@@ -5281,7 +5005,7 @@ const CustomerManagement: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <button className='text-sm text-archer-neon hover:text-archer-neon/80 font-medium'>
+                        <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80 font-medium'>
                           Configure
                         </button>
                       </div>
@@ -5299,7 +5023,7 @@ const CustomerManagement: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <button className='text-sm text-archer-neon hover:text-archer-neon/80 font-medium'>
+                        <button className='text-sm text-constructbms-blue hover:text-constructbms-blue/80 font-medium'>
                           Configure
                         </button>
                       </div>
@@ -5317,7 +5041,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Access Control
                         </label>
-                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                           <option value='all'>All Users</option>
                           <option value='assigned'>Assigned Users Only</option>
                           <option value='managers'>Managers Only</option>
@@ -5328,7 +5052,7 @@ const CustomerManagement: React.FC = () => {
                         <label className='block text-sm font-medium text-gray-700 mb-2'>
                           Data Export Permissions
                         </label>
-                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+                        <select className='w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                           <option value='all'>All Users</option>
                           <option value='managers'>Managers Only</option>
                           <option value='admins'>Administrators Only</option>
@@ -5349,7 +5073,7 @@ const CustomerManagement: React.FC = () => {
                             className='sr-only peer'
                             defaultChecked
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-archer-neon/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-archer-neon"></div>
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-constructbms-blue/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-constructbms-blue"></div>
                         </label>
                       </div>
                     </div>
@@ -5365,7 +5089,7 @@ const CustomerManagement: React.FC = () => {
                 >
                   Cancel
                 </button>
-                <button className='flex-1 bg-archer-neon text-black py-3 px-4 rounded-lg hover:bg-archer-neon/90 transition-colors font-medium'>
+                <button className='flex-1 bg-constructbms-blue text-black py-3 px-4 rounded-lg hover:bg-constructbms-blue/90 transition-colors font-medium'>
                   Save Settings
                 </button>
               </div>

@@ -3,221 +3,224 @@ export { supabase } from './supabaseAuth';
 
 // Database types for TypeScript
 export interface Database {
-  public: {
-    Tables: {
-      organizations: {
-        Row: {
-          id: string;
-          name: string;
-          domain: string | null;
-          settings: any;
-          created_at: string;
-          updated_at: string;
-        };
+          attachments?: any;
+      chat_messages: {
+          Insert: {
+          menu_items: {
         Insert: {
-          id?: string;
-          name: string;
-          domain?: string | null;
-          settings?: any;
           created_at?: string;
+          icon?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          order_index?: number;
+          organization_id: string;
+          parent_id?: string | null;
+          path?: string | null;
+          required_permissions?: any;
           updated_at?: string;
         };
+        Row: {
+          created_at: string;
+          icon: string | null;
+          id: string;
+          is_active: boolean;
+          name: string;
+          order_index: number;
+          organization_id: string;
+          parent_id: string | null;
+          path: string | null;
+          required_permissions: any;
+          updated_at: string;
+        };
         Update: {
-          id?: string;
-          name?: string;
-          domain?: string | null;
-          settings?: any;
           created_at?: string;
+          icon?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          order_index?: number;
+          organization_id?: string;
+          parent_id?: string | null;
+          path?: string | null;
+          required_permissions?: any;
           updated_at?: string;
         };
       };
-      users: {
-        Row: {
-          id: string;
-          organization_id: string;
-          email: string;
-          password_hash: string;
-          first_name: string | null;
-          last_name: string | null;
-          avatar_url: string | null;
-          is_active: boolean;
-          last_login: string | null;
-          created_at: string;
-          updated_at: string;
-        };
+  message: string;
+      notifications: {
         Insert: {
-          id?: string;
-          organization_id: string;
-          email: string;
-          password_hash: string;
-          first_name?: string | null;
-          last_name?: string | null;
-          avatar_url?: string | null;
-          is_active?: boolean;
-          last_login?: string | null;
           created_at?: string;
-          updated_at?: string;
+          data?: any;
+          id?: string;
+          is_read?: boolean;
+          message?: string | null;
+          title: string;
+          type?: string;
+          user_id: string;
+        };
+        Row: {
+          created_at: string;
+          data: any;
+          id: string;
+          is_read: boolean;
+          message: string | null;
+          title: string;
+          type: string;
+          user_id: string;
         };
         Update: {
-          id?: string;
-          organization_id?: string;
-          email?: string;
-          password_hash?: string;
-          first_name?: string | null;
-          last_name?: string | null;
-          avatar_url?: string | null;
-          is_active?: boolean;
-          last_login?: string | null;
           created_at?: string;
+          data?: any;
+          id?: string;
+          is_read?: boolean;
+          message?: string | null;
+          title?: string;
+          type?: string;
+          user_id?: string;
+        };
+      };
+      organizations: {
+        Insert: {
+          created_at?: string;
+          domain?: string | null;
+          id?: string;
+          name: string;
+          settings?: any;
           updated_at?: string;
         };
+        Row: {
+          created_at: string;
+          domain: string | null;
+          id: string;
+          name: string;
+          settings: any;
+          updated_at: string;
+        };
+        Update: {
+          created_at?: string;
+          domain?: string | null;
+          id?: string;
+          name?: string;
+          settings?: any;
+          updated_at?: string;
+        };
+      };
+      public: {
+          Row: {
+          attachments: any;
+          created_at: string;
+          id: string;
+          message: string;
+          room_id: string;
+          sender_id: string;
+        };
+          Tables: {
+};
+    Update: {
+          attachments?: any;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          room_id?: string;
+          sender_id?: string;
+        };
+        room_id: string;
+        sender_id: string;
       };
       roles: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          description: string | null;
-          permissions: any;
-          created_at: string;
-        };
         Insert: {
-          id?: string;
-          organization_id: string;
-          name: string;
-          description?: string | null;
-          permissions?: any;
           created_at?: string;
+          description?: string | null;
+          id?: string;
+          name: string;
+          organization_id: string;
+          permissions?: any;
+        };
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          name: string;
+          organization_id: string;
+          permissions: any;
         };
         Update: {
-          id?: string;
-          organization_id?: string;
-          name?: string;
-          description?: string | null;
-          permissions?: any;
           created_at?: string;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          organization_id?: string;
+          permissions?: any;
         };
       };
       user_roles: {
-        Row: {
-          id: string;
-          user_id: string;
-          role_id: string;
-          created_at: string;
-        };
         Insert: {
-          id?: string;
-          user_id: string;
-          role_id: string;
           created_at?: string;
+          id?: string;
+          role_id: string;
+          user_id: string;
+        };
+        Row: {
+          created_at: string;
+          id: string;
+          role_id: string;
+          user_id: string;
         };
         Update: {
-          id?: string;
-          user_id?: string;
-          role_id?: string;
           created_at?: string;
+          id?: string;
+          role_id?: string;
+          user_id?: string;
         };
       };
-      menu_items: {
-        Row: {
-          id: string;
+      users: {
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string;
+          demo_mode?: boolean;
+          email: string;
+          first_name?: string | null;
+          id?: string;
+          is_active?: boolean;
+          last_login?: string | null;
+          last_name?: string | null;
           organization_id: string;
-          parent_id: string | null;
-          name: string;
-          icon: string | null;
-          path: string | null;
-          order_index: number;
-          is_active: boolean;
-          required_permissions: any;
+          password_hash: string;
+          updated_at?: string;
+        };
+        Row: {
+          avatar_url: string | null;
           created_at: string;
+          demo_mode: boolean;
+          email: string;
+          first_name: string | null;
+          id: string;
+          is_active: boolean;
+          last_login: string | null;
+          last_name: string | null;
+          organization_id: string;
+          password_hash: string;
           updated_at: string;
         };
-        Insert: {
-          id?: string;
-          organization_id: string;
-          parent_id?: string | null;
-          name: string;
-          icon?: string | null;
-          path?: string | null;
-          order_index?: number;
-          is_active?: boolean;
-          required_permissions?: any;
-          created_at?: string;
-          updated_at?: string;
-        };
         Update: {
+          avatar_url?: string | null;
+          created_at?: string;
+          demo_mode?: boolean;
+          email?: string;
+          first_name?: string | null;
           id?: string;
+          is_active?: boolean;
+          last_login?: string | null;
+          last_name?: string | null;
           organization_id?: string;
-          parent_id?: string | null;
-          name?: string;
-          icon?: string | null;
-          path?: string | null;
-          order_index?: number;
-          is_active?: boolean;
-          required_permissions?: any;
-          created_at?: string;
+          password_hash?: string;
           updated_at?: string;
-        };
-      };
-      notifications: {
-        Row: {
-          id: string;
-          user_id: string;
-          title: string;
-          message: string | null;
-          type: string;
-          is_read: boolean;
-          data: any;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          title: string;
-          message?: string | null;
-          type?: string;
-          is_read?: boolean;
-          data?: any;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          title?: string;
-          message?: string | null;
-          type?: string;
-          is_read?: boolean;
-          data?: any;
-          created_at?: string;
-        };
-      };
-      chat_messages: {
-        Row: {
-          id: string;
-          sender_id: string;
-          room_id: string;
-          message: string;
-          attachments: any;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          sender_id: string;
-          room_id: string;
-          message: string;
-          attachments?: any;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          sender_id?: string;
-          room_id?: string;
-          message?: string;
-          attachments?: any;
-          created_at?: string;
         };
       };
     };
+          created_at?: string;
+        id?: string;
   };
 }
 

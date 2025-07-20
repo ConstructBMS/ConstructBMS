@@ -33,17 +33,31 @@ import {
   MoonIcon,
 } from '@heroicons/react/24/outline';
 
+// Standardized widget sizes for consistent grid layout
+export const WIDGET_SIZES = {
+  SMALL: { width: 2, height: 2 },    // 2x2 grid units
+  MEDIUM: { width: 3, height: 2 },   // 3x2 grid units  
+  LARGE: { width: 4, height: 3 },    // 4x3 grid units
+  WIDE: { width: 6, height: 2 },     // 6x2 grid units (half width)
+  TALL: { width: 2, height: 4 },     // 2x4 grid units
+  FULL_WIDTH: { width: 6, height: 3 }, // 6x3 grid units (full width)
+  SQUARE: { width: 3, height: 3 },   // 3x3 grid units
+} as const;
+
 export interface WidgetConfig {
-  id: string;
-  type: string;
-  title: string;
+  category: string;
+  configurable: boolean;
+  defaultSize: { height: number, width: number; 
+};
   description: string;
   icon: React.ComponentType<any>;
-  defaultSize: { width: number; height: number };
-  minSize: { width: number; height: number };
-  maxSize: { width: number; height: number };
-  configurable: boolean;
-  category: string;
+  id: string;
+  maxSize: { height: number, width: number; };
+  minSize: { height: number, width: number; };
+  title: string;
+  type: string;
+  contentHeight?: 'auto' | 'fixed' | 'scrollable'; // How content should behave
+  aspectRatio?: number; // Optional aspect ratio for consistent sizing
 }
 
 export const availableWidgets: WidgetConfig[] = [
@@ -54,11 +68,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Statistics Cards',
     description: 'Display key metrics and statistics',
     icon: ChartBarIcon,
-    defaultSize: { width: 24, height: 8 },
-    minSize: { width: 16, height: 6 },
-    maxSize: { width: 32, height: 12 },
+    defaultSize: WIDGET_SIZES.WIDE,
+    minSize: WIDGET_SIZES.MEDIUM,
+    maxSize: WIDGET_SIZES.FULL_WIDTH,
     configurable: true,
     category: 'Analytics',
+    contentHeight: 'auto',
   },
   {
     id: 'revenue-chart',
@@ -66,11 +81,13 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Revenue Chart',
     description: 'Visualize revenue trends and data',
     icon: ChartPieIcon,
-    defaultSize: { width: 16, height: 12 },
-    minSize: { width: 12, height: 8 },
-    maxSize: { width: 24, height: 16 },
+    defaultSize: WIDGET_SIZES.LARGE,
+    minSize: WIDGET_SIZES.MEDIUM,
+    maxSize: WIDGET_SIZES.FULL_WIDTH,
     configurable: true,
     category: 'Analytics',
+    contentHeight: 'fixed',
+    aspectRatio: 1.5,
   },
   {
     id: 'performance-metrics',
@@ -78,11 +95,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Performance Metrics',
     description: 'Track system and business performance',
     icon: BoltIcon,
-    defaultSize: { width: 12, height: 8 },
-    minSize: { width: 8, height: 6 },
-    maxSize: { width: 20, height: 12 },
+    defaultSize: WIDGET_SIZES.SQUARE,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Analytics',
+    contentHeight: 'auto',
   },
   {
     id: 'conversion-funnel',
@@ -90,11 +108,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Conversion Funnel',
     description: 'Track customer conversion rates',
     icon: FireIcon,
-    defaultSize: { width: 10, height: 12 },
-    minSize: { width: 6, height: 8 },
-    maxSize: { width: 18, height: 16 },
+    defaultSize: WIDGET_SIZES.TALL,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
     category: 'Analytics',
+    contentHeight: 'scrollable',
   },
 
   // Productivity Widgets
@@ -104,11 +123,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Tasks Overview',
     description: 'Manage and view task progress',
     icon: CheckCircleIcon,
-    defaultSize: { width: 8, height: 12 },
-    minSize: { width: 6, height: 8 },
-    maxSize: { width: 16, height: 20 },
+    defaultSize: WIDGET_SIZES.TALL,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
     category: 'Productivity',
+    contentHeight: 'scrollable',
   },
   {
     id: 'projects-overview',
@@ -116,11 +136,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Projects Overview',
     description: 'Track project status and progress',
     icon: DocumentTextIcon,
-    defaultSize: { width: 12, height: 10 },
-    minSize: { width: 8, height: 8 },
-    maxSize: { width: 20, height: 16 },
+    defaultSize: WIDGET_SIZES.LARGE,
+    minSize: WIDGET_SIZES.MEDIUM,
+    maxSize: WIDGET_SIZES.FULL_WIDTH,
     configurable: true,
     category: 'Productivity',
+    contentHeight: 'scrollable',
   },
   {
     id: 'time-tracking',
@@ -128,11 +149,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Time Tracking',
     description: 'Monitor time spent on tasks and projects',
     icon: ClockIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Productivity',
+    contentHeight: 'auto',
   },
   {
     id: 'goals-progress',
@@ -140,11 +162,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Goals Progress',
     description: 'Track progress towards business goals',
     icon: StarIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Productivity',
+    contentHeight: 'auto',
   },
 
   // Communication Widgets
@@ -154,11 +177,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Email Overview',
     description: 'Monitor email activity and inbox status',
     icon: EnvelopeIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Communication',
+    contentHeight: 'auto',
   },
   {
     id: 'chat-activity',
@@ -166,11 +190,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Chat Activity',
     description: 'View recent chat messages and conversations',
     icon: PhoneIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
     category: 'Communication',
+    contentHeight: 'scrollable',
   },
   {
     id: 'meeting-schedule',
@@ -178,11 +203,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Meeting Schedule',
     description: 'View upcoming meetings and appointments',
     icon: CalendarIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Communication',
+    contentHeight: 'scrollable',
   },
 
   // Monitoring Widgets
@@ -192,11 +218,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Recent Activity',
     description: 'Show latest system activities',
     icon: ClockIcon,
-    defaultSize: { width: 12, height: 12 },
-    minSize: { width: 8, height: 8 },
-    maxSize: { width: 20, height: 16 },
+    defaultSize: WIDGET_SIZES.LARGE,
+    minSize: WIDGET_SIZES.MEDIUM,
+    maxSize: WIDGET_SIZES.FULL_WIDTH,
     configurable: true,
     category: 'Monitoring',
+    contentHeight: 'scrollable',
   },
   {
     id: 'notifications-widget',
@@ -204,11 +231,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Notifications',
     description: 'Display system notifications and alerts',
     icon: BellIcon,
-    defaultSize: { width: 8, height: 12 },
-    minSize: { width: 4, height: 8 },
-    maxSize: { width: 16, height: 20 },
+    defaultSize: WIDGET_SIZES.TALL,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
     category: 'Monitoring',
+    contentHeight: 'scrollable',
   },
   {
     id: 'system-health',
@@ -216,11 +244,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'System Health',
     description: 'Monitor system performance and status',
     icon: HeartIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Monitoring',
+    contentHeight: 'auto',
   },
   {
     id: 'error-logs',
@@ -228,11 +257,12 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Error Logs',
     description: 'View system errors and warnings',
     icon: ExclamationTriangleIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
     category: 'Monitoring',
+    contentHeight: 'scrollable',
   },
 
   // Navigation Widgets
@@ -242,269 +272,72 @@ export const availableWidgets: WidgetConfig[] = [
     title: 'Quick Actions',
     description: 'Common actions and shortcuts',
     icon: CogIcon,
-    defaultSize: { width: 8, height: 8 },
-    minSize: { width: 4, height: 4 },
-    maxSize: { width: 16, height: 12 },
+    defaultSize: WIDGET_SIZES.WIDE,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.FULL_WIDTH,
     configurable: true,
     category: 'Navigation',
-  },
-  {
-    id: 'favorites',
-    type: 'favorites',
-    title: 'Favorites',
-    description: 'Quick access to favorite pages and tools',
-    icon: StarIcon,
-    defaultSize: { width: 6, height: 8 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 12, height: 12 },
-    configurable: true,
-    category: 'Navigation',
+    contentHeight: 'auto',
   },
 
-  // Team Widgets
+  // Team & Collaboration Widgets
   {
     id: 'team-overview',
     type: 'team-overview',
     title: 'Team Overview',
-    description: 'View team members and status',
+    description: 'View team members and their status',
     icon: UserGroupIcon,
-    defaultSize: { width: 12, height: 12 },
-    minSize: { width: 8, height: 8 },
-    maxSize: { width: 20, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Team',
-  },
-  {
-    id: 'team-availability',
-    type: 'team-availability',
-    title: 'Team Availability',
-    description: 'Check team member availability and schedules',
-    icon: CalendarIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
-    configurable: true,
-    category: 'Team',
+    contentHeight: 'scrollable',
   },
 
-  // Scheduling Widgets
+  // Calendar & Scheduling Widgets
   {
     id: 'calendar-widget',
     type: 'calendar-widget',
     title: 'Calendar',
-    description: 'Display upcoming events and meetings',
+    description: 'View upcoming events and appointments',
     icon: CalendarIcon,
-    defaultSize: { width: 12, height: 12 },
-    minSize: { width: 8, height: 8 },
-    maxSize: { width: 20, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
-    category: 'Scheduling',
-  },
-  {
-    id: 'deadlines',
-    type: 'deadlines',
-    title: 'Deadlines',
-    description: 'Track upcoming deadlines and due dates',
-    icon: ClockIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'Scheduling',
+    category: 'Calendar',
+    contentHeight: 'scrollable',
   },
 
-  // Finance Widgets
+  // Financial Widgets
   {
     id: 'financial-overview',
     type: 'financial-overview',
     title: 'Financial Overview',
-    description: 'Track financial metrics and trends',
+    description: 'Track revenue, expenses, and profit',
     icon: CurrencyDollarIcon,
-    defaultSize: { width: 12, height: 12 },
-    minSize: { width: 8, height: 8 },
-    maxSize: { width: 20, height: 16 },
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.LARGE,
     configurable: true,
     category: 'Finance',
-  },
-  {
-    id: 'expense-tracker',
-    type: 'expense-tracker',
-    title: 'Expense Tracker',
-    description: 'Monitor and categorize expenses',
-    icon: ShoppingCartIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
-    configurable: true,
-    category: 'Finance',
-  },
-  {
-    id: 'budget-overview',
-    type: 'budget-overview',
-    title: 'Budget Overview',
-    description: 'Track budget vs actual spending',
-    icon: DocumentIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'Finance',
+    contentHeight: 'auto',
   },
 
-  // Document Widgets
+  // Notification Widgets
   {
-    id: 'document-library',
-    type: 'document-library',
-    title: 'Document Library',
-    description: 'Access and manage documents',
-    icon: FolderIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
+    id: 'notifications-widget',
+    type: 'notifications-widget',
+    title: 'Notifications',
+    description: 'System notifications and alerts',
+    icon: BellIcon,
+    defaultSize: WIDGET_SIZES.MEDIUM,
+    minSize: WIDGET_SIZES.SMALL,
+    maxSize: WIDGET_SIZES.TALL,
     configurable: true,
-    category: 'Documents',
-  },
-  {
-    id: 'recent-documents',
-    type: 'recent-documents',
-    title: 'Recent Documents',
-    description: 'View recently accessed documents',
-    icon: DocumentIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'Documents',
-  },
-
-  // Operations Widgets
-  {
-    id: 'inventory-status',
-    type: 'inventory-status',
-    title: 'Inventory Status',
-    description: 'Monitor inventory levels and stock',
-    icon: TruckIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
-    configurable: true,
-    category: 'Operations',
-  },
-  {
-    id: 'maintenance-schedule',
-    type: 'maintenance-schedule',
-    title: 'Maintenance Schedule',
-    description: 'Track equipment maintenance and repairs',
-    icon: WrenchScrewdriverIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'Operations',
-  },
-
-  // IT Widgets
-  {
-    id: 'server-status',
-    type: 'server-status',
-    title: 'Server Status',
-    description: 'Monitor server health and performance',
-    icon: ServerIcon,
-    defaultSize: { width: 10, height: 8 },
-    minSize: { width: 6, height: 6 },
-    maxSize: { width: 16, height: 12 },
-    configurable: true,
-    category: 'IT',
-  },
-  {
-    id: 'backup-status',
-    type: 'backup-status',
-    title: 'Backup Status',
-    description: 'Monitor backup processes and status',
-    icon: CloudIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'IT',
-  },
-  {
-    id: 'security-alerts',
-    type: 'security-alerts',
-    title: 'Security Alerts',
-    description: 'Monitor security events and threats',
-    icon: ShieldCheckIcon,
-    defaultSize: { width: 8, height: 10 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 14, height: 16 },
-    configurable: true,
-    category: 'IT',
-  },
-
-  // Marketing Widgets
-  {
-    id: 'campaign-performance',
-    type: 'campaign-performance',
-    title: 'Campaign Performance',
-    description: 'Track marketing campaign metrics',
-    icon: GlobeAltIcon,
-    defaultSize: { width: 12, height: 10 },
-    minSize: { width: 8, height: 6 },
-    maxSize: { width: 20, height: 14 },
-    configurable: true,
-    category: 'Marketing',
-  },
-  {
-    id: 'social-media-feed',
-    type: 'social-media-feed',
-    title: 'Social Media Feed',
-    description: 'Monitor social media activity',
-    icon: GlobeAltIcon,
-    defaultSize: { width: 10, height: 12 },
-    minSize: { width: 6, height: 8 },
-    maxSize: { width: 16, height: 18 },
-    configurable: true,
-    category: 'Marketing',
-  },
-
-  // Weather Widgets
-  {
-    id: 'weather-widget',
-    type: 'weather-widget',
-    title: 'Weather',
-    description: 'Display current weather information',
-    icon: SunIcon,
-    defaultSize: { width: 6, height: 8 },
-    minSize: { width: 4, height: 6 },
-    maxSize: { width: 12, height: 12 },
-    configurable: true,
-    category: 'Weather',
-  },
-
-  // Custom Widgets
-  {
-    id: 'custom-html',
-    type: 'custom-html',
-    title: 'Custom HTML',
-    description: 'Add custom HTML content',
-    icon: DocumentTextIcon,
-    defaultSize: { width: 8, height: 8 },
-    minSize: { width: 4, height: 4 },
-    maxSize: { width: 20, height: 20 },
-    configurable: true,
-    category: 'Custom',
-  },
-  {
-    id: 'iframe-widget',
-    type: 'iframe-widget',
-    title: 'External Website',
-    description: 'Embed external websites or tools',
-    icon: GlobeAltIcon,
-    defaultSize: { width: 12, height: 10 },
-    minSize: { width: 8, height: 6 },
-    maxSize: { width: 24, height: 20 },
-    configurable: true,
-    category: 'Custom',
+    category: 'Notifications',
+    contentHeight: 'scrollable',
   },
 ];
 

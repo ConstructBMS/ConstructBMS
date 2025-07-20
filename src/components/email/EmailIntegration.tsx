@@ -13,7 +13,7 @@ import {
   Calendar,
   HelpCircle,
 } from 'lucide-react';
-import { EmailAccount, EmailMessage, EmailFolder } from '../../types/email';
+import type { EmailAccount, EmailMessage, EmailFolder } from '../../types/email';
 import emailIntegrationService from '../../services/emailIntegrationService';
 import SimpleEmailSetup from './SimpleEmailSetup';
 import EmailSetupGuide from './EmailSetupGuide';
@@ -449,8 +449,8 @@ const EmailIntegration: React.FC = () => {
 
 // Compose Email Component
 const ComposeEmailView: React.FC<{
-  selectedAccount: EmailAccount | null;
   onSent: () => void;
+  selectedAccount: EmailAccount | null;
 }> = ({ selectedAccount, onSent }) => {
   const [to, setTo] = useState('');
   const [cc, setCc] = useState('');
@@ -609,8 +609,8 @@ const ComposeEmailView: React.FC<{
 
 // Simple Account Setup Modal
 const EmailAccountSetupModal: React.FC<{
-  onClose: () => void;
   onAccountAdded: (account: EmailAccount) => void;
+  onClose: () => void;
 }> = ({ onClose, onAccountAdded }) => {
   const [provider, setProvider] = useState<'gmail' | 'microsoft365' | 'manual'>(
     'gmail'

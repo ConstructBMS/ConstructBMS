@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMenu } from '../contexts/MenuContext';
 import { useLogo } from '../contexts/LogoContext';
-import { MenuItem as BaseMenuItem } from '../types/menu';
+import type { MenuItem as BaseMenuItem } from '../types/menu';
 import {
   HomeIcon,
   InboxIcon,
@@ -41,10 +41,10 @@ interface MenuItem extends BaseMenuItem {
 }
 
 interface SidebarProps {
-  collapsed: boolean;
-  onToggle: () => void;
   activeModule: string;
+  collapsed: boolean;
   onModuleChange: (module: string) => void;
+  onToggle: () => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -84,6 +84,8 @@ const iconMap: Record<string, React.ReactNode> = {
   'arrow-path': <ArrowPathIcon className='h-8 w-8' />,
   'bars-3-bottom-left': <Bars3BottomLeftIcon className='h-8 w-8' />,
   key: <KeyIcon className='h-8 w-8' />,
+  'hard-hat': <WrenchScrewdriverIcon className='h-8 w-8' />,
+  'builder': <WrenchScrewdriverIcon className='h-8 w-8' />,
 };
 
 const renderIcon = (
@@ -95,7 +97,7 @@ const renderIcon = (
   const iconNode = iconMap[icon] || <HomeIcon className='h-8 w-8' />;
   return (
     <span
-      className={`sidebar-icon flex items-center justify-center ${collapsed ? (active ? 'text-green-500' : 'text-gray-400') : active ? 'text-green-500' : 'text-gray-400'}`}
+      className={`sidebar-icon flex items-center justify-center ${collapsed ? (active ? 'text-accent' : 'text-gray-400') : active ? 'text-accent' : 'text-gray-400'}`}
     >
       {iconNode}
     </span>
@@ -104,7 +106,7 @@ const renderIcon = (
 
 const renderBadge = (item: MenuItem) =>
   item.badge ? (
-    <span className='ml-2 px-2 py-0.5 rounded-full bg-green-500 text-white text-xs font-bold'>
+    <span className='ml-2 px-2 py-0.5 rounded-full bg-accent text-white text-xs font-bold'>
       {item.badge}
     </span>
   ) : null;
@@ -120,23 +122,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
   const modulesMap = modules as Record<
     string,
-    { type: string; active: boolean }
+    { active: boolean, type: string; }
   >;
 
-  // Default logo settings if not available
-  const defaultLogoSettings = {
-    sidebarLogo: {
-      type: 'icon' as const,
-      icon: 'home',
-      imageUrl: null,
-    },
-  };
-
-  const safeLogoSettings = logoSettings || defaultLogoSettings;
-
-  // Ensure safeLogoSettings has the required structure
-  const safeSidebarLogo =
-    safeLogoSettings?.sidebarLogo || defaultLogoSettings.sidebarLogo;
+  // Check if user has set a custom sidebar logo
+  const hasCustomSidebarLogo = logoSettings?.sidebarLogo?.type === 'image' && logoSettings?.sidebarLogo?.imageUrl && logoSettings.sidebarLogo.imageUrl !== null;
+  // Check if user has set a custom main logo
+  const hasCustomMainLogo = logoSettings?.mainLogo?.type === 'image' && logoSettings?.mainLogo?.imageUrl && logoSettings.mainLogo.imageUrl !== null;
 
   // Find parent of active module
   const findParent = (items: MenuItem[], module: string): string | null => {
@@ -162,17 +154,29 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [collapsed]);
 
-  // When active module changes, expand its parent (if any)
+  // When active module changes, expand its parent (if any) and collapse others
   useEffect(() => {
     if (!collapsed) {
       const parentId = findParent(menu as MenuItem[], activeModule);
-      if (parentId) setExpanded({ [parentId]: true });
+      if (parentId) {
+        setExpanded({ [parentId]: true });
+      } else {
+        // If no parent found, collapse all expanded parents
+        setExpanded({});
+      }
     }
   }, [activeModule, collapsed, menu]);
 
   // Only one parent expanded at a time
   const handleParentClick = (item: MenuItem) => {
-    setExpanded(expandedId => (expandedId[item.id] ? {} : { [item.id]: true }));
+    setExpanded(expandedId => {
+      // If this item is already expanded, collapse it
+      if (expandedId?.[item.id]) {
+        return {};
+      }
+      // Otherwise, expand this item and collapse all others
+      return { [item.id]: true };
+    });
     // Remove automatic child selection - parent click only expands/collapses
   };
 
@@ -203,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (
       item.moduleKey &&
       modulesMap[item.moduleKey] &&
-      !modulesMap[item.moduleKey].active
+      !modulesMap[item.moduleKey]?.active
     )
       return false;
     return true;
@@ -211,25 +215,37 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const coreMenu = menu.filter(item => {
     if (!isVisible(item)) return false;
+    // Exclude settings and support from core menu
+    if (item.id === 'settings' || item.id === 'support') return false;
     if (item.moduleKey && modulesMap[item.moduleKey]) {
-      return modulesMap[item.moduleKey].type === 'core';
+      const module = modulesMap[item.moduleKey];
+      return module && module.type === 'core';
     }
-    return true;
+    // Include items that don't have a moduleKey (like dashboard, projects, etc.)
+    return !item.moduleKey || (item.moduleKey && modulesMap[item.moduleKey] && modulesMap[item.moduleKey]?.type === 'core');
   }) as MenuItem[];
 
   const additionalMenu = menu.filter(item => {
     if (!isVisible(item)) return false;
+    // Exclude settings and support from additional menu
+    if (item.id === 'settings' || item.id === 'support') return false;
     if (item.moduleKey && modulesMap[item.moduleKey]) {
-      return modulesMap[item.moduleKey].type === 'additional';
+      return modulesMap[item.moduleKey]?.type === 'additional';
     }
     return false;
+  }) as MenuItem[];
+
+  // Separate Settings and Support for the bottom section
+  const bottomMenu = menu.filter(item => {
+    if (!isVisible(item)) return false;
+    return item.id === 'settings' || item.id === 'support';
   }) as MenuItem[];
 
   // Helper: is this the active parent?
   const activeParentId = findParent(menu as MenuItem[], activeModule);
 
   // Helper: is this parent expanded?
-  const isParentExpanded = (itemId: string) => expanded[itemId];
+  const isParentExpanded = (itemId: string) => expanded[itemId] || false;
 
   const renderMenu = (items: MenuItem[], parentId?: string) => (
     <ul className={parentId ? 'ml-0' : 'mt-2'}>
@@ -243,21 +259,24 @@ const Sidebar: React.FC<SidebarProps> = ({
             item.children && item.children.length > 0
           );
 
-          // All main items should show green when active
-          const shouldShowGreenMain = isActive;
+          // All main items should show accent when active
+          const shouldShowAccentMain = isActive;
 
-          // Parent items should also show green when expanded but no child is selected
-          const shouldShowGreenParent =
-            hasChildren && isExpanded && !isActiveParent;
+          // Parent items should only show accent icon when a child is actually selected
+          const shouldShowAccentIcon = hasChildren && isActiveParent;
 
-          // In collapsed mode, parent of active child should show green
-          const shouldShowGreenParentCollapsed = collapsed && isActiveParent;
+          // In collapsed mode, parent of active child should show accent icon
+          const shouldShowAccentIconCollapsed = collapsed && isActiveParent;
 
-          // Determine final green state for parent items
-          const shouldShowGreen =
-            shouldShowGreenMain ||
-            shouldShowGreenParent ||
-            shouldShowGreenParentCollapsed;
+          // Determine final accent icon state for parent items
+          const shouldShowAccentIconFinal =
+            shouldShowAccentMain ||
+            shouldShowAccentIcon ||
+            shouldShowAccentIconCollapsed;
+
+          // Parent items should only have accent text/background when they themselves are active
+          // But parent items with children should never be the active module themselves
+          const shouldShowAccentText = shouldShowAccentMain && !hasChildren;
 
           return (
             <li key={item.id}>
@@ -265,8 +284,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <>
                   <div
                     className={`flex items-center px-4 py-2 cursor-pointer rounded-lg transition font-medium sidebar-parent ${
-                      shouldShowGreen
-                        ? 'text-green-500 bg-green-50 dark:bg-green-900/20'
+                      shouldShowAccentText
+                        ? 'text-accent bg-accent/10 dark:bg-accent/20'
                         : 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                     onClick={() => handleMenuClick(item)}
@@ -274,7 +293,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   >
                     {renderIcon(
                       item.icon || '',
-                      shouldShowGreen,
+                      shouldShowAccentIconFinal,
                       collapsed,
                       true
                     )}
@@ -299,8 +318,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               ) : (
                 <div
                   className={`flex items-center px-4 py-2 cursor-pointer rounded-lg transition font-medium sidebar-child ${
-                    shouldShowGreenMain
-                      ? 'text-green-500'
+                    shouldShowAccentMain
+                      ? 'text-accent'
                       : 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                   onClick={() => handleMenuClick(item)}
@@ -308,7 +327,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   {renderIcon(
                     item.icon || '',
-                    shouldShowGreenMain,
+                    shouldShowAccentMain,
                     collapsed,
                     false
                   )}
@@ -331,39 +350,73 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className='flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700'>
         {collapsed ? (
           <div className='flex items-center justify-center w-full'>
-            {safeSidebarLogo.type === 'image' && safeSidebarLogo.imageUrl ? (
               <span
                 title='Toggle Sidebar'
                 className='sidebar-icon flex items-center justify-center cursor-pointer'
                 onClick={onToggle}
               >
+              {hasCustomSidebarLogo ? (
                 <img
-                  src={safeSidebarLogo.imageUrl}
+                  src={logoSettings?.sidebarLogo?.imageUrl || ''}
                   alt='Sidebar Logo'
                   className='h-7 w-7 object-contain'
                 />
-              </span>
             ) : (
+                /* Blue circle with navy 'C' for ConstructBMS - only show the circle when collapsed */
               <span
-                title='Toggle Sidebar'
-                className='sidebar-icon flex items-center justify-center cursor-pointer'
-                onClick={onToggle}
-              >
-                <HomeIcon className='h-7 w-7 text-green-500' />
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '2rem',
+                    height: '2rem',
+                    borderRadius: '9999px',
+                    background: '#3B82F6', // blue accent
+                    color: '#1A2233', // navy
+                    fontWeight: 'bold',
+                    fontSize: '1.25rem',
+                  }}
+                >
+                  C
               </span>
             )}
+            </span>
           </div>
         ) : (
           <>
             <span className='text-xl font-bold tracking-tight flex items-center'>
-              {safeSidebarLogo.type === 'image' && safeSidebarLogo.imageUrl ? (
+              {hasCustomSidebarLogo ? (
                 <img
-                  src={safeSidebarLogo.imageUrl}
+                  src={logoSettings?.sidebarLogo?.imageUrl || ''}
                   alt='Sidebar Logo'
                   className='h-7 w-7 object-contain mr-2'
                 />
               ) : (
-                <HomeIcon className='h-7 w-7 text-green-500 mr-2' />
+                <>
+                  {/* Blue circle with navy 'C' for ConstructBMS */}
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '2rem',
+                      height: '2rem',
+                      borderRadius: '50%',
+                      background: '#3B82F6',
+                      color: '#1e3a8a',
+                      fontWeight: 'bold',
+                      fontSize: '1.25rem',
+                      marginRight: '0.5rem',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+                    }}
+                  >
+                    C
+                </span>
+                  {/* Only show text if no custom logos are set */}
+                  {!(hasCustomSidebarLogo || hasCustomMainLogo) && (
+                    <span>ConstructBMS</span>
+                  )}
+                </>
               )}
             </span>
             <ChevronLeftIcon
@@ -380,29 +433,23 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
       <nav className='flex-1 overflow-y-auto pb-4'>
         {renderMenu(coreMenu)}
-        {additionalMenu.length > 0 && !collapsed && (
+        {additionalMenu.length > 0 && (
           <>
-            <div className='my-4 border-t border-gray-200 dark:border-gray-700 opacity-80' />
-            <div className='px-4 pt-2 pb-2 text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wide'>
-              ADDITIONAL MODULES
-            </div>
+            {!collapsed && (
+              <>
+                <div className='my-4 border-t border-gray-200 dark:border-gray-700 opacity-80' />
+                <div className='px-4 pt-2 pb-2 text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wide'>
+                  ADDITIONAL MODULES
+                </div>
+              </>
+            )}
             {renderMenu(additionalMenu)}
           </>
         )}
       </nav>
-      {!collapsed && (
-        <div className='mt-auto p-4 border-t border-gray-200 dark:border-gray-700 flex items-center'>
-          <div className='w-10 h-10 rounded-full bg-green-200 flex items-center justify-center text-lg font-bold text-green-800 mr-3'>
-            TH
-          </div>
-          <div>
-            <div className='font-semibold text-gray-900 dark:text-gray-100'>
-              Tom Harvey
-            </div>
-            <div className='text-xs text-gray-500 dark:text-gray-400'>
-              Project Manager
-            </div>
-          </div>
+      {bottomMenu.length > 0 && (
+        <div className='mt-auto border-t border-gray-200 dark:border-gray-700'>
+          {renderMenu(bottomMenu)}
         </div>
       )}
     </aside>

@@ -199,7 +199,7 @@ export class GmailService extends EmailProviderService {
       .map(addr => this.parseEmailAddress(addr.trim()));
   }
 
-  private extractBody(payload: any): { text?: string; html?: string } {
+  private extractBody(payload: any): { html?: string, text?: string; } {
     if (!payload) return {};
 
     if (payload.body?.data) {
@@ -212,7 +212,7 @@ export class GmailService extends EmailProviderService {
     }
 
     if (payload.parts) {
-      const body: { text?: string; html?: string } = {};
+      const body: { html?: string, text?: string; } = {};
       for (const part of payload.parts) {
         if (part.mimeType === 'text/plain' && part.body?.data) {
           body.text = atob(

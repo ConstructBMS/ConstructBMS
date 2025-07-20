@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import {
-  AuthContextType,
-  User,
-  Role,
-  Permissions,
-  SystemRoles,
-} from '../types/auth';
+import type { AuthContextType, User, Role } from '../types/auth';
+import { Permissions, SystemRoles } from '../types/auth';
 import {
   supabase,
   getUserRoles,
@@ -39,8 +34,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check if Supabase is configured
   const isSupabaseConfigured = () => {
-    const url = import.meta.env.VITE_SUPABASE_URL || '';
-    const key = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+    const url = import.meta.env['VITE_SUPABASE_URL'] || '';
+    const key = import.meta.env['VITE_SUPABASE_ANON_KEY'] || '';
     const isConfigured =
       url &&
       key &&
@@ -128,8 +123,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Database health check function
   const checkDatabaseHealth = async (): Promise<{
-    healthy: boolean;
     error?: string;
+    healthy: boolean;
   }> => {
     try {
       const timeoutPromise = new Promise((_, reject) => {
@@ -162,7 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       role: 'employee' as SystemRoles, // Default role
       organizationId: '',
       isActive: true,
-      avatarUrl: authUser.user_metadata?.avatar_url || undefined,
+      avatarUrl: authUser.user_metadata?.avatar_url || '',
       createdAt: authUser.created_at,
       updatedAt: authUser.updated_at || authUser.created_at,
       customPermissions: {},
@@ -205,7 +200,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
 
         setUser(updatedUser);
-        console.log('✅ Loaded user data from database:', updatedUser.role);
+  
 
         // Load user roles using the new authenticated REST API service
         try {
@@ -239,10 +234,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             );
             setPermissions(allPermissions);
 
-            console.log(
-              '✅ Loaded user roles from database:',
-              userRoles.map(r => r.name)
-            );
           } else {
             // Fallback to demo roles if no roles found
             console.log('⚠️ No roles found, using fallback');
@@ -362,7 +353,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           role: SystemRoles.SUPER_ADMIN,
           organizationId: 'demo-org-123',
           isActive: true,
-          avatarUrl: undefined,
+          avatarUrl: '',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           customPermissions: {},

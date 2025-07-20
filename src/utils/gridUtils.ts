@@ -1,9 +1,9 @@
 // Grid utility functions for sticky notes
 export interface GridConfig {
-  mobile: number;
-  tablet: number;
   desktop: number;
   large: number;
+  mobile: number;
+  tablet: number;
 }
 
 export const DEFAULT_GRID_CONFIG: GridConfig = {
@@ -50,7 +50,7 @@ export const calculateCanvasSize = (
   minWidth = 1200,
   minHeight = 800,
   padding = 200
-): { width: number; height: number } => {
+): { height: number, width: number; } => {
   if (items.length === 0) {
     return { width: minWidth, height: minHeight };
   }

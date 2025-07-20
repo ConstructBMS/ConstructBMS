@@ -3,17 +3,17 @@ import { Bell, X, Check, AlertCircle, Info, CheckCircle } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
 interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  is_read: boolean;
   created_at: string;
+  id: string;
+  is_read: boolean;
+  message: string;
+  title: string;
+  type: 'info' | 'success' | 'warning' | 'error';
 }
 
 interface NotificationBellProps {
-  onModuleChange: (module: string) => void;
   activeModule: string;
+  onModuleChange: (module: string) => void;
 }
 
 const NotificationBell: React.FC<NotificationBellProps> = ({
@@ -65,7 +65,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
     if (!currentUser) return;
 
     const subscription = supabase
-      .channel('notifications-bell')
+      .channel('notifications_changes')
       .on(
         'postgres_changes',
         {
@@ -79,10 +79,22 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
           setNotifications(prev => [newNotification, ...prev.slice(0, 9)]);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Notifications real-time subscription connected');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.warn('⚠️ Notifications real-time subscription failed - using local data only');
+        } else if (status === 'TIMED_OUT') {
+          console.warn('⚠️ Notifications real-time subscription timed out - using local data only');
+        }
+      });
 
     return () => {
-      subscription.unsubscribe();
+      try {
+        subscription.unsubscribe();
+      } catch (error) {
+        console.warn('⚠️ Error unsubscribing from notifications:', error);
+      }
     };
   };
 
@@ -161,7 +173,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         className={`relative p-2 rounded-lg transition-colors duration-200 ${
           activeModule === 'notifications'
-            ? 'text-archer-neon bg-archer-neon/10 border border-archer-neon/20'
+            ? 'text-constructbms-blue bg-constructbms-blue/10 border border-constructbms-blue/20'
             : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
         }`}
       >
@@ -195,7 +207,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
                   setIsOpen(false);
                   onModuleChange('notifications');
                 }}
-                className='text-sm text-archer-neon hover:text-archer-black font-medium'
+                className='text-sm text-constructbms-blue hover:text-constructbms-black font-medium'
               >
                 View All
               </button>

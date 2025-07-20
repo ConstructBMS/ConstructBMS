@@ -7,30 +7,30 @@ import { env } from '../config/environment';
 import { apiLogger, withPerformanceLogging } from '../utils/logger';
 
 export interface ApiRequestConfig {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  headers?: Record<string, string>;
   body?: any;
-  timeout?: number;
-  retries?: number;
-  retryDelay?: number;
   cache?: boolean;
   cacheTime?: number;
+  headers?: Record<string, string>;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  retries?: number;
+  retryDelay?: number;
+  timeout?: number;
 }
 
 export interface ApiResponse<T = any> {
+  config: ApiRequestConfig;
   data: T;
+  headers: Record<string, string>;
   status: number;
   statusText: string;
-  headers: Record<string, string>;
-  config: ApiRequestConfig;
 }
 
 export interface ApiError {
-  message: string;
-  status?: number;
   code?: string;
   details?: any;
+  message: string;
   retryable: boolean;
+  status?: number;
 }
 
 class ApiClient {

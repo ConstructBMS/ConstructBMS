@@ -66,7 +66,7 @@ export class SupabaseUserService {
     // Return demo user data instead of querying database
     const demoUser = {
       id: user.id,
-      email: user.email || 'demo@archer.com',
+              email: user.email || 'demo@napwood.com',
       first_name: user.user_metadata?.first_name || 'Demo',
       last_name: user.user_metadata?.last_name || 'User',
       is_active: true,
@@ -251,7 +251,15 @@ export class SupabaseNotificationService {
           callback(payload.new as Notification);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Notifications real-time subscription connected');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.warn('⚠️ Notifications real-time subscription failed - using local data only');
+        } else if (status === 'TIMED_OUT') {
+          console.warn('⚠️ Notifications real-time subscription timed out - using local data only');
+        }
+      });
   }
 }
 
@@ -312,7 +320,15 @@ export class SupabaseChatService {
           callback(payload.new as ChatMessage);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Chat real-time subscription connected');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.warn('⚠️ Chat real-time subscription failed - using local data only');
+        } else if (status === 'TIMED_OUT') {
+          console.warn('⚠️ Chat real-time subscription timed out - using local data only');
+        }
+      });
   }
 }
 

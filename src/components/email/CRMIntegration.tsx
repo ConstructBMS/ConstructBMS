@@ -27,43 +27,43 @@ import {
 
 // CRM Entity Types
 interface CRMEntity {
-  id: string;
-  type: 'customer' | 'project' | 'opportunity' | 'contractor';
-  name: string;
+  confidence: number;
+  description?: string;
   email?: string;
+  id: string;
+  lastContact?: Date;
+  linkedEmails?: number;
+  name: string;
   phone?: string;
   status: string;
-  lastContact?: Date;
-  value?: number;
-  description?: string;
   tags?: string[];
-  confidence: number;
-  linkedEmails?: number;
+  type: 'customer' | 'project' | 'opportunity' | 'contractor';
+  value?: number;
 }
 
 interface EmailLink {
-  id: string;
+  confidence: number;
+  createdAt: Date;
   emailId: string;
   entityId: string;
   entityType: string;
+  id: string;
   linkType: 'manual' | 'auto' | 'suggested';
-  confidence: number;
-  createdAt: Date;
 }
 
 interface EntitySuggestion {
+  confidence: number;
   entity: CRMEntity;
   reason: string;
-  confidence: number;
   suggestedActions: string[];
 }
 
 const CRMIntegration: React.FC<{
+  emailContent?: string;
+  emailId?: string;
+  emailSubject?: string;
   isOpen: boolean;
   onClose: () => void;
-  emailId?: string;
-  emailContent?: string;
-  emailSubject?: string;
   senderEmail?: string;
 }> = ({
   isOpen,
@@ -181,51 +181,7 @@ const CRMIntegration: React.FC<{
     senderEmail: string,
     content: string
   ): CRMEntity | null => {
-    const knownCustomers = [
-      {
-        id: 'cust_1',
-        type: 'customer' as const,
-        name: 'TechCorp Solutions',
-        email: 'contact@techcorp.com',
-        phone: '+44 20 7123 4567',
-        status: 'Active',
-        lastContact: new Date(),
-        value: 50000,
-        description: 'Technology consulting firm',
-        tags: ['Technology', 'Consulting'],
-        confidence: 0.9,
-        linkedEmails: 23,
-      },
-      {
-        id: 'cust_2',
-        type: 'customer' as const,
-        name: 'BuildPro Construction',
-        email: 'info@buildpro.com',
-        phone: '+44 20 7123 4568',
-        status: 'Active',
-        lastContact: new Date(),
-        value: 75000,
-        description: 'Construction and development company',
-        tags: ['Construction', 'Development'],
-        confidence: 0.85,
-        linkedEmails: 18,
-      },
-    ];
-
-    const customer = knownCustomers.find(c =>
-      senderEmail.includes(c.email.split('@')[1])
-    );
-    if (customer) {
-      return customer;
-    }
-
-    // Check content for customer names
-    for (const customer of knownCustomers) {
-      if (content.includes(customer.name.toLowerCase().split(' ')[0])) {
-        return customer;
-      }
-    }
-
+    // Return null since we don't want hardcoded customer matches
     return null;
   };
 
@@ -425,7 +381,7 @@ const CRMIntegration: React.FC<{
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
           <div className='flex items-center space-x-3'>
-            <Link className='w-6 h-6 text-archer-neon' />
+            <Link className='w-6 h-6 text-constructbms-blue' />
             <h2 className='text-xl font-semibold'>CRM Integration</h2>
           </div>
           <button
@@ -442,7 +398,7 @@ const CRMIntegration: React.FC<{
             onClick={() => setSelectedTab('linked')}
             className={`px-6 py-3 font-medium transition-colors ${
               selectedTab === 'linked'
-                ? 'text-archer-neon border-b-2 border-archer-neon'
+                ? 'text-constructbms-blue border-b-2 border-constructbms-blue'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -452,7 +408,7 @@ const CRMIntegration: React.FC<{
             onClick={() => setSelectedTab('suggestions')}
             className={`px-6 py-3 font-medium transition-colors ${
               selectedTab === 'suggestions'
-                ? 'text-archer-neon border-b-2 border-archer-neon'
+                ? 'text-constructbms-blue border-b-2 border-constructbms-blue'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -462,7 +418,7 @@ const CRMIntegration: React.FC<{
             onClick={() => setSelectedTab('search')}
             className={`px-6 py-3 font-medium transition-colors ${
               selectedTab === 'search'
-                ? 'text-archer-neon border-b-2 border-archer-neon'
+                ? 'text-constructbms-blue border-b-2 border-constructbms-blue'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -660,7 +616,7 @@ const CRMIntegration: React.FC<{
 
                         <button
                           onClick={() => linkEntity(suggestion.entity)}
-                          className='px-4 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+                          className='px-4 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
                         >
                           Link Entity
                         </button>
@@ -681,12 +637,12 @@ const CRMIntegration: React.FC<{
                   placeholder='Search for customers, projects, opportunities...'
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
                 <button
                   onClick={searchEntities}
                   disabled={isLoading}
-                  className='px-4 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors disabled:opacity-50'
+                  className='px-4 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors disabled:opacity-50'
                 >
                   {isLoading ? 'Searching...' : 'Search'}
                 </button>
@@ -720,7 +676,7 @@ const CRMIntegration: React.FC<{
                           </div>
                           <button
                             onClick={() => linkEntity(entity)}
-                            className='px-3 py-1 bg-archer-neon text-black text-sm font-medium rounded hover:bg-archer-black hover:text-white transition-colors'
+                            className='px-3 py-1 bg-constructbms-blue text-black text-sm font-medium rounded hover:bg-constructbms-black hover:text-white transition-colors'
                           >
                             Link
                           </button>

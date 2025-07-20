@@ -3,13 +3,13 @@ import { Bell, Check, X, AlertCircle, Info, CheckCircle } from 'lucide-react';
 import { supabase } from '../../services/supabase';
 
 interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  is_read: boolean;
   created_at: string;
   data?: any;
+  id: string;
+  is_read: boolean;
+  message: string;
+  title: string;
+  type: 'info' | 'success' | 'warning' | 'error';
 }
 
 const Notifications: React.FC = () => {
@@ -56,7 +56,7 @@ const Notifications: React.FC = () => {
     if (!currentUser) return;
 
     const subscription = supabase
-      .channel('notifications')
+      .channel('notifications_module')
       .on(
         'postgres_changes',
         {
@@ -70,10 +70,22 @@ const Notifications: React.FC = () => {
           setNotifications(prev => [newNotification, ...prev]);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Notifications module real-time subscription connected');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.warn('⚠️ Notifications module real-time subscription failed - using local data only');
+        } else if (status === 'TIMED_OUT') {
+          console.warn('⚠️ Notifications module real-time subscription timed out - using local data only');
+        }
+      });
 
     return () => {
-      subscription.unsubscribe();
+      try {
+        subscription.unsubscribe();
+      } catch (error) {
+        console.warn('⚠️ Error unsubscribing from notifications module:', error);
+      }
     };
   };
 

@@ -1,21 +1,21 @@
 export interface ProjectEmail {
+  emailCount: number;
+  lastEmailDate: Date;
   projectId: string;
   projectName: string;
-  emailCount: number;
+  status: 'active' | 'completed' | 'on-hold';
+  teamMembers: string[];
   unreadCount: number;
   urgentCount: number;
-  lastEmailDate: Date;
-  teamMembers: string[];
-  status: 'active' | 'completed' | 'on-hold';
 }
 
 export interface EmailProjectLink {
+  confidence: number;
   emailId: string;
+  linkType: 'direct' | 'inferred' | 'manual';
+  linkedAt: Date;
   projectId: string;
   projectName: string;
-  linkType: 'direct' | 'inferred' | 'manual';
-  confidence: number;
-  linkedAt: Date;
 }
 
 class ProjectIntegrationService {
@@ -166,12 +166,12 @@ class ProjectIntegrationService {
   getProjectSuggestions(
     emailContent: string,
     emailSubject: string
-  ): Array<{ projectId: string; projectName: string; confidence: number }> {
+  ): Array<{ confidence: number, projectId: string; projectName: string; }> {
     const content = (emailContent + ' ' + emailSubject).toLowerCase();
     const suggestions: Array<{
+      confidence: number;
       projectId: string;
       projectName: string;
-      confidence: number;
     }> = [];
 
     // Check existing projects

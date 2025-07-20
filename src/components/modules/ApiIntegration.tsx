@@ -39,8 +39,8 @@ interface IntegrationCardProps {
   integration: ApiIntegrationType;
   onConnect: (serviceName: string) => void;
   onDisconnect: (serviceName: string) => void;
-  onTest: (serviceName: string) => void;
   onSettings: (serviceName: string) => void;
+  onTest: (serviceName: string) => void;
 }
 
 const IntegrationCard: React.FC<IntegrationCardProps> = ({

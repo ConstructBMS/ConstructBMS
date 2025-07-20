@@ -1,24 +1,24 @@
 export interface EmailMessage {
-  id: string;
-  subject: string;
-  sender: string;
-  senderEmail: string;
-  recipients: string[];
-  content: string;
-  timestamp: Date;
+  actionRequired: boolean;
+  assignedTo?: string;
   attachments: EmailAttachment[];
-  isRead: boolean;
-  isArchived: boolean;
+  autoResponse?: string;
   category: EmailCategory;
+  clientId?: string;
+  content: string;
+  followUpDate?: Date;
+  id: string;
+  isArchived: boolean;
+  isRead: boolean;
   priority: EmailPriority;
   projectId?: string;
-  clientId?: string;
-  tags: string[];
-  actionRequired: boolean;
-  autoResponse?: string;
-  followUpDate?: Date;
-  assignedTo?: string;
+  recipients: string[];
+  sender: string;
+  senderEmail: string;
   status: EmailStatus;
+  subject: string;
+  tags: string[];
+  timestamp: Date;
 }
 
 export interface EmailAttachment {
@@ -51,14 +51,14 @@ export type EmailStatus =
   | 'completed';
 
 export interface EmailAnalytics {
+  averageResponseTime: number;
+  categoryDistribution: Record<EmailCategory, number>;
+  clientCommunicationCount: number;
+  projectRelatedCount: number;
+  teamWorkload: Record<string, number>;
   totalEmails: number;
   unreadCount: number;
   urgentCount: number;
-  projectRelatedCount: number;
-  clientCommunicationCount: number;
-  averageResponseTime: number;
-  teamWorkload: Record<string, number>;
-  categoryDistribution: Record<EmailCategory, number>;
 }
 
 class EmailIntelligenceService {
@@ -114,7 +114,7 @@ class EmailIntelligenceService {
     if (subject.includes('urgent') || subject.includes('asap')) {
       return 'urgent-actionable';
     }
-    if (sender.includes('@archer.com')) {
+    if (sender.includes('@napwood.com')) {
       return 'internal-team';
     }
     return 'general';
@@ -140,11 +140,11 @@ class EmailIntelligenceService {
     const sender = email.sender.toLowerCase();
     switch (email.category) {
       case 'project-related':
-        return `Hi ${sender},\n\nThank you for your email regarding the project. I'll review and respond within 24 hours.\n\nBest regards,\nArcher Team`;
+        return `Hi ${sender},\n\nThank you for your email regarding the project. I'll review and respond within 24 hours.\n\nBest regards,\nNapwood Team`;
       case 'client-communication':
-        return `Dear ${sender},\n\nThank you for reaching out. I'll address your inquiry promptly.\n\nBest regards,\nArcher Team`;
+                  return `Dear ${sender},\n\nThank you for reaching out. I'll address your inquiry promptly.\n\nBest regards,\nNapwood Team`;
       default:
-        return `Hi ${sender},\n\nThank you for your email. I'll respond shortly.\n\nBest regards,\nArcher Team`;
+                  return `Hi ${sender},\n\nThank you for your email. I'll respond shortly.\n\nBest regards,\nNapwood Team`;
     }
   }
 
@@ -181,8 +181,8 @@ class EmailIntelligenceService {
   getEmails(filters?: {
     category?: EmailCategory;
     priority?: EmailPriority;
-    status?: EmailStatus;
     search?: string;
+    status?: EmailStatus;
     unreadOnly?: boolean;
   }): EmailMessage[] {
     let filtered = [...this.emails];
@@ -292,7 +292,7 @@ class EmailIntelligenceService {
       subject: `Test Email - ${new Date().toLocaleTimeString()}`,
       sender: 'Test Sender',
       senderEmail: 'test@example.com',
-      recipients: ['user@archer.com'],
+              recipients: ['user@napwood.com'],
       content:
         'This is a test email to verify real-time notification badge updates.',
       timestamp: new Date(),
@@ -317,55 +317,7 @@ class EmailIntelligenceService {
   }
 
   initializeDemoData(): void {
-    const demoEmails: Omit<
-      EmailMessage,
-      'id' | 'category' | 'priority' | 'tags' | 'autoResponse'
-    >[] = [
-      {
-        subject: 'Project Alpha - Urgent Deadline Extension Request',
-        sender: 'Sarah Johnson',
-        senderEmail: 'sarah.johnson@clientcorp.com',
-        recipients: ['project@archer.com'],
-        content:
-          "Hi team, we need to discuss extending the deadline for Project Alpha. The current timeline is too tight and we're experiencing some delays.",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        attachments: [],
-        isRead: false,
-        isArchived: false,
-        actionRequired: true,
-        status: 'unread',
-      },
-      {
-        subject: 'Invoice #1234 - Payment Confirmation',
-        sender: 'Finance Team',
-        senderEmail: 'finance@buildpro.com',
-        recipients: ['accounts@archer.com'],
-        content:
-          'Payment of £15,000 has been processed for Invoice #1234. Please confirm receipt.',
-        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-        attachments: [],
-        isRead: true,
-        isArchived: false,
-        actionRequired: false,
-        status: 'read',
-      },
-      {
-        subject: 'Team Meeting - Friday 2pm',
-        sender: 'Mike Wilson',
-        senderEmail: 'mike.wilson@archer.com',
-        recipients: ['team@archer.com'],
-        content:
-          'Hi team, reminder about our weekly team meeting this Friday at 2pm.',
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-        attachments: [],
-        isRead: false,
-        isArchived: false,
-        actionRequired: false,
-        status: 'unread',
-      },
-    ];
-
-    demoEmails.forEach(emailData => this.addEmail(emailData));
+    // Don't initialize demo data - return empty
   }
 }
 

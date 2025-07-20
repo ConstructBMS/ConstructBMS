@@ -493,9 +493,9 @@ app.listen(PORT, () => {
   console.log(`🚀 Supabase Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🔐 Demo Accounts:`);
-  console.log(`   Super Admin: archerbuildltd@gmail.com / ArcherBuild25`);
-  console.log(`   Admin: admin@archer.com / ArcherBuild25`);
-  console.log(`   Employee: employee@archer.com / ArcherBuild25`);
+      console.log(`   Super Admin: constructbms@gmail.com / ConstructBMS25`);
+    console.log(`   Admin: admin@constructbms.com / ConstructBMS25`);
+    console.log(`   Employee: employee@constructbms.com / ConstructBMS25`);
   console.log(`✨ Features: Real-time, File Storage, Chat, Notifications`);
 });
 

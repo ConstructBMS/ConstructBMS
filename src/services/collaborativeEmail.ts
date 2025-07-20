@@ -1,45 +1,45 @@
 export interface EmailComment {
-  id: string;
-  emailId: string;
   author: string;
   authorEmail: string;
   content: string;
-  timestamp: Date;
+  emailId: string;
+  id: string;
   isInternal: boolean;
   mentions: string[];
+  timestamp: Date;
 }
 
 export interface EmailAssignment {
-  id: string;
-  emailId: string;
-  assignedTo: string;
-  assignedBy: string;
   assignedAt: Date;
+  assignedBy: string;
+  assignedTo: string;
   dueDate?: Date;
+  emailId: string;
+  id: string;
+  notes?: string;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'pending' | 'in-progress' | 'completed' | 'deferred';
-  notes?: string;
 }
 
 export interface SharedResponse {
-  id: string;
-  emailId: string;
-  createdBy: string;
-  content: string;
   approvedBy: string[];
-  status: 'draft' | 'pending-approval' | 'approved' | 'sent';
+  content: string;
   createdAt: Date;
+  createdBy: string;
+  emailId: string;
+  id: string;
+  status: 'draft' | 'pending-approval' | 'approved' | 'sent';
   updatedAt: Date;
   version: number;
 }
 
 export interface TeamMember {
-  id: string;
-  name: string;
   email: string;
-  role: 'admin' | 'manager' | 'member' | 'viewer';
-  permissions: string[];
+  id: string;
   isActive: boolean;
+  name: string;
+  permissions: string[];
+  role: 'admin' | 'manager' | 'member' | 'viewer';
 }
 
 class CollaborativeEmailService {
@@ -293,17 +293,17 @@ class CollaborativeEmailService {
   // Initialize with demo data
   initializeDemoData(): void {
     // Add demo team members
-    this.addTeamMember('Mike Wilson', 'mike.wilson@archer.com', 'admin');
-    this.addTeamMember('Sarah Johnson', 'sarah.johnson@archer.com', 'manager');
-    this.addTeamMember('David Brown', 'david.brown@archer.com', 'member');
-    this.addTeamMember('Emma Davis', 'emma.davis@archer.com', 'member');
-    this.addTeamMember('James Wilson', 'james.wilson@archer.com', 'viewer');
+    this.addTeamMember('Mike Wilson', 'mike.wilson@constructbms.com', 'admin');
+    this.addTeamMember('Sarah Johnson', 'sarah.johnson@constructbms.com', 'manager');
+    this.addTeamMember('David Brown', 'david.brown@constructbms.com', 'member');
+    this.addTeamMember('Emma Davis', 'emma.davis@constructbms.com', 'member');
+    this.addTeamMember('James Wilson', 'james.wilson@constructbms.com', 'viewer');
 
     // Add demo comments
     this.addComment(
       'email_1',
       'Mike Wilson',
-      'mike.wilson@archer.com',
+      'mike.wilson@constructbms.com',
       'This looks urgent - @sarah.johnson can you review this?',
       true
     );
@@ -311,7 +311,7 @@ class CollaborativeEmailService {
     this.addComment(
       'email_1',
       'Sarah Johnson',
-      'sarah.johnson@archer.com',
+      'sarah.johnson@constructbms.com',
       "I'll handle this. Need to check with the client about the deadline extension.",
       true
     );
@@ -319,8 +319,8 @@ class CollaborativeEmailService {
     // Add demo assignments
     this.assignEmail(
       'email_1',
-      'sarah.johnson@archer.com',
-      'mike.wilson@archer.com',
+      'sarah.johnson@constructbms.com',
+      'mike.wilson@constructbms.com',
       'high',
       new Date(Date.now() + 24 * 60 * 60 * 1000), // Due tomorrow
       'Client needs urgent response about deadline extension'
@@ -329,11 +329,11 @@ class CollaborativeEmailService {
     // Add demo shared response
     const response = this.createSharedResponse(
       'email_1',
-      'sarah.johnson@archer.com',
+      'sarah.johnson@constructbms.com',
       "Hi Sarah,\n\nThank you for your email regarding the Project Alpha deadline extension. I understand your concerns about the timeline.\n\nI've reviewed the current progress and we can accommodate a 1-week extension. However, this will require some adjustments to the final delivery schedule.\n\nPlease let me know if this works for you, and I'll update the project timeline accordingly.\n\nBest regards,\nSarah Johnson\nProject Manager"
     );
 
-    this.approveResponse(response.id, 'mike.wilson@archer.com');
+    this.approveResponse(response.id, 'mike.wilson@constructbms.com');
   }
 }
 

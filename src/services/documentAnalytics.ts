@@ -2,80 +2,75 @@ import { supabase } from './supabase';
 import { analytics } from './analytics';
 
 export interface DocumentView {
-  id?: string;
+  // in seconds
   document_id: string;
-  user_id: string;
-  viewed_at: string;
-  time_spent: number; // in seconds
+  id?: string;
   page_url?: string;
   session_id?: string;
+  time_spent: number; 
+  user_id: string;
+  viewed_at: string;
 }
 
 export interface DocumentEdit {
-  id?: string;
   document_id: string;
-  user_id: string;
-  edit_type:
-    | 'create'
-    | 'update'
-    | 'delete'
-    | 'duplicate'
-    | 'archive'
-    | 'restore';
   edit_details: Record<string, any>;
+  edit_type: 'create' | 'update' | 'delete' | 'duplicate' | 'archive' | 'restore';
   edited_at: string;
-  version_before?: number;
+  id?: string;
+  user_id: string;
   version_after?: number;
+  version_before?: number;
 }
 
 export interface DocumentShare {
-  id?: string;
   document_id: string;
-  shared_by: string;
-  shared_with: string;
+  expires_at?: string;
+  id?: string;
   share_type: 'link' | 'email' | 'collaboration';
   shared_at: string;
-  expires_at?: string;
+  shared_by: string;
+  shared_with: string;
 }
 
 export interface DocumentAnalytics {
-  total_documents: number;
-  total_views: number;
-  total_edits: number;
-  total_shares: number;
+    category: string;
+  category_breakdown: Array<{
+    document_count: number;
+    view_count: number;
+}>;
+  most_edited_documents: Array<{
+    document_id: string;
+    edit_count: number;
+    title: string;
+  }>;
   most_viewed_documents: Array<{
     document_id: string;
     title: string;
     view_count: number;
   }>;
-  most_edited_documents: Array<{
-    document_id: string;
-    title: string;
-    edit_count: number;
-  }>;
   recent_activity: Array<{
-    document_id: string;
-    title: string;
     action: string;
-    user_id: string;
+    document_id: string;
     timestamp: string;
-  }>;
-  category_breakdown: Array<{
-    category: string;
-    document_count: number;
-    view_count: number;
-  }>;
-  user_activity: Array<{
+    title: string;
     user_id: string;
-    documents_created: number;
-    documents_edited: number;
-    total_views: number;
   }>;
   time_series_data: Array<{
     date: string;
-    views: number;
     edits: number;
     shares: number;
+    views: number;
+  }>;
+  total_documents: number;
+  total_edits: number;
+  total_shares: number;
+  total_views: number;
+  user_activity: Array<{
+    documents_created: number;
+    documents_edited: number;
+    total_views: number;
+    user_id: string;
   }>;
 }
 
@@ -541,7 +536,7 @@ class DocumentAnalyticsService {
   ) {
     const dateMap = new Map<
       string,
-      { views: number; edits: number; shares: number }
+      { edits: number; shares: number, views: number; }
     >();
 
     // Initialize all dates in range

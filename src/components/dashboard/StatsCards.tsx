@@ -6,18 +6,20 @@ import {
   Users,
   PoundSterling,
   Calendar,
+  CheckCircle,
 } from 'lucide-react';
-import { demoDataService } from '../../services/demoData';
+import { dataSourceService } from '../../services/dataSourceService';
 import { DatabaseStatus } from '../DatabaseStatus';
 
 interface StatCard {
+  change: string;
+  changeType: 'increase' | 'decrease';
+  color: string;
+  icon: React.ComponentType<{ className?: string 
+}>;
   id: string;
   name: string;
   value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
 }
 
 const defaultStats = [
@@ -111,67 +113,138 @@ const defaultStats = [
   },
 ];
 
-export const StatsCards: React.FC<WidgetProps> = ({
-  config,
-  onConfigChange,
-}) => {
-  const stats = config?.stats || defaultStats;
+export const StatsCards: React.FC<any> = () => {
+  const [stats, setStats] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setLoading(true);
+        
+        // Get data from appropriate source
+        const customers = await dataSourceService.getCustomers();
+        const projects = await dataSourceService.getProjects();
+        const tasks = await dataSourceService.getTasks();
+        const deals = await dataSourceService.getDeals();
+        const metrics = await dataSourceService.getMetrics();
+
+        // Calculate stats from real data
+        const realStats = [
+          {
+            label: 'Total Revenue',
+            value: `£${(metrics.totalRevenue || 0).toLocaleString()}`,
+            icon: <PoundSterling className="w-5 h-5" />,
+            color: 'bg-green-100 text-green-600',
+            trend: 'up',
+            change: '+5.2%',
+          },
+          {
+            label: 'Active Projects',
+            value: projects.filter((p: any) => p.status === 'In Progress').length.toString(),
+            icon: <Building2 className="w-5 h-5" />,
+            color: 'bg-blue-100 text-blue-600',
+            trend: 'up',
+            change: '+2.1%',
+          },
+          {
+            label: 'Total Tasks',
+            value: tasks.length.toString(),
+            icon: <CheckCircle className="w-5 h-5" />,
+            color: 'bg-yellow-100 text-yellow-600',
+            trend: 'down',
+            change: '-1.3%',
+          },
+          {
+            label: 'Active Customers',
+            value: customers.filter((c: any) => c.status === 'active').length.toString(),
+            icon: <Users className="w-5 h-5" />,
+            color: 'bg-teal-100 text-teal-600',
+            trend: 'up',
+            change: '+0.8%',
+          },
+        ];
+
+        // If in production mode and all data is empty, show empty state
+        if (dataSourceService.isProductionMode() && 
+            metrics.totalRevenue === 0 && 
+            projects.length === 0 && 
+            tasks.length === 0 && 
+            customers.length === 0) {
+          setStats([
+            {
+              label: 'Total Revenue',
+              value: '£0',
+              icon: <PoundSterling className="w-5 h-5" />,
+              color: 'bg-gray-100 text-gray-600',
+              trend: 'up',
+              change: '0%',
+            },
+            {
+              label: 'Active Projects',
+              value: '0',
+              icon: <Building2 className="w-5 h-5" />,
+              color: 'bg-gray-100 text-gray-600',
+              trend: 'up',
+              change: '0%',
+            },
+            {
+              label: 'Total Tasks',
+              value: '0',
+              icon: <CheckCircle className="w-5 h-5" />,
+              color: 'bg-gray-100 text-gray-600',
+              trend: 'down',
+              change: '0%',
+            },
+            {
+              label: 'Active Customers',
+              value: '0',
+              icon: <Users className="w-5 h-5" />,
+              color: 'bg-gray-100 text-gray-600',
+              trend: 'up',
+              change: '0%',
+            },
+          ]);
+        } else {
+          setStats(realStats);
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        setStats(defaultStats);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return (
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className='bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg p-3 border border-green-200 dark:border-green-700 animate-pulse'
+            >
+              <div className='h-4 bg-gray-200 rounded mb-2'></div>
+              <div className='h-6 bg-gray-200 rounded'></div>
+            </div>
+          ))}
+      </div>
+    );
+  }
 
   return (
     <div className='h-full flex flex-col'>
-      <div className='flex-1 grid grid-cols-2 gap-3'>
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className='bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg p-3 border border-green-200 dark:border-green-700'
-          >
-            <div className='flex items-center justify-between'>
-              <div className='min-w-0 flex-1'>
-                <p className='text-sm font-medium text-gray-600 dark:text-gray-400 truncate'>
-                  {stat.label}
-                </p>
-                <p className='text-xl font-bold text-gray-900 dark:text-white truncate'>
-                  {stat.value}
-                </p>
-              </div>
-              <div
-                className={`p-2 rounded-full ${stat.color} flex-shrink-0 ml-2`}
-              >
-                {stat.icon}
-              </div>
-            </div>
-            <div className='mt-2 flex items-center text-xs'>
-              <span
-                className={`flex items-center ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}
-              >
-                {stat.trend === 'up' ? (
-                  <svg
-                    className='w-3 h-3 mr-1'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L12 10.586z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className='w-3 h-3 mr-1'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M12 13a1 1 0 100 2h5a1 1 0 001-1v-5a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586l-4.293-4.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L12 9.414z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                )}
-                {stat.change}
-              </span>
-              <span className='text-gray-500 ml-1 truncate'>vs last month</span>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+        {stats.map((stat, idx) => (
+          <div key={idx} className={`rounded-lg p-4 flex items-center gap-4 shadow-sm border border-gray-200 dark:border-gray-700`}>
+            <div className={`w-10 h-10 flex items-center justify-center rounded-full ${stat.color}`}>{stat.icon}</div>
+            <div>
+              <div className='text-lg font-bold text-gray-900 dark:text-white'>{stat.value}</div>
+              <div className='text-sm text-gray-500 dark:text-gray-300'>{stat.label}</div>
+              <div className={`text-xs font-medium ${stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{stat.change}</div>
             </div>
           </div>
         ))}

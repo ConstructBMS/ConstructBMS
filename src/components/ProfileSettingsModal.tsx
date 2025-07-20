@@ -13,15 +13,19 @@ import {
   EyeOff,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { validatePassword } from '../utils/devHelpers';
+import { persistentStorage } from '../services/persistentStorage';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onNavigateToSettings?: () => void;
 }
 
 const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   isOpen,
   onClose,
+  onNavigateToSettings,
 }) => {
   const { user, updateUserProfile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,7 +46,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   });
 
   const [avatar, setAvatar] = useState<string>(
-    user?.avatar || user?.avatarUrl || ''
+    user?.avatarUrl || user?.avatar || ''
   );
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [passwordData, setPasswordData] = useState({
@@ -50,6 +54,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
     newPassword: '',
     confirmPassword: '',
   });
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>(
     'idle'
   );
@@ -71,9 +76,34 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
         emergencyContact: user.emergencyContact || '',
         emergencyPhone: user.emergencyPhone || '',
       });
-      setAvatar(user.avatar || user.avatarUrl || '');
+      setAvatar(user.avatarUrl || user.avatar || '');
     }
   }, [user]);
+
+  // Load profile data from persistent storage on mount
+  useEffect(() => {
+    const loadProfileData = async () => {
+      try {
+        const savedProfileData = await persistentStorage.getProfileData();
+        const savedAvatar = await persistentStorage.getAvatar();
+        
+        if (savedProfileData) {
+          setFormData(prev => ({
+            ...prev,
+            ...savedProfileData
+          }));
+        }
+        
+        if (savedAvatar) {
+          setAvatar(savedAvatar);
+        }
+      } catch (error) {
+        console.error('Error loading profile data from storage:', error);
+      }
+    };
+
+    loadProfileData();
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -81,6 +111,15 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
 
   const handlePasswordChange = (field: string, value: string) => {
     setPasswordData(prev => ({ ...prev, [field]: value }));
+    
+    // Validate new password when it changes
+    if (field === 'newPassword') {
+      const validation = validatePassword(value);
+      setPasswordErrors(validation.errors);
+    } else {
+      // Clear errors when other fields change
+      setPasswordErrors([]);
+    }
   };
 
   const handleAvatarClick = () => {
@@ -106,12 +145,42 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
       // Prepare profile data to save
       const profileData = {
         ...formData,
-        avatar,
+        avatarUrl: avatar,
         updatedAt: new Date().toISOString(),
       };
 
       // Update user profile in context
       await updateUserProfile(profileData);
+
+      // Handle password change if form is open and passwords are filled
+      if (showPasswordForm && passwordData.newPassword && passwordData.confirmPassword) {
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+          alert('New passwords do not match');
+          setSaveStatus('idle');
+          return;
+        }
+
+        if (passwordErrors.length > 0) {
+          alert('Please fix password validation errors');
+          setSaveStatus('idle');
+          return;
+        }
+
+        // In a real app, you would call an API to change the password
+        console.log('Password change requested:', {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        });
+
+        // Clear password form
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+        setShowPasswordForm(false);
+        setPasswordErrors([]);
+      }
 
       setSaveStatus('saved');
       setTimeout(() => {
@@ -150,12 +219,26 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
           <h2 className='text-xl font-bold text-gray-900 dark:text-white'>
             Profile Settings
           </h2>
-          <button
-            onClick={onClose}
-            className='p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
-          >
-            <X className='h-5 w-5' />
-          </button>
+          <div className='flex items-center space-x-2'>
+            {onNavigateToSettings && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onNavigateToSettings();
+                }}
+                className='px-3 py-1 text-sm bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
+                title='Open full profile settings in General Settings'
+              >
+                Open in Settings
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className='p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+            >
+              <X className='h-5 w-5' />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -165,7 +248,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
             <div className='relative inline-block'>
               <div
                 onClick={handleAvatarClick}
-                className='relative w-24 h-24 rounded-full bg-archer-neon flex items-center justify-center cursor-pointer hover:bg-archer-black hover:text-white transition-colors group'
+                className='relative w-24 h-24 rounded-full bg-constructbms-blue flex items-center justify-center cursor-pointer hover:bg-constructbms-black hover:text-white transition-colors group'
               >
                 {avatar ? (
                   <img
@@ -184,7 +267,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
               </div>
               <button
                 onClick={handleAvatarClick}
-                className='absolute -bottom-1 -right-1 p-1.5 bg-archer-neon text-black rounded-full hover:bg-archer-black hover:text-white transition-colors'
+                className='absolute -bottom-1 -right-1 p-1.5 bg-constructbms-blue text-black rounded-full hover:bg-constructbms-black hover:text-white transition-colors'
               >
                 <Upload className='h-3 w-3' />
               </button>
@@ -217,7 +300,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   type='text'
                   value={formData.firstName}
                   onChange={e => handleInputChange('firstName', e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
               <div>
@@ -228,7 +311,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   type='text'
                   value={formData.lastName}
                   onChange={e => handleInputChange('lastName', e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
             </div>
@@ -243,7 +326,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   type='email'
                   value={formData.email}
                   onChange={e => handleInputChange('email', e.target.value)}
-                  className='w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
             </div>
@@ -258,7 +341,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   type='tel'
                   value={formData.phone}
                   onChange={e => handleInputChange('phone', e.target.value)}
-                  className='w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
             </div>
@@ -271,7 +354,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                 type='text'
                 value={formData.jobTitle}
                 onChange={e => handleInputChange('jobTitle', e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
 
@@ -283,7 +366,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                 type='text'
                 value={formData.department}
                 onChange={e => handleInputChange('department', e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
 
@@ -295,7 +378,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                 value={formData.bio}
                 onChange={e => handleInputChange('bio', e.target.value)}
                 rows={3}
-                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 placeholder='Tell us about yourself...'
               />
             </div>
@@ -331,7 +414,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                     onChange={e =>
                       handlePasswordChange('currentPassword', e.target.value)
                     }
-                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
                 <div>
@@ -344,8 +427,20 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                     onChange={e =>
                       handlePasswordChange('newPassword', e.target.value)
                     }
-                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent ${
+                      passwordErrors.length > 0 ? 'border-red-300 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                    placeholder='Enter new password (min 8 characters with uppercase, lowercase, number, and special character)'
                   />
+                  {passwordErrors.length > 0 && (
+                    <div className='mt-2 text-sm text-red-600 dark:text-red-400'>
+                      <ul className='list-disc list-inside space-y-1'>
+                        {passwordErrors.map((error, index) => (
+                          <li key={index}>{error}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
@@ -357,7 +452,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                     onChange={e =>
                       handlePasswordChange('confirmPassword', e.target.value)
                     }
-                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
               </div>
@@ -382,7 +477,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
                   ? 'bg-gray-400 text-white cursor-not-allowed'
                   : saveStatus === 'saved'
                     ? 'bg-green-500 text-white'
-                    : 'bg-archer-neon text-black hover:bg-archer-black hover:text-white'
+                    : 'bg-constructbms-blue text-black hover:bg-constructbms-black hover:text-white'
               }`}
             >
               {saveStatus === 'saving' ? (

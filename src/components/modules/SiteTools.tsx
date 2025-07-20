@@ -37,11 +37,11 @@ import {
 
 // Tool Categories
 interface ToolCategory {
-  id: string;
-  name: string;
+  color: string;
   description: string;
   icon: React.ReactNode;
-  color: string;
+  id: string;
+  name: string;
 }
 
 const toolCategories: ToolCategory[] = [
@@ -91,17 +91,17 @@ const toolCategories: ToolCategory[] = [
 
 // Individual Tools
 interface Tool {
-  id: string;
-  name: string;
-  description: string;
   category: string;
-  icon: React.ReactNode;
   complexity: 'Basic' | 'Intermediate' | 'Advanced';
+  description: string;
   estimatedTime: string;
   features: string[];
-  usageCount: number;
-  rating: number;
+  icon: React.ReactNode;
+  id: string;
   isActive: boolean;
+  name: string;
+  rating: number;
+  usageCount: number;
 }
 
 const availableTools: Tool[] = [
@@ -446,10 +446,10 @@ const availableTools: Tool[] = [
 
 // Project Interface
 interface Project {
+  assignedTools: string[];
   id: string;
   name: string;
   status: 'Active' | 'Planning' | 'Completed' | 'On Hold';
-  assignedTools: string[];
 }
 
 const demoProjects: Project[] = [
@@ -556,13 +556,13 @@ const SiteTools: React.FC = () => {
           <div className='flex items-center gap-3'>
             <div className='text-right'>
               <div className='text-sm text-gray-500'>Active Projects</div>
-              <div className='text-2xl font-bold text-archer-neon'>
+              <div className='text-2xl font-bold text-constructbms-blue'>
                 {projects.filter(p => p.status === 'Active').length}
               </div>
             </div>
             <div className='text-right'>
               <div className='text-sm text-gray-500'>Assigned Tools</div>
-              <div className='text-2xl font-bold text-archer-neon'>
+              <div className='text-2xl font-bold text-constructbms-blue'>
                 {projects.reduce(
                   (total, project) => total + project.assignedTools.length,
                   0
@@ -582,14 +582,14 @@ const SiteTools: React.FC = () => {
                 placeholder='Search tools...'
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
           </div>
           <select
             value={complexityFilter}
             onChange={e => setComplexityFilter(e.target.value)}
-            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
           >
             <option value='all'>All Complexity</option>
             <option value='Basic'>Basic</option>
@@ -607,12 +607,12 @@ const SiteTools: React.FC = () => {
             onClick={() => setSelectedCategory('all')}
             className={`p-4 rounded-lg border-2 transition-all ${
               selectedCategory === 'all'
-                ? 'border-archer-neon bg-archer-neon bg-opacity-10'
+                ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
             <div className='text-center'>
-              <HardHat className='h-8 w-8 text-archer-neon mx-auto mb-2' />
+              <HardHat className='h-8 w-8 text-constructbms-blue mx-auto mb-2' />
               <div className='font-medium text-sm'>All Tools</div>
               <div className='text-xs text-gray-500'>
                 {availableTools.length} tools
@@ -625,7 +625,7 @@ const SiteTools: React.FC = () => {
               onClick={() => setSelectedCategory(category.id)}
               className={`p-4 rounded-lg border-2 transition-all ${
                 selectedCategory === category.id
-                  ? 'border-archer-neon bg-archer-neon bg-opacity-10'
+                  ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
@@ -669,7 +669,7 @@ const SiteTools: React.FC = () => {
             >
               <div className='flex items-start justify-between mb-4'>
                 <div className='flex items-center gap-3'>
-                  <div className='text-archer-neon'>{tool.icon}</div>
+                  <div className='text-constructbms-blue'>{tool.icon}</div>
                   <div>
                     <h3 className='font-semibold text-gray-900'>{tool.name}</h3>
                     <span
@@ -722,7 +722,10 @@ const SiteTools: React.FC = () => {
               </div>
 
               <div className='mt-4 pt-4 border-t border-gray-100'>
-                <button className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-archer-neon text-black rounded-lg font-medium hover:bg-archer-black hover:text-white transition-colors'>
+                <button 
+                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg font-medium hover:bg-constructbms-black hover:text-white transition-colors'
+                  title='Use Tool'
+                >
                   <Play className='h-4 w-4' />
                   Use Tool
                 </button>
@@ -806,7 +809,7 @@ const SiteTools: React.FC = () => {
                   onChange={e =>
                     setToolConfig({ ...toolConfig, name: e.target.value })
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
 
@@ -823,7 +826,7 @@ const SiteTools: React.FC = () => {
                     })
                   }
                   rows={3}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
 
@@ -847,12 +850,14 @@ const SiteTools: React.FC = () => {
               <button
                 onClick={() => setShowToolConfig(false)}
                 className='px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200'
+                title='Cancel'
               >
                 Cancel
               </button>
               <button
                 onClick={() => setShowProjectAssignment(true)}
-                className='px-4 py-2 rounded-lg bg-archer-neon text-black font-semibold hover:bg-archer-black hover:text-white'
+                className='px-4 py-2 rounded-lg bg-constructbms-blue text-black font-semibold hover:bg-constructbms-black hover:text-white'
+                title='Assign to Project'
               >
                 Assign to Project
               </button>
@@ -877,7 +882,7 @@ const SiteTools: React.FC = () => {
                 <select
                   value={selectedProject}
                   onChange={e => setSelectedProject(e.target.value)}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 >
                   <option value=''>Choose a project...</option>
                   {projects.map(project => (
@@ -916,13 +921,15 @@ const SiteTools: React.FC = () => {
               <button
                 onClick={() => setShowProjectAssignment(false)}
                 className='px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200'
+                title='Cancel'
               >
                 Cancel
               </button>
               <button
                 onClick={handleAssignTool}
                 disabled={!selectedProject}
-                className='px-4 py-2 rounded-lg bg-archer-neon text-black font-semibold hover:bg-archer-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                className='px-4 py-2 rounded-lg bg-constructbms-blue text-black font-semibold hover:bg-constructbms-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                title={selectedProject ? 'Assign Tool' : 'Select a project first'}
               >
                 Assign Tool
               </button>

@@ -28,19 +28,23 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import DocumentBuilder from './DocumentBuilder';
-import { Document, documentService } from '../../services/documentService';
+import DocumentWizard from './DocumentWizard';
+import { documentService } from '../../services/documentService';
+import type { Document } from '../../services/documentService';
 import { documentAnalytics } from '../../services/documentAnalytics';
 import { apiIntegration } from '../../services/apiIntegration';
+import { cloudStorageService } from '../../services/cloudStorageService';
 import { aiService } from '../../services/aiService';
 import { workflowService } from '../../services/workflowService';
 import { useNavigate, useLocation } from 'react-router-dom';
+import CloudStorageIntegration from './CloudStorageIntegration';
 
 interface DocumentCategory {
-  id: string;
-  name: string;
+  color: string;
   description: string;
   icon: string;
-  color: string;
+  id: string;
+  name: string;
 }
 
 interface DocumentHubProps {
@@ -92,6 +96,11 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
     role: string;
   }>({ canCreateCategories: false, role: 'none' });
 
+  // Cloud storage integration state
+  const [cloudStorageSettings, setCloudStorageSettings] = useState<any>(null);
+  const [connectedProviders, setConnectedProviders] = useState<any[]>([]);
+  const [showCloudStorageModal, setShowCloudStorageModal] = useState(false);
+
   // AI Features state
   const [showAIModal, setShowAIModal] = useState(false);
   const [selectedDocumentForAI, setSelectedDocumentForAI] =
@@ -108,6 +117,7 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
     useState<Document | null>(null);
   const [availableWorkflows, setAvailableWorkflows] = useState<any[]>([]);
   const [documentWorkflow, setDocumentWorkflow] = useState<any>(null);
+  const [showWizard, setShowWizard] = useState(false);
 
   // Mobile-specific state
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -239,10 +249,24 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
       }
     };
 
+    const loadCloudStorageData = async () => {
+      try {
+        const [settings, providers] = await Promise.all([
+          cloudStorageService.getSyncSettings(),
+          cloudStorageService.getConnectedProviders()
+        ]);
+        setCloudStorageSettings(settings);
+        setConnectedProviders(providers);
+      } catch (error) {
+        console.error('Error loading cloud storage data:', error);
+      }
+    };
+
     loadUserPermissions();
     loadCategories();
     loadConnectedIntegrations();
     loadAvailableWorkflows();
+    loadCloudStorageData();
   }, []);
 
   // Load documents from database
@@ -422,6 +446,7 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
 
   const handleDocumentSaved = async (savedDocument: Document) => {
     console.log('Document saved:', savedDocument);
+    
     // Update documents locally
     const updatedDocuments = documents.map(doc =>
       doc.id === savedDocument.id ? savedDocument : doc
@@ -431,6 +456,26 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
     }
     setDocuments(updatedDocuments);
     setFilteredDocuments(updatedDocuments);
+
+    // Sync to cloud storage if connected and enabled
+    if (cloudStorageSettings?.defaultStorage !== 'local' && connectedProviders.length > 0) {
+      try {
+        const defaultProvider = cloudStorageSettings.defaultStorage;
+        const result = await cloudStorageService.uploadDocument(
+          defaultProvider,
+          savedDocument
+        );
+        
+        if (result.success) {
+          console.log(`Document synced to ${defaultProvider}:`, result.message);
+        } else {
+          console.warn(`Failed to sync document to ${defaultProvider}:`, result.message);
+        }
+      } catch (error) {
+        console.error('Error syncing document to cloud storage:', error);
+      }
+    }
+
     setShowDocumentBuilder(false);
   };
 
@@ -542,7 +587,7 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
             selectedDocumentForAI.id,
             selectedDocumentForAI.content || ''
           );
-          result = `Analysis:\n• Readability: ${analysis.readability_score}/100\n• Tone: ${analysis.tone}\n• Complexity: ${analysis.complexity}\n• Reading Time: ${analysis.estimated_reading_time} minutes\n• Key Themes: ${analysis.key_themes.join(', ')}`;
+          result = `Analysis:\n• Readability: ${analysis['readability_score']}/100\n• Tone: ${analysis['tone']}\n• Complexity: ${analysis['complexity']}\n• Reading Time: ${analysis['estimated_reading_time']} minutes\n• Key Themes: ${analysis['key_themes'].join(', ')}`;
           break;
         case 'improve':
           const improved = await aiService.improveContent(
@@ -617,7 +662,7 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
   if (showDocumentBuilder) {
     return (
       <DocumentBuilder
-        document={selectedDocument || undefined}
+        {...(selectedDocument && { document: selectedDocument })}
         onSave={handleDocumentSaved}
         onClose={handleCloseDocumentBuilder}
         mode={documentBuilderMode}
@@ -648,9 +693,25 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
               <p className='text-sm lg:text-base text-gray-600 dark:text-gray-400'>
                 Manage and create document templates
               </p>
+              {cloudStorageSettings?.defaultStorage !== 'local' && connectedProviders.length > 0 && (
+                <div className='flex items-center gap-2 mt-1'>
+                  <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                  <span className='text-xs text-green-600 dark:text-green-400'>
+                    Syncing to {cloudStorageSettings.defaultStorage.replace('_', ' ')}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <div className='flex items-center gap-2'>
+            <button
+              onClick={() => setShowWizard(true)}
+              className='bg-constructbms-blue hover:bg-constructbms-black text-black hover:text-white px-3 lg:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm lg:text-base'
+            >
+              <Sparkles className='h-4 w-4 lg:h-5 lg:w-5' />
+              <span className='hidden sm:inline'>Document Wizard</span>
+              <span className='sm:hidden'>Wizard</span>
+            </button>
             <button
               onClick={() => handleCreateDocument('create')}
               className='bg-green-500 hover:bg-green-600 text-white px-3 lg:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm lg:text-base'
@@ -1564,6 +1625,23 @@ const DocumentHub: React.FC<DocumentHubProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Cloud Storage Integration Modal */}
+      <CloudStorageIntegration
+        isOpen={showCloudStorageModal}
+        onClose={() => setShowCloudStorageModal(false)}
+      />
+
+      {/* Document Wizard */}
+      {showWizard && (
+        <DocumentWizard
+          onClose={() => setShowWizard(false)}
+          onComplete={(document) => {
+            setShowWizard(false);
+            handleDocumentSaved(document);
+          }}
+        />
       )}
     </div>
   );

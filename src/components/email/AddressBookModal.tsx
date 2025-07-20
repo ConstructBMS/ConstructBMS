@@ -19,27 +19,27 @@ import {
   Globe,
   Mail as MailIcon,
 } from 'lucide-react';
-import { Client } from '../../services/demoData';
-import { Customer, Company } from '../../types';
+import type { Client } from '../../services/demoData';
+import type { Customer, Company } from '../../types';
 
 interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
   company?: string;
-  position?: string;
-  type: 'app-contact' | 'email-contact';
-  source: 'crm' | 'email' | 'manual';
+  email: string;
+  id: string;
   lastContact?: string;
+  name: string;
+  phone?: string;
+  position?: string;
+  source: 'crm' | 'email' | 'manual';
   tags?: string[];
+  type: 'app-contact' | 'email-contact';
 }
 
 interface AddressBookModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectContact: (contact: Contact) => void;
   onInsertToField: (email: string, field: 'to' | 'cc' | 'bcc') => void;
+  onSelectContact: (contact: Contact) => void;
 }
 
 const AddressBookModal: React.FC<AddressBookModalProps> = ({
@@ -97,64 +97,8 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
         console.log('No CRM contacts found');
       }
 
-      // Load email contacts (from email history)
-      const emailContacts: Contact[] = [
-        {
-          id: 'email-1',
-          name: 'John Smith',
-          email: 'john.smith@example.com',
-          company: 'Tech Solutions Ltd',
-          position: 'Project Manager',
-          type: 'email-contact',
-          source: 'email',
-          lastContact: '2 days ago',
-          tags: ['Frequent Contact'],
-        },
-        {
-          id: 'email-2',
-          name: 'Sarah Johnson',
-          email: 'sarah.johnson@construction.co.uk',
-          company: 'Construction Partners',
-          position: 'Director',
-          type: 'email-contact',
-          source: 'email',
-          lastContact: '1 week ago',
-          tags: ['Client'],
-        },
-        {
-          id: 'email-3',
-          name: 'Mike Chen',
-          email: 'mike.chen@architects.com',
-          company: 'Urban Architects',
-          position: 'Senior Architect',
-          type: 'email-contact',
-          source: 'email',
-          lastContact: '3 days ago',
-          tags: ['Partner'],
-        },
-        {
-          id: 'email-4',
-          name: 'Lisa Wang',
-          email: 'lisa.wang@suppliers.co.uk',
-          company: 'Building Supplies Ltd',
-          position: 'Sales Manager',
-          type: 'email-contact',
-          source: 'email',
-          lastContact: '1 day ago',
-          tags: ['Supplier'],
-        },
-        {
-          id: 'email-5',
-          name: 'David Rodriguez',
-          email: 'david.rodriguez@contractors.com',
-          company: 'Rodriguez Contractors',
-          position: 'Owner',
-          type: 'email-contact',
-          source: 'email',
-          lastContact: '5 days ago',
-          tags: ['Contractor'],
-        },
-      ];
+      // Load email contacts (from email history) - empty for now
+      const emailContacts: Contact[] = [];
 
       allContacts.push(...emailContacts);
       setContacts(allContacts);
@@ -296,7 +240,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
           <div className='flex items-center space-x-3'>
-            <Users className='w-6 h-6 text-archer-neon' />
+            <Users className='w-6 h-6 text-constructbms-blue' />
             <h2 className='text-xl font-semibold'>Address Book</h2>
             <span className='text-sm text-gray-500'>
               ({filteredContacts.length} contacts)
@@ -323,12 +267,12 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     placeholder='Search contacts...'
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   />
                 </div>
                 <button
                   onClick={() => setShowAddContact(true)}
-                  className='px-4 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors flex items-center space-x-2'
+                  className='px-4 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors flex items-center space-x-2'
                 >
                   <Plus className='w-4 h-4' />
                   <span>Add Contact</span>
@@ -342,7 +286,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onClick={() => setSelectedCategory('all')}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === 'all'
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -352,7 +296,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onClick={() => setSelectedCategory('app-contacts')}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === 'app-contacts'
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -362,7 +306,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onClick={() => setSelectedCategory('email-contacts')}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === 'email-contacts'
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -463,7 +407,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
               <>
                 <div className='p-6 border-b border-gray-200'>
                   <div className='flex items-center space-x-3 mb-4'>
-                    <div className='w-12 h-12 bg-archer-neon rounded-full flex items-center justify-center'>
+                    <div className='w-12 h-12 bg-constructbms-blue rounded-full flex items-center justify-center'>
                       <User className='w-6 h-6 text-black' />
                     </div>
                     <div>
@@ -529,7 +473,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                   <div className='space-y-3'>
                     <button
                       onClick={() => handleSendEmail()}
-                      className='w-full px-4 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors flex items-center justify-center space-x-2'
+                      className='w-full px-4 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors flex items-center justify-center space-x-2'
                     >
                       <Mail className='w-4 h-4' />
                       <span>Send Email</span>
@@ -602,7 +546,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onChange={e =>
                       setNewContact({ ...newContact, name: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Full name'
                   />
                 </div>
@@ -617,7 +561,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onChange={e =>
                       setNewContact({ ...newContact, email: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='email@example.com'
                   />
                 </div>
@@ -632,7 +576,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onChange={e =>
                       setNewContact({ ...newContact, phone: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Phone number'
                   />
                 </div>
@@ -647,7 +591,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onChange={e =>
                       setNewContact({ ...newContact, company: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Company name'
                   />
                 </div>
@@ -662,7 +606,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                     onChange={e =>
                       setNewContact({ ...newContact, position: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Job title'
                   />
                 </div>
@@ -678,7 +622,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
                 <button
                   onClick={handleAddContact}
                   disabled={!newContact.name || !newContact.email}
-                  className='px-4 py-2 text-sm bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='px-4 py-2 text-sm bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   Add Contact
                 </button>

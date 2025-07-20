@@ -28,37 +28,31 @@ import {
 } from 'lucide-react';
 
 interface Document {
+  approvalHistory: ApprovalStep[];
+  assignedTo: string[];
+  createdAt: string;
+  createdBy: string;
+  description: string;
+  expiryDate?: string;
+  fileSize: string;
   id: string;
+  isConfidential: boolean;
+  lastModified: string;
+  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  reviewers: string[];
+  status: 'Draft' | 'Pending Review' | 'Under Review' | 'Approved' | 'Rejected' | 'Archived';
+  tags: string[];
   title: string;
   type: string;
   version: string;
-  status:
-    | 'Draft'
-    | 'Pending Review'
-    | 'Under Review'
-    | 'Approved'
-    | 'Rejected'
-    | 'Archived';
-  priority: 'Low' | 'Medium' | 'High' | 'Critical';
-  createdBy: string;
-  createdAt: string;
-  lastModified: string;
-  assignedTo: string[];
-  reviewers: string[];
-  tags: string[];
-  description: string;
-  fileSize: string;
-  isConfidential: boolean;
-  expiryDate?: string;
-  approvalHistory: ApprovalStep[];
 }
 
 interface ApprovalStep {
+  action: 'Approved' | 'Rejected' | 'Requested Changes';
+  comments: string;
+  date: string;
   id: string;
   reviewer: string;
-  action: 'Approved' | 'Rejected' | 'Requested Changes';
-  date: string;
-  comments: string;
 }
 
 const DocumentControlCentre: React.FC = () => {
@@ -215,8 +209,8 @@ const DocumentControlCentre: React.FC = () => {
               {
                 id: Date.now().toString(),
                 reviewer: 'Current User',
-                action: 'Approved',
-                date: new Date().toISOString().split('T')[0],
+                action: 'Approved' as const,
+                date: new Date().toISOString().split('T')[0] || new Date().toISOString().slice(0, 10),
                 comments: 'Document approved',
               },
             ],
@@ -239,8 +233,8 @@ const DocumentControlCentre: React.FC = () => {
               {
                 id: Date.now().toString(),
                 reviewer: 'Current User',
-                action: 'Rejected',
-                date: new Date().toISOString().split('T')[0],
+                action: 'Rejected' as const,
+                date: new Date().toISOString().split('T')[0] || new Date().toISOString().slice(0, 10),
                 comments: 'Document rejected',
               },
             ],
@@ -274,7 +268,7 @@ const DocumentControlCentre: React.FC = () => {
         </div>
         <button
           onClick={() => setShowUploadModal(true)}
-          className='flex items-center px-4 py-2 bg-archer-neon text-black rounded-lg font-medium hover:bg-archer-black hover:text-white transition-colors'
+          className='flex items-center px-4 py-2 bg-constructbms-blue text-black rounded-lg font-medium hover:bg-constructbms-black hover:text-white transition-colors'
         >
           <Plus className='h-4 w-4 mr-2' />
           Upload Document
@@ -328,13 +322,13 @@ const DocumentControlCentre: React.FC = () => {
               placeholder='Search documents...'
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
             />
           </div>
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
           >
             <option value='all'>All Status</option>
             <option value='Draft'>Draft</option>
@@ -347,7 +341,7 @@ const DocumentControlCentre: React.FC = () => {
           <select
             value={filterPriority}
             onChange={e => setFilterPriority(e.target.value)}
-            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
           >
             <option value='all'>All Priorities</option>
             {priorities.map(priority => (
@@ -359,7 +353,7 @@ const DocumentControlCentre: React.FC = () => {
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
-            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
           >
             <option value='all'>All Types</option>
             {documentTypes.map(type => (
@@ -498,6 +492,7 @@ const DocumentControlCentre: React.FC = () => {
               <button
                 onClick={() => setShowDocumentModal(false)}
                 className='text-gray-400 hover:text-gray-600'
+                title='Close'
               >
                 <XCircle className='h-6 w-6' />
               </button>
@@ -620,15 +615,24 @@ const DocumentControlCentre: React.FC = () => {
             </div>
 
             <div className='flex gap-2'>
-              <button className='px-4 py-2 rounded-lg bg-archer-neon text-black font-semibold'>
+              <button 
+                className='px-4 py-2 rounded-lg bg-constructbms-blue text-black font-semibold'
+                title='Download Document'
+              >
                 <Download className='h-4 w-4 mr-2 inline' />
                 Download
               </button>
-              <button className='px-4 py-2 rounded-lg bg-gray-100'>
+              <button 
+                className='px-4 py-2 rounded-lg bg-gray-100'
+                title='Edit Document'
+              >
                 <Edit className='h-4 w-4 mr-2 inline' />
                 Edit
               </button>
-              <button className='px-4 py-2 rounded-lg bg-gray-100'>
+              <button 
+                className='px-4 py-2 rounded-lg bg-gray-100'
+                title='View Version History'
+              >
                 <History className='h-4 w-4 mr-2 inline' />
                 Version History
               </button>
@@ -646,9 +650,9 @@ const DocumentControlCentre: React.FC = () => {
               <input
                 type='text'
                 placeholder='Document Title'
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
-              <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+              <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                 <option value=''>Select Document Type</option>
                 {documentTypes.map(type => (
                   <option key={type} value={type}>
@@ -656,7 +660,7 @@ const DocumentControlCentre: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'>
+              <select className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'>
                 <option value=''>Select Priority</option>
                 {priorities.map(priority => (
                   <option key={priority} value={priority}>
@@ -667,7 +671,7 @@ const DocumentControlCentre: React.FC = () => {
               <textarea
                 placeholder='Description'
                 rows={3}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
               <div className='border-2 border-dashed border-gray-300 rounded-lg p-4 text-center'>
                 <Upload className='h-8 w-8 text-gray-400 mx-auto mb-2' />
@@ -686,7 +690,7 @@ const DocumentControlCentre: React.FC = () => {
               >
                 Cancel
               </button>
-              <button className='px-4 py-2 rounded-lg bg-archer-neon text-black font-semibold hover:bg-archer-black hover:text-white'>
+              <button className='px-4 py-2 rounded-lg bg-constructbms-blue text-black font-semibold hover:bg-constructbms-black hover:text-white'>
                 Upload
               </button>
             </div>

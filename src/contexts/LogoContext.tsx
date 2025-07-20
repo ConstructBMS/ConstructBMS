@@ -3,28 +3,29 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode,
 } from 'react';
-import { persistentStorage, LogoSettings } from '../services/persistentStorage';
+import type { ReactNode } from 'react';
+import { persistentStorage } from '../services/persistentStorage';
+import type { LogoSettings } from '../services/persistentStorage';
 import { useAuth } from './AuthContext';
 
 interface LogoContextType {
+  canEditLogos: boolean;
   logoSettings: LogoSettings;
+  resetLogos: () => void;
   updateMainLogo: (settings: Partial<LogoSettings['mainLogo']>) => void;
   updateSidebarLogo: (settings: Partial<LogoSettings['sidebarLogo']>) => void;
-  resetLogos: () => void;
-  canEditLogos: boolean;
 }
 
 const defaultLogoSettings: LogoSettings = {
   mainLogo: {
     type: 'text',
-    text: 'ArcherBMS',
+    text: '',
     imageUrl: null,
   },
   sidebarLogo: {
     type: 'icon',
-    icon: 'home',
+    icon: 'hard-hat',
     imageUrl: null,
   },
 };

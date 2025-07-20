@@ -11,13 +11,13 @@ import {
   Shield,
   Zap,
 } from 'lucide-react';
-import { EmailProvider, EmailAccount } from '../../types/email';
+import type { EmailProvider, EmailAccount } from '../../types/email';
 import emailIntegrationService from '../../services/emailIntegrationService';
 
 interface SimpleEmailSetupProps {
   isOpen: boolean;
-  onClose: () => void;
   onAccountAdded: (account: EmailAccount) => void;
+  onClose: () => void;
 }
 
 const SimpleEmailSetup: React.FC<SimpleEmailSetupProps> = ({

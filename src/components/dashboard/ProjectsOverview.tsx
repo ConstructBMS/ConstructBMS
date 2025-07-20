@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Building2, Clock } from 'lucide-react';
-import { demoDataService } from '../../services/demoData';
+import { dataSourceService } from '../../services/dataSourceService';
 
 interface ProjectDisplay {
-  id: number;
-  name: string;
+  budget: string;
   client: string;
+  deadline: string;
+  id: number;
+  manager?: string;
+  name: string;
   progress: number;
   status: string;
   statusColor: string;
-  deadline: string;
-  budget: string;
-  manager?: string;
 }
 
 interface ProjectsOverviewProps {
-  onNavigateToModule?: (module: string) => void;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }
 
 const ProjectsOverview: React.FC<ProjectsOverviewProps> = ({
@@ -25,11 +25,11 @@ const ProjectsOverview: React.FC<ProjectsOverviewProps> = ({
 
   const loadProjects = useCallback(async () => {
     try {
-      const allProjects = await demoDataService.getProjects();
+      const allProjects = await dataSourceService.getProjects();
       const activeProjects = allProjects
-        .filter(project => project.status !== 'Completed')
+        .filter((project: any) => project.status !== 'Completed')
         .slice(0, 4) // Show only first 4 active projects
-        .map(project => ({
+        .map((project: any) => ({
           id: project.id,
           name: project.name,
           client: project.client,
@@ -78,8 +78,7 @@ const ProjectsOverview: React.FC<ProjectsOverviewProps> = ({
 
   const handleProjectClick = (project: ProjectDisplay) => {
     if (onNavigateToModule) {
-      onNavigateToModule('projects');
-      // In a real app, you might want to pass the project ID to open it directly
+      onNavigateToModule('projects', { openProject: { id: project.id, name: project.name, client: project.client, progress: project.progress, budget: project.budget, status: project.status } });
     } else {
       alert(`Opening project: ${project.name}`);
     }
@@ -96,34 +95,24 @@ const ProjectsOverview: React.FC<ProjectsOverviewProps> = ({
 
   return (
     <div className='h-full flex flex-col'>
-      <div className='flex items-center justify-between mb-4'>
-        <h3 className='text-lg font-semibold text-gray-900'>Active Projects</h3>
-        <button
-          onClick={handleViewAll}
-          className='text-archer-green hover:text-archer-neon text-sm font-medium'
-        >
-          View All
-        </button>
-      </div>
-
       <div className='flex-1 space-y-3 overflow-y-auto'>
         {projects.length > 0 ? (
           projects.map(project => (
             <div
               key={project.id}
-              className='border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow duration-200 cursor-pointer'
+              className='border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:shadow-md transition-shadow duration-200 cursor-pointer'
               onClick={() => handleProjectClick(project)}
             >
               <div className='flex items-start justify-between mb-2'>
                 <div className='flex items-start space-x-3'>
-                  <div className='w-8 h-8 bg-archer-grey rounded-lg flex items-center justify-center flex-shrink-0'>
-                    <Building2 className='h-4 w-4 text-archer-neon' />
+                  <div className='w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0'>
+                    <Building2 className='h-4 w-4 text-blue-600' />
                   </div>
                   <div className='flex-1 min-w-0'>
-                    <h4 className='text-sm font-semibold text-gray-900 truncate'>
+                    <h4 className='text-sm font-semibold text-gray-900 dark:text-white truncate'>
                       {project.name}
                     </h4>
-                    <p className='text-xs text-gray-500 truncate'>
+                    <p className='text-xs text-gray-500 dark:text-gray-400 truncate'>
                       {project.client}
                     </p>
                   </div>
@@ -134,38 +123,26 @@ const ProjectsOverview: React.FC<ProjectsOverviewProps> = ({
                   {project.status}
                 </span>
               </div>
-
               <div className='mb-2'>
-                <div className='flex items-center justify-between text-xs text-gray-600 mb-1'>
+                <div className='flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 mb-1'>
                   <span>Progress</span>
-                  <span>{project.progress}%</span>
+                  <span>{Math.round(project.progress * 100) / 100}%</span>
                 </div>
-                <div className='w-full bg-gray-200 rounded-full h-2'>
-                  <div
-                    className='h-2 rounded-full bg-archer-neon'
-                    style={{ width: `${project.progress}%` }}
-                  ></div>
+                <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
+                                  <div
+                  className='h-2 rounded-full bg-blue-500'
+                  style={{ width: `${Math.round(project.progress * 100) / 100}%` }}
+                ></div>
                 </div>
               </div>
-
-              <div className='flex items-center justify-between text-xs text-gray-500'>
-                <div className='flex items-center space-x-1'>
-                  <Clock className='h-3 w-3 flex-shrink-0' />
-                  <span className='truncate'>
-                    {formatDate(project.deadline)}
-                  </span>
-                </div>
-                <span className='font-medium flex-shrink-0 ml-2'>
-                  {project.budget}
-                </span>
+              <div className='flex items-center justify-between text-xs text-gray-500 dark:text-gray-400'>
+                <span>Deadline: {formatDate(project.deadline)}</span>
+                <span>Budget: {project.budget}</span>
               </div>
             </div>
           ))
         ) : (
-          <div className='text-center py-8 text-gray-500'>
-            <Building2 className='h-12 w-12 mx-auto mb-4 text-gray-300' />
-            <p>No active projects found</p>
-          </div>
+          <div className='text-center py-8 text-gray-500'>No active projects</div>
         )}
       </div>
     </div>

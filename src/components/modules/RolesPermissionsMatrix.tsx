@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { SystemRoles, Permissions } from '../../types/auth';
 import { DEFAULT_ROLE_TEMPLATES } from '../../services/permissionMatrix';
@@ -21,69 +22,8 @@ const TABS = [
   { key: 'audit-log', label: 'Audit Log' },
 ];
 
-// Mock users data
-const mockUsers = [
-  {
-    id: '1',
-    email: 'archerbuildltd@gmail.com',
-    firstName: 'Archer',
-    lastName: 'Admin',
-    role: SystemRoles.SUPER_ADMIN,
-    isActive: true,
-    lastLogin: '2024-01-15T10:30:00Z',
-    assignedProjects: ['project-1', 'project-2'],
-    profileCompleted: true,
-    twoFactorEnabled: true,
-  },
-  {
-    id: '2',
-    email: 'admin@archer.com',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: SystemRoles.ADMIN,
-    isActive: true,
-    lastLogin: '2024-01-14T15:45:00Z',
-    assignedProjects: ['project-1'],
-    profileCompleted: true,
-    twoFactorEnabled: false,
-  },
-  {
-    id: '3',
-    email: 'employee@archer.com',
-    firstName: 'Employee',
-    lastName: 'User',
-    role: SystemRoles.EMPLOYEE,
-    isActive: true,
-    lastLogin: '2024-01-13T09:15:00Z',
-    assignedProjects: ['project-1'],
-    profileCompleted: false,
-    twoFactorEnabled: false,
-  },
-  {
-    id: '4',
-    email: 'contractor@example.com',
-    firstName: 'John',
-    lastName: 'Contractor',
-    role: SystemRoles.CONTRACTOR,
-    isActive: true,
-    lastLogin: '2024-01-12T14:20:00Z',
-    assignedProjects: ['project-2'],
-    profileCompleted: true,
-    twoFactorEnabled: false,
-  },
-  {
-    id: '5',
-    email: 'customer@example.com',
-    firstName: 'Jane',
-    lastName: 'Customer',
-    role: SystemRoles.CUSTOMER,
-    isActive: true,
-    lastLogin: '2024-01-11T11:30:00Z',
-    assignedProjects: ['project-3'],
-    profileCompleted: true,
-    twoFactorEnabled: false,
-  },
-];
+// Mock users data - empty for now
+const mockUsers: any[] = [];
 
 // Mock roles data (combining system roles with some custom ones)
 const mockRoles = [
@@ -191,14 +131,14 @@ const mockRoles = [
 const permissionMetadata: Record<
   Permissions,
   {
-    displayName: string;
-    description: string;
     category: string;
-    dependencies?: Permissions[];
     conflicts?: Permissions[];
-    uiElements?: string[];
     dataScope?: string;
+    dependencies?: Permissions[];
+    description: string;
+    displayName: string;
     examples?: string[];
+    uiElements?: string[];
   }
 > = {
   [Permissions.USERS_VIEW_ALL]: {
@@ -1099,9 +1039,9 @@ const auditSeverities = [
 // Type-safe checkbox component to handle the boolean state properly
 const PermissionCheckbox: React.FC<{
   checked: boolean;
-  onChange: (e?: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled: boolean;
   className: string;
+  disabled: boolean;
+  onChange: (e?: React.ChangeEvent<HTMLInputElement>) => void;
 }> = ({ checked, onChange, disabled, className }) => {
   return (
     <input
@@ -1460,7 +1400,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
               key={tab.key}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === tab.key
-                  ? 'border-archer-neon text-archer-neon'
+                  ? 'border-constructbms-blue text-constructbms-blue'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
               onClick={() => setActiveTab(tab.key)}
@@ -1482,7 +1422,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                 onChange={e =>
                   setPreviewRole((e.target.value as SystemRoles) || null)
                 }
-                className='border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                className='border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
               >
                 <option value=''>Select Role</option>
                 {roleList.map(role => (
@@ -1603,7 +1543,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
             <h1 className='text-2xl font-bold'>User Management</h1>
             <button
               onClick={() => setShowUserModal(true)}
-              className='bg-archer-neon text-white px-4 py-2 rounded-md hover:bg-archer-black transition-colors'
+              className='bg-constructbms-blue text-white px-4 py-2 rounded-md hover:bg-constructbms-black transition-colors'
             >
               Add User
             </button>
@@ -1618,7 +1558,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     placeholder='Search users by name, email, or role...'
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   />
                 </div>
                 <div className='text-sm text-gray-500'>
@@ -1657,7 +1597,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                       <td className='px-6 py-4 whitespace-nowrap'>
                         <div className='flex items-center'>
                           <div className='flex-shrink-0 h-10 w-10'>
-                            <div className='h-10 w-10 rounded-full bg-archer-neon flex items-center justify-center text-white font-medium'>
+                            <div className='h-10 w-10 rounded-full bg-constructbms-blue flex items-center justify-center text-white font-medium'>
                               {user.firstName[0]}
                               {user.lastName[0]}
                             </div>
@@ -1701,7 +1641,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                         <button
                           onClick={() => setSelectedUser(user.id)}
-                          className='text-archer-neon hover:text-archer-black mr-3'
+                          className='text-constructbms-blue hover:text-constructbms-black mr-3'
                         >
                           Edit
                         </button>
@@ -1766,7 +1706,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     >
                       Cancel
                     </button>
-                    <button className='px-4 py-2 bg-archer-neon text-white rounded-md hover:bg-archer-black'>
+                    <button className='px-4 py-2 bg-constructbms-blue text-white rounded-md hover:bg-constructbms-black'>
                       Save Changes
                     </button>
                   </div>
@@ -1786,7 +1726,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                 setEditingRole(null);
                 setShowRoleModal(true);
               }}
-              className='bg-archer-neon text-white px-4 py-2 rounded-md hover:bg-archer-black transition-colors'
+              className='bg-constructbms-blue text-white px-4 py-2 rounded-md hover:bg-constructbms-black transition-colors'
             >
               Create Role
             </button>
@@ -1801,7 +1741,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     placeholder='Search roles by name, description, or type...'
                     value={roleSearchTerm}
                     onChange={e => setRoleSearchTerm(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   />
                 </div>
                 <div className='text-sm text-gray-500'>
@@ -1873,7 +1813,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                             setEditingRole(role);
                             setSelectedRole(role.id);
                           }}
-                          className='text-archer-neon hover:text-archer-black mr-3'
+                          className='text-constructbms-blue hover:text-constructbms-black mr-3'
                           disabled={
                             role.isSystemRole && role.id === 'super_admin'
                           }
@@ -1966,7 +1906,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                                   editingRole?.isSystemRole &&
                                   editingRole?.id === 'super_admin'
                                 }
-                                className='rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                                className='rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
                               />
                               <div className='flex-1'>
                                 <div className='text-sm font-medium text-gray-900'>
@@ -1994,7 +1934,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                       Cancel
                     </button>
                     {editingRole && (
-                      <button className='px-4 py-2 bg-archer-neon text-white rounded-md hover:bg-archer-black'>
+                      <button className='px-4 py-2 bg-constructbms-blue text-white rounded-md hover:bg-constructbms-black'>
                         Save Changes
                       </button>
                     )}
@@ -2025,14 +1965,14 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     placeholder='Search permissions by name, description, or category...'
                     value={permissionSearchTerm}
                     onChange={e => setPermissionSearchTerm(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   />
                 </div>
                 <div className='w-48'>
                   <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   >
                     <option value='all'>All Categories</option>
                     {permissionCategories.map(category => (
@@ -2135,7 +2075,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                         <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                           <button
                             onClick={() => setSelectedPermission(permission)}
-                            className='text-archer-neon hover:text-archer-black'
+                            className='text-constructbms-blue hover:text-constructbms-black'
                           >
                             Details
                           </button>
@@ -2313,7 +2253,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
             <h1 className='text-2xl font-bold'>Custom Rules Management</h1>
             <button
               onClick={handleCreateRule}
-              className='px-4 py-2 bg-archer-neon text-white rounded-md hover:bg-archer-black'
+              className='px-4 py-2 bg-constructbms-blue text-white rounded-md hover:bg-constructbms-black'
             >
               Create New Rule
             </button>
@@ -2326,7 +2266,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                 placeholder='Search rules by name or description...'
                 value={ruleSearchTerm}
                 onChange={e => setRuleSearchTerm(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
               />
             </div>
 
@@ -2403,7 +2343,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                             setRuleConditions(rule.conditions);
                             setRuleActions(rule.actions);
                           }}
-                          className='text-archer-neon hover:text-archer-black mr-3'
+                          className='text-constructbms-blue hover:text-constructbms-black mr-3'
                         >
                           Edit
                         </button>
@@ -2522,7 +2462,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                                 editingRole?.isSystemRole &&
                                 editingRole?.id === 'super_admin'
                               }
-                              className='rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                              className='rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
                             />
                             <span className='ml-2 text-sm text-gray-900'>
                               {role}
@@ -2734,7 +2674,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                           ruleConditions.length === 0 ||
                           ruleActions.length === 0
                         }
-                        className='px-4 py-2 bg-archer-neon text-white rounded-md hover:bg-archer-black disabled:opacity-50 disabled:cursor-not-allowed'
+                        className='px-4 py-2 bg-constructbms-blue text-white rounded-md hover:bg-constructbms-black disabled:opacity-50 disabled:cursor-not-allowed'
                       >
                         Save Rule
                       </button>
@@ -2826,7 +2766,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     editingRole?.isSystemRole &&
                     editingRole?.id === 'super_admin'
                   }
-                  className='rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                  className='rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
                 />
                 <span className='ml-2 text-sm text-gray-700'>
                   Real-time updates
@@ -2850,14 +2790,14 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     placeholder='Search logs by action, user, or details...'
                     value={logSearchTerm}
                     onChange={e => setLogSearchTerm(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   />
                 </div>
                 <div>
                   <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   >
                     {auditCategories.map(category => (
                       <option key={category.value} value={category.value}>
@@ -2870,7 +2810,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                   <select
                     value={selectedSeverity}
                     onChange={e => setSelectedSeverity(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                   >
                     {auditSeverities.map(severity => (
                       <option key={severity.value} value={severity.value}>
@@ -2886,7 +2826,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     onChange={e =>
                       setDateRange({ ...dateRange, start: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                     placeholder='Start date'
                   />
                 </div>
@@ -2897,7 +2837,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                     onChange={e =>
                       setDateRange({ ...dateRange, end: e.target.value })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-constructbms-blue'
                     placeholder='End date'
                   />
                 </div>
@@ -2993,7 +2933,7 @@ const RolesPermissionsMatrix: React.FC<RolesPermissionsMatrixProps> = ({
                       <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                         <button
                           onClick={() => setSelectedLog(log)}
-                          className='text-archer-neon hover:text-archer-black'
+                          className='text-constructbms-blue hover:text-constructbms-black'
                         >
                           Details
                         </button>

@@ -1,68 +1,72 @@
-import React from 'react';
-import StatsCards from '../dashboard/StatsCards';
-import RevenueChart from '../dashboard/RevenueChart';
-import TasksWidget from '../dashboard/TasksWidget';
-import ProjectsOverview from '../dashboard/ProjectsOverview';
-import RecentActivity from '../dashboard/RecentActivity';
-import QuickActions from '../dashboard/QuickActions';
+import { useEffect, useState } from 'react';
+import { getWidgetConfig, getWidgetComponent, WIDGET_STYLES } from './WidgetRegistry';
+import WidgetBase from './WidgetBase';
+import { demoDataService } from '../../services/demoData';
+import { availableWidgets } from './WidgetTypes';
 
 interface WidgetRendererProps {
-  type: string;
   config?: any;
-  onNavigateToModule?: (module: string) => void;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
+  type: string;
 }
 
-const WidgetRenderer: React.FC<WidgetRendererProps> = ({
+const WidgetRenderer = ({
   type,
   config,
   onNavigateToModule,
-}) => {
+}: WidgetRendererProps) => {
+  // Get widget configuration
+  const widgetConfig = getWidgetConfig(type);
+  const WidgetComponent = getWidgetComponent(type);
+  const availableWidgetConfig = availableWidgets.find(w => w.type === type);
+
+  // Get content height behavior
+  const contentHeight = availableWidgetConfig?.contentHeight || 'auto';
+
+  // If we have a registered widget component, use it
+  if (WidgetComponent && widgetConfig) {
+    return (
+      <WidgetBase
+        title={widgetConfig.title}
+        icon={widgetConfig.icon}
+        showSettings={widgetConfig.configurable}
+        onSettingsClick={() => console.log('Widget settings clicked')}
+        contentHeight={contentHeight}
+      >
+        <WidgetComponent {...(onNavigateToModule && { onNavigateToModule })} />
+      </WidgetBase>
+    );
+  }
+
+  // Fallback to switch statement for legacy widgets
   switch (type) {
-    case 'stats-cards':
-      return <StatsCards />;
-
-    case 'revenue-chart':
-      return <RevenueChart />;
-
-    case 'tasks-widget':
-      return <TasksWidget onNavigateToModule={onNavigateToModule} />;
-
-    case 'projects-overview':
-      return <ProjectsOverview onNavigateToModule={onNavigateToModule} />;
-
-    case 'recent-activity':
-      return <RecentActivity onNavigateToModule={onNavigateToModule} />;
-
-    case 'quick-actions':
-      return <QuickActions onNavigateToModule={onNavigateToModule} />;
 
     case 'team-overview':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Team Overview</h3>
+        <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
           <div className='space-y-3'>
-            <div className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
+            <div className='flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
               <div className='flex items-center'>
                 <div className='w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3'>
                   <span className='text-blue-600 font-bold text-sm'>TH</span>
                 </div>
                 <div>
-                  <p className='font-medium text-gray-900'>Tom Harvey</p>
-                  <p className='text-sm text-gray-500'>Project Manager</p>
+                  <p className='font-medium text-gray-900 dark:text-white'>Tom Harvey</p>
+                  <p className='text-sm text-gray-500 dark:text-gray-400'>Project Manager</p>
                 </div>
               </div>
               <span className='px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full'>
                 Online
               </span>
             </div>
-            <div className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
+            <div className='flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
               <div className='flex items-center'>
                 <div className='w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3'>
                   <span className='text-purple-600 font-bold text-sm'>JS</span>
                 </div>
                 <div>
-                  <p className='font-medium text-gray-900'>Jane Smith</p>
-                  <p className='text-sm text-gray-500'>Developer</p>
+                  <p className='font-medium text-gray-900 dark:text-white'>Jane Smith</p>
+                  <p className='text-sm text-gray-500 dark:text-gray-400'>Developer</p>
                 </div>
               </div>
               <span className='px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full'>
@@ -75,20 +79,19 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'calendar-widget':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Calendar</h3>
+        <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
           <div className='space-y-3'>
-            <div className='p-3 bg-blue-50 border-l-4 border-blue-500 rounded'>
-              <p className='font-medium text-gray-900'>Team Meeting</p>
-              <p className='text-sm text-gray-600'>Today, 2:00 PM</p>
+            <div className='p-3 border-l-4 border-blue-500 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <p className='font-medium text-gray-900 dark:text-white'>Team Meeting</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Today, 2:00 PM</p>
             </div>
-            <div className='p-3 bg-green-50 border-l-4 border-green-500 rounded'>
-              <p className='font-medium text-gray-900'>Project Review</p>
-              <p className='text-sm text-gray-600'>Tomorrow, 10:00 AM</p>
+            <div className='p-3 border-l-4 border-green-500 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <p className='font-medium text-gray-900 dark:text-white'>Project Review</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Tomorrow, 10:00 AM</p>
             </div>
-            <div className='p-3 bg-purple-50 border-l-4 border-purple-500 rounded'>
-              <p className='font-medium text-gray-900'>Client Call</p>
-              <p className='text-sm text-gray-600'>Friday, 3:30 PM</p>
+            <div className='p-3 border-l-4 border-purple-500 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <p className='font-medium text-gray-900 dark:text-white'>Client Call</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Friday, 3:30 PM</p>
             </div>
           </div>
         </div>
@@ -96,24 +99,21 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'financial-overview':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Financial Overview
-          </h3>
+        <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
           <div className='space-y-4'>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Monthly Revenue</span>
-              <span className='font-semibold text-green-600'>£45,230</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-gray-600 dark:text-white'>Monthly Revenue</span>
+              <span className='font-semibold text-green-600 dark:text-green-400'>£45,230</span>
             </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Expenses</span>
-              <span className='font-semibold text-red-600'>£12,450</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-gray-600 dark:text-white'>Expenses</span>
+              <span className='font-semibold text-red-600 dark:text-red-400'>£12,450</span>
             </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Profit</span>
-              <span className='font-semibold text-blue-600'>£32,780</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-gray-600 dark:text-white'>Profit</span>
+              <span className='font-semibold text-blue-600 dark:text-blue-400'>£32,780</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
                 className='bg-green-500 h-2 rounded-full'
                 style={{ width: '72%' }}
@@ -125,35 +125,346 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'notifications-widget':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Notifications</h3>
-          <div className='space-y-3'>
-            <div className='flex items-start space-x-3 p-3 bg-blue-50 rounded-lg'>
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light dark:border-white/20 ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2 silvery-fade-dark dark:silvery-fade-light">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Notifications</h3>
+          </div>
+          <div className='space-y-2 px-4 pb-4'>
+            <div className='flex items-start space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
               <div className='w-2 h-2 bg-blue-500 rounded-full mt-2'></div>
               <div>
-                <p className='text-sm font-medium text-gray-900'>
+                <p className='text-sm font-medium text-gray-900 dark:text-white'>
                   New project assigned
                 </p>
-                <p className='text-xs text-gray-600'>2 minutes ago</p>
+                <p className='text-xs text-gray-600 dark:text-gray-400'>2 minutes ago</p>
               </div>
             </div>
-            <div className='flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg'>
+            <div className='flex items-start space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
               <div className='w-2 h-2 bg-yellow-500 rounded-full mt-2'></div>
               <div>
-                <p className='text-sm font-medium text-gray-900'>
+                <p className='text-sm font-medium text-gray-900 dark:text-white'>
                   Task deadline approaching
                 </p>
-                <p className='text-xs text-gray-600'>15 minutes ago</p>
+                <p className='text-xs text-gray-600 dark:text-gray-400'>15 minutes ago</p>
               </div>
             </div>
-            <div className='flex items-start space-x-3 p-3 bg-green-50 rounded-lg'>
+            <div className='flex items-start space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
               <div className='w-2 h-2 bg-green-500 rounded-full mt-2'></div>
               <div>
-                <p className='text-sm font-medium text-gray-900'>
+                <p className='text-sm font-medium text-gray-900 dark:text-white'>
                   Invoice approved
                 </p>
-                <p className='text-xs text-gray-600'>1 hour ago</p>
+                <p className='text-xs text-gray-600 dark:text-gray-400'>1 hour ago</p>
               </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    // New widget types from WidgetPlacement
+    case 'stats-cards':
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Statistics Overview</h3>
+          </div>
+          <div className='grid grid-cols-2 gap-2 px-4 pb-4'>
+            <div className='bg-gray-100 dark:bg-gray-700 rounded p-2 text-center'>
+              <div className='text-lg font-bold text-gray-800 dark:text-white'>£125,000</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>Revenue</div>
+            </div>
+            <div className='bg-gray-100 dark:bg-gray-700 rounded p-2 text-center'>
+              <div className='text-lg font-bold text-gray-800 dark:text-white'>24</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>Projects</div>
+            </div>
+            <div className='bg-gray-100 dark:bg-gray-700 rounded p-2 text-center'>
+              <div className='text-lg font-bold text-gray-800 dark:text-white'>156</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>Tasks</div>
+            </div>
+            <div className='bg-gray-100 dark:bg-gray-700 rounded p-2 text-center'>
+              <div className='text-lg font-bold text-gray-800 dark:text-white'>12</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>Team</div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'task-list': {
+      const [tasks, setTasks] = useState<any[]>([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const loadTasks = async () => {
+          try {
+            const demoDataService = (await import('../../services/demoData')).demoDataService;
+            const tasksData = await demoDataService.getTasks();
+            setTasks(tasksData.slice(0, 5)); // Show first 5 tasks
+            setLoading(false);
+          } catch (error) {
+            console.error('Error loading tasks:', error);
+            setLoading(false);
+          }
+        };
+        loadTasks();
+      }, []);
+
+      if (loading) {
+        return (
+          <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+            <div className="flex items-center mb-4 px-4 py-2">
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Task List</h3>
+            </div>
+            <div className='space-y-1 px-4 pb-4 overflow-y-auto flex-1'>
+              <div className='animate-pulse space-y-1'>
+                <div className='h-10 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-10 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-10 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-10 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-10 bg-gray-200 dark:bg-gray-700 rounded'></div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      const getPriorityColor = (priority: string) => {
+        switch (priority) {
+          case 'high':
+            return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+          case 'medium':
+            return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+          case 'low':
+            return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+          default:
+            return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+        }
+      };
+
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Task List</h3>
+          </div>
+          <div className='space-y-1 px-4 pb-4 overflow-y-auto flex-1'>
+            {tasks.map((task) => (
+              <div 
+                key={task.id}
+                className='flex items-center justify-between p-2 rounded text-sm border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+                onClick={() => {
+                  onNavigateToModule?.('tasks', { openTask: task });
+                }}
+              >
+                <span className='truncate text-gray-900 dark:text-white'>{task.title}</span>
+                <span className={`px-2 py-1 rounded text-xs ${getPriorityColor(task.priority)}`}>
+                  {task.priority}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    case 'project-list': {
+      const [projects, setProjects] = useState<any[]>([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const loadProjects = async () => {
+          try {
+            const demoDataService = (await import('../../services/demoData')).demoDataService;
+            const projectsData = await demoDataService.getProjects();
+            setProjects(projectsData.slice(0, 3)); // Show first 3 projects
+            setLoading(false);
+          } catch (error) {
+            console.error('Error loading projects:', error);
+            setLoading(false);
+          }
+        };
+        loadProjects();
+      }, []);
+
+      if (loading) {
+        return (
+          <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+            <div className="flex items-center mb-4 px-4 py-2">
+              <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Project Overview</h3>
+            </div>
+            <div className='space-y-2 px-4 pb-4 overflow-y-auto flex-1'>
+              <div className='animate-pulse space-y-2'>
+                <div className='h-16 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-16 bg-gray-200 dark:bg-gray-700 rounded'></div>
+                <div className='h-16 bg-gray-200 dark:bg-gray-700 rounded'></div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Project Overview</h3>
+          </div>
+          <div className='space-y-2 px-4 pb-4 overflow-y-auto flex-1'>
+            {projects.map((project) => (
+              <div 
+                key={project.id}
+                className='p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+                onClick={() => {
+                  onNavigateToModule?.('projects', { openProject: project });
+                }}
+              >
+                <div className='font-medium text-sm text-gray-900 dark:text-white'>{project.name}</div>
+                <div className='flex items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
+                  <span>{Math.round(project.progress)}%</span>
+                  <span>£{(project.budget / 1000).toFixed(0)}K</span>
+                </div>
+                <div className='w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1 mt-1'>
+                  <div className='bg-blue-600 h-1 rounded-full' style={{ width: `${project.progress}%` }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    case 'activity-feed':
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Recent Activity</h3>
+          </div>
+          <div className='space-y-2 px-4 pb-4 overflow-y-auto flex-1'>
+            <div 
+              className='flex items-start space-x-2 p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('projects')}
+            >
+              <div className='w-2 h-2 bg-green-500 rounded-full mt-2'></div>
+              <div className='flex-1 min-w-0'>
+                <div className='text-sm font-medium text-gray-900 dark:text-white'>Project completed</div>
+                <div className='text-xs text-gray-600 dark:text-gray-400'>John Doe • 2 hours ago</div>
+              </div>
+            </div>
+            <div 
+              className='flex items-start space-x-2 p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('tasks')}
+            >
+              <div className='w-2 h-2 bg-blue-500 rounded-full mt-2'></div>
+              <div className='flex-1 min-w-0'>
+                <div className='text-sm font-medium text-gray-900 dark:text-white'>New task assigned</div>
+                <div className='text-xs text-gray-600 dark:text-gray-400'>Jane Smith • 4 hours ago</div>
+              </div>
+            </div>
+            <div 
+              className='flex items-start space-x-2 p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('finance')}
+            >
+              <div className='w-2 h-2 bg-yellow-500 rounded-full mt-2'></div>
+              <div className='flex-1 min-w-0'>
+                <div className='text-sm font-medium text-gray-900 dark:text-white'>Budget updated</div>
+                <div className='text-xs text-gray-600 dark:text-gray-400'>Mike Johnson • 6 hours ago</div>
+              </div>
+            </div>
+            <div 
+              className='flex items-start space-x-2 p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('calendar')}
+            >
+              <div className='w-2 h-2 bg-blue-500 rounded-full mt-2'></div>
+              <div className='flex-1 min-w-0'>
+                <div className='text-sm font-medium text-gray-900 dark:text-white'>Team meeting scheduled</div>
+                <div className='text-xs text-gray-600 dark:text-gray-400'>Sarah Wilson • 1 day ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'calendar':
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Calendar Events</h3>
+          </div>
+          <div className='space-y-2 px-4 pb-4'>
+            <div className='p-2 rounded border border-gray-200 dark:border-gray-600'>
+              <div className='font-medium text-sm text-gray-900 dark:text-white'>Team Meeting</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>2024-01-15 • 10:00 AM</div>
+              <span className='inline-block px-2 py-1 rounded text-xs mt-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>meeting</span>
+            </div>
+            <div className='p-2 rounded border border-gray-200 dark:border-gray-600'>
+              <div className='font-medium text-sm text-gray-900 dark:text-white'>Client Presentation</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>2024-01-16 • 2:00 PM</div>
+              <span className='inline-block px-2 py-1 rounded text-xs mt-1 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'>presentation</span>
+            </div>
+            <div className='p-2 rounded border border-gray-200 dark:border-gray-600'>
+              <div className='font-medium text-sm text-gray-900 dark:text-white'>Project Deadline</div>
+              <div className='text-xs text-gray-600 dark:text-gray-400'>2024-01-18 • 5:00 PM</div>
+              <span className='inline-block px-2 py-1 rounded text-xs mt-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'>deadline</span>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'notifications':
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Notifications</h3>
+          </div>
+          <div className='space-y-2 px-4 pb-4 overflow-y-auto flex-1'>
+            <div 
+              className='p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('projects')}
+            >
+              <div className='flex items-start justify-between'>
+                <div className='flex-1 min-w-0'>
+                  <div className='text-sm font-medium text-gray-900 dark:text-white'>Project Update</div>
+                  <div className='text-xs text-gray-600 dark:text-gray-400'>Office renovation is 75% complete</div>
+                </div>
+                <span className='px-2 py-1 rounded text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>info</span>
+              </div>
+              <div className='text-xs text-gray-500 dark:text-gray-500 mt-1'>1 hour ago</div>
+            </div>
+            <div 
+              className='p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('finance')}
+            >
+              <div className='flex items-start justify-between'>
+                <div className='flex-1 min-w-0'>
+                  <div className='text-sm font-medium text-gray-900 dark:text-white'>Budget Alert</div>
+                  <div className='text-xs text-gray-600 dark:text-gray-400'>Equipment budget is 90% used</div>
+                </div>
+                <span className='px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'>warning</span>
+              </div>
+              <div className='text-xs text-gray-500 dark:text-gray-500 mt-1'>3 hours ago</div>
+            </div>
+            <div 
+              className='p-2 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              onClick={() => onNavigateToModule?.('tasks')}
+            >
+              <div className='flex items-start justify-between'>
+                <div className='flex-1 min-w-0'>
+                  <div className='text-sm font-medium text-gray-900 dark:text-white'>Task Completed</div>
+                  <div className='text-xs text-gray-600 dark:text-gray-400'>Safety inspection passed successfully</div>
+                </div>
+                <span className='px-2 py-1 rounded text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>success</span>
+              </div>
+              <div className='text-xs text-gray-500 dark:text-gray-500 mt-1'>5 hours ago</div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'revenue-chart':
+      return (
+        <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className='flex-1 flex items-center justify-center'>
+            <div className='text-center'>
+              <div className='text-2xl font-bold text-gray-400 dark:text-white mb-2'>📈</div>
+              <div className='text-sm text-gray-600 dark:text-gray-400'>Revenue Chart</div>
+              <div className='text-xs text-gray-500 dark:text-gray-500 mt-1'>Chart visualization</div>
             </div>
           </div>
         </div>
@@ -162,26 +473,26 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Analytics Widgets
     case 'performance-metrics':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Performance Metrics
-          </h3>
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-blue-600'>98.5%</div>
-              <div className='text-sm text-gray-600'>Uptime</div>
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Performance Metrics</h3>
+          </div>
+          <div className='grid grid-cols-2 gap-4 px-4 pb-4'>
+            <div className='text-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <div className='text-2xl font-bold text-gray-400 dark:text-white'>0%</div>
+              <div className='text-sm text-gray-600 dark:text-white'>Uptime</div>
             </div>
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-green-600'>2.3s</div>
-              <div className='text-sm text-gray-600'>Response Time</div>
+            <div className='text-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <div className='text-2xl font-bold text-gray-400 dark:text-white'>0s</div>
+              <div className='text-sm text-gray-600 dark:text-white'>Response Time</div>
             </div>
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-purple-600'>1,247</div>
-              <div className='text-sm text-gray-600'>Active Users</div>
+            <div className='text-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <div className='text-2xl font-bold text-gray-400 dark:text-white'>0</div>
+              <div className='text-sm text-gray-600 dark:text-white'>Active Users</div>
             </div>
-            <div className='text-center'>
-              <div className='text-2xl font-bold text-orange-600'>89%</div>
-              <div className='text-sm text-gray-600'>Satisfaction</div>
+            <div className='text-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <div className='text-2xl font-bold text-gray-400 dark:text-white'>0%</div>
+              <div className='text-sm text-gray-600 dark:text-white'>Satisfaction</div>
             </div>
           </div>
         </div>
@@ -189,36 +500,33 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'conversion-funnel':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Conversion Funnel
-          </h3>
+        <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
           <div className='space-y-3'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>Visitors</span>
-              <span className='font-semibold'>10,000</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Visitors</span>
+              <span className='font-semibold text-gray-900 dark:text-white'>10,000</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
                 className='bg-blue-500 h-2 rounded-full'
                 style={{ width: '100%' }}
               ></div>
             </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>Leads</span>
-              <span className='font-semibold'>1,200</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Leads</span>
+              <span className='font-semibold text-gray-900 dark:text-white'>1,200</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-green-500 h-2 rounded-full'
+                className='bg-blue-500 h-2 rounded-full'
                 style={{ width: '12%' }}
               ></div>
             </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm text-gray-600'>Customers</span>
-              <span className='font-semibold'>240</span>
+            <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Customers</span>
+              <span className='font-semibold text-gray-900 dark:text-white'>240</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
                 className='bg-purple-500 h-2 rounded-full'
                 style={{ width: '2.4%' }}
@@ -229,35 +537,85 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
       );
 
     // Communication Widgets
-    case 'email-overview':
+    case 'email-overview': {
+      const [stats, setStats] = useState<{ drafts: number, inbox: number; sentToday: number; unread: number; } | null>(null);
+      const [loading, setLoading] = useState(true);
+      useEffect(() => {
+        let mounted = true;
+        
+        const loadEmailStats = async () => {
+          try {
+            const isInDemoMode = await demoDataService.isDemoMode();
+            if (isInDemoMode) {
+              const data = await demoDataService.getEmailStats();
+              if (mounted) {
+                setStats(data);
+                setLoading(false);
+              }
+            } else {
+              // Not in demo mode, show default stats
+              if (mounted) {
+                setStats({ inbox: 0, unread: 0, sentToday: 0, drafts: 0 });
+                setLoading(false);
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to load email stats:', error);
+            if (mounted) {
+              setStats({ inbox: 0, unread: 0, sentToday: 0, drafts: 0 });
+              setLoading(false);
+            }
+          }
+        };
+        
+        loadEmailStats();
+        return () => {
+          mounted = false;
+        };
+      }, []);
+
+      if (loading) {
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Email Overview</h3>
-          <div className='space-y-4'>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Inbox</span>
-              <span className='font-semibold text-blue-600'>23</span>
-            </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Unread</span>
-              <span className='font-semibold text-red-600'>7</span>
-            </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Sent Today</span>
-              <span className='font-semibold text-green-600'>12</span>
-            </div>
-            <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Drafts</span>
-              <span className='font-semibold text-yellow-600'>3</span>
-            </div>
+          <div className={`h-full flex flex-col ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+            <div className='animate-pulse space-y-3'>
+              <div className='h-12 bg-gray-200 dark:bg-gray-700 rounded-lg'></div>
+              <div className='h-12 bg-gray-200 dark:bg-gray-700 rounded-lg'></div>
+              <div className='h-12 bg-gray-200 dark:bg-gray-700 rounded-lg'></div>
+          </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Email Overview</h3>
+          </div>
+          <div className='space-y-3 px-4 pb-4'>
+                <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Inbox</span>
+              <span className='font-semibold text-gray-900 dark:text-white'>{stats?.inbox || 0}</span>
+                </div>
+                <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Unread</span>
+              <span className='font-semibold text-red-600 dark:text-red-400'>{stats?.unread || 0}</span>
+                </div>
+                <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Sent Today</span>
+              <span className='font-semibold text-green-600 dark:text-green-400'>{stats?.sentToday || 0}</span>
+                </div>
+                <div className='flex justify-between items-center p-3 rounded-lg border border-gray-200 dark:border-gray-600'>
+              <span className='text-sm text-gray-600 dark:text-gray-400'>Drafts</span>
+              <span className='font-semibold text-yellow-600 dark:text-yellow-400'>{stats?.drafts || 0}</span>
+                </div>
           </div>
         </div>
       );
+    }
 
     case 'chat-activity':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Chat Activity</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
             <div className='flex items-center space-x-3 p-2 bg-gray-50 rounded'>
               <div className='w-2 h-2 bg-green-500 rounded-full'></div>
@@ -291,37 +649,39 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Monitoring Widgets
     case 'system-health':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>System Health</h3>
-          <div className='space-y-4'>
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>System Health</h3>
+          </div>
+          <div className='space-y-4 px-4 pb-4'>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>CPU Usage</span>
-              <span className='font-semibold text-green-600'>45%</span>
+              <span className='text-gray-600 dark:text-gray-400'>CPU Usage</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-green-500 h-2 rounded-full'
-                style={{ width: '45%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Memory</span>
-              <span className='font-semibold text-yellow-600'>78%</span>
+              <span className='text-gray-600 dark:text-gray-400'>Memory</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-yellow-500 h-2 rounded-full'
-                style={{ width: '78%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Disk Space</span>
-              <span className='font-semibold text-green-600'>32%</span>
+              <span className='text-gray-600 dark:text-gray-400'>Disk Space</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-green-500 h-2 rounded-full'
-                style={{ width: '32%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
           </div>
@@ -330,8 +690,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'error-logs':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Error Logs</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
             <div className='p-3 bg-red-50 border-l-4 border-red-500 rounded'>
               <p className='text-sm font-medium text-red-900'>
@@ -358,8 +717,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Finance Widgets
     case 'expense-tracker':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Expense Tracker</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div className='flex justify-between items-center'>
               <span className='text-gray-600'>Office Supplies</span>
@@ -389,30 +747,29 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'budget-overview':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Budget Overview</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div>
               <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm text-gray-600'>Q1 Budget</span>
-                <span className='text-sm font-semibold'>£50,000</span>
+                <span className='text-sm text-constructbms-dark-2 dark:text-gray-400'>Q1 Budget</span>
+                <span className='text-sm font-semibold text-constructbms-dark-1 dark:text-white'>£50,000</span>
               </div>
               <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm text-gray-600'>Spent</span>
+                <span className='text-sm text-constructbms-dark-2 dark:text-gray-400'>Spent</span>
                 <span className='text-sm font-semibold text-red-600'>
                   £32,450
                 </span>
               </div>
               <div className='w-full bg-gray-200 rounded-full h-2'>
                 <div
-                  className='bg-blue-500 h-2 rounded-full'
+                  className='bg-constructbms-primary h-2 rounded-full'
                   style={{ width: '65%' }}
                 ></div>
               </div>
             </div>
             <div className='text-center'>
-              <div className='text-lg font-bold text-green-600'>£17,550</div>
-              <div className='text-sm text-gray-600'>Remaining</div>
+              <div className='text-lg font-bold text-constructbms-primary'>£17,550</div>
+              <div className='text-sm text-constructbms-dark-2 dark:text-gray-400'>Remaining</div>
             </div>
           </div>
         </div>
@@ -421,34 +778,33 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Document Widgets
     case 'document-library':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Document Library</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
+            <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
               <div className='w-8 h-8 bg-blue-100 rounded flex items-center justify-center'>
                 <span className='text-blue-600 text-xs'>PDF</span>
               </div>
               <div className='flex-1'>
-                <p className='text-sm font-medium'>Q1 Report</p>
-                <p className='text-xs text-gray-500'>Updated 2 days ago</p>
+                <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Q1 Report</p>
+                <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Updated 2 days ago</p>
               </div>
             </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
+            <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
               <div className='w-8 h-8 bg-green-100 rounded flex items-center justify-center'>
                 <span className='text-green-600 text-xs'>DOC</span>
               </div>
               <div className='flex-1'>
-                <p className='text-sm font-medium'>Project Proposal</p>
-                <p className='text-xs text-gray-500'>Updated 1 week ago</p>
+                <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Project Proposal</p>
+                <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Updated 1 week ago</p>
               </div>
             </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
+            <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
               <div className='w-8 h-8 bg-purple-100 rounded flex items-center justify-center'>
                 <span className='text-purple-600 text-xs'>XLS</span>
               </div>
               <div className='flex-1'>
-                <p className='text-sm font-medium'>Budget Spreadsheet</p>
-                <p className='text-xs text-gray-500'>Updated 3 days ago</p>
+                <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Budget Spreadsheet</p>
+                <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Updated 3 days ago</p>
               </div>
             </div>
           </div>
@@ -458,8 +814,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // IT Widgets
     case 'server-status':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Server Status</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
             <div className='flex items-center justify-between p-3 bg-green-50 rounded-lg'>
               <div className='flex items-center'>
@@ -488,8 +843,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'backup-status':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Backup Status</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div className='flex justify-between items-center'>
               <span className='text-gray-600'>Last Backup</span>
@@ -515,8 +869,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'security-alerts':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Security Alerts</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
             <div className='p-3 bg-red-50 border-l-4 border-red-500 rounded'>
               <p className='text-sm font-medium text-red-900'>
@@ -545,39 +898,39 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Marketing Widgets
     case 'campaign-performance':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Campaign Performance
-          </h3>
-          <div className='space-y-4'>
+        <div className={`h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden silvery-fade-dark dark:silvery-fade-light ${contentHeight === 'scrollable' ? 'overflow-y-auto' : ''}`}>
+          <div className="flex items-center mb-4 px-4 py-2">
+            <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>Campaign Performance</h3>
+          </div>
+          <div className='space-y-4 px-4 pb-4'>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Email Campaign</span>
-              <span className='font-semibold text-green-600'>24.5%</span>
+              <span className='text-gray-600 dark:text-gray-400'>Email Campaign</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-green-500 h-2 rounded-full'
-                style={{ width: '24.5%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>Social Media</span>
-              <span className='font-semibold text-blue-600'>18.2%</span>
+              <span className='text-gray-600 dark:text-gray-400'>Social Media</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-blue-500 h-2 rounded-full'
-                style={{ width: '18.2%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
             <div className='flex justify-between items-center'>
-              <span className='text-gray-600'>PPC Ads</span>
-              <span className='font-semibold text-purple-600'>32.1%</span>
+              <span className='text-gray-600 dark:text-gray-400'>PPC Ads</span>
+              <span className='font-semibold text-gray-400 dark:text-gray-300'>0%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-2'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
               <div
-                className='bg-purple-500 h-2 rounded-full'
-                style={{ width: '32.1%' }}
+                className='bg-gray-400 dark:bg-gray-500 h-2 rounded-full'
+                style={{ width: '0%' }}
               ></div>
             </div>
           </div>
@@ -586,10 +939,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'social-media-feed':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Social Media Feed
-          </h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
             <div className='p-3 bg-blue-50 rounded-lg'>
               <div className='flex items-center space-x-2 mb-2'>
@@ -625,8 +975,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Weather Widget
     case 'weather-widget':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Weather</h3>
+        <div className='h-full flex flex-col'>
           <div className='text-center'>
             <div className='text-3xl font-bold text-blue-600 mb-2'>22°C</div>
             <div className='text-sm text-gray-600 mb-4'>London, UK</div>
@@ -651,8 +1000,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Custom Widgets
     case 'custom-html':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Custom HTML</h3>
+        <div className='h-full flex flex-col'>
           <div className='text-center text-gray-500'>
             <p className='text-sm'>Configure custom HTML content</p>
             <p className='text-xs mt-2'>Click the settings icon to edit</p>
@@ -662,8 +1010,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'iframe-widget':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>External Website</h3>
+        <div className='h-full flex flex-col'>
           <div className='text-center text-gray-500'>
             <p className='text-sm'>Configure external website URL</p>
             <p className='text-xs mt-2'>Click the settings icon to edit</p>
@@ -674,8 +1021,7 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     // Additional widgets
     case 'time-tracking':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Time Tracking</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-blue-600'>6h 23m</div>
@@ -697,31 +1043,30 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'goals-progress':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Goals Progress</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div>
               <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm text-gray-600'>Q1 Revenue Target</span>
-                <span className='text-sm font-semibold'>78%</span>
+                <span className='text-sm text-constructbms-dark-2 dark:text-gray-400'>Q1 Revenue Target</span>
+                <span className='text-sm font-semibold text-constructbms-dark-1 dark:text-white'>78%</span>
               </div>
               <div className='w-full bg-gray-200 rounded-full h-2'>
                 <div
-                  className='bg-green-500 h-2 rounded-full'
+                  className='bg-constructbms-primary h-2 rounded-full'
                   style={{ width: '78%' }}
                 ></div>
               </div>
             </div>
             <div>
               <div className='flex justify-between items-center mb-2'>
-                <span className='text-sm text-gray-600'>
+                <span className='text-sm text-constructbms-dark-2 dark:text-gray-400'>
                   Customer Acquisition
                 </span>
-                <span className='text-sm font-semibold'>92%</span>
+                <span className='text-sm font-semibold text-constructbms-dark-1 dark:text-white'>92%</span>
               </div>
               <div className='w-full bg-gray-200 rounded-full h-2'>
                 <div
-                  className='bg-blue-500 h-2 rounded-full'
+                  className='bg-constructbms-primary h-2 rounded-full'
                   style={{ width: '92%' }}
                 ></div>
               </div>
@@ -732,20 +1077,19 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'meeting-schedule':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Meeting Schedule</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='p-3 bg-blue-50 border-l-4 border-blue-500 rounded'>
-              <p className='font-medium text-gray-900'>Weekly Standup</p>
-              <p className='text-sm text-gray-600'>Today, 9:00 AM</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Weekly Standup</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Today, 9:00 AM</p>
             </div>
-            <div className='p-3 bg-green-50 border-l-4 border-green-500 rounded'>
-              <p className='font-medium text-gray-900'>Client Review</p>
-              <p className='text-sm text-gray-600'>Tomorrow, 2:00 PM</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Client Review</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Tomorrow, 2:00 PM</p>
             </div>
-            <div className='p-3 bg-purple-50 border-l-4 border-purple-500 rounded'>
-              <p className='font-medium text-gray-900'>Team Retrospective</p>
-              <p className='text-sm text-gray-600'>Friday, 3:30 PM</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Team Retrospective</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Friday, 3:30 PM</p>
             </div>
           </div>
         </div>
@@ -753,20 +1097,19 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'deadlines':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Deadlines</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='p-3 bg-red-50 border-l-4 border-red-500 rounded'>
-              <p className='font-medium text-gray-900'>Project Alpha</p>
-              <p className='text-sm text-gray-600'>Due: Today</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Project Alpha</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Due: Today</p>
             </div>
-            <div className='p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded'>
-              <p className='font-medium text-gray-900'>Beta Testing</p>
-              <p className='text-sm text-gray-600'>Due: Tomorrow</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Beta Testing</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Due: Tomorrow</p>
             </div>
-            <div className='p-3 bg-green-50 border-l-4 border-green-500 rounded'>
-              <p className='font-medium text-gray-900'>Documentation</p>
-              <p className='text-sm text-gray-600'>Due: Next Week</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Documentation</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Due: Next Week</p>
             </div>
           </div>
         </div>
@@ -774,26 +1117,23 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'team-availability':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Team Availability
-          </h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='flex items-center justify-between p-2 bg-green-50 rounded'>
-              <span className='font-medium'>Tom Harvey</span>
-              <span className='px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full'>
+            <div className='flex items-center justify-between p-2 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <span className='font-medium text-gray-900 dark:text-white'>Tom Harvey</span>
+              <span className='px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs rounded-full'>
                 Available
               </span>
             </div>
-            <div className='flex items-center justify-between p-2 bg-yellow-50 rounded'>
-              <span className='font-medium'>Jane Smith</span>
-              <span className='px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full'>
+            <div className='flex items-center justify-between p-2 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <span className='font-medium text-gray-900 dark:text-white'>Jane Smith</span>
+              <span className='px-2 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 text-xs rounded-full'>
                 In Meeting
               </span>
             </div>
-            <div className='flex items-center justify-between p-2 bg-red-50 rounded'>
-              <span className='font-medium'>Mike Johnson</span>
-              <span className='px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full'>
+            <div className='flex items-center justify-between p-2 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <span className='font-medium text-gray-900 dark:text-white'>Mike Johnson</span>
+              <span className='px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs rounded-full'>
                 Offline
               </span>
             </div>
@@ -803,71 +1143,68 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'favorites':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Favorites</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-2'>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-6 h-6 bg-blue-100 rounded flex items-center justify-center'>
-                <span className='text-blue-600 text-xs'>P</span>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-6 h-6 bg-blue-100 rounded flex items-center justify-center'>
+                  <span className='text-blue-600 text-xs'>P</span>
+                </div>
+                <span className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Projects</span>
               </div>
-              <span className='text-sm font-medium'>Projects</span>
-            </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-6 h-6 bg-green-100 rounded flex items-center justify-center'>
-                <span className='text-green-600 text-xs'>T</span>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-6 h-6 bg-green-100 rounded flex items-center justify-center'>
+                  <span className='text-green-600 text-xs'>T</span>
+                </div>
+                <span className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Tasks</span>
               </div>
-              <span className='text-sm font-medium'>Tasks</span>
-            </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-6 h-6 bg-purple-100 rounded flex items-center justify-center'>
-                <span className='text-purple-600 text-xs'>C</span>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-6 h-6 bg-purple-100 rounded flex items-center justify-center'>
+                  <span className='text-purple-600 text-xs'>C</span>
+                </div>
+                <span className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Calendar</span>
               </div>
-              <span className='text-sm font-medium'>Calendar</span>
             </div>
-          </div>
         </div>
       );
 
     case 'recent-documents':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Recent Documents</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-8 h-8 bg-blue-100 rounded flex items-center justify-center'>
-                <span className='text-blue-600 text-xs'>PDF</span>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-8 h-8 bg-blue-100 rounded flex items-center justify-center'>
+                  <span className='text-blue-600 text-xs'>PDF</span>
+                </div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Monthly Report</p>
+                  <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Opened 2 hours ago</p>
+                </div>
               </div>
-              <div className='flex-1'>
-                <p className='text-sm font-medium'>Monthly Report</p>
-                <p className='text-xs text-gray-500'>Opened 2 hours ago</p>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-8 h-8 bg-green-100 rounded flex items-center justify-center'>
+                  <span className='text-green-600 text-xs'>DOC</span>
+                </div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Meeting Notes</p>
+                  <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Opened 1 day ago</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'>
+                <div className='w-8 h-8 bg-purple-100 rounded flex items-center justify-center'>
+                  <span className='text-purple-600 text-xs'>XLS</span>
+                </div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium text-constructbms-dark-1 dark:text-white'>Budget 2024</p>
+                  <p className='text-xs text-constructbms-dark-2 dark:text-gray-400'>Opened 3 days ago</p>
+                </div>
               </div>
             </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-8 h-8 bg-green-100 rounded flex items-center justify-center'>
-                <span className='text-green-600 text-xs'>DOC</span>
-              </div>
-              <div className='flex-1'>
-                <p className='text-sm font-medium'>Meeting Notes</p>
-                <p className='text-xs text-gray-500'>Opened 1 day ago</p>
-              </div>
-            </div>
-            <div className='flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer'>
-              <div className='w-8 h-8 bg-purple-100 rounded flex items-center justify-center'>
-                <span className='text-purple-600 text-xs'>XLS</span>
-              </div>
-              <div className='flex-1'>
-                <p className='text-sm font-medium'>Budget 2024</p>
-                <p className='text-xs text-gray-500'>Opened 3 days ago</p>
-              </div>
-            </div>
-          </div>
         </div>
       );
 
     case 'inventory-status':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>Inventory Status</h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-4'>
             <div className='flex justify-between items-center'>
               <span className='text-gray-600'>Product A</span>
@@ -891,24 +1228,21 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     case 'maintenance-schedule':
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <h3 className='font-semibold text-gray-900 mb-4'>
-            Maintenance Schedule
-          </h3>
+        <div className='h-full flex flex-col'>
           <div className='space-y-3'>
-            <div className='p-3 bg-blue-50 border-l-4 border-blue-500 rounded'>
-              <p className='font-medium text-gray-900'>Server Maintenance</p>
-              <p className='text-sm text-gray-600'>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Server Maintenance</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>
                 Scheduled: Tomorrow, 2:00 AM
               </p>
             </div>
-            <div className='p-3 bg-green-50 border-l-4 border-green-500 rounded'>
-              <p className='font-medium text-gray-900'>Backup System</p>
-              <p className='text-sm text-gray-600'>Last: Today, 1:00 AM</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Backup System</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Last: Today, 1:00 AM</p>
             </div>
-            <div className='p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded'>
-              <p className='font-medium text-gray-900'>Security Updates</p>
-              <p className='text-sm text-gray-600'>Due: This weekend</p>
+            <div className='p-3 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
+              <p className='font-medium text-gray-900 dark:text-white'>Security Updates</p>
+              <p className='text-sm text-gray-600 dark:text-gray-400'>Due: This weekend</p>
             </div>
           </div>
         </div>
@@ -916,8 +1250,8 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
     default:
       return (
-        <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-          <p className='text-gray-500'>Widget type "{type}" not found</p>
+        <div className='h-full flex flex-col'>
+          <p className='text-constructbms-dark-2 dark:text-gray-400'>Widget type "{type}" not found</p>
         </div>
       );
   }

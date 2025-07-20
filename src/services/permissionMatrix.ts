@@ -2,6 +2,8 @@ import {
   SystemRoles,
   Permissions,
   PermissionCategories,
+} from '../types/auth';
+import type {
   RoleTemplate,
   PermissionMatrixEntry,
   CustomRule,
@@ -436,9 +438,9 @@ export class PermissionMatrixService {
     user: User,
     permission: Permissions,
     context?: {
+      dataScope?: 'all' | 'organization' | 'project' | 'own' | 'assigned';
       projectId?: string;
       resourceId?: string;
-      dataScope?: 'all' | 'organization' | 'project' | 'own' | 'assigned';
     }
   ): PermissionCheckResult {
     const result: PermissionCheckResult = {

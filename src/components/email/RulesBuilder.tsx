@@ -88,139 +88,134 @@ export type FourDsAction = 'DO' | 'DELETE' | 'DELEGATE' | 'DEFER';
 export type ParetoCategory = 'HIGH_VALUE' | 'LOW_VALUE' | 'UNKNOWN';
 
 export interface RuleCondition {
-  id: string;
-  field: string;
-  operator: string;
-  value: string | number | boolean;
-  children?: RuleCondition[];
-  logic?: LogicalOperator;
   // Advanced Logic Fields
+  // in minutes
   branchingLogic?: BranchingLogic;
-  patternType?: PatternType;
+  children?: RuleCondition[];
   confidence?: number;
-  weight?: number;
-  timeWindow?: number; // in minutes
-  frequency?: number; // occurrences per time window
+  field: string;
+  frequency?: number;
+  id: string;
+  logic?: LogicalOperator;
+  operator: string;
+  patternType?: PatternType;
+  timeWindow?: number;
+  value: string | number | boolean; 
+  weight?: number; // occurrences per time window
 }
 
 export interface RuleAction {
-  id: string;
-  type: string;
-  parameters: Record<string, any>;
-  // Advanced Action Fields
-  conditional?: {
-    condition: RuleCondition;
-    trueAction: RuleAction;
-    falseAction?: RuleAction;
-  };
   branching?: {
     branches: Array<{
-      condition: RuleCondition;
       actions: RuleAction[];
     }>;
+    condition: RuleCondition;
     defaultActions?: RuleAction[];
   };
-  delay?: number; // in seconds
-  retry?: {
-    maxAttempts: number;
-    delayBetweenAttempts: number;
+  conditional?: {
+    condition: RuleCondition;
+    falseAction?: RuleAction;
+    trueAction: RuleAction;
   };
-  parallel?: boolean;
+  delay?: number;
+  id: string;
+  // in seconds
+  parallel?: boolean; 
+  parameters: Record<string, any>;
   priority?: number;
+  retry?: {
+    delayBetweenAttempts: number;
+    maxAttempts: number;
+  };
+  type: string;
 }
 
 export interface AutomationRule {
-  id: string;
-  name: string;
-  description: string;
-  conditions: RuleCondition[];
-  logic: LogicalOperator;
-  actions: RuleAction[];
-  isActive: boolean;
-  priority: number;
-  createdAt: Date;
-  updatedAt: Date;
-  executionCount: number;
-  lastExecuted?: Date;
-  templateId?: string;
-  schedule?: {
-    enabled?: boolean;
-    cronExpression?: string;
-    timezone?: string;
-    daysOfWeek?: number[];
-    startTime?: string;
-    endTime?: string;
-  };
-  advanced?: {
-    maxExecutionsPerHour?: number;
-    retryOnFailure?: boolean;
-    maxRetries?: number;
-    timeoutSeconds?: number;
-    parallelExecution?: boolean;
-    dataRetention?: {
-      enabled: boolean;
-      daysToKeep: number;
-    };
     // New Advanced Features
+  actions: RuleAction[];
+  advanced?: {
     branchingEnabled?: boolean;
     branchingLogic?: BranchingLogic;
-    patternRecognition?: {
-      enabled?: boolean;
-      models?: string[];
-      confidenceThreshold?: number;
+    dataRetention?: {
+      daysToKeep: number;
+      enabled: boolean;
     };
-    paretoAnalysis?: {
-      enabled?: boolean;
-      valueCriteria?: string[];
+    fourDs?: {
       autoCategorize?: boolean;
+      // email pattern -> assignee
+      deferralRules?: Record<string, number>;
+      delegationRules?: Record<string, string>; 
+      enabled?: boolean; // email pattern -> defer hours
     };
     inboxZero?: {
       enabled?: boolean;
-      processingStrategy?: 'IMMEDIATE' | 'BATCH' | 'SCHEDULED';
-      maxProcessingTime?: number; // in minutes
+      maxProcessingTime?: number;
+      processingStrategy?: 'IMMEDIATE' | 'BATCH' | 'SCHEDULED'; // in minutes
     };
-    fourDs?: {
-      enabled?: boolean;
+    maxExecutionsPerHour?: number;
+    maxRetries?: number;
+    parallelExecution?: boolean;
+    paretoAnalysis?: {
       autoCategorize?: boolean;
-      delegationRules?: Record<string, string>; // email pattern -> assignee
-      deferralRules?: Record<string, number>; // email pattern -> defer hours
+      enabled?: boolean;
+      valueCriteria?: string[];
     };
+    patternRecognition?: {
+      confidenceThreshold?: number;
+      enabled?: boolean;
+      models?: string[];
+    };
+    retryOnFailure?: boolean;
+    timeoutSeconds?: number;
   };
+  conditions: RuleCondition[];
+  createdAt: Date;
+  description: string;
+  executionCount: number;
+  id: string;
+  isActive: boolean;
+  lastExecuted?: Date;
+  logic: LogicalOperator;
+  name: string;
+  priority: number;
+  schedule?: {
+    cronExpression?: string;
+    daysOfWeek?: number[];
+    enabled?: boolean;
+    endTime?: string;
+    startTime?: string;
+    timezone?: string;
+  };
+  templateId?: string;
+  updatedAt: Date;
 }
 
 export interface RuleExecutionLog {
-  id: string;
-  ruleId: string;
-  timestamp: Date;
-  emailId: string;
-  actionsTaken: string[];
-  status: 'success' | 'error';
-  message?: string;
   // Enhanced Logging
-  executionPath?: string[];
+  actionsTaken: string[];
   branchingDecisions?: Record<string, string>;
-  patternMatches?: Record<string, number>;
-  paretoCategory?: ParetoCategory;
+  emailId: string;
+  executionPath?: string[];
   fourDsAction?: FourDsAction;
+  id: string;
+  message?: string;
+  paretoCategory?: ParetoCategory;
+  patternMatches?: Record<string, number>;
   processingTime?: number;
+  ruleId: string;
+  status: 'success' | 'error';
+  timestamp: Date;
 }
 
 export interface RuleTemplate {
-  id: string;
-  name: string;
-  description: string;
-  conditions: RuleCondition[];
-  logic: LogicalOperator;
   actions: RuleAction[];
+  category?: 'BASIC' | 'BRANCHING' | 'PATTERN' | 'PARETO' | 'INBOX_ZERO' | 'FOUR_DS' | 'Advanced';
+  conditions: RuleCondition[];
+  description: string;
   example?: string;
-  category?:
-    | 'BASIC'
-    | 'BRANCHING'
-    | 'PATTERN'
-    | 'PARETO'
-    | 'INBOX_ZERO'
-    | 'FOUR_DS'
-    | 'Advanced';
+  id: string;
+  logic: LogicalOperator;
+  name: string;
 }
 
 // --- Enhanced Action Types ---
@@ -2305,7 +2300,7 @@ const AdvancedRulesBuilder: React.FC<{
         <div className='w-80 border-r border-gray-200 flex flex-col bg-gray-50'>
           <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
             <div className='flex items-center space-x-2'>
-              <Zap className='w-5 h-5 text-archer-neon' />
+              <Zap className='w-5 h-5 text-constructbms-blue' />
               <span className='font-semibold'>Automation</span>
             </div>
             <button
@@ -2320,7 +2315,7 @@ const AdvancedRulesBuilder: React.FC<{
             <div className='mb-4'>
               <button
                 onClick={() => setShowNaturalLanguage(!showNaturalLanguage)}
-                className='w-full flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-archer-neon to-archer-black text-white rounded-lg hover:from-archer-black hover:to-archer-neon transition-all'
+                className='w-full flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-constructbms-blue to-constructbms-black text-white rounded-lg hover:from-constructbms-black hover:to-constructbms-blue transition-all'
               >
                 <Brain className='w-4 h-4' />
                 <span>AI Rule Builder</span>
@@ -2343,7 +2338,7 @@ const AdvancedRulesBuilder: React.FC<{
                   <div className='mt-2 flex space-x-2'>
                     <button
                       onClick={() => parseNaturalLanguage(naturalLanguageInput)}
-                      className='px-3 py-1 bg-archer-neon text-black text-sm rounded hover:bg-archer-black hover:text-white'
+                      className='px-3 py-1 bg-constructbms-blue text-black text-sm rounded hover:bg-constructbms-black hover:text-white'
                     >
                       Generate Rule
                     </button>
@@ -2444,7 +2439,7 @@ const AdvancedRulesBuilder: React.FC<{
                 {rules.map(rule => (
                   <div
                     key={rule.id}
-                    className={`p-3 border rounded-lg cursor-pointer ${selectedRule?.id === rule.id ? 'border-archer-neon bg-archer-neon/10' : 'border-gray-200 hover:border-gray-300'}`}
+                    className={`p-3 border rounded-lg cursor-pointer ${selectedRule?.id === rule.id ? 'border-constructbms-blue bg-constructbms-blue/10' : 'border-gray-200 hover:border-gray-300'}`}
                     onClick={() => editRule(rule)}
                   >
                     <div className='flex items-center justify-between'>
@@ -2496,7 +2491,7 @@ const AdvancedRulesBuilder: React.FC<{
                     priority: 1,
                   });
                 }}
-                className='w-full mt-4 flex items-center space-x-2 px-3 py-2 bg-archer-neon text-black rounded-lg hover:bg-archer-black hover:text-white font-medium'
+                className='w-full mt-4 flex items-center space-x-2 px-3 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-black hover:text-white font-medium'
               >
                 <Plus className='w-4 h-4' />
                 <span>New Rule</span>
@@ -2533,7 +2528,7 @@ const AdvancedRulesBuilder: React.FC<{
                   </button>
                   <button
                     onClick={saveRule}
-                    className='px-6 py-2 text-sm bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white'
+                    className='px-6 py-2 text-sm bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white'
                   >
                     Save Rule
                   </button>
@@ -2550,7 +2545,7 @@ const AdvancedRulesBuilder: React.FC<{
                     onChange={e =>
                       setRuleForm(prev => ({ ...prev, name: e.target.value }))
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Enter rule name'
                   />
                 </div>
@@ -2566,7 +2561,7 @@ const AdvancedRulesBuilder: React.FC<{
                         priority: parseInt(e.target.value),
                       }))
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   >
                     <option value={1}>Low (1)</option>
                     <option value={5}>Medium (5)</option>
@@ -2586,7 +2581,7 @@ const AdvancedRulesBuilder: React.FC<{
                       description: e.target.value,
                     }))
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   rows={2}
                   placeholder='Describe what this rule does'
                 />
@@ -3539,7 +3534,7 @@ const AdvancedRulesBuilder: React.FC<{
                       priority: 1,
                     });
                   }}
-                  className='px-6 py-2 text-sm bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white'
+                  className='px-6 py-2 text-sm bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white'
                 >
                   New Rule
                 </button>
@@ -3637,7 +3632,7 @@ const AdvancedRulesBuilder: React.FC<{
                     </div>
                     <button
                       onClick={() => createFromTemplate(template)}
-                      className='px-4 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white'
+                      className='px-4 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white'
                     >
                       Use Template
                     </button>
@@ -3967,7 +3962,7 @@ const AdvancedRulesBuilder: React.FC<{
               </p>
               <button
                 onClick={() => bulkApplyRule(selectedRule)}
-                className='w-full px-6 py-2 bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white'
+                className='w-full px-6 py-2 bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white'
               >
                 Apply Rule
               </button>
@@ -3983,8 +3978,8 @@ const AdvancedRulesBuilder: React.FC<{
 // --- Action Parameter Builder Component ---
 const ActionParameterBuilder: React.FC<{
   actionType: string;
-  parameters: Record<string, any>;
   onUpdate: (params: Record<string, any>) => void;
+  parameters: Record<string, any>;
 }> = ({ actionType, parameters, onUpdate }) => {
   const updateParam = (key: string, value: any) => {
     onUpdate({ ...parameters, [key]: value });
@@ -4210,13 +4205,13 @@ const ActionParameterBuilder: React.FC<{
 
 const ConditionNode: React.FC<{
   cond: RuleCondition;
+  onAddChild: (parentId: string) => void;
+  onRemove: (id: string, conds?: RuleCondition[]) => void;
   onUpdate: (
     id: string,
     updates: Partial<RuleCondition>,
     conds?: RuleCondition[]
   ) => void;
-  onRemove: (id: string, conds?: RuleCondition[]) => void;
-  onAddChild: (parentId: string) => void;
 }> = ({ cond, onUpdate, onRemove, onAddChild }) => {
   return (
     <div className='ml-4 border-l-2 border-blue-100 pl-4 py-2 relative'>

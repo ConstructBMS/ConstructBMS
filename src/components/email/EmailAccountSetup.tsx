@@ -10,13 +10,13 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { EmailProvider, EmailAccount } from '../../types/email';
+import type { EmailProvider, EmailAccount } from '../../types/email';
 import emailIntegrationService from '../../services/emailIntegrationService';
 
 interface EmailAccountSetupProps {
   isOpen: boolean;
-  onClose: () => void;
   onAccountAdded: (account: EmailAccount) => void;
+  onClose: () => void;
 }
 
 const EmailAccountSetup: React.FC<EmailAccountSetupProps> = ({

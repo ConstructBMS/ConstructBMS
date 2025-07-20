@@ -54,10 +54,11 @@ interface EmailSettingsModalProps {
 }
 
 interface EmailProvider {
-  name: string;
-  imap: { server: string; port: number; secure: boolean };
-  smtp: { server: string; port: number; secure: boolean };
   icon: string;
+  imap: { port: number; secure: boolean, server: string; 
+};
+  name: string;
+  smtp: { port: number; secure: boolean, server: string; };
 }
 
 interface EmailProviders {
@@ -294,7 +295,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
           <div className='flex items-center space-x-2'>
             <button
               onClick={saveSettings}
-              className='flex items-center space-x-2 px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-opacity-90 transition-colors'
+              className='flex items-center space-x-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-opacity-90 transition-colors'
             >
               <Save className='w-4 h-4' />
               <span>Save</span>
@@ -321,7 +322,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                     onClick={() => setActiveTab(tab.key)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                       activeTab === tab.key
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'hover:bg-gray-200'
                     }`}
                   >
@@ -457,7 +458,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                   <h3 className='text-lg font-semibold'>Email Accounts</h3>
                   <button
                     onClick={() => setShowAddAccount(true)}
-                    className='flex items-center space-x-2 px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-opacity-90 transition-colors'
+                    className='flex items-center space-x-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-opacity-90 transition-colors'
                   >
                     <Plus className='w-4 h-4' />
                     <span>Add Account</span>
@@ -489,12 +490,12 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                               onClick={() => setAddAccountMode('auto')}
                               className={`p-4 border-2 rounded-lg text-left transition-colors ${
                                 addAccountMode === 'auto'
-                                  ? 'border-archer-neon bg-archer-neon bg-opacity-10'
+                                  ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10'
                                   : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
                               <div className='flex items-center space-x-2 mb-2'>
-                                <Zap className='w-5 h-5 text-archer-neon' />
+                                <Zap className='w-5 h-5 text-constructbms-blue' />
                                 <span className='font-medium'>Quick Setup</span>
                               </div>
                               <p className='text-sm text-gray-600'>
@@ -506,12 +507,12 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                               onClick={() => setAddAccountMode('manual')}
                               className={`p-4 border-2 rounded-lg text-left transition-colors ${
                                 addAccountMode === 'manual'
-                                  ? 'border-archer-neon bg-archer-neon bg-opacity-10'
+                                  ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10'
                                   : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
                               <div className='flex items-center space-x-2 mb-2'>
-                                <Settings className='w-5 h-5 text-archer-neon' />
+                                <Settings className='w-5 h-5 text-constructbms-blue' />
                                 <span className='font-medium'>
                                   Manual Setup
                                 </span>
@@ -673,7 +674,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                         </button>
                         <button
                           onClick={addAccount}
-                          className='px-4 py-2 text-sm bg-archer-neon text-black font-medium rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+                          className='px-4 py-2 text-sm bg-constructbms-blue text-black font-medium rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
                         >
                           Add Account
                         </button>
@@ -1227,7 +1228,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                   <h4 className='font-medium mb-4'>Style Preview</h4>
                   <div className='grid grid-cols-2 gap-6'>
                     <div
-                      className={`p-4 border-2 rounded-lg ${settings.emailStyle === 'outlook' ? 'border-archer-neon bg-archer-neon bg-opacity-10' : 'border-gray-200'}`}
+                      className={`p-4 border-2 rounded-lg ${settings.emailStyle === 'outlook' ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10' : 'border-gray-200'}`}
                     >
                       <div className='flex items-center space-x-2 mb-3'>
                         <div className='w-3 h-3 bg-blue-500 rounded'></div>
@@ -1249,7 +1250,7 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
                       </div>
                     </div>
                     <div
-                      className={`p-4 border-2 rounded-lg ${settings.emailStyle === 'gmail' ? 'border-archer-neon bg-archer-neon bg-opacity-10' : 'border-gray-200'}`}
+                      className={`p-4 border-2 rounded-lg ${settings.emailStyle === 'gmail' ? 'border-constructbms-blue bg-constructbms-blue bg-opacity-10' : 'border-gray-200'}`}
                     >
                       <div className='flex items-center space-x-2 mb-3'>
                         <div className='w-3 h-3 bg-red-500 rounded'></div>

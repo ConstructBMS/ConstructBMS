@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 import { chatService } from '../../services/chatService';
 import { useAuth } from '../../contexts/AuthContext';
-import {
+import type {
   ChatUser,
   ChatMessage,
   ChatChannel,
@@ -1090,12 +1090,14 @@ const Chat: React.FC = () => {
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className='p-2 hover:bg-gray-100 rounded-lg'
+                    title='Attach File'
                   >
                     <Paperclip className='w-4 h-4 text-gray-600' />
                   </button>
                   <button
                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                     className='p-2 hover:bg-gray-100 rounded-lg'
+                    title='Add Emoji'
                   >
                     <Smile className='w-4 h-4 text-gray-600' />
                   </button>
@@ -1103,6 +1105,7 @@ const Chat: React.FC = () => {
                     onClick={sendMessage}
                     disabled={!newMessage.trim()}
                     className='p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed'
+                    title='Send Message'
                   >
                     <Send className='w-4 h-4' />
                   </button>

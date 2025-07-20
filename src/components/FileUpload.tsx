@@ -13,24 +13,25 @@ import {
 import { supabase } from '../services/supabase';
 
 interface FileUploadProps {
+  // in MB
+  allowedTypes?: string[];
   bucket?: string;
+  className?: string;
   folder?: string;
+  maxFileSize?: number; 
+  multiple?: boolean;
   onUploadComplete?: (fileUrl: string, fileName: string) => void;
   onUploadError?: (error: string) => void;
-  maxFileSize?: number; // in MB
-  allowedTypes?: string[];
-  multiple?: boolean;
-  className?: string;
 }
 
 interface UploadedFile {
   id: string;
   name: string;
+  progress: number;
   size: number;
+  status: 'uploading' | 'completed' | 'error';
   type: string;
   url: string;
-  progress: number;
-  status: 'uploading' | 'completed' | 'error';
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({

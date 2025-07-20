@@ -1,5 +1,36 @@
-<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="192" height="192" fill="#3b82f6"/>
-  <rect x="16" y="16" width="160" height="160" rx="20" fill="white"/>
-  <text x="96" y="115" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="#3b82f6">A</text>
+<svg width="144" height="144" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="72" cy="72" r="70" fill="#0C1C2E" stroke="#3B82F6" stroke-width="2"/>
+  
+  <!-- Construction worker silhouette -->
+  <g transform="translate(72, 72)">
+    <!-- Hard hat -->
+    <ellipse cx="0" cy="-25" rx="20" ry="8" fill="#3B82F6"/>
+    <rect x="-18" y="-25" width="36" height="6" fill="#3B82F6"/>
+    
+    <!-- Head -->
+    <circle cx="0" cy="-15" r="12" fill="#FFFFFF"/>
+    
+    <!-- Body -->
+    <rect x="-15" y="-3" width="30" height="25" fill="#3B82F6"/>
+    
+    <!-- Arms -->
+    <rect x="-25" y="0" width="8" height="20" fill="#3B82F6"/>
+    <rect x="17" y="0" width="8" height="20" fill="#3B82F6"/>
+    
+    <!-- Legs -->
+    <rect x="-12" y="22" width="8" height="15" fill="#3B82F6"/>
+    <rect x="4" y="22" width="8" height="15" fill="#3B82F6"/>
+    
+    <!-- Safety vest details -->
+    <rect x="-12" y="2" width="24" height="18" fill="#FFFFFF" opacity="0.3"/>
+    <rect x="-8" y="6" width="16" height="2" fill="#0C1C2E"/>
+    <rect x="-8" y="10" width="16" height="2" fill="#0C1C2E"/>
+    <rect x="-8" y="14" width="16" height="2" fill="#0C1C2E"/>
+  </g>
+  
+  <!-- Text "ConstructBMS" -->
+  <text x="72" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">
+    ConstructBMS
+  </text>
 </svg> 

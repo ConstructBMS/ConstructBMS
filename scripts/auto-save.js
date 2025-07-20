@@ -24,7 +24,7 @@ class AutoSave {
     try {
       // Set default git config if not already set
       execSync('git config --global user.name "Archer Auto-Save"', { stdio: 'ignore' });
-      execSync('git config --global user.email "auto-save@archer-project.local"', { stdio: 'ignore' });
+      execSync('git config --global user.email "auto-save@constructbms-project.local"', { stdio: 'ignore' });
       console.log('✅ Git configuration set up for auto-save');
     } catch (error) {
       console.log('⚠️  Git config already set or error occurred');

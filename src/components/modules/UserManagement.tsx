@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { authService } from '../../services/authService';
 import {
-  User,
-  Role,
-  Permission,
   SystemRoles,
   Permissions,
 } from '../../types/auth';
+import type { User, Role, Permission } from '../../types/auth';
 import PermissionGuard from '../auth/PermissionGuard';
 import {
   Users,
@@ -80,7 +78,7 @@ const UserManagement: React.FC = () => {
   if (loading) {
     return (
       <div className='flex items-center justify-center h-64'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-archer-neon'></div>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-constructbms-blue'></div>
       </div>
     );
   }
@@ -117,7 +115,7 @@ const UserManagement: React.FC = () => {
               onClick={() => setActiveTab('users')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'users'
-                  ? 'border-archer-neon text-archer-neon'
+                  ? 'border-constructbms-blue text-constructbms-blue'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -129,7 +127,7 @@ const UserManagement: React.FC = () => {
                 onClick={() => setActiveTab('roles')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'roles'
-                    ? 'border-archer-neon text-archer-neon'
+                    ? 'border-constructbms-blue text-constructbms-blue'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -142,7 +140,7 @@ const UserManagement: React.FC = () => {
                 onClick={() => setActiveTab('permissions')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'permissions'
-                    ? 'border-archer-neon text-archer-neon'
+                    ? 'border-constructbms-blue text-constructbms-blue'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -162,7 +160,7 @@ const UserManagement: React.FC = () => {
                   System Users
                 </h3>
                 <PermissionGuard permissions={[Permissions.USERS_CREATE]}>
-                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-archer-neon hover:bg-archer-black transition-colors'>
+                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-constructbms-blue hover:bg-constructbms-black transition-colors'>
                     <Plus className='h-4 w-4 mr-2' />
                     Add User
                   </button>
@@ -192,7 +190,7 @@ const UserManagement: React.FC = () => {
                       <tr key={user.id} className='hover:bg-gray-50'>
                         <td className='px-6 py-4 whitespace-nowrap'>
                           <div className='flex items-center'>
-                            <div className='w-8 h-8 rounded-full bg-archer-neon flex items-center justify-center'>
+                            <div className='w-8 h-8 rounded-full bg-constructbms-blue flex items-center justify-center'>
                               <span className='text-sm font-medium text-black'>
                                 {user.firstName.charAt(0)}
                                 {user.lastName.charAt(0)}
@@ -237,7 +235,7 @@ const UserManagement: React.FC = () => {
                             <PermissionGuard
                               permissions={[Permissions.USERS_VIEW]}
                             >
-                              <button className='text-archer-neon hover:text-archer-black'>
+                              <button className='text-constructbms-blue hover:text-constructbms-black'>
                                 <Eye className='h-4 w-4' />
                               </button>
                             </PermissionGuard>
@@ -273,7 +271,7 @@ const UserManagement: React.FC = () => {
                   System Roles
                 </h3>
                 <PermissionGuard permissions={[Permissions.ROLES_CREATE]}>
-                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-archer-neon hover:bg-archer-black transition-colors'>
+                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-constructbms-blue hover:bg-constructbms-black transition-colors'>
                     <Plus className='h-4 w-4 mr-2' />
                     Add Role
                   </button>
@@ -301,7 +299,7 @@ const UserManagement: React.FC = () => {
                     </p>
                     <div className='flex space-x-2'>
                       <PermissionGuard permissions={[Permissions.ROLES_VIEW]}>
-                        <button className='text-archer-neon hover:text-archer-black'>
+                        <button className='text-constructbms-blue hover:text-constructbms-black'>
                           <Eye className='h-4 w-4' />
                         </button>
                       </PermissionGuard>
@@ -330,7 +328,7 @@ const UserManagement: React.FC = () => {
                   System Permissions
                 </h3>
                 <PermissionGuard permissions={[Permissions.PERMISSIONS_CREATE]}>
-                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-archer-neon hover:bg-archer-black transition-colors'>
+                  <button className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-constructbms-blue hover:bg-constructbms-black transition-colors'>
                     <Plus className='h-4 w-4 mr-2' />
                     Add Permission
                   </button>
@@ -398,7 +396,7 @@ const UserManagement: React.FC = () => {
                             <PermissionGuard
                               permissions={[Permissions.PERMISSIONS_VIEW]}
                             >
-                              <button className='text-archer-neon hover:text-archer-black'>
+                              <button className='text-constructbms-blue hover:text-constructbms-black'>
                                 <Eye className='h-4 w-4' />
                               </button>
                             </PermissionGuard>

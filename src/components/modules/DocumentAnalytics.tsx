@@ -36,11 +36,11 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 interface AnalyticsCardProps {
+  change?: number;
+  color: string;
+  icon: React.ReactNode;
   title: string;
   value: string | number;
-  change?: number;
-  icon: React.ReactNode;
-  color: string;
 }
 
 const AnalyticsCard: React.FC<AnalyticsCardProps> = ({

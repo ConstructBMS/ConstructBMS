@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { X, Folder, Edit3, Settings, Trash2, Archive } from 'lucide-react';
 
 interface FolderOperationsModalProps {
+  folderName?: string;
   isOpen: boolean;
   onClose: () => void;
-  operation: 'new' | 'rename' | 'properties' | 'delete' | 'empty';
-  folderName?: string;
   onConfirm: (data: any) => void;
+  operation: 'new' | 'rename' | 'properties' | 'delete' | 'empty';
 }
 
 const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
@@ -113,7 +113,7 @@ const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
                 onChange={e =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 placeholder='Enter folder name'
                 required
               />
@@ -130,7 +130,7 @@ const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
                 onChange={e =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 rows={3}
                 placeholder='Enter folder description'
               />
@@ -149,7 +149,7 @@ const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
                   onChange={e =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               </div>
 
@@ -196,7 +196,7 @@ const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
                         archiveAfter: parseInt(e.target.value),
                       })
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     min='1'
                     max='365'
                   />
@@ -239,7 +239,7 @@ const FolderOperationsModal: React.FC<FolderOperationsModalProps> = ({
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 operation === 'delete' || operation === 'empty'
                   ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-archer-neon text-black hover:bg-archer-black hover:text-white'
+                  : 'bg-constructbms-blue text-black hover:bg-constructbms-black hover:text-white'
               }`}
             >
               {operation === 'new' && 'Create Folder'}

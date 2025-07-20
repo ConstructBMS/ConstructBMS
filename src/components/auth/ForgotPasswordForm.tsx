@@ -68,7 +68,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
           <div className='space-y-4'>
             <button
               onClick={onBackToLogin}
-              className='w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-archer-neon'
+              className='w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-constructbms-blue'
             >
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to Sign In
@@ -83,7 +83,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
     <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-md w-full space-y-8'>
         <div>
-          <div className='mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-archer-neon'>
+          <div className='mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-constructbms-blue'>
             <Shield className='h-8 w-8 text-black' />
           </div>
           <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
@@ -126,7 +126,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-archer-neon focus:border-archer-neon sm:text-sm'
+                className='appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-constructbms-blue focus:border-constructbms-blue sm:text-sm'
                 placeholder='Enter your email'
               />
             </div>
@@ -139,8 +139,8 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
               className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
                 isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-archer-neon hover:bg-archer-black text-black hover:text-white'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-archer-neon transition-colors`}
+                  : 'bg-constructbms-blue hover:bg-constructbms-black text-black hover:text-white'
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-constructbms-blue transition-colors`}
             >
               {isLoading ? (
                 <>
@@ -155,7 +155,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
             <button
               type='button'
               onClick={onBackToLogin}
-              className='w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-archer-neon'
+              className='w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-constructbms-blue'
             >
               <ArrowLeft className='h-4 w-4 mr-2' />
               Back to Sign In

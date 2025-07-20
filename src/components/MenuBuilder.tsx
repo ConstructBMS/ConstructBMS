@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMenu } from '../contexts/MenuContext';
-import { MenuItem } from '../types/menu';
+import type { MenuItem } from '../types/menu';
 
 let nextId = 1000;
 
@@ -201,7 +201,7 @@ const MenuBuilder: React.FC = () => {
                         setAddChildTo(null);
                       }
                     }}
-                    className='px-4 py-2 bg-archer-neon text-black rounded-md hover:bg-archer-dark font-medium transition-colors'
+                    className='px-4 py-2 bg-constructbms-blue text-black rounded-md hover:bg-constructbms-dark font-medium transition-colors'
                   >
                     Add
                   </button>
@@ -242,7 +242,7 @@ const MenuBuilder: React.FC = () => {
         <div className='flex items-center space-x-4'>
           <button
             onClick={resetMenu}
-            className='px-6 py-3 bg-archer-neon text-black rounded-lg hover:bg-archer-dark font-medium transition-colors'
+            className='px-6 py-3 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-dark font-medium transition-colors'
           >
             Reset to Default
           </button>
@@ -266,7 +266,7 @@ const MenuBuilder: React.FC = () => {
                   setNewParentName('');
                 }
               }}
-              className='px-6 py-2 bg-archer-neon text-black rounded-lg hover:bg-archer-dark font-medium transition-colors'
+              className='px-6 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-dark font-medium transition-colors'
             >
               Add Parent
             </button>
@@ -446,7 +446,7 @@ function moveMenuItem(
   const findItemAndParent = (
     items: MenuItem[],
     id: string
-  ): { item: MenuItem | null; parent: MenuItem[] | null; index: number } => {
+  ): { index: number, item: MenuItem | null; parent: MenuItem[] | null; } => {
     for (let i = 0; i < items.length; i++) {
       if (items[i].id === id) {
         return { item: items[i], parent: items, index: i };

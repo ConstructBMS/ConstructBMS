@@ -1,21 +1,21 @@
 import { supabase } from './supabase';
 
 export interface Task {
-  id: string;
-  project_id: string;
-  title: string;
-  description?: string;
-  status: string;
   assignee?: string;
-  due_date?: string;
-  created_at?: string;
-  updated_at?: string;
-  priority?: string;
-  position?: number;
   client_visible?: boolean;
+  created_at?: string;
   customer_id?: string;
+  description?: string;
+  due_date?: string;
+  id: string;
   opportunity_id?: string;
+  position?: number;
+  priority?: string;
+  project_id: string;
+  status: string;
+  title: string;
   type?: string;
+  updated_at?: string;
 }
 
 export interface Project {
@@ -25,9 +25,9 @@ export interface Project {
 }
 
 export interface Customer {
+  email?: string;
   id: string;
   name: string;
-  email?: string;
 }
 
 export interface Opportunity {
@@ -38,12 +38,12 @@ export interface Opportunity {
 
 // Get all tasks with optional filtering
 export async function getTasks(filters?: {
-  project_id?: string;
+  assignee?: string;
   customer_id?: string;
   opportunity_id?: string;
-  type?: string;
+  project_id?: string;
   status?: string;
-  assignee?: string;
+  type?: string;
 }): Promise<Task[]> {
   let query = supabase.from('tasks').select('*');
 

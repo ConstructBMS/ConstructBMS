@@ -1,58 +1,53 @@
 import { supabase } from './supabase';
 
 export interface ApiIntegration {
-  id?: string;
-  service_name: string;
-  service_type:
-    | 'cloud_storage'
-    | 'communication'
-    | 'project_management'
-    | 'crm'
-    | 'other';
-  display_name: string;
-  description: string;
-  icon: string;
   color: string;
-  is_connected: boolean;
   connection_details?: Record<string, any>;
-  last_sync?: string;
-  sync_frequency?: 'manual' | 'hourly' | 'daily' | 'weekly';
   created_at?: string;
+  description: string;
+  display_name: string;
+  icon: string;
+  id?: string;
+  is_connected: boolean;
+  last_sync?: string;
+  service_name: string;
+  service_type: 'cloud_storage' | 'communication' | 'project_management' | 'crm' | 'other';
+  sync_frequency?: 'manual' | 'hourly' | 'daily' | 'weekly';
   updated_at?: string;
 }
 
 export interface IntegrationConnection {
+  access_token?: string;
+  connection_data: Record<string, any>;
+  created_at?: string;
+  expires_at?: string;
   id?: string;
   integration_id: string;
-  user_id: string;
-  access_token?: string;
-  refresh_token?: string;
-  expires_at?: string;
-  connection_data: Record<string, any>;
   is_active: boolean;
-  created_at?: string;
+  refresh_token?: string;
   updated_at?: string;
+  user_id: string;
 }
 
 export interface SyncResult {
-  success: boolean;
-  message: string;
   data?: any;
   error?: string;
+  message: string;
+  success: boolean;
   timestamp: string;
 }
 
 export interface DocumentSync {
-  id?: string;
+  created_at?: string;
   document_id: string;
-  integration_id: string;
+  error_message?: string;
   external_id: string;
   external_url?: string;
-  sync_direction: 'upload' | 'download' | 'bidirectional';
+  id?: string;
+  integration_id: string;
   last_sync: string;
+  sync_direction: 'upload' | 'download' | 'bidirectional';
   sync_status: 'pending' | 'in_progress' | 'completed' | 'failed';
-  error_message?: string;
-  created_at?: string;
   updated_at?: string;
 }
 

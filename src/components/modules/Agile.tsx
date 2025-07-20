@@ -63,7 +63,7 @@ const Agile: React.FC = () => {
         {statsExpanded && (
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-2 duration-200'>
             <div className='bg-white rounded-xl border p-6 flex items-center'>
-              <Zap className='h-8 w-8 text-archer-neon mr-4' />
+              <Zap className='h-8 w-8 text-constructbms-blue mr-4' />
               <div>
                 <p className='text-sm text-gray-500'>Total Sprints</p>
                 <p className='text-2xl font-bold'>{demoSprints.length}</p>
@@ -93,7 +93,7 @@ const Agile: React.FC = () => {
       <div className='bg-white rounded-xl border p-6 mt-6'>
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-lg font-semibold'>Sprints</h2>
-          <button className='flex items-center px-4 py-2 bg-archer-neon text-black rounded-lg text-sm font-medium hover:bg-archer-black hover:text-white transition-colors'>
+          <button className='flex items-center px-4 py-2 bg-constructbms-blue text-black rounded-lg text-sm font-medium hover:bg-constructbms-black hover:text-white transition-colors'>
             <Plus className='h-4 w-4 mr-2' /> New Sprint
           </button>
         </div>

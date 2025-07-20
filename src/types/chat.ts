@@ -1,59 +1,65 @@
 export interface ChatUser {
-  id: string;
-  name: string;
-  email: string;
   avatar?: string;
-  role: 'super_admin' | 'admin' | 'employee' | 'contractor' | 'customer';
+  email: string;
+  id: string;
   isOnline: boolean;
   lastSeen?: Date;
+  name: string;
+  role: 'super_admin' | 'admin' | 'employee' | 'contractor' | 'customer';
   status?: 'available' | 'busy' | 'away' | 'offline';
 }
 
 export interface ChatMessage {
-  id: string;
+  // ID of message being replied to
+  // Array of user IDs mentioned
+  attachments?: ChatAttachment[];
   channelId: string;
-  senderId: string;
   content: string;
-  timestamp: Date;
-  type: 'text' | 'image' | 'file' | 'system';
-  mentions: string[]; // Array of user IDs mentioned
-  replyTo?: string; // ID of message being replied to
   edited: boolean;
   editedAt?: Date;
-  attachments?: ChatAttachment[];
+  id: string;
+  isDeleted: boolean; 
+  mentions: string[]; 
   reactions: MessageReaction[];
-  isDeleted: boolean;
+  replyTo?: string;
+  senderId: string;
+  timestamp: Date;
+  type: 'text' | 'image' | 'file' | 'system';
 }
 
 export interface ChatAttachment {
   id: string;
-  name: string;
-  url: string;
-  type: 'image' | 'document' | 'video' | 'audio';
-  size: number;
   mimeType: string;
+  name: string;
+  size: number;
+  type: 'image' | 'document' | 'video' | 'audio';
+  url: string;
 }
 
 export interface MessageReaction {
-  userId: string;
   emoji: string;
   timestamp: Date;
+  userId: string;
 }
 
 export interface ChatChannel {
-  id: string;
-  name: string;
-  type: 'system' | 'project' | 'custom';
-  description?: string;
-  projectId?: string; // For project-specific channels
-  members: string[]; // Array of user IDs
-  admins: string[]; // Array of admin user IDs
-  isPrivate: boolean;
+  // Array of user IDs
+  // Array of admin user IDs
+  // For project-specific channels
+  // Array of message IDs
+  admins: string[];
   createdAt: Date;
-  lastMessage?: ChatMessage;
-  unreadCount: number;
-  pinnedMessages: string[]; // Array of message IDs
+  description?: string;
+  id: string;
+  isPrivate: boolean; 
+  lastMessage?: ChatMessage; 
+  members: string[]; 
+  name: string;
+  pinnedMessages: string[];
+  projectId?: string;
   settings: ChannelSettings;
+  type: 'system' | 'project' | 'custom'; 
+  unreadCount: number;
 }
 
 export interface ChannelSettings {
@@ -65,45 +71,45 @@ export interface ChannelSettings {
 }
 
 export interface ChatThread {
-  id: string;
-  parentMessageId: string;
   channelId: string;
-  messages: ChatMessage[];
-  participants: string[];
   createdAt: Date;
+  id: string;
+  messages: ChatMessage[];
+  parentMessageId: string;
+  participants: string[];
   updatedAt: Date;
 }
 
 export interface ChatNotification {
-  id: string;
-  userId: string;
-  type: 'mention' | 'message' | 'reaction' | 'channel_invite';
   channelId?: string;
+  content: string;
+  id: string;
+  isRead: boolean;
   messageId?: string;
   senderId?: string;
-  content: string;
   timestamp: Date;
-  isRead: boolean;
+  type: 'mention' | 'message' | 'reaction' | 'channel_invite';
+  userId: string;
 }
 
 export interface ChatPresence {
-  userId: string;
-  status: 'online' | 'offline' | 'away' | 'busy';
-  lastSeen: Date;
   currentChannel?: string;
+  lastSeen: Date;
+  status: 'online' | 'offline' | 'away' | 'busy';
+  userId: string;
 }
 
 export interface ChatSearchResult {
-  messages: ChatMessage[];
   channels: ChatChannel[];
-  users: ChatUser[];
+  messages: ChatMessage[];
   totalResults: number;
+  users: ChatUser[];
 }
 
 export interface ChatStats {
-  totalMessages: number;
-  totalChannels: number;
   activeUsers: number;
-  messagesToday: number;
   mentionsToday: number;
+  messagesToday: number;
+  totalChannels: number;
+  totalMessages: number;
 }

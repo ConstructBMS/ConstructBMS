@@ -1,26 +1,26 @@
 import { supabase } from './supabase';
 
 export interface PersistentSettings {
-  id?: string;
-  user_id?: string;
-  organization_id?: string;
-  key: string;
-  value: any;
   category: string;
   created_at?: string;
+  id?: string;
+  key: string;
+  organization_id?: string;
   updated_at?: string;
+  user_id?: string;
+  value: any;
 }
 
 export interface LogoSettings {
   mainLogo: {
-    type: 'text' | 'image';
+    imageUrl?: string | null;
     text: string;
-    imageUrl: string | null;
+    type: 'text' | 'image';
   };
   sidebarLogo: {
-    type: 'icon' | 'image';
     icon: string;
     imageUrl: string | null;
+    type: 'icon' | 'image';
   };
 }
 
@@ -29,11 +29,11 @@ export interface ThemeSettings {
 }
 
 export interface UserPreferences {
+  [key: string]: any;
+  activityStreamStatsExpanded: boolean;
+  contractorsStatsExpanded: boolean;
   dashboardStatsExpanded: boolean;
   marketingStatsExpanded: boolean;
-  contractorsStatsExpanded: boolean;
-  activityStreamStatsExpanded: boolean;
-  [key: string]: any;
 }
 
 class PersistentStorageService {
@@ -60,11 +60,11 @@ class PersistentStorageService {
 
       const { data, error } = await supabase
         .from('user_settings')
-        .select('*')
+        .select('value')
         .eq('user_id', user.id)
         .eq('key', key)
         .eq('category', category)
-        .single();
+        .maybeSingle();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -279,7 +279,7 @@ class PersistentStorageService {
   }
 
   // Test function to check persistent storage
-  async testPersistentStorage(): Promise<{ success: boolean; error?: string }> {
+  async testPersistentStorage(): Promise<{ error?: string, success: boolean; }> {
     try {
       const user = await this.getCurrentUser();
       if (!user) {

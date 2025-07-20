@@ -1,52 +1,52 @@
 import { supabase } from './supabase';
 
 export interface AnalyticsEvent {
-  id?: string;
-  user_id?: string;
-  organization_id?: string;
-  event_type: string;
   event_data: Record<string, any>;
-  page_url?: string;
-  user_agent?: string;
+  event_type: string;
+  id?: string;
   ip_address?: string;
-  timestamp?: string;
+  organization_id?: string;
+  page_url?: string;
   session_id?: string;
+  timestamp?: string;
+  user_agent?: string;
+  user_id?: string;
 }
 
 export interface PerformanceMetric {
-  id?: string;
-  user_id?: string;
-  organization_id?: string;
-  metric_type: 'page_load' | 'api_response' | 'error' | 'user_interaction';
-  metric_name: string;
-  metric_value: number;
-  unit: string;
-  timestamp?: string;
   additional_data?: Record<string, any>;
+  id?: string;
+  metric_name: string;
+  metric_type: 'page_load' | 'api_response' | 'error' | 'user_interaction';
+  metric_value: number;
+  organization_id?: string;
+  timestamp?: string;
+  unit: string;
+  user_id?: string;
 }
 
 export interface UserBehavior {
-  id?: string;
-  user_id?: string;
-  organization_id?: string;
   action: string;
-  target_element?: string;
+  id?: string;
+  organization_id?: string;
   page_url: string;
+  session_id?: string;
+  target_element?: string;
   time_spent: number;
   timestamp?: string;
-  session_id?: string;
+  user_id?: string;
 }
 
 export interface BusinessMetric {
-  id?: string;
-  organization_id: string;
-  metric_type: 'revenue' | 'projects' | 'tasks' | 'users' | 'customers';
-  metric_name: string;
-  metric_value: number;
-  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
-  timestamp?: string;
   comparison_period?: number;
   growth_rate?: number;
+  id?: string;
+  metric_name: string;
+  metric_type: 'revenue' | 'projects' | 'tasks' | 'users' | 'customers';
+  metric_value: number;
+  organization_id: string;
+  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  timestamp?: string;
 }
 
 class AnalyticsService {

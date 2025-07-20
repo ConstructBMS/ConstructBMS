@@ -99,42 +99,42 @@ const TABS = [
 ];
 
 interface OutlookRibbonProps {
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-  onNewEmail: () => void;
-  onNewMeeting: () => void;
-  onDelete: () => void;
-  onArchive: () => void;
-  onReply: () => void;
-  onReplyAll: () => void;
-  onForward: () => void;
-  onRules: () => void;
-  onTag: () => void;
-  onAddressBook: () => void;
-  onFilterEmail: () => void;
-  onSearch: (term: string) => void;
-  onSaveAttachments: () => void;
-  onSendReceive: () => void;
+  // Current state props for visual feedback
   // New props for additional functionality
-  onSendReceiveAll?: () => void;
+  activeTab: string;
+  currentReadingPane?: string;
+  currentSortBy?: string;
+  currentView?: string;
+  currentZoom?: number;
+  onAddressBook: () => void;
+  onArchive: () => void;
+  onChangeView?: (view: string) => void;
   onCreateFolder?: () => void;
-  onRenameFolder?: () => void;
+  onDelete: () => void;
   onDeleteFolder?: () => void;
   onEmptyFolder?: () => void;
-  onFolderProperties?: () => void;
-  onViewSettings?: () => void;
-  onChangeView?: (view: string) => void;
-  onSortBy?: (field: string) => void;
-  onGroupBy?: (field: string) => void;
   onFilterBy?: (filter: string) => void;
-  onReadingPane?: (position: string) => void;
-  onZoom?: (level: number) => void;
+  onFilterEmail: () => void;
+  onFolderProperties?: () => void;
+  onForward: () => void;
+  onGroupBy?: (field: string) => void;
   onHelp?: () => void;
-  // Current state props for visual feedback
-  currentView?: string;
-  currentReadingPane?: string;
-  currentZoom?: number;
-  currentSortBy?: string;
+  onNewEmail: () => void;
+  onNewMeeting: () => void;
+  onReadingPane?: (position: string) => void;
+  onRenameFolder?: () => void;
+  onReply: () => void;
+  onReplyAll: () => void;
+  onRules: () => void;
+  onSaveAttachments: () => void;
+  onSearch: (term: string) => void;
+  onSendReceive: () => void;
+  onSendReceiveAll?: () => void;
+  onSortBy?: (field: string) => void;
+  onTabChange: (tab: string) => void;
+  onTag: () => void;
+  onViewSettings?: () => void;
+  onZoom?: (level: number) => void;
 }
 
 const Divider = () => <div className='h-12 w-px bg-gray-200 mx-2' />;
@@ -186,7 +186,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className={`px-4 py-2 text-sm font-semibold focus:outline-none relative ${activeTab === tab.key ? 'text-archer-neon' : 'text-gray-700'} `}
+            className={`px-4 py-2 text-sm font-semibold focus:outline-none relative ${activeTab === tab.key ? 'text-constructbms-blue' : 'text-gray-700'} `}
             style={{
               borderBottom:
                 activeTab === tab.key
@@ -336,7 +336,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                 <input
                   type='text'
                   placeholder='Search emails...'
-                  className='text-xs w-32 border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-archer-neon'
+                  className='text-xs w-32 border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-constructbms-blue'
                   onChange={e => onSearch(e.target.value)}
                 />
               </div>
@@ -462,7 +462,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onChangeView?.('compact')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentView === 'compact'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -473,7 +473,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onChangeView?.('normal')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentView === 'normal'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -484,7 +484,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onChangeView?.('preview')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentView === 'preview'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -502,7 +502,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onReadingPane?.('right')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentReadingPane === 'right'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -513,7 +513,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onReadingPane?.('bottom')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentReadingPane === 'bottom'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -524,7 +524,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onReadingPane?.('off')}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentReadingPane === 'off'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -570,7 +570,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onZoom?.(100)}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentZoom === 100
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -581,7 +581,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onZoom?.(125)}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentZoom === 125
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -592,7 +592,7 @@ const OutlookRibbon: React.FC<OutlookRibbonProps> = ({
                   onClick={() => onZoom?.(150)}
                   className={`flex flex-col items-center px-2 py-1 rounded transition-colors ${
                     currentZoom === 150
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >

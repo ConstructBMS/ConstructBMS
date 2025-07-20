@@ -1,28 +1,31 @@
 /**
  * Enterprise Logging System
  * Centralized logging with different levels and structured output
+ * 
+ * @deprecated Use the new loggingService from '../services/loggingService' instead
  */
 
 import { env, isDevelopment, isProduction } from '../config/environment';
+import { loggingService, LogLevel as NewLogLevel } from '../services/loggingService';
 
 export enum LogLevel {
   DEBUG = 0,
-  INFO = 1,
-  WARN = 2,
   ERROR = 3,
   FATAL = 4,
+  INFO = 1,
+  WARN = 2,
 }
 
 export interface LogEntry {
-  timestamp: string;
-  level: LogLevel;
-  message: string;
   context?: string;
   data?: any;
-  error?: Error;
-  userId?: string;
-  sessionId?: string;
-  requestId?: string;
+  error?: Error | undefined;
+  level: LogLevel;
+  message: string;
+  requestId?: string | undefined;
+  sessionId?: string | undefined;
+  timestamp: string;
+  userId?: string | undefined;
 }
 
 class Logger {
@@ -266,3 +269,6 @@ export const withPerformanceLogging = <T extends any[], R>(
     }
   };
 };
+
+// Re-export new logging service for easy migration
+export { loggingService, logger as newLogger } from '../services/loggingService';

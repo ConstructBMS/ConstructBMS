@@ -24,9 +24,9 @@ import {
   ChevronUp,
   ChevronDown,
 } from 'lucide-react';
+import type { ActivityItem } from '../../types';
 import {
   activityStreamService,
-  ActivityEvent,
 } from '../../services/activityStream';
 
 interface ActivityStreamProps {
@@ -36,8 +36,8 @@ interface ActivityStreamProps {
 const ActivityStream: React.FC<ActivityStreamProps> = ({
   onNavigateToModule,
 }) => {
-  const [activities, setActivities] = useState<ActivityEvent[]>([]);
-  const [filteredActivities, setFilteredActivities] = useState<ActivityEvent[]>(
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<ActivityItem[]>(
     []
   );
   const [stats, setStats] = useState(activityStreamService.getActivityStats());
@@ -121,7 +121,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
     setFilteredActivities(filtered);
   }, [activities, filters, sortBy, sortOrder]);
 
-  const handleActivityClick = (activity: ActivityEvent) => {
+  const handleActivityClick = (activity: ActivityItem) => {
     if (!activity.read) {
       activityStreamService.markAsRead(activity.id);
     }
@@ -183,7 +183,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
     return iconMap[iconName || 'Bell'] || Bell;
   };
 
-  const getPriorityColor = (priority: ActivityEvent['priority']) => {
+  const getPriorityColor = (priority: ActivityItem['priority']) => {
     switch (priority) {
       case 'urgent':
         return 'text-red-600 bg-red-100';
@@ -271,7 +271,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
         {statsExpanded && (
           <div className='grid grid-cols-1 md:grid-cols-4 gap-4 animate-in slide-in-from-top-2 duration-200'>
             <div className='bg-white rounded-xl border p-4 flex items-center'>
-              <Bell className='h-8 w-8 text-archer-neon mr-3' />
+              <Bell className='h-8 w-8 text-constructbms-blue mr-3' />
               <div>
                 <p className='text-sm text-gray-500'>Total Activities</p>
                 <p className='text-2xl font-bold'>{stats.total}</p>
@@ -325,7 +325,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                 onChange={e =>
                   setFilters(prev => ({ ...prev, search: e.target.value }))
                 }
-                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
             <button
@@ -341,7 +341,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as any)}
-              className='px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+              className='px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
             >
               <option value='timestamp'>Sort by Time</option>
               <option value='priority'>Sort by Priority</option>
@@ -357,7 +357,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
             </button>
             <button
               onClick={handleMarkAllRead}
-              className='flex items-center gap-2 px-4 py-2 bg-archer-neon text-black rounded-lg hover:bg-archer-green transition-colors'
+              className='flex items-center gap-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-green transition-colors'
             >
               <CheckCircle className='h-4 w-4' />
               Mark All Read
@@ -378,7 +378,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                   onChange={e =>
                     setFilters(prev => ({ ...prev, type: e.target.value }))
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 >
                   <option value=''>All Types</option>
                   {activityTypes.map(type => (
@@ -398,7 +398,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                   onChange={e =>
                     setFilters(prev => ({ ...prev, category: e.target.value }))
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 >
                   <option value=''>All Categories</option>
                   {categories.map(category => (
@@ -418,7 +418,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                   onChange={e =>
                     setFilters(prev => ({ ...prev, priority: e.target.value }))
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 >
                   <option value=''>All Priorities</option>
                   {priorities.map(priority => (
@@ -438,7 +438,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                   onChange={e =>
                     setFilters(prev => ({ ...prev, read: e.target.value }))
                   }
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 >
                   <option value=''>All</option>
                   <option value='false'>Unread</option>
@@ -462,7 +462,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                   filteredActivities.length > 0
                 }
                 onChange={handleSelectAll}
-                className='rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                className='rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
               />
               <span className='text-sm text-gray-600'>
                 {selectedActivities.length > 0
@@ -505,7 +505,7 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                         e.stopPropagation();
                         handleSelectActivity(activity.id);
                       }}
-                      className='mt-1 rounded border-gray-300 text-archer-neon focus:ring-archer-neon'
+                      className='mt-1 rounded border-gray-300 text-constructbms-blue focus:ring-constructbms-blue'
                     />
 
                     <div
@@ -516,8 +516,8 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                             ? 'bg-green-100'
                             : activity.color === 'purple'
                               ? 'bg-purple-100'
-                              : activity.color === 'gold'
-                                ? 'bg-yellow-100'
+                              : activity.color === 'blue'
+                                ? 'bg-blue-100'
                                 : activity.color === 'red'
                                   ? 'bg-red-100'
                                   : activity.color === 'orange'
@@ -533,8 +533,8 @@ const ActivityStream: React.FC<ActivityStreamProps> = ({
                               ? 'text-green-600'
                               : activity.color === 'purple'
                                 ? 'text-purple-600'
-                                : activity.color === 'gold'
-                                  ? 'text-yellow-600'
+                                : activity.color === 'blue'
+                                  ? 'text-blue-600'
                                   : activity.color === 'red'
                                     ? 'text-red-600'
                                     : activity.color === 'orange'

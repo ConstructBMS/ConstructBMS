@@ -1,23 +1,23 @@
 export interface EmailAnalytics {
+  averageResponseTime: number;
+  categoryDistribution: Record<string, number>;
+  clientCommunicationCount: number;
+  emailVolumeTrends: VolumeData[];
+  performanceMetrics: PerformanceMetrics;
+  priorityDistribution: Record<string, number>;
+  projectRelatedCount: number;
+  responseTimeTrends: ResponseTimeData[];
+  teamWorkload: Record<string, number>;
+  topProjects: ProjectData[];
+  topSenders: SenderData[];
   totalEmails: number;
   unreadCount: number;
   urgentCount: number;
-  projectRelatedCount: number;
-  clientCommunicationCount: number;
-  averageResponseTime: number;
-  teamWorkload: Record<string, number>;
-  categoryDistribution: Record<string, number>;
-  priorityDistribution: Record<string, number>;
-  responseTimeTrends: ResponseTimeData[];
-  emailVolumeTrends: VolumeData[];
-  topSenders: SenderData[];
-  topProjects: ProjectData[];
-  performanceMetrics: PerformanceMetrics;
 }
 
 export interface ResponseTimeData {
-  date: string;
   averageResponseTime: number;
+  date: string;
   emailCount: number;
 }
 
@@ -29,49 +29,50 @@ export interface VolumeData {
 }
 
 export interface SenderData {
-  sender: string;
-  emailCount: number;
   averagePriority: number;
+  emailCount: number;
   lastContact: Date;
+  sender: string;
 }
 
 export interface ProjectData {
-  projectName: string;
-  emailCount: number;
-  urgentCount: number;
   averageResponseTime: number;
+  emailCount: number;
+  projectName: string;
   teamMembers: string[];
+  urgentCount: number;
 }
 
 export interface PerformanceMetrics {
-  averageResponseTime: number;
-  responseTimeTarget: number;
-  responseTimeCompliance: number;
-  emailsProcessedToday: number;
-  emailsAssignedToday: number;
   automationRulesTriggered: number;
+  averageResponseTime: number;
+  emailsAssignedToday: number;
+  emailsProcessedToday: number;
+  responseTimeCompliance: number;
+  responseTimeTarget: number;
   teamEfficiency: number;
 }
 
 export interface SearchResult {
-  emailId: string;
-  subject: string;
-  sender: string;
-  timestamp: Date;
-  relevance: number;
-  highlights: string[];
   category: string;
+  emailId: string;
+  highlights: string[];
   priority: string;
+  relevance: number;
+  sender: string;
+  subject: string;
+  timestamp: Date;
 }
 
 export interface SearchFilters {
-  dateRange?: { start: Date; end: Date };
   categories?: string[];
-  priorities?: string[];
-  senders?: string[];
-  projects?: string[];
+  dateRange?: { end: Date, start: Date; 
+};
   hasAttachments?: boolean;
   isRead?: boolean;
+  priorities?: string[];
+  projects?: string[];
+  senders?: string[];
   tags?: string[];
 }
 
@@ -380,10 +381,10 @@ class EmailAnalyticsService {
       });
 
       const incomingCount = dayEmails.filter(
-        e => e.senderEmail !== 'you@archer.com'
+        e => e.senderEmail !== 'you@constructbms.com'
       ).length;
       const outgoingCount = dayEmails.filter(
-        e => e.senderEmail === 'you@archer.com'
+        e => e.senderEmail === 'you@constructbms.com'
       ).length;
 
       trends.push({
@@ -401,7 +402,7 @@ class EmailAnalyticsService {
   private getTopSenders(): SenderData[] {
     const senderMap = new Map<
       string,
-      { count: number; totalPriority: number; lastContact: Date }
+      { count: number; lastContact: Date, totalPriority: number; }
     >();
 
     this.emails.forEach(email => {
@@ -440,9 +441,9 @@ class EmailAnalyticsService {
       string,
       {
         count: number;
-        urgentCount: number;
         responseTimes: number[];
         teamMembers: Set<string>;
+        urgentCount: number;
       }
     >();
 

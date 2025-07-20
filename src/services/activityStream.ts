@@ -1,11 +1,12 @@
 import { supabase } from './supabase';
-import { ActivityItem } from '../types';
+import type { ActivityItem } from '../types';
 
 // Activity Stream Service - Now uses real database persistence
 export class ActivityStreamService {
   private static instance: ActivityStreamService;
   private activities: ActivityItem[] = [];
   private listeners: ((activities: ActivityItem[]) => void)[] = [];
+  private realtimeChannel: any; // Store the channel for cleanup
 
   static getInstance(): ActivityStreamService {
     if (!ActivityStreamService.instance) {
@@ -113,21 +114,37 @@ export class ActivityStreamService {
   }
 
   private setupRealtimeSubscription(): void {
-    supabase
-      .channel('activity_stream_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'activity_stream',
-        },
-        payload => {
-          console.log('Activity stream change:', payload);
-          this.loadActivities();
-        }
-      )
-      .subscribe();
+    try {
+      const channel = supabase
+        .channel('activity_stream_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'activity_stream',
+          },
+          payload => {
+            console.log('Activity stream change:', payload);
+            this.loadActivities();
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('✅ Activity stream real-time subscription connected');
+          } else if (status === 'CHANNEL_ERROR') {
+            console.warn('⚠️ Activity stream real-time subscription failed - using local data only');
+          } else if (status === 'TIMED_OUT') {
+            console.warn('⚠️ Activity stream real-time subscription timed out - using local data only');
+          }
+        });
+
+      // Store the channel for cleanup
+      this.realtimeChannel = channel;
+    } catch (error) {
+      console.warn('⚠️ Failed to setup activity stream real-time subscription:', error);
+      console.log('📝 Using local activity data only');
+    }
   }
 
   async addActivity(
@@ -288,6 +305,19 @@ export class ActivityStreamService {
       // Fallback to local clear
       this.activities = [];
       this.notifyListeners();
+    }
+  }
+
+  // Cleanup method to unsubscribe from real-time
+  cleanup(): void {
+    if (this.realtimeChannel) {
+      try {
+        supabase.removeChannel(this.realtimeChannel);
+        console.log('✅ Activity stream real-time subscription cleaned up');
+      } catch (error) {
+        console.warn('⚠️ Error cleaning up activity stream subscription:', error);
+      }
+      this.realtimeChannel = null;
     }
   }
 }

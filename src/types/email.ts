@@ -8,61 +8,63 @@ export type EmailProvider =
   | 'manual';
 
 export interface EmailAccount {
-  id: string;
-  provider: EmailProvider;
-  email: string;
+  configuration: EmailConfiguration;
+  createdAt: Date;
   displayName: string;
+  email: string;
+  id: string;
   isActive: boolean;
   isDefault: boolean;
-  createdAt: Date;
   lastSyncAt?: Date;
-  configuration: EmailConfiguration;
+  provider: EmailProvider;
 }
 
 export interface EmailConfiguration {
-  provider: EmailProvider;
   // OAuth configuration
-  accessToken?: string;
-  refreshToken?: string;
-  expiresAt?: Date;
   // Manual IMAP/SMTP configuration
+  accessToken?: string;
+  expiresAt?: Date;
   imapHost?: string;
   imapPort?: number;
   imapSecure?: boolean;
+  password?: string;
+  provider: EmailProvider;
+  refreshToken?: string;
   smtpHost?: string;
   smtpPort?: number;
   smtpSecure?: boolean;
-  username?: string;
-  password?: string; // Should be encrypted in production
+  username?: string; // Should be encrypted in production
 }
 
 export interface EmailMessage {
-  id: string;
   accountId: string;
-  messageId: string; // Provider's message ID
-  threadId?: string;
-  subject: string;
-  from: EmailAddress;
-  to: EmailAddress[];
-  cc?: EmailAddress[];
-  bcc?: EmailAddress[];
-  replyTo?: EmailAddress[];
-  body: {
-    text?: string;
-    html?: string;
-  };
   attachments: EmailAttachment[];
+  bcc?: EmailAddress[]; 
+  body: {
+    html?: string;
+    text?: string;
+};
+  cc?: EmailAddress[];
+  customerId?: string;
   date: Date;
+  folder: string;
+  from: EmailAddress;
+  id: string;
+  isDeleted: boolean;
+  isDraft: boolean;
   isRead: boolean;
+  isSent: boolean;
   isStarred: boolean;
   labels: string[];
-  folder: string;
-  isDraft: boolean;
-  isSent: boolean;
-  isDeleted: boolean;
+  messageId: string;
   priority: 'low' | 'normal' | 'high';
-  customerId?: string; // Link to CRM customer
-  projectId?: string; // Link to project
+  // Link to CRM customer
+  projectId?: string;
+  replyTo?: EmailAddress[];
+  subject: string;
+  // Provider's message ID
+  threadId?: string; 
+  to: EmailAddress[]; // Link to project
 }
 
 export interface EmailAddress {
@@ -71,77 +73,78 @@ export interface EmailAddress {
 }
 
 export interface EmailAttachment {
-  id: string;
-  filename: string;
-  contentType: string;
-  size: number;
+  // Base64 encoded data
   contentId?: string;
-  isInline: boolean;
-  data?: string; // Base64 encoded data
+  contentType: string;
+  data?: string;
   downloadUrl?: string;
+  filename: string;
+  id: string;
+  isInline: boolean; 
+  size: number;
 }
 
 export interface EmailThread {
-  id: string;
   accountId: string;
-  subject: string;
-  participants: EmailAddress[];
-  messageCount: number;
-  unreadCount: number;
-  lastMessageDate: Date;
+  id: string;
   labels: string[];
+  lastMessageDate: Date;
+  messageCount: number;
   messages: EmailMessage[];
+  participants: EmailAddress[];
+  subject: string;
+  unreadCount: number;
 }
 
 export interface EmailDraft {
-  id?: string;
   accountId: string;
-  to: EmailAddress[];
-  cc?: EmailAddress[];
-  bcc?: EmailAddress[];
-  subject: string;
-  body: {
-    text?: string;
-    html?: string;
-  };
   attachments: EmailAttachment[];
-  scheduledAt?: Date;
-  templateId?: string;
+  bcc?: EmailAddress[];
+  body: {
+    html?: string;
+    text?: string;
+};
+  cc?: EmailAddress[];
   customerId?: string;
+  id?: string;
   projectId?: string;
+  scheduledAt?: Date;
+  subject: string;
+  templateId?: string;
+  to: EmailAddress[];
 }
 
 export interface EmailTemplate {
+  body: {
+    html?: string;
+    text?: string;
+};
+  category: string;
+  createdAt: Date;
   id: string;
+  isActive: boolean;
   name: string;
   subject: string;
-  body: {
-    text?: string;
-    html?: string;
-  };
-  variables: string[];
-  category: string;
-  isActive: boolean;
-  createdAt: Date;
   updatedAt: Date;
+  variables: string[];
 }
 
 export interface EmailFolder {
-  id: string;
-  name: string;
-  type: 'inbox' | 'sent' | 'drafts' | 'trash' | 'spam' | 'custom';
-  messageCount: number;
-  unreadCount: number;
-  parentId?: string;
   children?: EmailFolder[];
+  id: string;
+  messageCount: number;
+  name: string;
+  parentId?: string;
+  type: 'inbox' | 'sent' | 'drafts' | 'trash' | 'spam' | 'custom';
+  unreadCount: number;
 }
 
 export interface EmailFilter {
-  id: string;
-  name: string;
-  conditions: EmailFilterCondition[];
   actions: EmailFilterAction[];
+  conditions: EmailFilterCondition[];
+  id: string;
   isActive: boolean;
+  name: string;
   priority: number;
 }
 
@@ -158,38 +161,39 @@ export interface EmailFilterAction {
 
 export interface EmailSyncStatus {
   accountId: string;
+    current: number;
+  errors: string[];
   isRunning: boolean;
   lastSyncAt?: Date;
   nextSyncAt?: Date;
   progress: {
-    current: number;
-    total: number;
     status: string;
-  };
-  errors: string[];
+    total: number;
+};
 }
 
 export interface EmailAnalytics {
   accountId: string;
-  period: 'day' | 'week' | 'month' | 'year';
   metrics: {
-    sent: number;
-    received: number;
     opened: number;
+    received: number;
     replied: number;
-    responseTime: number; // Average in minutes
-    topSenders: Array<{ email: string; count: number }>;
-    topSubjects: Array<{ subject: string; count: number }>;
+    responseTime: number;
+    sent: number; // Average in minutes
+    topSenders: Array<{ count: number, email: string; 
+}>;
+    topSubjects: Array<{ count: number, subject: string; }>;
   };
+  period: 'day' | 'week' | 'month' | 'year';
 }
 
 // OAuth provider configurations
 export interface OAuthConfig {
+  authUrl: string;
   clientId: string;
   clientSecret: string;
   redirectUri: string;
   scopes: string[];
-  authUrl: string;
   tokenUrl: string;
 }
 

@@ -11,13 +11,13 @@ import {
   CheckCircle,
   ExternalLink,
 } from 'lucide-react';
-import { Task } from '../../services/taskService';
+import type { Task } from '../../services/taskService';
 
 interface SortableTaskCardProps {
-  task: Task;
-  onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
   onStatusChange: (taskId: string, newStatus: string) => void;
+  task: Task;
 }
 
 const SortableTaskCard: React.FC<SortableTaskCardProps> = ({

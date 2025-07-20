@@ -54,18 +54,19 @@ type EmailCategory =
   | 'document-review';
 
 interface OldEmailMessage {
-  id: string;
-  sender: string;
-  senderEmail: string;
-  subject: string;
+  attachments: Array<{ name: string; size: number 
+}>;
+  category: EmailCategory;
   content: string;
-  timestamp: Date;
+  id: string;
   isRead: boolean;
   priority: EmailPriority;
-  category: EmailCategory;
+  sender: string;
+  senderEmail: string;
   status: EmailStatus;
-  attachments: Array<{ name: string; size: number }>;
-  tags?: string[]; // Added tags property
+  subject: string;
+  tags?: string[];
+  timestamp: Date; // Added tags property
 }
 
 const EmailClient: React.FC = () => {
@@ -86,6 +87,7 @@ const EmailClient: React.FC = () => {
     'all'
   );
   const [statusFilter, setStatusFilter] = useState<EmailStatus | 'all'>('all');
+
   const [sortBy, setSortBy] = useState<
     'date' | 'sender' | 'subject' | 'priority'
   >('date');
@@ -99,6 +101,12 @@ const EmailClient: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const { unreadCount, setUnreadCount } = useEmail();
   const [activeRibbonTab, setActiveRibbonTab] = useState('home');
+  
+  // Resizable pane state
+  const [emailListWidth, setEmailListWidth] = useState(30); // percentage - enough for filters to sit comfortably
+  const [isResizing, setIsResizing] = useState(false);
+  const [initialMouseX, setInitialMouseX] = useState(0);
+  const [initialWidth, setInitialWidth] = useState(30);
 
   // Modal states
   const [showSettings, setShowSettings] = useState(false);
@@ -134,88 +142,21 @@ const EmailClient: React.FC = () => {
     scheduledAt: null as Date | null,
   });
 
-  // Demo data
+  // Load emails from data source
   useEffect(() => {
-    const demoEmails: OldEmailMessage[] = [
-      {
-        id: '1',
-        sender: 'John Smith',
-        senderEmail: 'john.smith@company.com',
-        subject: 'Project Update - Q4 Goals',
-        content:
-          "Hi team, I wanted to share our progress on the Q4 objectives. We've made significant strides in our key initiatives...",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-        isRead: false,
-        priority: 'high',
-        category: 'project-related',
-        status: 'unread',
-        attachments: [{ name: 'Q4_Report.pdf', size: 2048576 }],
-        tags: ['Urgent', 'Project'],
-      },
-      {
-        id: '2',
-        sender: 'Sarah Johnson',
-        senderEmail: 'sarah.j@client.com',
-        subject: 'Invoice #2024-001 Payment',
-        content:
-          "Thank you for your services. I've processed the payment for invoice #2024-001. Please confirm receipt...",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        isRead: true,
-        priority: 'medium',
-        category: 'invoice-payment',
-        status: 'read',
-        attachments: [],
-        tags: ['Invoice'],
-      },
-      {
-        id: '3',
-        sender: 'Mike Chen',
-        senderEmail: 'mike.chen@internal.com',
-        subject: 'Team Meeting Tomorrow',
-        content:
-          'Reminder: We have our weekly team meeting tomorrow at 10 AM. Agenda includes project updates and planning...',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 hours ago
-        isRead: false,
-        priority: 'critical',
-        category: 'meeting-scheduling',
-        status: 'unread',
-        attachments: [{ name: 'Meeting_Agenda.docx', size: 512000 }],
-        tags: ['Meeting'],
-      },
-      {
-        id: '4',
-        sender: 'Lisa Rodriguez',
-        senderEmail: 'lisa.r@vendor.com',
-        subject: 'Contract Renewal Discussion',
-        content:
-          "I hope this email finds you well. I'd like to discuss the renewal of our service contract...",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6), // 6 hours ago
-        isRead: true,
-        priority: 'medium',
-        category: 'client-communication',
-        status: 'read',
-        attachments: [{ name: 'Contract_Proposal.pdf', size: 1536000 }],
-        tags: ['Client'],
-      },
-      {
-        id: '5',
-        sender: 'David Wilson',
-        senderEmail: 'david.w@support.com',
-        subject: 'Technical Issue Resolution',
-        content:
-          'The technical issue you reported has been resolved. Please test the functionality and let us know...',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8), // 8 hours ago
-        isRead: false,
-        priority: 'high',
-        category: 'urgent-actionable',
-        status: 'unread',
-        attachments: [],
-        tags: ['Urgent'],
-      },
-    ];
+    const loadEmails = async () => {
+      try {
+        // For now, return empty array since email tables don't exist
+        setEmails([]);
+        setUnreadCount(0);
+      } catch (error) {
+        console.error('Error loading emails:', error);
+        setEmails([]);
+        setUnreadCount(0);
+      }
+    };
 
-    setEmails(demoEmails);
-    setUnreadCount(demoEmails.filter(email => !email.isRead).length);
+    loadEmails();
   }, []);
 
   // Filtered emails
@@ -237,6 +178,7 @@ const EmailClient: React.FC = () => {
         if (statusFilter === 'unread' && email.isRead) return false;
         if (statusFilter === 'read' && !email.isRead) return false;
       }
+
       return true;
     })
     .sort((a, b) => {
@@ -553,6 +495,61 @@ const EmailClient: React.FC = () => {
     }
   };
 
+  // Resize handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    setInitialMouseX(e.clientX);
+    setInitialWidth(emailListWidth);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isResizing) return;
+    
+    const container = document.querySelector('.email-container') as HTMLElement;
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    // Calculate width as percentage of the available space (excluding the folder pane)
+    const folderPaneWidth = 256; // w-64 = 16rem = 256px
+    const availableWidth = containerRect.width - folderPaneWidth;
+    
+    // Calculate the mouse movement delta
+    const mouseDelta = e.clientX - initialMouseX;
+    const widthDelta = (mouseDelta / availableWidth) * 100;
+    const newWidth = initialWidth + widthDelta;
+    
+    // Limit the width between 20% and 80%
+    const clampedWidth = Math.max(20, Math.min(80, newWidth));
+    setEmailListWidth(clampedWidth);
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  // Add and remove event listeners
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isResizing]);
+
   return (
     <div className='h-screen flex flex-col bg-gray-50'>
       {/* Top Utility Toolbar */}
@@ -560,6 +557,7 @@ const EmailClient: React.FC = () => {
         <button
           onClick={() => setShowRulesModal(true)}
           className='flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 text-gray-700'
+          title='Rules & Automations'
         >
           <Zap className='w-5 h-5' />
           <span className='text-sm'>Rules & Automations</span>
@@ -567,6 +565,7 @@ const EmailClient: React.FC = () => {
         <button
           onClick={() => setShowEmailAI(true)}
           className='flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 text-gray-700'
+          title='Email AI'
         >
           <Brain className='w-5 h-5' />
           <span className='text-sm'>Email AI</span>
@@ -574,6 +573,7 @@ const EmailClient: React.FC = () => {
         <button
           onClick={() => setShowSettings(true)}
           className='flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 text-gray-700'
+          title='Settings'
         >
           <Settings className='w-5 h-5' />
           <span className='text-sm'>Settings</span>
@@ -581,6 +581,7 @@ const EmailClient: React.FC = () => {
         <button
           onClick={() => setShowAnalytics(true)}
           className='flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 text-gray-700'
+          title='Analytics'
         >
           <BarChart3 className='w-5 h-5' />
           <span className='text-sm'>Analytics</span>
@@ -588,6 +589,7 @@ const EmailClient: React.FC = () => {
         <button
           onClick={() => setShowHelp(true)}
           className='flex items-center space-x-1 px-3 py-1 rounded hover:bg-gray-100 text-gray-700'
+          title='Help'
         >
           <HelpCircle className='w-5 h-5' />
           <span className='text-sm'>Help</span>
@@ -708,14 +710,14 @@ const EmailClient: React.FC = () => {
 
       {/* Main Content */}
       <div
-        className='flex-1 flex overflow-hidden'
+        className='flex-1 flex overflow-hidden email-container'
         style={{ zoom: zoomLevel / 100 }}
       >
         {/* Left Pane - Folders */}
         <div className='w-64 bg-white border-r border-gray-200 flex flex-col'>
           <div className='p-4 border-b border-gray-200'>
             <div className='flex items-center space-x-3'>
-              <div className='w-8 h-8 bg-archer-neon rounded-full flex items-center justify-center'>
+              <div className='w-8 h-8 bg-constructbms-blue rounded-full flex items-center justify-center'>
                 <User className='w-4 h-4 text-black' />
               </div>
               <div>
@@ -731,9 +733,10 @@ const EmailClient: React.FC = () => {
                 onClick={() => setView('inbox')}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   view === 'inbox'
-                    ? 'bg-archer-neon text-black'
+                    ? 'bg-constructbms-blue text-black'
                     : 'hover:bg-gray-100'
                 }`}
+                title='Inbox'
               >
                 <Inbox className='w-4 h-4' />
                 <span className='font-medium'>Inbox</span>
@@ -746,9 +749,10 @@ const EmailClient: React.FC = () => {
                 onClick={() => setView('starred')}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   view === 'starred'
-                    ? 'bg-archer-neon text-black'
+                    ? 'bg-constructbms-blue text-black'
                     : 'hover:bg-gray-100'
                 }`}
+                title='Starred'
               >
                 <Star className='w-4 h-4' />
                 <span className='font-medium'>Starred</span>
@@ -758,9 +762,10 @@ const EmailClient: React.FC = () => {
                 onClick={() => setView('sent')}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   view === 'sent'
-                    ? 'bg-archer-neon text-black'
+                    ? 'bg-constructbms-blue text-black'
                     : 'hover:bg-gray-100'
                 }`}
+                title='Sent'
               >
                 <Mail className='w-4 h-4' />
                 <span className='font-medium'>Sent</span>
@@ -770,9 +775,10 @@ const EmailClient: React.FC = () => {
                 onClick={() => setView('drafts')}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   view === 'drafts'
-                    ? 'bg-archer-neon text-black'
+                    ? 'bg-constructbms-blue text-black'
                     : 'hover:bg-gray-100'
                 }`}
+                title='Drafts'
               >
                 <FileIcon className='w-4 h-4' />
                 <span className='font-medium'>Drafts</span>
@@ -782,9 +788,10 @@ const EmailClient: React.FC = () => {
                 onClick={() => setView('archive')}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   view === 'archive'
-                    ? 'bg-archer-neon text-black'
+                    ? 'bg-constructbms-blue text-black'
                     : 'hover:bg-gray-100'
                 }`}
+                title='Archive'
               >
                 <ArchiveIcon className='w-4 h-4' />
                 <span className='font-medium'>Archive</span>
@@ -801,7 +808,7 @@ const EmailClient: React.FC = () => {
                   onClick={() => setCategoryFilter('all')}
                   className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                     categoryFilter === 'all'
-                      ? 'bg-archer-neon text-black'
+                      ? 'bg-constructbms-blue text-black'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -820,7 +827,7 @@ const EmailClient: React.FC = () => {
                     onClick={() => setCategoryFilter(category as EmailCategory)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                       categoryFilter === category
-                        ? 'bg-archer-neon text-black'
+                        ? 'bg-constructbms-blue text-black'
                         : 'hover:bg-gray-100'
                     }`}
                   >
@@ -836,63 +843,51 @@ const EmailClient: React.FC = () => {
         </div>
 
         {/* Middle Pane - Email List */}
-        <div className='flex-1 flex flex-col'>
+        <div 
+          className='flex flex-col'
+          style={{ 
+            width: `${emailListWidth}%`,
+            minWidth: '200px',
+            maxWidth: '80%',
+            flexShrink: 0,
+            flexGrow: 0
+          }}
+        >
           {/* Email List Header */}
           <div className='p-4 border-b border-gray-200'>
             <div className='flex items-center justify-between mb-3'>
               <h2 className='font-semibold text-gray-900 capitalize'>{view}</h2>
-              <div className='flex items-center space-x-2'>
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value as any)}
-                  className='text-xs border border-gray-300 rounded px-2 py-1'
-                >
-                  <option value='date'>Date</option>
-                  <option value='sender'>Sender</option>
-                  <option value='subject'>Subject</option>
-                  <option value='priority'>Priority</option>
-                </select>
-                <button
-                  onClick={() =>
-                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-                  }
-                  className='p-1 hover:bg-gray-100 rounded'
-                >
-                  {sortOrder === 'asc' ? (
-                    <ChevronUp className='w-4 h-4' />
-                  ) : (
-                    <ChevronDown className='w-4 h-4' />
-                  )}
-                </button>
-              </div>
             </div>
 
             {/* Bulk Actions Toolbar */}
             {selectedEmails.size > 1 && (
-              <div className='flex items-center justify-between p-2 bg-archer-neon/5 border border-archer-neon/20 rounded-md mb-3'>
+              <div className='flex items-center justify-between p-2 bg-constructbms-blue/5 border border-constructbms-blue/20 rounded-md mb-3'>
                 <div className='flex items-center space-x-3'>
-                  <span className='text-sm font-medium text-archer-black flex items-center'>
-                    <div className='w-2 h-2 bg-archer-neon rounded-full mr-2'></div>
+                  <span className='text-sm font-medium text-constructbms-black flex items-center'>
+                    <div className='w-2 h-2 bg-constructbms-blue rounded-full mr-2'></div>
                     {selectedEmails.size} selected
                   </span>
                   <div className='flex items-center space-x-1'>
                     <button
                       onClick={handleBulkMarkAsRead}
-                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-archer-black hover:bg-archer-neon/10 rounded transition-colors'
+                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-constructbms-black hover:bg-constructbms-blue/10 rounded transition-colors'
+                      title='Mark as Read'
                     >
                       <Eye className='w-3 h-3' />
                       <span>Read</span>
                     </button>
                     <button
                       onClick={handleBulkMarkAsUnread}
-                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-archer-black hover:bg-archer-neon/10 rounded transition-colors'
+                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-constructbms-black hover:bg-constructbms-blue/10 rounded transition-colors'
+                      title='Mark as Unread'
                     >
                       <EyeOff className='w-3 h-3' />
                       <span>Unread</span>
                     </button>
                     <button
                       onClick={handleBulkArchive}
-                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-archer-black hover:bg-archer-neon/10 rounded transition-colors'
+                      className='flex items-center space-x-1 px-2 py-1 text-xs text-gray-600 hover:text-constructbms-black hover:bg-constructbms-blue/10 rounded transition-colors'
+                      title='Archive'
                     >
                       <Archive className='w-3 h-3' />
                       <span>Archive</span>
@@ -900,6 +895,7 @@ const EmailClient: React.FC = () => {
                     <button
                       onClick={handleBulkDelete}
                       className='flex items-center space-x-1 px-2 py-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors'
+                      title='Delete'
                     >
                       <Trash className='w-3 h-3' />
                       <span>Delete</span>
@@ -909,7 +905,8 @@ const EmailClient: React.FC = () => {
                 <div className='flex items-center space-x-2'>
                   <button
                     onClick={handleSelectAll}
-                    className='text-xs text-archer-neon hover:text-archer-black font-medium'
+                    className='text-xs text-constructbms-blue hover:text-constructbms-black font-medium'
+                    title='Select All'
                   >
                     Select All
                   </button>
@@ -917,6 +914,7 @@ const EmailClient: React.FC = () => {
                   <button
                     onClick={handleClearSelection}
                     className='text-xs text-gray-500 hover:text-gray-700'
+                    title='Clear Selection'
                   >
                     Clear
                   </button>
@@ -925,36 +923,46 @@ const EmailClient: React.FC = () => {
             )}
 
             {/* Quick Filters */}
-            <div className='flex items-center space-x-2'>
-              <select
-                value={priorityFilter}
-                onChange={e =>
-                  setPriorityFilter(e.target.value as EmailPriority | 'all')
-                }
-                className='text-xs border border-gray-300 rounded px-2 py-1'
-              >
-                <option value='all'>All Priorities</option>
-                <option value='critical'>Critical</option>
-                <option value='high'>High</option>
-                <option value='medium'>Medium</option>
-                <option value='low'>Low</option>
-              </select>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-2 flex-wrap'>
+                <select
+                  value={priorityFilter}
+                  onChange={e =>
+                    setPriorityFilter(e.target.value as EmailPriority | 'all')
+                  }
+                  className='text-xs border border-gray-300 rounded px-2 py-1.5 min-w-[90px] max-w-[110px]'
+                >
+                  <option value='all'>All Priorities</option>
+                  <option value='critical'>Critical</option>
+                  <option value='high'>High</option>
+                  <option value='medium'>Medium</option>
+                  <option value='low'>Low</option>
+                </select>
 
-              <select
-                value={statusFilter}
-                onChange={e =>
-                  setStatusFilter(e.target.value as EmailStatus | 'all')
-                }
-                className='text-xs border border-gray-300 rounded px-2 py-1'
-              >
-                <option value='all'>All Status</option>
-                <option value='unread'>Unread</option>
-                <option value='read'>Read</option>
-                <option value='assigned'>Assigned</option>
-                <option value='completed'>Completed</option>
-              </select>
-              <div className='text-xs text-gray-500 ml-4'>
-                Multi-select: Ctrl/Cmd+Click or Shift+Click
+                <select
+                  value={statusFilter}
+                  onChange={e =>
+                    setStatusFilter(e.target.value as EmailStatus | 'all')
+                  }
+                  className='text-xs border border-gray-300 rounded px-2 py-1.5 min-w-[90px] max-w-[110px]'
+                >
+                  <option value='all'>All Status</option>
+                  <option value='unread'>Unread</option>
+                  <option value='read'>Read</option>
+                  <option value='assigned'>Assigned</option>
+                  <option value='completed'>Completed</option>
+                </select>
+
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value as any)}
+                  className='text-xs border border-gray-300 rounded px-2 py-1.5 min-w-[90px] max-w-[110px]'
+                >
+                  <option value='date'>Sort by Date</option>
+                  <option value='sender'>Sort by Sender</option>
+                  <option value='subject'>Sort by Subject</option>
+                  <option value='priority'>Sort by Priority</option>
+                </select>
               </div>
             </div>
           </div>
@@ -967,8 +975,8 @@ const EmailClient: React.FC = () => {
                 onClick={e => handleEmailClick(email, e)}
                 className={`group border-b cursor-pointer transition-colors duration-150 ${
                   selectedEmails.has(email.id)
-                    ? 'bg-archer-neon/30 border-l-4 border-l-archer-neon'
-                    : 'hover:bg-archer-neon/10'
+                    ? 'bg-constructbms-blue/30 border-l-4 border-l-constructbms-blue'
+                    : 'hover:bg-constructbms-blue/10'
                 } ${currentView === 'compact' ? 'p-2' : 'p-4'}`}
               >
                 {currentView === 'compact' ? (
@@ -979,7 +987,7 @@ const EmailClient: React.FC = () => {
                         <User className='w-3 h-3 text-gray-600' />
                       </div>
                       {!email.isRead && (
-                        <div className='absolute -top-1 -right-1 w-2 h-2 bg-archer-neon rounded-full'></div>
+                        <div className='absolute -top-1 -right-1 w-2 h-2 bg-constructbms-blue rounded-full'></div>
                       )}
                     </div>
 
@@ -1018,7 +1026,7 @@ const EmailClient: React.FC = () => {
                           <User className='w-4 h-4 text-gray-600' />
                         </div>
                         {!email.isRead && (
-                          <div className='absolute -top-1 -right-1 w-3 h-3 bg-archer-neon rounded-full'></div>
+                          <div className='absolute -top-1 -right-1 w-3 h-3 bg-constructbms-blue rounded-full'></div>
                         )}
                       </div>
 
@@ -1070,7 +1078,7 @@ const EmailClient: React.FC = () => {
                               {email.tags.slice(0, 2).map(tag => (
                                 <span
                                   key={tag}
-                                  className='text-xs px-1.5 py-0.5 bg-archer-neon/20 text-archer-black rounded border border-archer-neon/30'
+                                  className='text-xs px-1.5 py-0.5 bg-constructbms-blue/20 text-constructbms-black rounded border border-constructbms-blue/30'
                                 >
                                   {tag}
                                 </span>
@@ -1144,9 +1152,21 @@ const EmailClient: React.FC = () => {
           </div>
         </div>
 
+        {/* Resizable Divider */}
+        {readingPanePosition === 'right' && (
+          <div
+            className='w-1 bg-gray-300 hover:bg-constructbms-blue cursor-col-resize transition-colors relative'
+            onMouseDown={handleMouseDown}
+          >
+            <div className='absolute inset-0 flex items-center justify-center'>
+              <div className='w-0.5 h-8 bg-gray-400 rounded-full'></div>
+            </div>
+          </div>
+        )}
+
         {/* Right Pane - Email Content */}
         <div
-          className={`${readingPanePosition === 'off' ? 'hidden' : readingPanePosition === 'bottom' ? 'w-full h-64' : 'w-1/2'} border-l border-gray-200 flex flex-col`}
+          className={`${readingPanePosition === 'off' ? 'hidden' : readingPanePosition === 'bottom' ? 'w-full h-64' : 'flex-1'} border-l border-gray-200 flex flex-col`}
         >
           {selectedEmail ? (
             <div className='flex-1 overflow-y-auto'>
@@ -1227,7 +1247,7 @@ const EmailClient: React.FC = () => {
                                 link.click();
                                 document.body.removeChild(link);
                               }}
-                              className='text-archer-neon hover:text-archer-black text-sm font-medium'
+                              className='text-constructbms-blue hover:text-constructbms-black text-sm font-medium'
                             >
                               Download
                             </button>
@@ -1246,7 +1266,7 @@ const EmailClient: React.FC = () => {
                         {selectedEmail.tags.map(tag => (
                           <span
                             key={tag}
-                            className='px-2 py-1 bg-archer-neon/20 text-archer-black rounded-full text-sm border border-archer-neon/30'
+                            className='px-2 py-1 bg-constructbms-blue/20 text-constructbms-black rounded-full text-sm border border-constructbms-blue/30'
                           >
                             {tag}
                           </span>
@@ -1457,7 +1477,7 @@ const EmailClient: React.FC = () => {
                         ? `Meeting: ${selectedEmail.subject}`
                         : ''
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Enter meeting title'
                     required
                   />
@@ -1472,7 +1492,7 @@ const EmailClient: React.FC = () => {
                       name='date'
                       type='date'
                       defaultValue={new Date().toISOString().split('T')[0]}
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                       required
                     />
                   </div>
@@ -1484,7 +1504,7 @@ const EmailClient: React.FC = () => {
                       name='time'
                       type='time'
                       defaultValue='09:00'
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                       required
                     />
                   </div>
@@ -1496,7 +1516,7 @@ const EmailClient: React.FC = () => {
                   </label>
                   <select
                     name='duration'
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                   >
                     <option value='30'>30 minutes</option>
                     <option value='60' selected>
@@ -1518,7 +1538,7 @@ const EmailClient: React.FC = () => {
                         ? `Meeting based on email: ${selectedEmail.content.substring(0, 200)}...`
                         : ''
                     }
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     rows={3}
                     placeholder='Meeting description'
                   />
@@ -1535,7 +1555,7 @@ const EmailClient: React.FC = () => {
                 </button>
                 <button
                   type='submit'
-                  className='flex-1 px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+                  className='flex-1 px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
                 >
                   Create Meeting
                 </button>
@@ -1585,7 +1605,7 @@ const EmailClient: React.FC = () => {
                     {(selectedEmail.tags || []).map(tag => (
                       <span
                         key={tag}
-                        className='px-3 py-1 bg-archer-neon text-black rounded-full text-sm flex items-center gap-1'
+                        className='px-3 py-1 bg-constructbms-blue text-black rounded-full text-sm flex items-center gap-1'
                       >
                         {tag}
                         <button
@@ -1607,7 +1627,7 @@ const EmailClient: React.FC = () => {
                 <div className='flex gap-2'>
                   <input
                     type='text'
-                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                     placeholder='Enter new tag'
                     onKeyPress={e => {
                       if (e.key === 'Enter' && e.currentTarget.value.trim()) {
@@ -1637,7 +1657,7 @@ const EmailClient: React.FC = () => {
                         input.value = '';
                       }
                     }}
-                    className='px-4 py-2 bg-archer-neon text-black font-semibold rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+                    className='px-4 py-2 bg-constructbms-blue text-black font-semibold rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
                   >
                     Add
                   </button>

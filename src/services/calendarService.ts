@@ -1,23 +1,23 @@
 export interface CalendarEvent {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  duration: number;
   attendees: string[];
-  description: string;
   calendar: string;
-  createdFromEmail?: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
   createdAt: Date;
+  createdFromEmail?: string;
+  date: string;
+  description: string;
+  duration: number;
+  id: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+  time: string;
+  title: string;
 }
 
 export interface Calendar {
+  color: string;
   id: string;
+  isDefault: boolean;
   name: string;
   type: 'default' | 'work' | 'personal' | 'project' | 'team';
-  color: string;
-  isDefault: boolean;
 }
 
 class CalendarService {

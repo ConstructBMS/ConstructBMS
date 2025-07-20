@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DocumentWizard from './DocumentWizard';
 import {
   ArrowLeftIcon,
   DocumentDuplicateIcon,
@@ -35,16 +36,16 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowDownTrayIcon as SaveIcon } from '@heroicons/react/24/solid';
 import { useAuth } from '../../contexts/AuthContext';
-import {
-  documentService,
+import { documentService } from '../../services/documentService';
+import type {
   Document,
   CreateDocumentData,
   UpdateDocumentData,
 } from '../../services/documentService';
 import { documentAnalytics } from '../../services/documentAnalytics';
 import { aiService } from '../../services/aiService';
-import {
-  collaborationService,
+import { collaborationService } from '../../services/collaborationService';
+import type {
   CollaborationSession,
   SessionParticipant,
   DocumentChange,
@@ -53,49 +54,51 @@ import {
 
 interface DocumentBuilderProps {
   document?: Document;
-  onSave?: (document: Document) => void;
-  onClose?: () => void;
   mode?: 'create' | 'edit' | 'template';
+  onClose?: () => void;
+  onSave?: (document: Document) => void;
 }
 
 interface AIAssistant {
-  id: string;
-  type: 'writing' | 'formatting' | 'analysis' | 'suggestion';
-  title: string;
   description: string;
   icon: React.ReactNode;
+  id: string;
+  title: string;
+  type: 'writing' | 'formatting' | 'analysis' | 'suggestion';
 }
 
 interface OCRResult {
-  text: string;
   confidence: number;
   pages: number;
   processingTime: number;
+  text: string;
 }
 
 interface CursorPosition {
+  position: { ch: number, line: number; 
+};
+  selection?: {
+    from: { ch: number, line: number; };
+    to: { ch: number, line: number; };
+  };
+  userColor: string;
   userId: string;
   userName: string;
-  userColor: string;
-  position: { line: number; ch: number };
-  selection?: {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
-  };
 }
 
 interface InlineComment {
-  id: string;
   content: string;
-  position: { line: number; ch: number };
-  user: { id: string; name: string; color: string };
-  resolved: boolean;
+  id: string;
+  position: { ch: number, line: number; 
+};
   replies: Array<{
-    id: string;
     content: string;
-    user: { id: string; name: string };
+    id: string;
     timestamp: string;
+    user: { id: string; name: string };
   }>;
+  resolved: boolean;
+  user: { color: string, id: string; name: string; };
 }
 
 const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
@@ -149,6 +152,7 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
     canCreateCategories: boolean;
     role: string;
   }>({ canCreateCategories: false, role: 'none' });
+  const [showWizard, setShowWizard] = useState(false);
 
   // Collaboration state
   const [collabSession, setCollabSession] =
@@ -242,7 +246,7 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   };
 
   // Handle cursor position updates
-  const handleCursorUpdate = (position: { line: number; ch: number }) => {
+  const handleCursorUpdate = (position: { ch: number, line: number; }) => {
     if (collabSession && user) {
       collaborationService.updateCursorPosition(position);
     }
@@ -250,8 +254,8 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
   // Handle selection updates
   const handleSelectionUpdate = (selection: {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
+    from: { ch: number, line: number; };
+    to: { ch: number, line: number; };
   }) => {
     if (collabSession && user) {
       collaborationService.updateSelection(selection);
@@ -266,7 +270,7 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   };
 
   // Add inline comment
-  const addInlineComment = async (position: { line: number; ch: number }) => {
+  const addInlineComment = async (position: { ch: number, line: number; }) => {
     if (!newCommentContent.trim() || !currentDocument?.id) return;
 
     try {
@@ -864,7 +868,6 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       collaborationService.leaveSession();
       unsubscribers.forEach(unsub => unsub());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentDocument?.id, mode]);
 
   // Update cursor positions and inline comments when participants or comments change
@@ -985,14 +988,23 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
           </div>
           <div className='flex items-center gap-2'>
             <button
+              onClick={() => setShowWizard(true)}
+              className='p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors'
+              title='Document Wizard'
+            >
+              <SparklesIcon className='h-5 w-5' />
+            </button>
+            <button
               onClick={() => setShowPreview(!showPreview)}
               className='p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors'
+              title='Preview Document'
             >
               <EyeIcon className='h-5 w-5' />
             </button>
             <button
               onClick={() => setShowSettings(!showSettings)}
               className='p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors'
+              title='Document Settings'
             >
               <CogIcon className='h-5 w-5' />
             </button>
@@ -1000,6 +1012,7 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               onClick={handleSave}
               disabled={!isDirty || isProcessing}
               className='bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-3 lg:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm'
+              title={isProcessing ? 'Saving...' : isDirty ? 'Save Changes' : 'All Changes Saved'}
             >
               <FloppyDiskIcon className='h-4 w-4' />
               <span className='hidden sm:inline'>
@@ -2027,6 +2040,19 @@ const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Document Wizard */}
+      {showWizard && (
+        <DocumentWizard
+          onClose={() => setShowWizard(false)}
+          onComplete={(document) => {
+            setShowWizard(false);
+            if (onSave) {
+              onSave(document);
+            }
+          }}
+        />
       )}
     </div>
   );

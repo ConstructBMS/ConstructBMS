@@ -11,27 +11,26 @@ import {
 } from 'lucide-react';
 import {
   demoDataService,
-  Project as DemoProject,
-  Client as DemoClient,
 } from '../../services/demoData';
+import type { Project as DemoProject, Client as DemoClient } from '../../services/demoData';
 
 // Type definitions for the component
 interface Task {
-  id: string;
-  project_id: string;
-  title: string;
-  description?: string;
-  status: string;
   assignee?: string;
-  due_date?: string;
-  created_at?: string;
-  updated_at?: string;
-  priority?: string;
-  position?: number;
   client_visible?: boolean;
+  created_at?: string;
   customer_id?: string;
+  description?: string;
+  due_date?: string;
+  id: string;
   opportunity_id?: string;
+  position?: number;
+  priority?: string;
+  project_id: string;
+  status: string;
+  title: string;
   type?: string;
+  updated_at?: string;
 }
 
 interface Project {
@@ -41,9 +40,9 @@ interface Project {
 }
 
 interface Customer {
+  email?: string;
   id: string;
   name: string;
-  email?: string;
 }
 
 interface Opportunity {
@@ -53,10 +52,10 @@ interface Opportunity {
 }
 
 interface TaskFormProps {
-  task?: Task;
-  onSave: (task: Partial<Task>) => Promise<void>;
-  onCancel: () => void;
   isOpen: boolean;
+  onCancel: () => void;
+  onSave: (task: Partial<Task>) => Promise<void>;
+  task?: Task;
 }
 
 // Helper function to convert demo project to component project
@@ -129,12 +128,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
           ? demoCustomersData.map(convertDemoClientToCustomer)
           : [];
 
-        // Create demo opportunities
-        const opportunitiesData = [
-          { id: '1', name: 'Website Redesign', status: 'active' },
-          { id: '2', name: 'Mobile App Development', status: 'active' },
-          { id: '3', name: 'Marketing Campaign', status: 'pending' },
-        ];
+        // Create demo opportunities - empty for now
+        const opportunitiesData: any[] = [];
 
         setProjects(projectsData);
         setCustomers(customersData);
@@ -432,6 +427,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
               type='button'
               onClick={onCancel}
               className='px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
+              title='Cancel'
             >
               Cancel
             </button>
@@ -439,6 +435,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
               type='submit'
               disabled={loading}
               className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2'
+              title={loading ? 'Saving...' : task ? 'Update Task' : 'Add Task'}
             >
               <Save className='h-4 w-4' />
               <span>

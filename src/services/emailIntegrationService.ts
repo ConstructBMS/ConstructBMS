@@ -21,144 +21,8 @@ class EmailProviderService {
     folderId?: string,
     limit = 50
   ): Promise<EmailMessage[]> {
-    // Return realistic demo data
-    const demoMessages: EmailMessage[] = [
-      {
-        id: generateId('msg'),
-        accountId,
-        messageId: generateId('external'),
-        subject: 'Project Update - Q4 Goals',
-        from: { email: 'sarah.manager@company.com', name: 'Sarah Johnson' },
-        to: [{ email: 'john.doe@gmail.com', name: 'John Doe' }],
-        cc: [{ email: 'team@company.com', name: 'Development Team' }],
-        bcc: [],
-        body: {
-          html: "<p>Hi John,</p><p>Great work on the recent project milestones. Here's our Q4 roadmap:</p><ul><li>Complete email integration</li><li>Launch new dashboard</li><li>User testing phase</li></ul><p>Let me know if you have any questions!</p><p>Best regards,<br>Sarah</p>",
-          text: "Hi John, Great work on the recent project milestones. Here's our Q4 roadmap: - Complete email integration - Launch new dashboard - User testing phase Let me know if you have any questions! Best regards, Sarah",
-        },
-        attachments: [],
-        date: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-        isRead: false,
-        isStarred: true,
-        labels: ['INBOX', 'IMPORTANT'],
-        folder: folderId || 'inbox',
-        isDraft: false,
-        isSent: false,
-        isDeleted: false,
-        priority: 'high',
-      },
-      {
-        id: generateId('msg'),
-        accountId,
-        messageId: generateId('external'),
-        subject: 'Meeting Reminder - Tomorrow 10 AM',
-        from: { email: 'calendar@company.com', name: 'Company Calendar' },
-        to: [{ email: 'john.doe@gmail.com', name: 'John Doe' }],
-        cc: [],
-        bcc: [],
-        body: {
-          html: '<p>Reminder: You have a meeting scheduled for tomorrow at 10:00 AM.</p><p><strong>Topic:</strong> Email Integration Demo</p><p><strong>Location:</strong> Conference Room A</p>',
-          text: 'Reminder: You have a meeting scheduled for tomorrow at 10:00 AM. Topic: Email Integration Demo Location: Conference Room A',
-        },
-        attachments: [],
-        date: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
-        isRead: true,
-        isStarred: false,
-        labels: ['INBOX'],
-        folder: folderId || 'inbox',
-        isDraft: false,
-        isSent: false,
-        isDeleted: false,
-        priority: 'normal',
-      },
-      {
-        id: generateId('msg'),
-        accountId,
-        messageId: generateId('external'),
-        subject: 'Invoice #INV-2024-001',
-        from: { email: 'billing@supplier.com', name: 'Tech Supplies Inc.' },
-        to: [{ email: 'john.doe@gmail.com', name: 'John Doe' }],
-        cc: [{ email: 'finance@company.com', name: 'Finance Department' }],
-        bcc: [],
-        body: {
-          html: '<p>Dear John,</p><p>Please find attached the invoice for your recent order.</p><p><strong>Amount:</strong> $1,250.00</p><p><strong>Due Date:</strong> December 15, 2024</p>',
-          text: 'Dear John, Please find attached the invoice for your recent order. Amount: $1,250.00 Due Date: December 15, 2024',
-        },
-        attachments: [
-          {
-            id: generateId('att'),
-            filename: 'invoice-2024-001.pdf',
-            contentType: 'application/pdf',
-            size: 245760,
-            isInline: false,
-          },
-        ],
-        date: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-        isRead: false,
-        isStarred: false,
-        labels: ['INBOX'],
-        folder: folderId || 'inbox',
-        isDraft: false,
-        isSent: false,
-        isDeleted: false,
-        priority: 'normal',
-      },
-      {
-        id: generateId('msg'),
-        accountId,
-        messageId: generateId('external'),
-        subject: 'Weekly Newsletter - Tech Updates',
-        from: { email: 'newsletter@technews.com', name: 'Tech News Weekly' },
-        to: [{ email: 'john.doe@gmail.com', name: 'John Doe' }],
-        cc: [],
-        bcc: [],
-        body: {
-          html: '<p>This week in tech:</p><ul><li>New React 19 features announced</li><li>AI integration trends</li><li>Email security best practices</li></ul><p>Read more on our website!</p>',
-          text: 'This week in tech: - New React 19 features announced - AI integration trends - Email security best practices Read more on our website!',
-        },
-        attachments: [],
-        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-        isRead: true,
-        isStarred: false,
-        labels: ['INBOX'],
-        folder: folderId || 'inbox',
-        isDraft: false,
-        isSent: false,
-        isDeleted: false,
-        priority: 'low',
-      },
-      {
-        id: generateId('msg'),
-        accountId,
-        messageId: generateId('external'),
-        subject: 'Password Reset Request',
-        from: { email: 'noreply@company.com', name: 'IT Support' },
-        to: [{ email: 'john.doe@gmail.com', name: 'John Doe' }],
-        cc: [],
-        bcc: [],
-        body: {
-          html: "<p>Your password has been successfully reset.</p><p>If you didn't request this change, please contact IT support immediately.</p>",
-          text: "Your password has been successfully reset. If you didn't request this change, please contact IT support immediately.",
-        },
-        attachments: [],
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-        isRead: true,
-        isStarred: false,
-        labels: ['INBOX'],
-        folder: folderId || 'inbox',
-        isDraft: false,
-        isSent: false,
-        isDeleted: false,
-        priority: 'high',
-      },
-    ];
-
-    // Filter by folder if specified
-    if (folderId && folderId !== 'inbox') {
-      return demoMessages.filter(msg => msg.folder === folderId);
-    }
-
-    return demoMessages.slice(0, limit);
+    // Return empty array since we don't want demo messages
+    return [];
   }
 
   async sendMessage(
@@ -194,28 +58,28 @@ class EmailProviderService {
         id: 'inbox',
         name: 'Inbox',
         type: 'inbox',
-        messageCount: 10,
-        unreadCount: 3,
+        messageCount: 0,
+        unreadCount: 0,
       },
       {
         id: 'sent',
         name: 'Sent',
         type: 'sent',
-        messageCount: 25,
+        messageCount: 0,
         unreadCount: 0,
       },
       {
         id: 'drafts',
         name: 'Drafts',
         type: 'drafts',
-        messageCount: 2,
+        messageCount: 0,
         unreadCount: 0,
       },
       {
         id: 'trash',
         name: 'Trash',
         type: 'trash',
-        messageCount: 5,
+        messageCount: 0,
         unreadCount: 0,
       },
     ];
@@ -277,61 +141,8 @@ class EmailIntegrationService {
   }
 
   getAccounts(): EmailAccount[] {
-    try {
-      const stored = JSON.parse(localStorage.getItem('emailAccounts') || '[]');
-
-      // If no accounts stored, return demo accounts for development
-      if (stored.length === 0) {
-        const demoAccounts: EmailAccount[] = [
-          {
-            id: 'demo-1',
-            email: 'john.doe@gmail.com',
-            displayName: 'John Doe',
-            provider: 'gmail',
-            isActive: true,
-            isDefault: true,
-            createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-            configuration: {
-              provider: 'gmail',
-              imapHost: 'imap.gmail.com',
-              imapPort: 993,
-              imapSecure: true,
-              smtpHost: 'smtp.gmail.com',
-              smtpPort: 587,
-              smtpSecure: true,
-              username: 'john.doe@gmail.com',
-            },
-          },
-          {
-            id: 'demo-2',
-            email: 'jane.smith@outlook.com',
-            displayName: 'Jane Smith',
-            provider: 'microsoft365',
-            isActive: true,
-            isDefault: false,
-            createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-            configuration: {
-              provider: 'microsoft365',
-              imapHost: 'outlook.office365.com',
-              imapPort: 993,
-              imapSecure: true,
-              smtpHost: 'smtp.office365.com',
-              smtpPort: 587,
-              smtpSecure: true,
-              username: 'jane.smith@outlook.com',
-            },
-          },
-        ];
-
-        // Store demo accounts
-        localStorage.setItem('emailAccounts', JSON.stringify(demoAccounts));
-        return demoAccounts;
-      }
-
-      return stored;
-    } catch {
-      return [];
-    }
+    // Return empty array since we don't want demo email accounts
+    return [];
   }
 
   async removeAccount(accountId: string): Promise<void> {
@@ -456,16 +267,16 @@ class EmailIntegrationService {
 
   // Manual configuration
   async addManualAccount(config: {
-    email: string;
     displayName: string;
+    email: string;
     imapHost: string;
     imapPort: number;
     imapSecure: boolean;
+    password: string;
     smtpHost: string;
     smtpPort: number;
     smtpSecure: boolean;
     username: string;
-    password: string;
   }): Promise<EmailAccount> {
     const emailConfig: EmailConfiguration = {
       provider: 'manual',
@@ -529,9 +340,9 @@ class EmailIntegrationService {
 
   // Analytics and statistics
   getAccountStats(accountId: string): {
+    lastSync?: Date;
     totalMessages: number;
     unreadCount: number;
-    lastSync?: Date;
   } {
     const account = this.getAccountById(accountId);
     if (!account) return { totalMessages: 0, unreadCount: 0 };
@@ -544,8 +355,8 @@ class EmailIntegrationService {
   }
 
   getAllAccountsStats(): {
-    totalAccounts: number;
     activeAccounts: number;
+    totalAccounts: number;
     totalMessages: number;
   } {
     const accounts = this.getAccounts();

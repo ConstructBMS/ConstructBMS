@@ -1,68 +1,56 @@
 import { supabase } from './supabase';
 
 export interface AIRequest {
-  id?: string;
-  user_id: string;
-  document_id?: string;
-  request_type:
-    | 'summarize'
-    | 'suggest'
-    | 'rewrite'
-    | 'analyze'
-    | 'generate'
-    | 'improve';
   content: string;
   context?: Record<string, any>;
-  response?: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  error_message?: string;
-  tokens_used?: number;
   cost?: number;
   created_at?: string;
+  document_id?: string;
+  error_message?: string;
+  id?: string;
+  request_type: 'summarize' | 'suggest' | 'rewrite' | 'analyze' | 'generate' | 'improve';
+  response?: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  tokens_used?: number;
   updated_at?: string;
+  user_id: string;
 }
 
 export interface AISuggestion {
-  id?: string;
-  document_id: string;
-  suggestion_type: 'grammar' | 'style' | 'clarity' | 'structure' | 'content';
-  original_text: string;
-  suggested_text: string;
-  confidence: number;
-  explanation: string;
-  position: {
-    start: number;
-    end: number;
-  };
   applied: boolean;
+  confidence: number;
   created_at?: string;
+  document_id: string;
+  explanation: string;
+  id?: string;
+  original_text: string;
+  position: {
+    end: number;
+    start: number;
+  };
+  suggested_text: string;
+  suggestion_type: 'grammar' | 'style' | 'clarity' | 'structure' | 'content';
 }
 
 export interface AISummary {
-  id?: string;
-  document_id: string;
-  summary_type: 'brief' | 'detailed' | 'executive' | 'technical';
   content: string;
-  key_points: string[];
-  word_count: number;
-  reading_time: number;
   created_at?: string;
+  document_id: string;
+  id?: string;
+  key_points: string[];
+  reading_time: number;
+  summary_type: 'brief' | 'detailed' | 'executive' | 'technical';
+  word_count: number;
 }
 
 export interface AIGeneratedContent {
-  id?: string;
-  document_id?: string;
-  content_type:
-    | 'title'
-    | 'description'
-    | 'tags'
-    | 'outline'
-    | 'section'
-    | 'conclusion';
-  prompt: string;
-  generated_content: string;
   confidence: number;
+  content_type: 'title' | 'description' | 'tags' | 'outline' | 'section' | 'conclusion';
   created_at?: string;
+  document_id?: string;
+  generated_content: string;
+  id?: string;
+  prompt: string;
 }
 
 class AIService {

@@ -3,10 +3,10 @@ import React, {
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from 'react';
+import type { ReactNode } from 'react';
 import { chatService } from '../services/chatService';
-import {
+import type {
   ChatUser,
   ChatMessage,
   ChatChannel,
@@ -18,22 +18,6 @@ import {
 interface ChatContextType {
   // State
   channels: ChatChannel[];
-  currentChannel: ChatChannel | null;
-  messages: ChatMessage[];
-  users: ChatUser[];
-  notifications: ChatNotification[];
-  presence: ChatPresence[];
-  stats: ChatStats;
-  isLoading: boolean;
-  error: string | null;
-
-  // Actions
-  setCurrentChannel: (channel: ChatChannel | null) => void;
-  sendMessage: (
-    content: string,
-    mentions?: string[],
-    replyTo?: string
-  ) => Promise<void>;
   createChannel: (
     name: string,
     type: 'system' | 'project' | 'custom',
@@ -41,31 +25,51 @@ interface ChatContextType {
     projectId?: string,
     isPrivate?: boolean
   ) => Promise<ChatChannel>;
+  currentChannel: ChatChannel | null;
+  error: string | null;
+  getChannelById: (channelId: string) => ChatChannel | undefined;
+  getUserById: (userId: string) => ChatUser | undefined;
+  isLoading: boolean;
   joinChannel: (channelId: string) => Promise<void>;
   leaveChannel: (channelId: string) => Promise<void>;
-  searchMessages: (query: string) => Promise<ChatMessage[]>;
   markNotificationsAsRead: (notificationIds: string[]) => Promise<void>;
+
+  messages: ChatMessage[];
+  notifications: ChatNotification[];
+  presence: ChatPresence[];
+  refreshData: () => Promise<void>;
+  searchMessages: (query: string) => Promise<ChatMessage[]>;
+  // Actions
+  sendMessage: (
+    content: string,
+    mentions?: string[],
+    replyTo?: string
+  ) => Promise<void>;
+  setCurrentChannel: (channel: ChatChannel | null) => void;
+  stats: ChatStats;
+  unreadCount: number;
   updatePresence: (
     status: 'online' | 'offline' | 'away' | 'busy',
     currentChannel?: string
   ) => Promise<void>;
-  getUserById: (userId: string) => ChatUser | undefined;
-  getChannelById: (channelId: string) => ChatChannel | undefined;
-  refreshData: () => Promise<void>;
+  users: ChatUser[];
 }
 
+// Export the interface for use in other components
+export type { ChatContextType };
+
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
+
+// Export the context for direct use when needed
+export { ChatContext };
 
 interface ChatProviderProps {
   children: ReactNode;
 }
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
-  // State
   const [channels, setChannels] = useState<ChatChannel[]>([]);
-  const [currentChannel, setCurrentChannel] = useState<ChatChannel | null>(
-    null
-  );
+  const [currentChannel, setCurrentChannel] = useState<ChatChannel | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [notifications, setNotifications] = useState<ChatNotification[]>([]);
@@ -79,15 +83,22 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize chat service
   useEffect(() => {
     const initializeChat = async () => {
+      // Prevent duplicate initialization
+      if (isInitialized) {
+  
+        return;
+      }
+
       try {
         setIsLoading(true);
         setError(null);
 
-        console.log('🚀 Initializing chat context...');
+    
 
         // Initialize the chat service
         await chatService.initialize();
@@ -98,7 +109,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         // Set up real-time listeners
         setupRealtimeListeners();
 
-        console.log('✅ Chat context initialized successfully');
+        setIsInitialized(true);
+  
       } catch (err) {
         console.error('Failed to initialize chat context:', err);
         setError(
@@ -113,13 +125,15 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
     // Cleanup on unmount
     return () => {
-      chatService.cleanup();
+      if (isInitialized) {
+        chatService.cleanup();
+      }
     };
-  }, []);
+  }, [isInitialized]);
 
   const loadInitialData = async () => {
     try {
-      console.log('📊 Loading initial chat data...');
+
 
       // Load channels
       const channelsData = await chatService.getChannels();
@@ -136,7 +150,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       // Set initial stats
       updateStats(channelsData, notificationsData, usersData);
 
-      console.log('✅ Initial data loaded');
+
     } catch (err) {
       console.error('Failed to load initial data:', err);
       throw err;
@@ -146,8 +160,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const setupRealtimeListeners = () => {
     // Listen for new messages
     chatService.subscribe('chat:newMessage', (newMessage: any) => {
-      console.log('📨 New message received in context:', newMessage);
-
       // Transform database message to ChatMessage type
       const message: ChatMessage = {
         id: newMessage.id,
@@ -159,9 +171,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         mentions: newMessage.mentions || [],
         replyTo: newMessage.reply_to_id,
         edited: newMessage.edited,
-        editedAt: newMessage.edited_at
-          ? new Date(newMessage.edited_at)
-          : undefined,
+        ...(newMessage.edited_at && { editedAt: new Date(newMessage.edited_at) }),
         attachments: newMessage.attachments || [],
         reactions: newMessage.reactions || [],
         isDeleted: newMessage.is_deleted,
@@ -175,8 +185,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
     // Listen for presence updates
     chatService.subscribe('chat:presenceUpdate', (presenceUpdate: any) => {
-      console.log('👤 Presence update received:', presenceUpdate);
-
       // Transform database presence to ChatPresence type
       const presence: ChatPresence = {
         userId: presenceUpdate.user_id,
@@ -197,8 +205,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
     // Listen for channel updates
     chatService.subscribe('chat:channelUpdate', (channelUpdate: any) => {
-      console.log('📢 Channel update received:', channelUpdate);
-
       // Transform database channel to ChatChannel type
       const channel: ChatChannel = {
         id: channelUpdate.id,
@@ -210,7 +216,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         admins: channelUpdate.admins || [],
         isPrivate: channelUpdate.is_private,
         createdAt: new Date(channelUpdate.created_at),
-        lastMessage: undefined,
         unreadCount: 0,
         pinnedMessages: [],
         settings: channelUpdate.settings || {
@@ -260,10 +265,9 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const loadMessagesForChannel = async (channelId: string) => {
     try {
-      console.log('📨 Loading messages for channel:', channelId);
       const messagesData = await chatService.getMessages(channelId);
       setMessages(messagesData);
-      console.log('✅ Messages loaded:', messagesData.length);
+
     } catch (err) {
       console.error('Failed to load messages for channel:', err);
       setError(err instanceof Error ? err.message : 'Failed to load messages');
@@ -280,13 +284,12 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
 
     try {
-      console.log('📤 Sending message to channel:', currentChannel.id);
       const message = await chatService.sendMessage(
         currentChannel.id,
         content,
         currentChannel.id
       );
-      console.log('✅ Message sent:', message.id);
+
     } catch (err) {
       console.error('Failed to send message:', err);
       setError(err instanceof Error ? err.message : 'Failed to send message');
@@ -302,7 +305,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     isPrivate: boolean = false
   ): Promise<ChatChannel> => {
     try {
-      console.log('📢 Creating channel:', name);
       const channel = await chatService.createChannel(
         name,
         type,
@@ -310,7 +312,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         projectId,
         isPrivate
       );
-      console.log('✅ Channel created:', channel.id);
+
       return channel;
     } catch (err) {
       console.error('Failed to create channel:', err);
@@ -321,7 +323,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const joinChannel = async (channelId: string): Promise<void> => {
     try {
-      console.log('👥 Joining channel:', channelId);
       // For now, just set as current channel
       const channel = channels.find(c => c.id === channelId);
       if (channel) {
@@ -336,7 +337,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const leaveChannel = async (channelId: string): Promise<void> => {
     try {
-      console.log('👋 Leaving channel:', channelId);
       if (currentChannel?.id === channelId) {
         setCurrentChannel(null);
       }
@@ -349,9 +349,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const searchMessages = async (query: string): Promise<ChatMessage[]> => {
     try {
-      console.log('🔍 Searching messages:', query);
       const results = await chatService.search(query);
-      console.log('✅ Search results:', results.length);
+
       return results;
     } catch (err) {
       console.error('Failed to search messages:', err);
@@ -366,7 +365,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     notificationIds: string[]
   ): Promise<void> => {
     try {
-      console.log('✅ Marking notifications as read:', notificationIds);
+
       await chatService.markNotificationsAsRead(notificationIds);
 
       // Update local state
@@ -393,7 +392,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     currentChannel?: string
   ): Promise<void> => {
     try {
-      console.log('👤 Updating presence:', status);
       await chatService.updatePresence(status, currentChannel);
     } catch (err) {
       console.error('Failed to update presence:', err);
@@ -414,18 +412,20 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   const refreshData = async (): Promise<void> => {
     try {
-      console.log('🔄 Refreshing chat data...');
       await loadInitialData();
       if (currentChannel) {
         await loadMessagesForChannel(currentChannel.id);
       }
-      console.log('✅ Data refreshed');
+
     } catch (err) {
       console.error('Failed to refresh data:', err);
       setError(err instanceof Error ? err.message : 'Failed to refresh data');
       throw err;
     }
   };
+
+  // Calculate unread count from notifications
+  const unreadCount = notifications.filter(notification => !notification.isRead).length;
 
   // Update stats when data changes
   useEffect(() => {
@@ -443,6 +443,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     stats,
     isLoading,
     error,
+    unreadCount,
 
     // Actions
     setCurrentChannel,

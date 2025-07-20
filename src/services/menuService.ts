@@ -5,6 +5,7 @@ class MenuService {
   private static instance: MenuService;
   private menuItems: MenuItem[] = [];
   private listeners: ((menuItems: MenuItem[]) => void)[] = [];
+  private realtimeChannel: any; // Store the channel for cleanup
 
   static getInstance(): MenuService {
     if (!MenuService.instance) {
@@ -154,21 +155,37 @@ class MenuService {
   }
 
   private setupRealtimeSubscription(): void {
-    supabase
-      .channel('menu_items_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'menu_items',
-        },
-        payload => {
-          console.log('Menu item change:', payload);
-          this.loadMenuItems();
-        }
-      )
-      .subscribe();
+    try {
+      const channel = supabase
+        .channel('menu_items_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'menu_items',
+          },
+          payload => {
+            console.log('Menu item change:', payload);
+            this.loadMenuItems();
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('✅ Menu items real-time subscription connected');
+          } else if (status === 'CHANNEL_ERROR') {
+            console.warn('⚠️ Menu items real-time subscription failed - using local data only');
+          } else if (status === 'TIMED_OUT') {
+            console.warn('⚠️ Menu items real-time subscription timed out - using local data only');
+          }
+        });
+
+      // Store the channel for cleanup
+      this.realtimeChannel = channel;
+    } catch (error) {
+      console.warn('⚠️ Failed to setup menu items real-time subscription:', error);
+      console.log('📝 Using local menu data only');
+    }
   }
 
   async getMenuItems(): Promise<MenuItem[]> {
@@ -343,6 +360,19 @@ class MenuService {
         permissions.includes(permission)
       );
     });
+  }
+
+  // Cleanup method to unsubscribe from real-time
+  cleanup(): void {
+    if (this.realtimeChannel) {
+      try {
+        supabase.removeChannel(this.realtimeChannel);
+        console.log('✅ Menu items real-time subscription cleaned up');
+      } catch (error) {
+        console.warn('⚠️ Error cleaning up menu items subscription:', error);
+      }
+      this.realtimeChannel = null;
+    }
   }
 }
 

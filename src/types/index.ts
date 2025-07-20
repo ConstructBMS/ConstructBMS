@@ -1,150 +1,150 @@
-// Shared Types for Archer Business Management System
+// Shared Types for Napwood Business Management System
 
 export interface Address {
-  street: string;
   city: string;
-  state: string;
-  zip: string;
   country: string;
+  state: string;
+  street: string;
+  zip: string;
 }
 
 export interface SocialMedia {
+  facebook?: string;
   linkedin?: string;
   twitter?: string;
-  facebook?: string;
 }
 
 export interface Interaction {
-  id: string;
-  type: 'email' | 'call' | 'meeting' | 'note';
   date: string;
   description: string;
-  outcome: string;
+  id: string;
   nextAction?: string;
+  outcome: string;
+  type: 'email' | 'call' | 'meeting' | 'note';
 }
 
 export interface Deal {
+  closeDate: string;
   id: string;
+  probability: number;
+  stage: string;
   title: string;
   value: number;
-  stage: string;
-  probability: number;
-  closeDate: string;
 }
 
 export interface Opportunity {
+  assignedTo: string;
+  closeDate: string;
+  createdAt: string;
+  description: string;
   id: string;
+  lastActivity: string;
+  probability: number;
+  source: string;
+  stage: string;
   title: string;
   value: number;
-  stage: string;
-  probability: number;
-  closeDate: string;
-  description: string;
-  source: string;
-  assignedTo: string;
-  createdAt: string;
-  lastActivity: string;
 }
 
 export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high';
-  dueDate: string;
   assignedTo: string;
-  createdAt: string;
   completedAt?: string;
+  createdAt: string;
+  description: string;
+  dueDate: string;
+  id: string;
+  priority: 'low' | 'medium' | 'high';
+  status: 'pending' | 'in-progress' | 'completed' | 'cancelled';
+  title: string;
 }
 
 export interface Document {
   id: string;
   name: string;
+  size: number;
   type: 'contract' | 'proposal' | 'invoice' | 'report' | 'other';
-  url: string;
   uploadedAt: string;
   uploadedBy: string;
-  size: number;
+  url: string;
 }
 
 export interface ActivityItem {
-  id: string;
-  type: string;
+  actionUrl?: string;
+  actionable: boolean;
   category: string;
-  title: string;
+  color?: string;
   description: string;
   entityId?: string;
   entityName?: string;
-  userId?: string | null;
-  userName?: string;
-  timestamp: Date;
+  icon?: string;
+  id: string;
+  isDemoData?: boolean;
+  metadata?: Record<string, any>;
   priority: 'low' | 'medium' | 'high' | 'urgent';
   read: boolean;
-  actionable: boolean;
-  actionUrl?: string;
-  metadata?: Record<string, any>;
-  icon?: string;
-  color?: string;
-  isDemoData?: boolean;
+  timestamp: Date;
+  title: string;
+  type: string;
+  userId?: string | null;
+  userName?: string;
 }
 
 export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
+  address: Address;
+  assignedTo: string;
   company: string;
   companyId?: string;
-  position: string;
-  status: 'active' | 'inactive' | 'prospect' | 'lead';
-  source: string;
-  tags: string[];
-  address: Address;
-  totalRevenue: number;
+  createdAt: string;
+  customFields: Record<string, string | number | boolean>;
+  deals: Deal[];
+  documents: Document[];
+  email: string;
+  id: string;
+  industry: string;
+  interactions: Interaction[];
+  lastContact: string;
   lastPurchase: string;
+  name: string;
   nextFollowUp: string;
   notes: string;
-  assignedTo: string;
-  createdAt: string;
-  lastContact: string;
-  priority: 'low' | 'medium' | 'high';
-  industry: string;
-  website: string;
-  socialMedia: SocialMedia;
-  interactions: Interaction[];
-  deals: Deal[];
   opportunities: Opportunity[];
+  phone: string;
+  position: string;
+  priority: 'low' | 'medium' | 'high';
+  socialMedia: SocialMedia;
+  source: string;
+  status: 'active' | 'inactive' | 'prospect' | 'lead';
+  tags: string[];
   tasks: Task[];
-  documents: Document[];
-  customFields: Record<string, string | number | boolean>;
+  totalRevenue: number;
+  website: string;
 }
 
 export interface Company {
-  id: string;
-  name: string;
-  industry: string;
-  size: 'startup' | 'sme' | 'enterprise';
-  website: string;
-  phone: string;
-  email: string;
   address: Address;
-  status: 'active' | 'inactive' | 'prospect';
   annualRevenue: number;
+  assignedTo: string;
+  contacts: Customer[];
+  customFields: Record<string, string | number | boolean>;
+  deals: Deal[];
+  description: string;
+  documents: Document[];
+  email: string;
   employeeCount: number;
   founded: string;
-  description: string;
-  contacts: Customer[];
-  deals: Deal[];
-  opportunities: Opportunity[];
-  tasks: Task[];
-  documents: Document[];
+  id: string;
+  industry: string;
   lastContact: string;
-  assignedTo: string;
-  tags: string[];
+  name: string;
   notes: string;
+  opportunities: Opportunity[];
+  phone: string;
+  size: 'startup' | 'sme' | 'enterprise';
   socialMedia: SocialMedia;
-  customFields: Record<string, string | number | boolean>;
+  status: 'active' | 'inactive' | 'prospect';
+  tags: string[];
+  tasks: Task[];
+  website: string;
 }
 
 // Default address for UK

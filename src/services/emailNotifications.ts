@@ -1,36 +1,30 @@
 export interface EmailNotification {
-  id: string;
-  type:
-    | 'new_email'
-    | 'email_assigned'
-    | 'email_replied'
-    | 'email_urgent'
-    | 'email_customer_linked'
-    | 'email_project_linked';
-  title: string;
-  message: string;
+  actionRequired: boolean;
   emailId: string;
   emailSubject: string;
-  sender: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  id: string;
   isRead: boolean;
-  timestamp: Date;
+  message: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   relatedCustomerId?: string;
-  relatedProjectId?: string;
   relatedOpportunityId?: string;
-  actionRequired: boolean;
+  relatedProjectId?: string;
+  sender: string;
+  timestamp: Date;
+  title: string;
+  type: 'new_email' | 'email_assigned' | 'email_replied' | 'email_urgent' | 'email_customer_linked' | 'email_project_linked';
 }
 
 export interface EmailNotificationSettings {
-  userId: string;
-  newEmails: boolean;
-  urgentEmails: boolean;
-  customerEmails: boolean;
-  projectEmails: boolean;
   assignmentNotifications: boolean;
-  replyNotifications: boolean;
+  customerEmails: boolean;
   desktopNotifications: boolean;
   emailNotifications: boolean;
+  newEmails: boolean;
+  projectEmails: boolean;
+  replyNotifications: boolean;
+  urgentEmails: boolean;
+  userId: string;
 }
 
 class EmailNotificationService {

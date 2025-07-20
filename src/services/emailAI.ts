@@ -2,84 +2,85 @@ import { EmailMessage } from '../types/email';
 
 // AI Email Intelligence Types
 export interface AIEmailAnalysis {
-  id: string;
-  emailId: string;
-  summary: string;
-  keyPoints: string[];
-  sentiment: 'positive' | 'negative' | 'neutral';
-  urgency: 'low' | 'medium' | 'high';
-  category: string;
-  suggestedActions: string[];
-  relatedEntities: {
-    customers?: Array<{
-      id: string;
-      name: string;
-      confidence: number;
-      email?: string;
-    }>;
-    projects?: Array<{
-      id: string;
-      name: string;
-      confidence: number;
-      status?: string;
-    }>;
-    opportunities?: Array<{
-      id: string;
-      name: string;
-      confidence: number;
-      value?: number;
-    }>;
-    contractors?: Array<{
-      id: string;
-      name: string;
-      confidence: number;
-      role?: string;
-    }>;
-  };
-  extractedData: {
-    dates?: string[];
+    actionItems?: string[];
     amounts?: number[];
+  category: string;
+  createdAt: Date;
+    dates?: string[];
+  emailId: string;
+  extractedData: {
     phoneNumbers?: string[];
     urls?: string[];
-    actionItems?: string[];
+};
+  id: string;
+  keyPoints: string[];
+  relatedEntities: {
+    contractors?: Array<{
+      confidence: number;
+      id: string;
+      name: string;
+      role?: string;
+    }>;
+    customers?: Array<{
+      confidence: number;
+      email?: string;
+      id: string;
+      name: string;
+    }>;
+    opportunities?: Array<{
+      confidence: number;
+      id: string;
+      name: string;
+      value?: number;
+    }>;
+    projects?: Array<{
+      confidence: number;
+      id: string;
+      name: string;
+      status?: string;
+    }>;
   };
-  createdAt: Date;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  suggestedActions: string[];
+  summary: string;
+  urgency: 'low' | 'medium' | 'high';
 }
 
 export interface EmailThreadAnalysis {
-  threadId: string;
-  participantCount: number;
-  messageCount: number;
-  duration: number; // in days
-  summary: string;
+  // in days
+  duration: number;
   keyTopics: string[];
-  sentiment: 'positive' | 'negative' | 'neutral';
-  urgency: 'low' | 'medium' | 'high';
-  suggestedActions: string[];
+  messageCount: number;
+  participantCount: number; 
   relatedEntities: AIEmailAnalysis['relatedEntities'];
+  sentiment: 'positive' | 'negative' | 'neutral';
+  suggestedActions: string[];
+  summary: string;
+  threadId: string;
+  urgency: 'low' | 'medium' | 'high';
 }
 
 export interface AIAutomationSuggestion {
-  id: string;
-  emailId: string;
-  ruleType: 'if_then' | 'bulk_action' | 'smart_reply' | 'auto_categorize';
-  condition: string;
   action: string;
+  condition: string;
   confidence: number;
-  reasoning: string;
+  emailId: string;
   estimatedImpact: 'low' | 'medium' | 'high';
+  id: string;
+  reasoning: string;
+  ruleType: 'if_then' | 'bulk_action' | 'smart_reply' | 'auto_categorize';
 }
 
 export interface EmailInsight {
-  id: string;
-  emailId: string;
-  type: 'follow_up' | 'deadline' | 'action_required' | 'opportunity' | 'risk';
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
-  suggestedAction: string;
   confidence: number;
+  description: string;
+  dueDate?: Date;
+  emailId: string;
+  id: string;
+  priority: 'low' | 'medium' | 'high';
+  suggestedAction: string;
+  title: string;
+  type: 'follow_up' | 'deadline' | 'action_required' | 'opportunity' | 'risk';
 }
 
 class EmailAIService {
@@ -347,7 +348,7 @@ class EmailAIService {
       return 'urgent-actionable';
     }
 
-    if (email.from.email.includes('@archer.com')) {
+    if (email.from.email.includes('@constructbms.com')) {
       return 'internal-team';
     }
 
@@ -431,7 +432,7 @@ class EmailAIService {
   private matchCustomer(
     senderEmail: string,
     content: string
-  ): { id: string; name: string; confidence: number; email?: string } | null {
+  ): { confidence: number; email?: string, id: string; name: string; } | null {
     const knownCustomers = [
       {
         id: 'cust_1',
@@ -468,7 +469,7 @@ class EmailAIService {
   // Match project from content
   private matchProject(
     content: string
-  ): { id: string; name: string; confidence: number; status?: string } | null {
+  ): { confidence: number; id: string; name: string; status?: string } | null {
     const projectMatch = content.match(/project[:\s]+([a-zA-Z0-9\s]+)/i);
     if (projectMatch) {
       const projectName = projectMatch[1].trim();
@@ -494,7 +495,7 @@ class EmailAIService {
   // Match opportunity from content
   private matchOpportunity(
     content: string
-  ): { id: string; name: string; confidence: number; value?: number } | null {
+  ): { confidence: number; id: string; name: string; value?: number } | null {
     const opportunityMatch = content.match(
       /(?:opportunity|deal|proposal)[:\s]+([a-zA-Z0-9\s]+)/i
     );

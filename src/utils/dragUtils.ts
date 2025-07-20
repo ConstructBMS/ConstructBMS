@@ -1,8 +1,9 @@
 // Drag and drop utility functions
 export interface DragState {
-  isDragging: boolean;
+  currentPosition: { x: number; y: number 
+};
   dragStart: { x: number; y: number } | null;
-  currentPosition: { x: number; y: number };
+  isDragging: boolean;
 }
 
 export const calculateDistance = (
@@ -24,8 +25,8 @@ export const isClickNotDrag = (
 
 export const clampPosition = (
   position: { x: number; y: number },
-  bounds: { width: number; height: number },
-  itemSize: { width: number; height: number }
+  bounds: { height: number, width: number; },
+  itemSize: { height: number, width: number; }
 ): { x: number; y: number } => {
   return {
     x: Math.max(0, Math.min(bounds.width - itemSize.width, position.x)),

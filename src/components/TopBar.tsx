@@ -21,14 +21,15 @@ import ChatNotificationBadge from './ChatNotificationBadge';
 
 interface TopBarProps {
   activeModule: string;
-  onModuleChange: (module: string) => void;
   emailUnreadCount?: number;
+  onModuleChange: (module: string) => void;
 }
 
 const moduleNames: { [key: string]: string } = {
   dashboard: 'Dashboard',
   crm: 'Customer Relationship Management',
   sales: 'Sales Pipeline',
+  'sales-pipeline': 'Sales Pipeline',
   signature: 'E-Signature Management',
   tasks: 'Task Management',
   estimating: 'Estimating & Proposals',
@@ -53,13 +54,14 @@ const moduleNames: { [key: string]: string } = {
   projects: 'Project Management',
   roadmap: 'Project Roadmap',
   settings: 'System Settings',
+  notes: 'Notes',
 };
 
 const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   const { user, roles, logout } = useAuth();
   const { unreadCount: emailUnreadCount } = useEmail();
   const { logoSettings } = useLogo();
-  const { theme, setTheme, effectiveTheme } = useTheme();
+  const { themeSettings, setThemeMode } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
@@ -67,20 +69,8 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   const [prevUnreadCount, setPrevUnreadCount] = useState(emailUnreadCount);
   const [isBadgeUpdating, setIsBadgeUpdating] = useState(false);
 
-  // Default logo settings if not available
-  const defaultLogoSettings = {
-    mainLogo: {
-      type: 'text' as const,
-      text: 'Archer',
-      imageUrl: null,
-    },
-  };
-
-  const safeLogoSettings = logoSettings || defaultLogoSettings;
-
-  // Ensure safeLogoSettings has the required structure
-  const safeMainLogo =
-    safeLogoSettings?.mainLogo || defaultLogoSettings.mainLogo;
+  // Check if user has set a custom main logo
+  const hasCustomMainLogo = logoSettings?.mainLogo?.type === 'image' && logoSettings?.mainLogo?.imageUrl && logoSettings.mainLogo.imageUrl !== null;
 
   // Track unread count changes for animation
   useEffect(() => {
@@ -143,45 +133,40 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   };
 
   const handleThemeToggle = () => {
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('auto');
+    // Only toggle between light and dark, regardless of current mode
+    if (themeSettings.mode === 'light' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'light')) {
+      setThemeMode('dark');
     } else {
-      setTheme('light');
+      setThemeMode('light');
     }
   };
 
   const getThemeIcon = () => {
-    if (theme === 'auto') {
-      return effectiveTheme === 'dark' ? Sun : Moon;
-    }
-    return theme === 'dark' ? Sun : Moon;
+    // Show the opposite of current effective mode
+    const isCurrentlyDark = themeSettings.mode === 'dark' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'dark');
+    return isCurrentlyDark ? Sun : Moon;
   };
 
   const getThemeTooltip = () => {
-    if (theme === 'auto') {
-      return effectiveTheme === 'dark'
-        ? 'Change to light theme'
-        : 'Change to dark theme';
-    }
-    return theme === 'dark' ? 'Change to light theme' : 'Change to dark theme';
+    // Show what clicking will change to
+    const isCurrentlyDark = themeSettings.mode === 'dark' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'dark');
+    return isCurrentlyDark ? 'Switch to light mode' : 'Switch to dark mode';
   };
 
   const ThemeIcon = getThemeIcon();
 
   const getUserInitials = () => {
     if (!user) return 'U';
-    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+    return `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() || 'U';
   };
 
   const getUserAvatar = () => {
-    return user?.avatar || user?.avatarUrl || null;
+    return user?.avatar || user?.avatarUrl || undefined;
   };
 
   const getPrimaryRole = () => {
     if (!roles || roles.length === 0) return 'User';
-    return roles[0].name;
+    return roles[0]?.name || 'User';
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,20 +181,16 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
     <header className='bg-white dark:bg-[#1a2332] border-b border-gray-200 dark:border-[#2a3442] px-2 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 safe-area-inset'>
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-2 sm:space-x-4'>
-          {/* Company Logo/Name */}
-          <div className='flex items-center'>
-            {safeMainLogo.type === 'image' && safeMainLogo.imageUrl ? (
+          {/* Company Logo/Name - Only show if user has set a custom main logo */}
+          {hasCustomMainLogo && (
+            <div className='flex items-center'>
               <img
-                src={safeMainLogo.imageUrl}
+                src={logoSettings?.mainLogo?.imageUrl || ''}
                 alt='Company Logo'
                 className='h-8 w-auto max-w-32 object-contain'
               />
-            ) : (
-              <h1 className='text-xl sm:text-2xl font-bold text-gray-900 dark:text-white'>
-                {safeMainLogo.text}
-              </h1>
-            )}
-          </div>
+            </div>
+          )}
 
           <div className='hidden md:block'>
             <div className='relative'>
@@ -218,7 +199,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                 type='text'
                 placeholder='Search projects, clients, tasks...'
                 onChange={handleSearch}
-                className='pl-10 pr-4 py-2 w-80 border border-gray-300 dark:border-[#3a4452] rounded-lg bg-white dark:bg-[#2a3442] text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                className='pl-10 pr-4 py-2 w-80 border border-gray-300 dark:border-[#3a4452] rounded-lg bg-white dark:bg-[#2a3442] text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
               />
             </div>
           </div>
@@ -238,14 +219,15 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
             onClick={handleMailClick}
             className={`relative p-2 rounded-lg transition-colors duration-200 ${
               activeModule === 'email'
-                ? 'text-archer-neon bg-archer-neon/10 border border-archer-neon/20'
+                ? 'text-constructbms-blue bg-constructbms-blue/10 border border-constructbms-blue/20'
                 : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a3442]'
             }`}
+            title='Email Client'
           >
             <Mail className='h-5 w-5' />
             {emailUnreadCount > 0 && (
               <span
-                className={`absolute -top-1 -right-1 bg-archer-neon text-black text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center notification-badge-count px-1 ${isBadgeUpdating ? 'updating' : ''}`}
+                className={`absolute -top-1 -right-1 bg-constructbms-blue text-black text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center notification-badge-count px-1 ${isBadgeUpdating ? 'updating' : ''}`}
               >
                 {emailUnreadCount > 99 ? '99+' : emailUnreadCount}
               </span>
@@ -257,6 +239,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
           <button
             onClick={handleNotesClick}
             className='p-2 rounded-lg transition-colors duration-200 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a3442]'
+            title='Notes'
           >
             <StickyNote className='h-5 w-5' />
           </button>
@@ -275,9 +258,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
               activeModule === 'permissions' ||
               activeModule === 'system-permissions' ||
               activeModule === 'user-management'
-                ? 'text-archer-neon bg-archer-neon/10 border border-archer-neon/20'
+                ? 'text-constructbms-blue bg-constructbms-blue/10 border border-constructbms-blue/20'
                 : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a3442]'
             }`}
+            title='Settings'
           >
             <Settings className='h-5 w-5' />
           </button>
@@ -288,10 +272,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className='flex items-center space-x-2 hover:bg-gray-100 dark:hover:bg-[#2a3442] rounded-lg p-2 transition-colors'
               >
-                <div className='w-8 h-8 rounded-full bg-archer-neon flex items-center justify-center cursor-pointer hover:bg-archer-black hover:text-white transition-colors overflow-hidden'>
+                <div className='w-8 h-8 rounded-full bg-constructbms-blue flex items-center justify-center cursor-pointer hover:bg-constructbms-black hover:text-white transition-colors overflow-hidden'>
                   {getUserAvatar() ? (
                     <img
-                      src={getUserAvatar()!}
+                      src={getUserAvatar()}
                       alt='Profile'
                       className='w-full h-full object-cover'
                     />
@@ -316,10 +300,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                 <div className='absolute right-0 mt-2 w-56 bg-white dark:bg-[#2a3442] rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-[#3a4452]'>
                   <div className='px-4 py-3 border-b border-gray-100 dark:border-[#3a4452]'>
                     <div className='flex items-center space-x-3'>
-                      <div className='w-10 h-10 rounded-full bg-archer-neon flex items-center justify-center overflow-hidden'>
+                      <div className='w-10 h-10 rounded-full bg-constructbms-blue flex items-center justify-center overflow-hidden'>
                         {getUserAvatar() ? (
                           <img
-                            src={getUserAvatar()!}
+                            src={getUserAvatar()}
                             alt='Profile'
                             className='w-full h-full object-cover'
                           />
@@ -336,7 +320,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                         <p className='text-xs text-gray-500 dark:text-gray-400 truncate'>
                           {user?.email}
                         </p>
-                        <p className='text-xs text-archer-neon'>
+                        <p className='text-xs text-constructbms-blue'>
                           {getPrimaryRole()}
                         </p>
                       </div>
@@ -348,6 +332,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                       setShowProfileModal(true);
                     }}
                     className='w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#3a4452] flex items-center space-x-2'
+                    title='Profile Settings'
                   >
                     <User className='h-4 w-4' />
                     <span>Profile Settings</span>
@@ -358,6 +343,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                   <button
                     onClick={handleLogout}
                     className='w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2'
+                    title='Log Out'
                   >
                     <LogOut className='h-4 w-4' />
                     <span>Log Out</span>
@@ -373,6 +359,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
       <ProfileSettingsModal
         isOpen={showProfileModal}
         onClose={() => setShowProfileModal(false)}
+        onNavigateToSettings={() => {
+          setShowProfileModal(false);
+          onModuleChange('general-settings');
+        }}
       />
 
       {/* Sticky Notes Modal */}

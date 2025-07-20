@@ -10,6 +10,7 @@ import RevenueChart from './dashboard/RevenueChart';
 import QuickActions from './dashboard/QuickActions';
 import DashboardTabs from './DashboardTabs';
 import DashboardSettings from './dashboard/DashboardSettings';
+import DemoDataInitializer from './DemoDataInitializer';
 import ActivityStream from './modules/ActivityStream';
 import PageBuilder from './PageBuilder';
 import {
@@ -19,30 +20,32 @@ import {
 import { supabase } from '../services/supabase';
 
 interface DashboardProps {
-  onNavigateToModule?: (module: string) => void;
   activeModule?: string;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }
 
 interface DashboardTab {
+  icon: string;
   id: string;
   label: string;
-  icon: string;
   moduleKey: string;
   type: 'builtin' | 'custom';
   widgets?: any[];
 }
 
 interface WidgetInstance {
-  id: string;
-  type: string;
-  width: number; // Grid column span
-  height: number; // Grid row span
+  // Grid row span
   config?: any;
+  // Grid column span
+  height: number;
+  id: string; 
+  type: string; 
+  width: number;
 }
 
 // Quick Start Component
 const QuickStart: React.FC<{
-  onNavigateToModule?: (module: string) => void;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }> = ({ onNavigateToModule }) => {
   const { logoSettings, updateMainLogo, updateSidebarLogo } = useLogo();
   const { user } = useAuth();
@@ -54,7 +57,7 @@ const QuickStart: React.FC<{
 
   return (
     <div className='space-y-6'>
-      <div className='bg-gradient-to-r from-[#00cc6a] to-[#00c4b4] rounded-xl p-6'>
+      <div className='bg-constructbms-green rounded-xl p-6'>
         <h1 className='text-2xl font-bold mb-2 banner-text-dark'>
           {welcomeText}
         </h1>
@@ -66,8 +69,8 @@ const QuickStart: React.FC<{
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
           <div className='flex items-center mb-4'>
-            <div className='w-10 h-10 bg-archer-green/10 rounded-lg flex items-center justify-center mr-3'>
-              <span className='text-archer-green font-bold'>1</span>
+            <div className='w-10 h-10 bg-constructbms-green/10 rounded-lg flex items-center justify-center mr-3'>
+              <span className='text-constructbms-green font-bold'>1</span>
             </div>
             <h3 className='font-semibold text-gray-900'>Set Up Your Profile</h3>
           </div>
@@ -76,7 +79,7 @@ const QuickStart: React.FC<{
           </p>
           <button
             onClick={() => onNavigateToModule?.('general-settings')}
-            className='text-archer-green hover:text-archer-neon font-medium'
+            className='text-constructbms-green hover:text-constructbms-blue font-medium'
           >
             Go to Settings →
           </button>
@@ -134,7 +137,7 @@ const QuickStart: React.FC<{
           </div>
           <button
             onClick={() => setShowLogoSettings(!showLogoSettings)}
-            className='text-archer-green hover:text-archer-neon font-medium text-sm'
+            className='text-constructbms-green hover:text-constructbms-blue font-medium text-sm'
           >
             {showLogoSettings ? 'Hide' : 'Customize'} →
           </button>
@@ -180,7 +183,7 @@ const QuickStart: React.FC<{
                   value={logoSettings.mainLogo.text}
                   onChange={e => updateMainLogo({ text: e.target.value })}
                   placeholder='Enter company name'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
                 />
               ) : (
                 <div className='space-y-2'>
@@ -198,7 +201,7 @@ const QuickStart: React.FC<{
                         reader.readAsDataURL(file);
                       }
                     }}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-archer-green file:text-white hover:file:bg-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-constructbms-green file:text-white hover:file:bg-constructbms-blue'
                   />
                   {logoSettings.mainLogo.imageUrl && (
                     <div className='flex items-center space-x-2'>
@@ -267,7 +270,7 @@ const QuickStart: React.FC<{
                         reader.readAsDataURL(file);
                       }
                     }}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-archer-neon focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-archer-green file:text-white hover:file:bg-archer-neon'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-constructbms-blue focus:border-transparent file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-medium file:bg-constructbms-green file:text-white hover:file:bg-constructbms-blue'
                   />
                   {logoSettings.sidebarLogo.imageUrl && (
                     <div className='flex items-center space-x-2'>
@@ -330,17 +333,16 @@ const QuickStart: React.FC<{
         )}
       </div>
 
-      <div className='bg-white rounded-xl p-6 shadow-sm border border-gray-200'>
-        <h3 className='font-semibold text-gray-900 mb-4'>Quick Actions</h3>
-        <QuickActions onNavigateToModule={onNavigateToModule} />
-      </div>
+      {/* Quick Actions */}
+      {onNavigateToModule && <QuickActions onNavigateToModule={onNavigateToModule} />}
+      {!onNavigateToModule && <QuickActions />}
     </div>
   );
 };
 
 // Main Dashboard Content Component
 const DashboardContent: React.FC<{
-  onNavigateToModule?: (module: string) => void;
+  onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }> = ({ onNavigateToModule }) => {
   const [statsExpanded, setStatsExpanded] = useState(true);
   const { user } = useAuth();
@@ -365,8 +367,11 @@ const DashboardContent: React.FC<{
 
   return (
     <div className='space-y-6'>
+      {/* Demo Data Initializer */}
+      <DemoDataInitializer />
+      
       {/* Welcome Section */}
-      <div className='bg-gradient-to-r from-[#00cc6a] to-[#00c4b4] rounded-xl p-6'>
+      <div className='bg-constructbms-green rounded-xl p-6'>
         <h1 className='text-2xl font-bold mb-2 banner-text-dark'>
           {welcomeText}
         </h1>
@@ -379,7 +384,7 @@ const DashboardContent: React.FC<{
       <div>
         <button
           onClick={toggleStats}
-          className='flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-archer-green transition-colors mb-4'
+          className='flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-constructbms-green transition-colors mb-4'
         >
           {statsExpanded ? (
             <ChevronUp className='h-4 w-4' />
@@ -397,19 +402,10 @@ const DashboardContent: React.FC<{
       </div>
 
       {/* Main Dashboard Grid */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
-        <div className='xl:col-span-2'>
-          <RevenueChart />
-        </div>
-        <div>
-          <TasksWidget onNavigateToModule={onNavigateToModule} />
-        </div>
-      </div>
-
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-        <ProjectsOverview onNavigateToModule={onNavigateToModule} />
-        <RecentActivity onNavigateToModule={onNavigateToModule} />
-      </div>
+      <RevenueChart />
+      {onNavigateToModule ? <TasksWidget onNavigateToModule={onNavigateToModule} /> : <TasksWidget />}
+      {onNavigateToModule ? <ProjectsOverview onNavigateToModule={onNavigateToModule} /> : <ProjectsOverview />}
+      {onNavigateToModule ? <RecentActivity onNavigateToModule={onNavigateToModule} /> : <RecentActivity />}
     </div>
   );
 };
@@ -581,7 +577,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const handleTabDelete = (tabId: string) => {
     if (tabs.length > 1) {
       const newTabs = tabs.filter(tab => tab.id !== tabId);
-      if (activeTab === tabId) {
+      if (activeTab === tabId && newTabs.length > 0 && newTabs[0]) {
         setActiveTab(newTabs[0].id);
       }
       persistTabs(newTabs);
@@ -610,9 +606,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     persistTabs(updatedTabs);
   };
 
-  const handleAddWidgets = () => {
-    setShowWidgetPalette(!showWidgetPalette);
-  };
+
 
   const handleToggleGrid = () => {
     setShowGrid(!showGrid);
@@ -630,60 +624,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     setShowSettings(false);
   };
 
-  const handleAutoOrganize = () => {
-    // Trigger auto-organize for the current tab
-    const activeTabData = tabs.find(tab => tab.id === activeTab);
-    if (activeTabData && activeTabData.widgets) {
-      const newWidgets = activeTabData.widgets.map((widget, index) => {
-        // Determine grid spans based on widget type
-        let colSpan = 1;
-        let rowSpan = 1;
 
-        switch (widget.type) {
-          case 'stats-cards':
-            colSpan = 2; // Wider for stats cards
-            rowSpan = 1;
-            break;
-          case 'revenue-chart':
-            colSpan = 1;
-            rowSpan = 2; // Taller for charts
-            break;
-          case 'tasks-widget':
-            colSpan = 1;
-            rowSpan = 2; // Taller for task lists
-            break;
-          case 'projects-overview':
-            colSpan = 2;
-            rowSpan = 2; // Wider and taller for project overview
-            break;
-          case 'recent-activity':
-            colSpan = 2;
-            rowSpan = 2; // Wider and taller for activity feed
-            break;
-          case 'performance-metrics':
-            colSpan = 1;
-            rowSpan = 1;
-            break;
-          case 'email-overview':
-            colSpan = 1;
-            rowSpan = 1;
-            break;
-          default:
-            colSpan = 1;
-            rowSpan = 1;
-        }
-
-        return {
-          ...widget,
-          width: colSpan,
-          height: rowSpan,
-        };
-      });
-
-      handleWidgetsChange(activeTab, newWidgets);
-    }
-    setShowSettings(false);
-  };
 
   // Check if current tab is a page builder tab
   const isPageBuilderTab = () => {
@@ -692,20 +633,22 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const renderActiveTabContent = () => {
-    const activeTabData = tabs.find(tab => tab.id === activeTab);
-    if (!activeTabData) return null;
-    switch (activeTabData.type) {
+    const currentTab = tabs.find(tab => tab.id === activeTab);
+    if (!currentTab) return null;
+    switch (currentTab.type) {
       case 'builtin':
         switch (activeTab) {
           case 'quick-start':
-            return <QuickStart onNavigateToModule={onNavigateToModule} />;
-          case 'main-dashboard':
-            return (
+            return onNavigateToModule ? <QuickStart onNavigateToModule={onNavigateToModule} /> : <QuickStart />;
+          case 'dashboard':
+            return onNavigateToModule ? <DashboardContent onNavigateToModule={onNavigateToModule} /> : <DashboardContent />;
+          case 'activity-stream':
+            return onNavigateToModule ? <ActivityStream onNavigateToModule={onNavigateToModule} /> : <ActivityStream />;
+          default:
+            return onNavigateToModule ? (
               <PageBuilder
-                widgets={activeTabData.widgets || []}
-                onWidgetsChange={widgets =>
-                  handleWidgetsChange(activeTab, widgets)
-                }
+                widgets={currentTab.widgets || []}
+                onWidgetsChange={(widgets) => handleWidgetsChange(currentTab.id, widgets)}
                 onNavigateToModule={onNavigateToModule}
                 showWidgetPalette={showWidgetPalette}
                 setShowWidgetPalette={setShowWidgetPalette}
@@ -713,18 +656,34 @@ const Dashboard: React.FC<DashboardProps> = ({
                 isLocked={isLocked}
                 onToggleLock={handleToggleLock}
               />
+            ) : (
+              <PageBuilder
+                widgets={currentTab.widgets || []}
+                onWidgetsChange={(widgets) => handleWidgetsChange(currentTab.id, widgets)}
+                showWidgetPalette={showWidgetPalette}
+                setShowWidgetPalette={setShowWidgetPalette}
+                showGrid={showGrid}
+                isLocked={isLocked}
+                onToggleLock={handleToggleLock}
+              />
             );
-          case 'activity-stream':
-            return <ActivityStream onNavigateToModule={onNavigateToModule} />;
-          default:
-            return null;
         }
       case 'custom':
-        return (
+        return onNavigateToModule ? (
           <PageBuilder
-            widgets={activeTabData.widgets || []}
-            onWidgetsChange={widgets => handleWidgetsChange(activeTab, widgets)}
+            widgets={currentTab.widgets || []}
+            onWidgetsChange={widgets => handleWidgetsChange(currentTab.id, widgets)}
             onNavigateToModule={onNavigateToModule}
+            showWidgetPalette={showWidgetPalette}
+            setShowWidgetPalette={setShowWidgetPalette}
+            showGrid={showGrid}
+            isLocked={isLocked}
+            onToggleLock={handleToggleLock}
+          />
+        ) : (
+          <PageBuilder
+            widgets={currentTab.widgets || []}
+            onWidgetsChange={widgets => handleWidgetsChange(currentTab.id, widgets)}
             showWidgetPalette={showWidgetPalette}
             setShowWidgetPalette={setShowWidgetPalette}
             showGrid={showGrid}
@@ -744,7 +703,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 overflow-visible'>
       {/* Tabbed Interface */}
       <DashboardTabs
         tabs={tabs}
@@ -754,7 +713,6 @@ const Dashboard: React.FC<DashboardProps> = ({
         onTabDelete={handleTabDelete}
         onTabAdd={handleTabAdd}
         showPageBuilderControls={isPageBuilderTab()}
-        onAddWidgets={handleAddWidgets}
         onOpenSettings={handleOpenSettings}
       />
 
@@ -766,11 +724,23 @@ const Dashboard: React.FC<DashboardProps> = ({
         <DashboardSettings
           showGrid={showGrid}
           onToggleGrid={handleToggleGrid}
-          onAutoOrganize={handleAutoOrganize}
-          onResetLayout={resetToDefaultLayout}
           isLocked={isLocked}
           onToggleLock={handleToggleLock}
           onClose={handleCloseSettings}
+          onWidgetsChange={(widgets) => {
+            const currentTab = tabs.find(tab => tab.id === activeTab);
+            if (currentTab) {
+              handleWidgetsChange(currentTab.id, widgets);
+            }
+          }}
+          widgets={tabs.find(tab => tab.id === activeTab)?.widgets || []}
+          activeTab={activeTab}
+          tabs={tabs}
+          onLoadDashboardState={(state) => {
+            // Load the full dashboard state
+            setTabs(state.tabs);
+            setActiveTab(state.activeTab);
+          }}
         />
       )}
     </div>

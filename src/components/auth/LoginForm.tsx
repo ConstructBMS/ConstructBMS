@@ -118,7 +118,7 @@ const LoginForm: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className='w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-archer-neon focus:border-archer-neon'
+                  className='w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-constructbms-blue focus:border-constructbms-blue'
                   placeholder='Enter your email'
                 />
               </div>
@@ -140,7 +140,7 @@ const LoginForm: React.FC = () => {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className='w-full pl-10 pr-10 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-archer-neon focus:border-archer-neon'
+                  className='w-full pl-10 pr-10 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-constructbms-blue focus:border-constructbms-blue'
                   placeholder='Enter your password'
                 />
                 <button
@@ -167,7 +167,7 @@ const LoginForm: React.FC = () => {
                 type='checkbox'
                 checked={rememberMe}
                 onChange={e => setRememberMe(e.target.checked)}
-                className='h-4 w-4 text-archer-neon focus:ring-archer-neon border-gray-300 rounded'
+                className='h-4 w-4 text-constructbms-blue focus:ring-constructbms-blue border-gray-300 rounded'
               />
               <label
                 htmlFor='remember-me'
@@ -180,7 +180,7 @@ const LoginForm: React.FC = () => {
               <button
                 type='button'
                 onClick={handleForgotPassword}
-                className='font-medium text-archer-neon hover:text-archer-black'
+                className='font-medium text-constructbms-blue hover:text-constructbms-black'
               >
                 Forgot your password?
               </button>
@@ -193,8 +193,8 @@ const LoginForm: React.FC = () => {
             className={`w-full py-2 px-4 border border-transparent text-lg font-bold rounded transition-colors ${
               isLoading || authLoading
                 ? 'bg-gray-400 cursor-not-allowed text-white'
-                : 'bg-archer-neon text-black hover:bg-black hover:text-white'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-archer-neon shadow`}
+                : 'bg-constructbms-blue text-black hover:bg-black hover:text-white'
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-constructbms-blue shadow`}
           >
             {isLoading || authLoading ? (
               <>
@@ -211,7 +211,7 @@ const LoginForm: React.FC = () => {
           <span className='text-sm text-gray-600'>Don't have an account? </span>
           <Link
             to='/signup'
-            className='text-archer-neon hover:text-archer-black font-medium'
+            className='text-constructbms-blue hover:text-constructbms-black font-medium'
           >
             Sign Up
           </Link>

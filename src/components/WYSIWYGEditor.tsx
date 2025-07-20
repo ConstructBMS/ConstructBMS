@@ -41,8 +41,8 @@ const CompactToolbar = ({
   setShowLinkInput,
 }: {
   editor: any;
-  showLinkInput: boolean;
   setShowLinkInput: (show: boolean) => void;
+  showLinkInput: boolean;
 }) => (
   <div className='flex items-center gap-1'>
     {/* Essential formatting only */}
@@ -105,12 +105,12 @@ const CompactToolbar = ({
 );
 
 interface WYSIWYGEditorProps {
-  content: string;
-  onChange: (content: string) => void;
-  placeholder?: string;
   className?: string;
   compact?: boolean;
+  content: string;
   hideToolbar?: boolean;
+  onChange: (content: string) => void;
+  placeholder?: string;
 }
 
 const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({

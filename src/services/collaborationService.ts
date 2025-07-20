@@ -1,98 +1,99 @@
 import { supabase } from './supabase';
 
 export interface CollaborationSession {
-  id: string;
-  document_id: string;
-  session_name: string;
+  created_at?: string;
   created_by: string;
+  document_id: string;
+  id: string;
   is_active: boolean;
   max_participants: number;
-  created_at?: string;
+  session_name: string;
   updated_at?: string;
 }
 
 export interface SessionParticipant {
-  id?: string;
-  session_id: string;
-  user_id: string;
-  user_name: string;
-  user_email: string;
-  user_role: string;
-  joined_at: string;
-  last_active: string;
+  avatar_url?: string;
+    ch: number;
   cursor_position?: {
     line: number;
-    ch: number;
-  };
-  selection?: {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
-  };
+};
+  id?: string;
   is_online: boolean;
-  avatar_url?: string;
+  joined_at: string;
+  last_active: string;
+  selection?: {
+    from: { ch: number, line: number; };
+    to: { ch: number, line: number; };
+  };
+  session_id: string;
+  user_email: string;
+  user_id: string;
+  user_name: string;
+  user_role: string;
 }
 
 export interface DocumentChange {
-  id?: string;
-  session_id: string;
-  user_id: string;
-  document_id: string;
   change_type: 'insert' | 'delete' | 'format' | 'comment';
-  position: number;
   content?: string;
+  created_at?: string;
+  document_id: string;
+  id?: string;
   length?: number;
   metadata?: any;
+  position: number;
+  session_id: string;
   timestamp: string;
+  user_id: string;
   version: number;
-  created_at?: string;
 }
 
 export interface DocumentComment {
-  id?: string;
+    ch: number;
+  content: string;
+  created_at?: string;
   document_id: string;
+  id?: string;
+    line: number;
+  position: {
+};
+  resolved: boolean;
+  updated_at?: string;
   user_id: string;
   user_name: string;
-  content: string;
-  position: {
-    line: number;
-    ch: number;
-  };
-  resolved: boolean;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export interface CollaborationSettings {
+  // seconds
+  auto_save_interval: number;
+  created_at?: string;
+  enable_screen_sharing: boolean; 
+  enable_voice_chat: boolean;
   id?: string;
-  user_id: string;
-  auto_save_interval: number; // seconds
+  show_comments: boolean;
   show_cursors: boolean;
   show_selections: boolean;
-  show_comments: boolean;
-  enable_voice_chat: boolean;
-  enable_screen_sharing: boolean;
   theme: 'light' | 'dark' | 'auto';
-  created_at?: string;
   updated_at?: string;
+  user_id: string;
 }
 
 export interface VoiceChatSession {
-  id?: string;
-  session_id: string;
-  room_name: string;
-  is_active: boolean;
-  created_by: string;
   created_at?: string;
+  created_by: string;
+  id?: string;
+  is_active: boolean;
+  room_name: string;
+  session_id: string;
 }
 
 export interface ScreenShareSession {
-  id?: string;
-  session_id: string;
-  user_id: string;
-  stream_url?: string;
-  is_active: boolean;
-  started_at: string;
   ended_at?: string;
+  id?: string;
+  is_active: boolean;
+  session_id: string;
+  started_at: string;
+  stream_url?: string;
+  user_id: string;
 }
 
 class CollaborationService {
@@ -310,7 +311,7 @@ class CollaborationService {
   async addComment(
     documentId: string,
     content: string,
-    position: { line: number; ch: number }
+    position: { ch: number, line: number; }
   ): Promise<DocumentComment> {
     try {
       const {
@@ -382,8 +383,8 @@ class CollaborationService {
 
   // Update cursor position
   async updateCursorPosition(position: {
-    line: number;
     ch: number;
+    line: number;
   }): Promise<void> {
     if (!this.currentSession) return;
 
@@ -421,8 +422,8 @@ class CollaborationService {
 
   // Update text selection
   async updateSelection(selection: {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
+    from: { ch: number, line: number; };
+    to: { ch: number, line: number; };
   }): Promise<void> {
     if (!this.currentSession) return;
 
@@ -923,16 +924,16 @@ export const collaborationService = {
   addComment: (
     documentId: string,
     content: string,
-    position: { line: number; ch: number }
+    position: { ch: number, line: number; }
   ) =>
     getCollaborationServiceInstance().addComment(documentId, content, position),
   resolveComment: (commentId: string) =>
     getCollaborationServiceInstance().resolveComment(commentId),
-  updateCursorPosition: (position: { line: number; ch: number }) =>
+  updateCursorPosition: (position: { ch: number, line: number; }) =>
     getCollaborationServiceInstance().updateCursorPosition(position),
   updateSelection: (selection: {
-    from: { line: number; ch: number };
-    to: { line: number; ch: number };
+    from: { ch: number, line: number; };
+    to: { ch: number, line: number; };
   }) => getCollaborationServiceInstance().updateSelection(selection),
   notifyTyping: () => getCollaborationServiceInstance().notifyTyping(),
   getSessionParticipants: (sessionId: string) =>

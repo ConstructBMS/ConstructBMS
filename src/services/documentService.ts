@@ -1,77 +1,77 @@
 import { supabase } from './supabase';
 
 export interface Document {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  content: string;
-  version: number;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-  is_archived: boolean;
-  is_template: boolean;
   assigned_projects: string[];
-  permissions: {
+    can_delete: string[];
     can_edit: string[];
     can_view: string[];
-    can_delete: string[];
-  };
+  category: string;
+  content: string;
+  created_at: string;
+  created_by: string;
+  description: string;
+  id: string;
+  is_archived: boolean;
+  is_template: boolean;
+  permissions: {
+};
+  tags: string[];
+  title: string;
+  updated_at: string;
+  version: number;
 }
 
 export interface DocumentVersion {
-  id: string;
-  document_id: string;
-  version: number;
-  content: string;
-  title: string;
-  description: string;
-  created_by: string;
-  created_at: string;
   change_description: string;
+  content: string;
+  created_at: string;
+  created_by: string;
+  description: string;
+  document_id: string;
+  id: string;
+  title: string;
+  version: number;
 }
 
 export interface DocumentCategory {
-  id: string;
-  name: string;
+  color: string;
   description: string;
   icon: string;
-  color: string;
+  id: string;
+  name: string;
 }
 
 export interface CreateDocumentData {
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  content: string;
-  is_template: boolean;
-  permissions: {
+    can_delete: string[];
     can_edit: string[];
     can_view: string[];
-    can_delete: string[];
-  };
+  category: string;
+  content: string;
+  description: string;
+  is_template: boolean;
+  permissions: {
+};
+  tags: string[];
+  title: string;
 }
 
 export interface UpdateDocumentData {
-  title?: string;
-  description?: string;
   category?: string;
-  tags?: string[];
-  content?: string;
   change_description: string;
+  content?: string;
+  description?: string;
+  tags?: string[];
+  title?: string;
 }
 
 class DocumentService {
   // Get all documents with optional filters
   async getDocuments(filters?: {
-    category?: string;
-    isTemplate?: boolean;
-    isArchived?: boolean;
-    search?: string;
     assignedToProject?: string;
+    category?: string;
+    isArchived?: boolean;
+    isTemplate?: boolean;
+    search?: string;
   }): Promise<Document[]> {
     try {
       let query = supabase
@@ -98,9 +98,13 @@ class DocumentService {
       }
 
       if (filters?.assignedToProject) {
-        query = query.contains('assigned_projects', [
-          filters.assignedToProject,
-        ]);
+        // Convert numeric project ID to UUID format if needed
+        const projectId = filters.assignedToProject;
+        const uuidProjectId = projectId.includes('-') 
+          ? projectId 
+          : `00000000-0000-0000-0000-${projectId.padStart(12, '0')}`;
+        
+        query = query.contains('assigned_projects', [uuidProjectId]);
       }
 
       const { data, error } = await query;
@@ -358,11 +362,11 @@ class DocumentService {
   async createDocumentVersion(
     documentId: string,
     versionData: {
-      version: number;
-      content: string;
-      title: string;
-      description: string;
       change_description: string;
+      content: string;
+      description: string;
+      title: string;
+      version: number;
     }
   ): Promise<DocumentVersion> {
     try {
@@ -500,7 +504,7 @@ class DocumentService {
       }
 
       // Check if user has admin role
-      const userRole = user.user_metadata?.role;
+      const userRole = user.user_metadata?.['role'];
       if (userRole !== 'admin' && userRole !== 'super_admin') {
         throw new Error('Insufficient permissions to create categories');
       }
@@ -536,7 +540,7 @@ class DocumentService {
         return { canCreateCategories: false, role: 'none' };
       }
 
-      const userRole = user.user_metadata?.role || 'user';
+      const userRole = user.user_metadata?.['role'] || 'user';
       const canCreateCategories =
         userRole === 'admin' || userRole === 'super_admin';
 
@@ -571,7 +575,7 @@ class DocumentService {
       }
 
       // Check role-based permissions
-      const userRole = user.user_metadata?.role || 'user';
+      const userRole = user.user_metadata?.['role'] || 'user';
       const permissionKey =
         `can_${action}` as keyof typeof document.permissions;
 
@@ -612,14 +616,14 @@ class DocumentService {
 
   // Search documents with advanced filters
   async searchDocuments(searchParams: {
-    query?: string;
     category?: string;
-    tags?: string[];
     createdBy?: string;
     dateFrom?: string;
     dateTo?: string;
-    isTemplate?: boolean;
     isArchived?: boolean;
+    isTemplate?: boolean;
+    query?: string;
+    tags?: string[];
   }): Promise<Document[]> {
     try {
       let query = supabase.from('documents').select('*');

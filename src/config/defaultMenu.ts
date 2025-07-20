@@ -1,4 +1,4 @@
-import { MenuItem } from '../types/menu';
+import type { MenuItem } from '../types/menu';
 
 export const defaultMenu: MenuItem[] = [
   {
@@ -48,24 +48,34 @@ export const defaultMenu: MenuItem[] = [
     order: 3,
     children: [
       {
-        id: 'customers',
-        label: 'Customers',
+        id: 'crm-clients',
+        label: 'Clients',
         icon: 'users',
         type: 'child',
         parentId: 'crm',
-        moduleKey: 'customers',
+        moduleKey: 'crm-clients',
         visible: true,
         order: 1,
       },
       {
-        id: 'contractors',
+        id: 'crm-consultants',
+        label: 'Consultants',
+        icon: 'users',
+        type: 'child',
+        parentId: 'crm',
+        moduleKey: 'crm-consultants',
+        visible: true,
+        order: 2,
+      },
+      {
+        id: 'crm-contractors',
         label: 'Contractors',
         icon: 'identification',
         type: 'child',
         parentId: 'crm',
-        moduleKey: 'contractors',
+        moduleKey: 'crm-contractors',
         visible: true,
-        order: 2,
+        order: 3,
       },
     ],
   },
@@ -76,6 +86,28 @@ export const defaultMenu: MenuItem[] = [
     type: 'parent',
     visible: true,
     order: 4,
+    children: [
+      {
+        id: 'projects-list',
+        label: 'Projects',
+        icon: 'projects',
+        type: 'child',
+        parentId: 'projects',
+        moduleKey: 'projects',
+        visible: true,
+        order: 1,
+      },
+      {
+        id: 'programme-manager',
+        label: 'Programme Manager',
+        icon: 'chart-bar',
+        type: 'child',
+        parentId: 'projects',
+        moduleKey: 'programme-manager',
+        visible: true,
+        order: 2,
+      },
+    ],
   },
   {
     id: 'calendar',
@@ -144,6 +176,14 @@ export const defaultMenu: MenuItem[] = [
     order: 8,
   },
   {
+    id: 'notes',
+    label: 'Notes',
+    icon: 'document-text',
+    type: 'parent',
+    visible: true,
+    order: 8.5,
+  },
+  {
     id: 'procurement',
     label: 'Procurement',
     icon: 'procurement',
@@ -181,14 +221,7 @@ export const defaultMenu: MenuItem[] = [
       },
     ],
   },
-  {
-    id: 'roles-permissions-matrix',
-    label: 'Roles & Permissions Matrix',
-    icon: 'key',
-    type: 'parent',
-    visible: true,
-    order: 12,
-  },
+
   {
     id: 'settings',
     label: 'Settings',

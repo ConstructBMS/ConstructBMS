@@ -3,10 +3,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 interface PermissionGuardProps {
   children: React.ReactNode;
-  permissions?: string[];
-  roles?: string[];
   fallback?: React.ReactNode;
-  requireAll?: boolean; // If true, user must have ALL permissions/roles, otherwise ANY
+  permissions?: string[];
+  requireAll?: boolean;
+  roles?: string[]; // If true, user must have ALL permissions/roles, otherwise ANY
 }
 
 const PermissionGuard: React.FC<PermissionGuardProps> = ({

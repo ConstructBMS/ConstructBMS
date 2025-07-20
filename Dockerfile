@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for Archer Business Management System
+# Multi-stage Dockerfile for ConstructBMS Business Management System
 # Stage 1: Build stage
 FROM node:18-alpine AS builder
 
@@ -25,7 +25,7 @@ RUN apk add --no-cache dumb-init
 
 # Create app user for security
 RUN addgroup -g 1001 -S nodejs
-RUN adduser -S archer -u 1001
+RUN adduser -S constructbms -u 1001
 
 # Set working directory
 WORKDIR /app
@@ -37,15 +37,15 @@ COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
-COPY --from=builder --chown=archer:nodejs /app/dist ./dist
-COPY --from=builder --chown=archer:nodejs /app/public ./public
-COPY --from=builder --chown=archer:nodejs /app/server ./server
+COPY --from=builder --chown=constructbms:nodejs /app/dist ./dist
+COPY --from=builder --chown=constructbms:nodejs /app/public ./public
+COPY --from=builder --chown=constructbms:nodejs /app/server ./server
 
 # Create necessary directories
-RUN mkdir -p logs && chown -R archer:nodejs logs
+RUN mkdir -p logs && chown -R constructbms:nodejs logs
 
 # Switch to non-root user
-USER archer
+USER constructbms
 
 # Expose port
 EXPOSE 3000

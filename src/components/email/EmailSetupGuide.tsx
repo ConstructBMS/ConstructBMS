@@ -7,7 +7,7 @@ import {
   AlertCircle,
   ExternalLink,
 } from 'lucide-react';
-import { EmailProvider } from '../../types/email';
+import type { EmailProvider } from '../../types/email';
 
 interface EmailSetupGuideProps {
   isOpen: boolean;

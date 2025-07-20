@@ -1,86 +1,85 @@
 import {
-  User,
-  Role,
-  Permission,
   SystemRoles,
   Permissions,
+  PermissionResources,
+  PermissionActions,
+  PermissionCategories,
 } from '../types/auth';
+import type { User, Role, Permission } from '../types/auth';
 
-// Mock data - in real app this would come from database
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'superadmin@archer.com',
-    firstName: 'Super',
-    lastName: 'Admin',
-    organizationId: '1',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    email: 'admin@archer.com',
-    firstName: 'Admin',
-    lastName: 'User',
-    organizationId: '1',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    email: 'employee@archer.com',
-    firstName: 'Employee',
-    lastName: 'User',
-    organizationId: '1',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+// Mock data - will be populated from database
+const mockUsers: User[] = [];
 
 const mockRoles: Role[] = [
   {
     id: '1',
-    name: SystemRoles.SUPER_ADMIN,
+    name: 'Super Administrator',
     description: 'Full system access with all permissions',
+    level: SystemRoles.SUPER_ADMIN,
+    permissions: Object.values(Permissions).reduce((acc, permission) => {
+      acc[permission] = true;
+      return acc;
+    }, {} as Record<Permissions, boolean>),
+    customRules: [],
     isSystemRole: true,
     isActive: true,
     organizationId: '1',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    createdBy: 'system',
+    userCount: 1,
+    priority: 1,
   },
   {
     id: '2',
-    name: SystemRoles.ADMIN,
+    name: 'Administrator',
     description: 'Administrative access with limited system permissions',
+    level: SystemRoles.ADMIN,
+    permissions: Object.values(Permissions).reduce((acc, permission) => {
+      acc[permission] = false;
+      return acc;
+    }, {} as Record<Permissions, boolean>),
+    customRules: [],
     isSystemRole: true,
     isActive: true,
     organizationId: '1',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    createdBy: 'system',
+    userCount: 1,
+    priority: 2,
   },
   {
     id: '3',
-    name: SystemRoles.EMPLOYEE,
+    name: 'Employee',
     description: 'Standard employee access',
+    level: SystemRoles.EMPLOYEE,
+    permissions: Object.values(Permissions).reduce((acc, permission) => {
+      acc[permission] = false;
+      return acc;
+    }, {} as Record<Permissions, boolean>),
+    customRules: [],
     isSystemRole: true,
     isActive: true,
     organizationId: '1',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    createdBy: 'system',
+    userCount: 1,
+    priority: 3,
   },
 ];
 
 const mockPermissions: Permission[] = [
-  // Menu permissions
+  // User management permissions
   {
     id: '1',
-    name: Permissions.MENU_VIEW,
-    description: 'View menu items',
-    resource: 'menu',
-    action: 'read',
+    name: Permissions.USERS_VIEW_ALL,
+    displayName: 'View All Users',
+    description: 'View all users in the system',
+    category: PermissionCategories.USER_MANAGEMENT,
+    resource: PermissionResources.USERS,
+    action: PermissionActions.VIEW,
     isSystemPermission: true,
     isActive: true,
     organizationId: '1',
@@ -89,10 +88,12 @@ const mockPermissions: Permission[] = [
   },
   {
     id: '2',
-    name: Permissions.MENU_EDIT,
-    description: 'Edit menu structure',
-    resource: 'menu',
-    action: 'update',
+    name: Permissions.USERS_CREATE,
+    displayName: 'Create Users',
+    description: 'Create new user accounts',
+    category: PermissionCategories.USER_MANAGEMENT,
+    resource: PermissionResources.USERS,
+    action: PermissionActions.CREATE,
     isSystemPermission: true,
     isActive: true,
     organizationId: '1',
@@ -101,10 +102,12 @@ const mockPermissions: Permission[] = [
   },
   {
     id: '3',
-    name: Permissions.MENU_CREATE,
-    description: 'Create new menu items',
-    resource: 'menu',
-    action: 'create',
+    name: Permissions.USERS_EDIT,
+    displayName: 'Edit Users',
+    description: 'Edit user information',
+    category: PermissionCategories.USER_MANAGEMENT,
+    resource: PermissionResources.USERS,
+    action: PermissionActions.EDIT,
     isSystemPermission: true,
     isActive: true,
     organizationId: '1',
@@ -113,71 +116,12 @@ const mockPermissions: Permission[] = [
   },
   {
     id: '4',
-    name: Permissions.MENU_DELETE,
-    description: 'Delete menu items',
-    resource: 'menu',
-    action: 'delete',
-    isSystemPermission: true,
-    isActive: true,
-    organizationId: '1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    name: Permissions.MENU_RESET,
-    description: 'Reset menu to default',
-    resource: 'menu',
-    action: 'reset',
-    isSystemPermission: true,
-    isActive: true,
-    organizationId: '1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  // User management permissions
-  {
-    id: '6',
-    name: Permissions.USERS_VIEW,
-    description: 'View users',
-    resource: 'users',
-    action: 'read',
-    isSystemPermission: true,
-    isActive: true,
-    organizationId: '1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '7',
-    name: Permissions.USERS_CREATE,
-    description: 'Create users',
-    resource: 'users',
-    action: 'create',
-    isSystemPermission: true,
-    isActive: true,
-    organizationId: '1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '8',
-    name: Permissions.USERS_EDIT,
-    description: 'Edit users',
-    resource: 'users',
-    action: 'update',
-    isSystemPermission: true,
-    isActive: true,
-    organizationId: '1',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '9',
     name: Permissions.USERS_DELETE,
-    description: 'Delete users',
-    resource: 'users',
-    action: 'delete',
+    displayName: 'Delete Users',
+    description: 'Delete user accounts',
+    category: PermissionCategories.USER_MANAGEMENT,
+    resource: PermissionResources.USERS,
+    action: PermissionActions.DELETE,
     isSystemPermission: true,
     isActive: true,
     organizationId: '1',
@@ -189,51 +133,73 @@ const mockPermissions: Permission[] = [
 // Role-permission mappings
 const rolePermissions: Record<string, string[]> = {
   [SystemRoles.SUPER_ADMIN]: [
-    Permissions.MENU_VIEW,
-    Permissions.MENU_EDIT,
-    Permissions.MENU_CREATE,
-    Permissions.MENU_DELETE,
-    Permissions.MENU_RESET,
-    Permissions.USERS_VIEW,
+    Permissions.USERS_VIEW_ALL,
     Permissions.USERS_CREATE,
     Permissions.USERS_EDIT,
     Permissions.USERS_DELETE,
-    Permissions.ROLES_VIEW,
     Permissions.ROLES_CREATE,
     Permissions.ROLES_EDIT,
     Permissions.ROLES_DELETE,
-    Permissions.PERMISSIONS_VIEW,
-    Permissions.PERMISSIONS_CREATE,
-    Permissions.PERMISSIONS_EDIT,
-    Permissions.PERMISSIONS_DELETE,
-    Permissions.DASHBOARD_VIEW,
-    Permissions.SETTINGS_VIEW,
-    Permissions.SETTINGS_EDIT,
+    Permissions.PERMISSIONS_CREATE_CUSTOM,
+    Permissions.PERMISSIONS_EDIT_CUSTOM,
+    Permissions.AUDIT_LOGS_VIEW_ALL,
+    Permissions.SECURITY_2FA_MANAGE,
+    Permissions.DATA_ACCESS_ALL,
+    Permissions.FINANCIALS_VIEW_ALL,
+    Permissions.FINANCIALS_EDIT_ALL,
+    Permissions.INTEGRATIONS_CONFIGURE,
+    Permissions.SYSTEM_FEATURE_FLAGS,
+    Permissions.CUSTOM_LOGIC_CREATE,
+    Permissions.PROJECTS_VIEW_ALL,
+    Permissions.TASKS_CREATE,
+    Permissions.TASKS_EDIT,
+    Permissions.TASKS_DELETE,
+    Permissions.CHAT_VIEW_ALL,
+    Permissions.CHAT_SEND_EXTERNAL,
+    Permissions.TIME_VIEW_REPORTS,
+    Permissions.DASHBOARD_ACCESS_PORTAL,
+    Permissions.MESSAGING_SEND_PROJECT,
+    Permissions.NOTIFICATIONS_RECEIVE,
+    Permissions.E_SIGNING_SIGN,
   ],
   [SystemRoles.ADMIN]: [
-    Permissions.MENU_VIEW,
-    Permissions.MENU_EDIT,
-    Permissions.MENU_CREATE,
-    Permissions.MENU_DELETE,
-    Permissions.USERS_VIEW,
+    Permissions.USERS_VIEW_ALL,
     Permissions.USERS_CREATE,
     Permissions.USERS_EDIT,
-    Permissions.DASHBOARD_VIEW,
-    Permissions.SETTINGS_VIEW,
-    Permissions.SETTINGS_EDIT,
+    Permissions.ROLES_ASSIGN_EXISTING,
+    Permissions.AUDIT_LOGS_VIEW_SCOPE,
+    Permissions.DATA_ACCESS_PROJECT,
+    Permissions.FINANCIALS_VIEW_SCOPE,
+    Permissions.PROJECTS_VIEW_ALL,
+    Permissions.TASKS_CREATE,
+    Permissions.TASKS_EDIT,
+    Permissions.CHAT_VIEW_PROJECT,
+    Permissions.CHAT_SEND_INTERNAL,
+    Permissions.TIME_LOG,
+    Permissions.DASHBOARD_ACCESS_PORTAL,
+    Permissions.NOTIFICATIONS_RECEIVE,
   ],
   [SystemRoles.EMPLOYEE]: [
-    Permissions.MENU_VIEW,
-    Permissions.DASHBOARD_VIEW,
-    Permissions.SETTINGS_VIEW,
+    Permissions.PROJECTS_VIEW_ASSIGNED,
+    Permissions.TASKS_EDIT_OWN,
+    Permissions.DATA_ACCESS_PROJECT,
+    Permissions.FILES_UPLOAD,
+    Permissions.FILES_DOWNLOAD,
+    Permissions.CHAT_VIEW_PROJECT,
+    Permissions.CHAT_SEND_INTERNAL,
+    Permissions.CHAT_MENTION_USERS,
+    Permissions.TIME_LOG,
+    Permissions.FINANCIALS_VIEW_COSTS,
+    Permissions.DASHBOARD_ACCESS_PORTAL,
+    Permissions.NOTIFICATIONS_RECEIVE,
   ],
 };
 
 // User-role mappings
 const userRoles: Record<string, string[]> = {
-  '1': [SystemRoles.SUPER_ADMIN], // superadmin@archer.com
-  '2': [SystemRoles.ADMIN], // admin@archer.com
-  '3': [SystemRoles.EMPLOYEE], // employee@archer.com
+  '1': [SystemRoles.SUPER_ADMIN], // superadmin@constructbms.com
+  '2': [SystemRoles.ADMIN], // admin@constructbms.com
+  '3': [SystemRoles.EMPLOYEE], // employee@constructbms.com
 };
 
 class AuthService {
@@ -244,7 +210,7 @@ class AuthService {
   async login(
     email: string,
     password: string
-  ): Promise<{ user: User; roles: Role[]; permissions: string[] }> {
+  ): Promise<{ permissions: string[], roles: Role[]; user: User; }> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -289,9 +255,9 @@ class AuthService {
   }
 
   async getCurrentUser(): Promise<{
-    user: User | null;
-    roles: Role[];
     permissions: string[];
+    roles: Role[];
+    user: User | null;
   }> {
     // Check localStorage first (for persistence across page reloads)
     const storedUser = localStorage.getItem('auth_user');
@@ -390,21 +356,37 @@ class AuthService {
 
   // Admin methods for managing users, roles, permissions
   async getUsers(): Promise<User[]> {
-    if (!this.checkPermission(Permissions.USERS_VIEW)) {
-      throw new Error('Insufficient permissions');
+    try {
+      // Fetch users from the database
+      const response = await fetch('/api/users', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      const data = await response.json();
+      return data.users || [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return [];
     }
-    return mockUsers;
   }
 
   async getRoles(): Promise<Role[]> {
-    if (!this.checkPermission(Permissions.ROLES_VIEW)) {
+    if (!this.checkPermission(Permissions.ROLES_CREATE)) {
       throw new Error('Insufficient permissions');
     }
     return mockRoles;
   }
 
   async getPermissions(): Promise<Permission[]> {
-    if (!this.checkPermission(Permissions.PERMISSIONS_VIEW)) {
+    if (!this.checkPermission(Permissions.PERMISSIONS_CREATE_CUSTOM)) {
       throw new Error('Insufficient permissions');
     }
     return mockPermissions;

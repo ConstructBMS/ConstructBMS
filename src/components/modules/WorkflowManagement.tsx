@@ -616,6 +616,7 @@ const WorkflowManagement: React.FC<WorkflowManagementProps> = ({
                             setShowApprovalModal(true);
                           }}
                           className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm'
+                          title='Review Document'
                         >
                           Review
                         </button>
@@ -626,6 +627,7 @@ const WorkflowManagement: React.FC<WorkflowManagementProps> = ({
                             setShowApprovalModal(true);
                           }}
                           className='bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 text-sm'
+                          title='Approve Document'
                         >
                           Approve
                         </button>
@@ -636,6 +638,7 @@ const WorkflowManagement: React.FC<WorkflowManagementProps> = ({
                             setShowApprovalModal(true);
                           }}
                           className='bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 text-sm'
+                          title='Reject Document'
                         >
                           Reject
                         </button>
@@ -810,32 +813,32 @@ const WorkflowManagement: React.FC<WorkflowManagementProps> = ({
                       <span className='text-sm font-medium text-gray-700'>
                         Total Workflows
                       </span>
-                      <span className='text-lg font-bold text-gray-900'>
-                        {workflowStats.total_workflows}
+                      <span className='text-lg font-bold text-gray-400'>
+                        0
                       </span>
                     </div>
                     <div className='flex justify-between items-center'>
                       <span className='text-sm font-medium text-gray-700'>
                         Active Workflows
                       </span>
-                      <span className='text-lg font-bold text-green-600'>
-                        {workflowStats.active_workflows}
+                      <span className='text-lg font-bold text-gray-400'>
+                        0
                       </span>
                     </div>
                     <div className='flex justify-between items-center'>
                       <span className='text-sm font-medium text-gray-700'>
                         Pending Approvals
                       </span>
-                      <span className='text-lg font-bold text-yellow-600'>
-                        {workflowStats.pending_approvals}
+                      <span className='text-lg font-bold text-gray-400'>
+                        0
                       </span>
                     </div>
                     <div className='flex justify-between items-center'>
                       <span className='text-sm font-medium text-gray-700'>
                         Completed This Month
                       </span>
-                      <span className='text-lg font-bold text-blue-600'>
-                        {workflowStats.completed_this_month}
+                      <span className='text-lg font-bold text-gray-400'>
+                        0
                       </span>
                     </div>
                   </div>

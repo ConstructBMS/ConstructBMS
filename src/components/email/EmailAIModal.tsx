@@ -21,24 +21,24 @@ interface EmailAIModalProps {
 }
 
 interface AIInsight {
-  id: string;
-  type: 'follow_up' | 'deadline' | 'action_required' | 'opportunity' | 'risk';
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
   confidence: number;
+  description: string;
+  id: string;
+  priority: 'low' | 'medium' | 'high';
+  title: string;
+  type: 'follow_up' | 'deadline' | 'action_required' | 'opportunity' | 'risk';
 }
 
 interface AIAnalysis {
-  summary: string;
-  sentiment: 'positive' | 'negative' | 'neutral';
-  urgency: 'low' | 'medium' | 'high';
   keyPoints: string[];
-  suggestedActions: string[];
   relatedEntities: {
-    customers?: Array<{ name: string; confidence: number }>;
-    projects?: Array<{ name: string; confidence: number }>;
+    customers?: Array<{ confidence: number; name: string }>;
+    projects?: Array<{ confidence: number; name: string }>;
   };
+  sentiment: 'positive' | 'negative' | 'neutral';
+  suggestedActions: string[];
+  summary: string;
+  urgency: 'low' | 'medium' | 'high';
 }
 
 const EmailAIModal: React.FC<EmailAIModalProps> = ({
@@ -187,7 +187,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
           <div className='flex items-center space-x-3'>
-            <div className='w-10 h-10 bg-archer-neon rounded-lg flex items-center justify-center'>
+            <div className='w-10 h-10 bg-constructbms-blue rounded-lg flex items-center justify-center'>
               <Brain className='w-6 h-6 text-black' />
             </div>
             <div>
@@ -213,7 +213,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
             onClick={() => setActiveTab('insights')}
             className={`flex items-center space-x-2 px-6 py-3 border-b-2 transition-colors ${
               activeTab === 'insights'
-                ? 'border-archer-neon text-archer-neon'
+                ? 'border-constructbms-blue text-constructbms-blue'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -224,7 +224,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
             onClick={() => setActiveTab('analysis')}
             className={`flex items-center space-x-2 px-6 py-3 border-b-2 transition-colors ${
               activeTab === 'analysis'
-                ? 'border-archer-neon text-archer-neon'
+                ? 'border-constructbms-blue text-constructbms-blue'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -235,7 +235,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
             onClick={() => setActiveTab('automation')}
             className={`flex items-center space-x-2 px-6 py-3 border-b-2 transition-colors ${
               activeTab === 'automation'
-                ? 'border-archer-neon text-archer-neon'
+                ? 'border-constructbms-blue text-constructbms-blue'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -249,7 +249,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
           {isAnalyzing ? (
             <div className='flex items-center justify-center h-full'>
               <div className='text-center'>
-                <div className='w-12 h-12 border-4 border-archer-neon border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+                <div className='w-12 h-12 border-4 border-constructbms-blue border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
                 <p className='text-gray-600'>Analyzing email with AI...</p>
               </div>
             </div>
@@ -290,7 +290,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                                   Confidence:{' '}
                                   {Math.round(insight.confidence * 100)}%
                                 </span>
-                                <button className='text-archer-neon hover:text-archer-dark text-sm font-medium'>
+                                <button className='text-constructbms-blue hover:text-constructbms-dark text-sm font-medium'>
                                   Take Action
                                 </button>
                               </div>
@@ -374,7 +374,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                             key={index}
                             className='flex items-start space-x-2'
                           >
-                            <div className='w-2 h-2 bg-archer-neon rounded-full mt-2 flex-shrink-0'></div>
+                            <div className='w-2 h-2 bg-constructbms-blue rounded-full mt-2 flex-shrink-0'></div>
                             <span className='text-gray-700'>{point}</span>
                           </li>
                         ))}
@@ -393,7 +393,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                             className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
                           >
                             <span className='text-gray-700'>{action}</span>
-                            <button className='text-archer-neon hover:text-archer-dark text-sm font-medium'>
+                            <button className='text-constructbms-blue hover:text-constructbms-dark text-sm font-medium'>
                               Execute
                             </button>
                           </div>
@@ -414,7 +414,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                     <div className='grid gap-4'>
                       <div className='border rounded-lg p-4 hover:shadow-md transition-shadow'>
                         <div className='flex items-start space-x-3'>
-                          <div className='w-8 h-8 bg-archer-neon rounded-lg flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-constructbms-blue rounded-lg flex items-center justify-center flex-shrink-0'>
                             <Zap className='w-4 h-4 text-black' />
                           </div>
                           <div className='flex-1'>
@@ -427,7 +427,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                               " based on content analysis.
                             </p>
                             <div className='flex items-center space-x-2'>
-                              <button className='bg-archer-neon text-black px-3 py-1 rounded text-sm font-medium hover:bg-archer-dark transition-colors'>
+                              <button className='bg-constructbms-blue text-black px-3 py-1 rounded text-sm font-medium hover:bg-constructbms-dark transition-colors'>
                                 Create Rule
                               </button>
                               <button className='text-gray-500 hover:text-gray-700 text-sm'>
@@ -440,7 +440,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
 
                       <div className='border rounded-lg p-4 hover:shadow-md transition-shadow'>
                         <div className='flex items-start space-x-3'>
-                          <div className='w-8 h-8 bg-archer-neon rounded-lg flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-constructbms-blue rounded-lg flex items-center justify-center flex-shrink-0'>
                             <Users className='w-4 h-4 text-black' />
                           </div>
                           <div className='flex-1'>
@@ -453,7 +453,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                               context.
                             </p>
                             <div className='flex items-center space-x-2'>
-                              <button className='bg-archer-neon text-black px-3 py-1 rounded text-sm font-medium hover:bg-archer-dark transition-colors'>
+                              <button className='bg-constructbms-blue text-black px-3 py-1 rounded text-sm font-medium hover:bg-constructbms-dark transition-colors'>
                                 Create Rule
                               </button>
                               <button className='text-gray-500 hover:text-gray-700 text-sm'>
@@ -466,7 +466,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
 
                       <div className='border rounded-lg p-4 hover:shadow-md transition-shadow'>
                         <div className='flex items-start space-x-3'>
-                          <div className='w-8 h-8 bg-archer-neon rounded-lg flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-constructbms-blue rounded-lg flex items-center justify-center flex-shrink-0'>
                             <Calendar className='w-4 h-4 text-black' />
                           </div>
                           <div className='flex-1'>
@@ -478,7 +478,7 @@ const EmailAIModal: React.FC<EmailAIModalProps> = ({
                               content and sender relationship.
                             </p>
                             <div className='flex items-center space-x-2'>
-                              <button className='bg-archer-neon text-black px-3 py-1 rounded text-sm font-medium hover:bg-archer-dark transition-colors'>
+                              <button className='bg-constructbms-blue text-black px-3 py-1 rounded text-sm font-medium hover:bg-constructbms-dark transition-colors'>
                                 Create Template
                               </button>
                               <button className='text-gray-500 hover:text-gray-700 text-sm'>

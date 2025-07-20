@@ -16,43 +16,43 @@ import { ArrowDownTrayIcon as SaveIcon } from '@heroicons/react/24/solid';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface Document {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  content: string;
-  version: number;
-  createdBy: string;
-  createdAt: Date;
-  updatedAt: Date;
-  isArchived: boolean;
-  isTemplate: boolean;
   assignedProjects: string[];
-  permissions: {
+    canDelete: string[];
     canEdit: string[];
     canView: string[];
-    canDelete: string[];
-  };
+  category: string;
+  content: string;
+  createdAt: Date;
+  createdBy: string;
+  description: string;
+  id: string;
+  isArchived: boolean;
+  isTemplate: boolean;
+  permissions: {
+};
+  tags: string[];
+  title: string;
+  updatedAt: Date;
+  version: number;
 }
 
 interface DocumentVersion {
-  id: string;
-  version: number;
-  content: string;
-  title: string;
-  description: string;
-  createdBy: string;
-  createdAt: Date;
   changeDescription: string;
+  content: string;
+  createdAt: Date;
+  createdBy: string;
+  description: string;
+  id: string;
+  title: string;
+  version: number;
 }
 
 interface DocumentEditorProps {
   document?: Document;
-  onSave: (document: Document) => void;
-  onClose: () => void;
   onArchive?: (document: Document) => void;
+  onClose: () => void;
   onDelete?: (document: Document) => void;
+  onSave: (document: Document) => void;
 }
 
 const DocumentEditor: React.FC<DocumentEditorProps> = ({

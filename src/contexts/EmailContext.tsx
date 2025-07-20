@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface EmailContextType {
-  unreadCount: number;
   setUnreadCount: (count: number) => void;
+  unreadCount: number;
 }
 
 const EmailContext = createContext<EmailContextType | undefined>(undefined);

@@ -21,8 +21,8 @@ import {
   Smartphone,
   Monitor,
 } from 'lucide-react';
-import {
-  analytics,
+import { analytics } from '../../services/analytics';
+import type {
   AnalyticsEvent,
   PerformanceMetric,
   UserBehavior,
@@ -31,17 +31,18 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 interface AnalyticsData {
-  events: AnalyticsEvent[];
   behaviors: UserBehavior[];
-  performance: PerformanceMetric[];
   business: BusinessMetric[];
+  events: AnalyticsEvent[];
+  performance: PerformanceMetric[];
 }
 
 interface DashboardMetrics {
-  revenue: { current: number; previous: number; growth: number };
-  projects: { current: number; previous: number; growth: number };
-  tasks: { current: number; previous: number; growth: number };
-  users: { current: number; previous: number; growth: number };
+  projects: { current: number; growth: number, previous: number; 
+};
+  revenue: { current: number; growth: number, previous: number; };
+  tasks: { current: number; growth: number, previous: number; };
+  users: { current: number; growth: number, previous: number; };
 }
 
 const Analytics: React.FC = () => {
@@ -198,6 +199,7 @@ const Analytics: React.FC = () => {
                 ? 'bg-green-100 text-green-700 hover:bg-green-200'
                 : 'bg-red-100 text-red-700 hover:bg-red-200'
             }`}
+            title={isTrackingEnabled ? 'Disable Tracking' : 'Enable Tracking'}
           >
             {isTrackingEnabled ? (
               <Eye className='w-4 h-4 mr-2' />
@@ -209,6 +211,7 @@ const Analytics: React.FC = () => {
           <button
             onClick={exportData}
             className='flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            title='Export Analytics Data'
           >
             <Download className='w-4 h-4 mr-2' />
             Export Data

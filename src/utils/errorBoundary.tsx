@@ -2,14 +2,15 @@ import React from 'react';
 import { logger } from './logger';
 
 interface ErrorBoundaryState {
-  hasError: boolean;
   error?: Error;
   errorInfo?: React.ErrorInfo;
+  hasError: boolean;
 }
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
-  fallback?: React.ComponentType<{ error: Error; errorInfo?: React.ErrorInfo }>;
+  fallback?: React.ComponentType<{ error: Error; errorInfo?: React.ErrorInfo 
+}>;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 

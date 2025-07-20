@@ -5,47 +5,47 @@
 
 export interface EnvironmentConfig {
   // Supabase Configuration
-  supabase: {
-    url: string;
     anonKey: string;
-    serviceRoleKey?: string;
-  };
-
-  // Application Configuration
+    // Application Configuration
   app: {
+    apiTimeout: number;
+    debug: boolean;
+    environment: 'development' | 'staging' | 'production';
+    maxRetries: number;
     name: string;
     version: string;
-    environment: 'development' | 'staging' | 'production';
-    debug: boolean;
-    apiTimeout: number;
-    maxRetries: number;
   };
-
   // Feature Flags
   features: {
+    analytics: boolean;
     chat: boolean;
     emailIntegration: boolean;
-    analytics: boolean;
     pwa: boolean;
     realtime: boolean;
   };
 
-  // Security Configuration
-  security: {
-    sessionTimeout: number;
-    maxLoginAttempts: number;
-    passwordMinLength: number;
-    enableCors: boolean;
-    enableRateLimiting: boolean;
-  };
-
   // Performance Configuration
   performance: {
-    enableCompression: boolean;
-    enableCaching: boolean;
     cacheMaxAge: number;
+    enableCaching: boolean;
+    enableCompression: boolean;
     enableGzip: boolean;
   };
+
+  // Security Configuration
+  security: {
+    enableCors: boolean;
+    enableRateLimiting: boolean;
+    maxLoginAttempts: number;
+    passwordMinLength: number;
+    sessionTimeout: number;
+  };
+
+  serviceRoleKey?: string;
+
+  supabase: {
+    url: string;
+};
 }
 
 /**
@@ -73,7 +73,7 @@ function loadEnvironmentConfig(): EnvironmentConfig {
     },
 
     app: {
-      name: 'Archer Business Management',
+      name: 'ConstructBMS Business Management',
       version: import.meta.env.VITE_APP_VERSION || '1.0.0',
       environment: environment as 'development' | 'staging' | 'production',
       debug: environment === 'development',

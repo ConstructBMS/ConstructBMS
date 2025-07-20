@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { MessageCircle } from 'lucide-react';
-import { useChat } from '../contexts/ChatContext';
+import { ChatContext } from '../contexts/ChatContext';
 
 interface ChatNotificationBadgeProps {
   onClick?: () => void;
@@ -9,7 +9,9 @@ interface ChatNotificationBadgeProps {
 const ChatNotificationBadge: React.FC<ChatNotificationBadgeProps> = ({
   onClick,
 }) => {
-  const { unreadCount } = useChat();
+  // Use useContext directly instead of useChat hook to avoid the error
+  const chatContext = useContext(ChatContext);
+  const unreadCount = chatContext?.unreadCount || 0;
 
   if (unreadCount === 0) {
     return (

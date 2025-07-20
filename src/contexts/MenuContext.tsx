@@ -3,25 +3,25 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode,
 } from 'react';
+import type { ReactNode } from 'react';
 import { defaultMenu } from '../config/defaultMenu';
 import { modules as defaultModules } from '../config/modules';
-import { MenuItem } from '../types/menu';
+import type { MenuItem } from '../types/menu';
 import { persistentStorage } from '../services/persistentStorage';
 
 export type ModuleMap = Record<
   string,
-  { name: string; type: string; active: boolean }
+  { active: boolean, name: string; type: string; }
 >;
 
 interface MenuContextType {
-  menu: MenuItem[];
-  setMenu: (menu: MenuItem[]) => void;
-  modules: ModuleMap;
-  setModules: (modules: ModuleMap) => void;
-  resetMenu: () => void;
   isLoading: boolean;
+  menu: MenuItem[];
+  modules: ModuleMap;
+  resetMenu: () => void;
+  setMenu: (menu: MenuItem[]) => void;
+  setModules: (modules: ModuleMap) => void;
 }
 
 const MenuContext = createContext<MenuContextType | undefined>(undefined);

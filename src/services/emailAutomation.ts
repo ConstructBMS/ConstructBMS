@@ -1,75 +1,55 @@
 export interface AutomationRule {
-  id: string;
-  name: string;
-  description: string;
-  conditions: AutomationCondition[];
   actions: AutomationAction[];
-  isActive: boolean;
-  priority: number;
+  conditions: AutomationCondition[];
   createdAt: Date;
+  description: string;
+  id: string;
+  isActive: boolean;
+  name: string;
+  priority: number;
   updatedAt: Date;
 }
 
 export interface AutomationCondition {
-  field:
-    | 'subject'
-    | 'sender'
-    | 'content'
-    | 'category'
-    | 'priority'
-    | 'has_attachments';
-  operator:
-    | 'contains'
-    | 'equals'
-    | 'starts_with'
-    | 'ends_with'
-    | 'regex'
-    | 'greater_than'
-    | 'less_than';
+  field: 'subject' | 'sender' | 'content' | 'category' | 'priority' | 'has_attachments';
+  operator: 'contains' | 'equals' | 'starts_with' | 'ends_with' | 'regex' | 'greater_than' | 'less_than';
   value: string | number | boolean;
 }
 
 export interface AutomationAction {
-  type:
-    | 'auto_reply'
-    | 'assign'
-    | 'categorize'
-    | 'tag'
-    | 'forward'
-    | 'archive'
-    | 'notify'
-    | 'create_task';
   parameters: Record<string, any>;
+  type: 'auto_reply' | 'assign' | 'categorize' | 'tag' | 'forward' | 'archive' | 'notify' | 'create_task';
 }
 
 export interface AutoResponse {
-  id: string;
-  name: string;
-  trigger: 'immediate' | 'delayed' | 'scheduled';
-  delayMinutes?: number;
-  scheduleTime?: string; // HH:MM format
+  // HH:MM format
   content: string;
+  delayMinutes?: number;
+  id: string;
   isActive: boolean;
+  lastUsed?: Date; 
+  name: string;
+  scheduleTime?: string;
+  trigger: 'immediate' | 'delayed' | 'scheduled';
   usageCount: number;
-  lastUsed?: Date;
 }
 
 export interface EmailWorkflow {
-  id: string;
-  name: string;
-  description: string;
-  steps: WorkflowStep[];
-  isActive: boolean;
   createdAt: Date;
+  description: string;
+  id: string;
+  isActive: boolean;
+  name: string;
+  steps: WorkflowStep[];
 }
 
 export interface WorkflowStep {
+  alternativeStepId?: string;
   id: string;
   name: string;
-  type: 'condition' | 'action' | 'delay' | 'approval';
-  parameters: Record<string, any>;
   nextStepId?: string;
-  alternativeStepId?: string; // For conditional branching
+  parameters: Record<string, any>;
+  type: 'condition' | 'action' | 'delay' | 'approval'; // For conditional branching
 }
 
 class EmailAutomationService {
@@ -433,7 +413,7 @@ class EmailAutomationService {
       [
         {
           type: 'assign',
-          parameters: { assignedTo: 'sarah.johnson@archer.com' },
+          parameters: { assignedTo: 'sarah.johnson@constructbms.com' },
         },
         {
           type: 'notify',
@@ -472,7 +452,7 @@ class EmailAutomationService {
         },
         {
           type: 'assign',
-          parameters: { assignedTo: 'mike.wilson@archer.com' },
+          parameters: { assignedTo: 'mike.wilson@constructbms.com' },
         },
       ],
       3
@@ -481,7 +461,7 @@ class EmailAutomationService {
     // Create demo auto-responses
     this.createAutoResponse(
       'Out of Office',
-      'Thank you for your email. I am currently out of the office and will return on Monday. For urgent matters, please contact my colleague at colleague@archer.com.',
+      'Thank you for your email. I am currently out of the office and will return on Monday. For urgent matters, please contact my colleague at colleague@constructbms.com.',
       'immediate'
     );
 

@@ -44,38 +44,41 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 interface PermissionTemplate {
+  category: 'system' | 'module' | 'feature' | 'data' | 'file';
+  children?: PermissionTemplate[];
+  description: string;
+  icon: React.ComponentType<{ className?: string 
+}>;
   id: string;
   name: string;
-  category: 'system' | 'module' | 'feature' | 'data' | 'file';
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
   permissions: {
-    view: boolean;
-    create: boolean;
-    edit: boolean;
-    delete: boolean;
     admin: boolean;
+    create: boolean;
+    delete: boolean;
+    edit: boolean;
     super_admin: boolean;
+    view: boolean;
   };
-  children?: PermissionTemplate[];
 }
 
 interface Role {
-  id: string;
-  name: string;
-  level: 'super_admin' | 'admin' | 'employee' | 'contractor' | 'customer';
-  permissions: { [key: string]: boolean };
-  isSystemRole: boolean;
   description: string;
+  id: string;
+  isSystemRole: boolean;
+  level: 'super_admin' | 'admin' | 'employee' | 'contractor' | 'customer';
+  name: string;
+  permissions: { [key: string]: boolean 
+};
 }
 
 interface User {
-  id: string;
-  name: string;
+  customPermissions: { [key: string]: boolean 
+};
   email: string;
-  role: string;
-  customPermissions: { [key: string]: boolean };
+  id: string;
   isActive: boolean;
+  name: string;
+  role: string;
 }
 
 const Permissions: React.FC = () => {
@@ -810,33 +813,8 @@ const Permissions: React.FC = () => {
     },
   ]);
 
-  // Sample users
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      role: 'super_admin',
-      customPermissions: {},
-      isActive: true,
-    },
-    {
-      id: '2',
-      name: 'Jane Doe',
-      email: 'jane@example.com',
-      role: 'admin',
-      customPermissions: {},
-      isActive: true,
-    },
-    {
-      id: '3',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      role: 'employee',
-      customPermissions: {},
-      isActive: true,
-    },
-  ]);
+  // Sample users - empty for now
+  const [users, setUsers] = useState<User[]>([]);
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => ({
@@ -902,7 +880,7 @@ const Permissions: React.FC = () => {
                   )}
                 </button>
               )}
-              <Icon className='h-5 w-5 text-archer-green' />
+              <Icon className='h-5 w-5 text-constructbms-green' />
               <div>
                 <div className='font-medium text-gray-900 dark:text-white'>
                   {template.name}
@@ -1035,7 +1013,7 @@ const Permissions: React.FC = () => {
             onClick={() => setShowCreateRole(true)}
             className='flex items-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
           >
-            <Plus className='h-5 w-5 text-archer-green mr-3' />
+            <Plus className='h-5 w-5 text-constructbms-green mr-3' />
             <div className='text-left'>
               <div className='font-medium text-gray-900 dark:text-white'>
                 Create Role
@@ -1050,7 +1028,7 @@ const Permissions: React.FC = () => {
             onClick={() => setShowCreateUser(true)}
             className='flex items-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
           >
-            <UserPlus className='h-5 w-5 text-archer-green mr-3' />
+            <UserPlus className='h-5 w-5 text-constructbms-green mr-3' />
             <div className='text-left'>
               <div className='font-medium text-gray-900 dark:text-white'>
                 Add User
@@ -1062,7 +1040,7 @@ const Permissions: React.FC = () => {
           </button>
 
           <button className='flex items-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'>
-            <Copy className='h-5 w-5 text-archer-green mr-3' />
+            <Copy className='h-5 w-5 text-constructbms-green mr-3' />
             <div className='text-left'>
               <div className='font-medium text-gray-900 dark:text-white'>
                 Clone Permissions
@@ -1118,7 +1096,7 @@ const Permissions: React.FC = () => {
         </h3>
         <button
           onClick={() => setShowCreateRole(true)}
-          className='inline-flex items-center px-4 py-2 bg-archer-green text-white rounded-lg hover:bg-archer-green/80 transition-colors'
+          className='inline-flex items-center px-4 py-2 bg-constructbms-green text-white rounded-lg hover:bg-constructbms-green/80 transition-colors'
         >
           <Plus className='h-4 w-4 mr-2' />
           Create Role
@@ -1203,7 +1181,7 @@ const Permissions: React.FC = () => {
         </h3>
         <button
           onClick={() => setShowCreateUser(true)}
-          className='inline-flex items-center px-4 py-2 bg-archer-green text-white rounded-lg hover:bg-archer-green/80 transition-colors'
+          className='inline-flex items-center px-4 py-2 bg-constructbms-green text-white rounded-lg hover:bg-constructbms-green/80 transition-colors'
         >
           <UserPlus className='h-4 w-4 mr-2' />
           Add User
@@ -1218,7 +1196,7 @@ const Permissions: React.FC = () => {
           >
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-3'>
-                <div className='w-10 h-10 bg-archer-green rounded-full flex items-center justify-center'>
+                <div className='w-10 h-10 bg-constructbms-green rounded-full flex items-center justify-center'>
                   <span className='text-white font-medium'>
                     {user.name
                       .split(' ')
@@ -1292,14 +1270,14 @@ const Permissions: React.FC = () => {
               placeholder='Search permissions...'
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className='pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-green focus:border-transparent'
+              className='pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
             />
           </div>
 
           <select
             value={filterLevel}
             onChange={e => setFilterLevel(e.target.value)}
-            className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-archer-green focus:border-transparent'
+            className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-constructbms-blue focus:border-transparent'
           >
             <option value='all'>All Levels</option>
             <option value='admin'>Admin Level</option>
@@ -1320,7 +1298,7 @@ const Permissions: React.FC = () => {
         <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
           File & Folder Permissions
         </h3>
-        <button className='inline-flex items-center px-4 py-2 bg-archer-green text-white rounded-lg hover:bg-archer-green/80 transition-colors'>
+        <button className='inline-flex items-center px-4 py-2 bg-constructbms-green text-white rounded-lg hover:bg-constructbms-green/80 transition-colors'>
           <Plus className='h-4 w-4 mr-2' />
           Add Folder Permission
         </button>
@@ -1400,7 +1378,7 @@ const Permissions: React.FC = () => {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-archer-green text-archer-green'
+                      ? 'border-constructbms-green text-constructbms-green'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
                 >

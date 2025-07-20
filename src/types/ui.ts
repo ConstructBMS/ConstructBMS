@@ -5,17 +5,17 @@ export interface Position {
 }
 
 export interface Size {
-  width: number;
   height: number;
+  width: number;
 }
 
 export interface Bounds extends Position, Size {}
 
 export interface DragEvent {
-  startPosition: Position;
   currentPosition: Position;
   deltaPosition: Position;
   isDragging: boolean;
+  startPosition: Position;
 }
 
 export interface GridSettings {
@@ -25,28 +25,28 @@ export interface GridSettings {
 }
 
 export interface ModalProps {
+  className?: string;
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  className?: string;
 }
 
 export interface Note {
-  id: string;
-  title: string;
-  content: string;
-  position: Position;
   color: string;
+  content: string;
   createdAt: Date;
+  id: string;
+  position: Position;
+  title: string;
   updatedAt: Date;
 }
 
 export type Breakpoint = 'mobile' | 'tablet' | 'desktop' | 'large';
 
 export interface ResponsiveValue<T> {
-  mobile?: T;
-  tablet?: T;
+  default: T;
   desktop?: T;
   large?: T;
-  default: T;
+  mobile?: T;
+  tablet?: T;
 }

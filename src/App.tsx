@@ -23,9 +23,11 @@ import ChatNotificationBadge from './components/ChatNotificationBadge';
 import DocumentHub from './components/modules/DocumentHub';
 import DocumentBuilder from './components/modules/DocumentBuilder';
 
+
 import DocumentControlCentre from './components/modules/E-Signature';
 import Estimating from './components/modules/Estimating';
 import Roadmap from './components/modules/Roadmap';
+import Changelog from './components/modules/Changelog';
 import SidebarSettings from './components/modules/SidebarSettings';
 import ActivityStream from './components/modules/ActivityStream';
 import SiteTools from './components/modules/SiteTools';
@@ -56,19 +58,45 @@ import ModulesPage from './components/ModulesPage';
 import SignUpForm from './components/auth/SignUpForm';
 import LandingPage from './components/LandingPage';
 import RolesPermissionsMatrix from './components/modules/RolesPermissionsMatrix';
+import SalesPipeline from './components/modules/SalesPipeline';
+import Notes from './components/modules/Notes';
+import GanttPage from './components/modules/GanttPage';
+import ProgrammeManager from './components/modules/ProgrammeManager';
+import DemoModeIndicator from './components/DemoModeIndicator';
+import DemoDataInitializer from './components/DemoDataInitializer';
+import Footer from './components/Footer';
+import { demoDataService } from './services/demoData';
+import { loggingService } from './services/loggingService';
+import { initializeDemoData, hasDemoData } from './utils/initializeDemoData';
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { unreadCount } = useEmail();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [activeModule, setActiveModule] = useState('dashboard');
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleModuleChange = (module: string) => {
+  const handleModuleChange = (module: string, params?: Record<string, any>) => {
     setActiveModule(module);
     // Update URL to reflect the active module
     navigate(`/${module}`);
+    
+    // Handle specific parameters for opening items
+    if (params?.['openProject']) {
+      // Store the project data in sessionStorage for the Projects module to access
+      sessionStorage.setItem('openProject', JSON.stringify(params['openProject']));
+    }
+    if (params?.['openTask']) {
+      // Store the task data in sessionStorage for the Tasks module to access
+      sessionStorage.setItem('openTask', JSON.stringify(params['openTask']));
+    }
+  };
+
+  const handleNavigateToSettings = () => {
+    setActiveModule('general-settings');
+    navigate('/general-settings?tab=data');
   };
 
   // Sync activeModule with URL on initial load and URL changes
@@ -82,6 +110,34 @@ function AppContent() {
       setActiveModule(path);
     }
   }, [location.pathname, navigate]);
+
+  // Initialize demo data when authenticated and in demo mode
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // Check if demo data was just cleared
+      const wasJustCleared = sessionStorage.getItem('demo_data_just_cleared');
+      if (wasJustCleared === 'true') {
+        console.log('🚫 Demo data was just cleared, skipping initialization');
+        return;
+      }
+      
+      // Check demo mode status and initialize demo data
+      const checkAndInitializeDemoData = async () => {
+        try {
+          const isInDemoMode = await demoDataService.isDemoMode();
+          setIsDemoMode(isInDemoMode);
+          if (isInDemoMode) {
+        
+            await demoDataService.ensureDemoDataExists();
+          }
+        } catch (error) {
+          console.warn('Failed to check demo mode or initialize demo data:', error);
+        }
+      };
+      
+      checkAndInitializeDemoData();
+    }
+  }, [isAuthenticated, user]);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -115,18 +171,26 @@ function AppContent() {
       case 'activity-stream':
         return (
           <Dashboard
-            onNavigateToModule={setActiveModule}
+            onNavigateToModule={handleModuleChange}
             activeModule={activeModule}
           />
         );
       case 'crm':
         return <CRM />;
-      case 'customers':
-        return <CRM activeModule='customers' />;
-      case 'contractors':
-        return <CRM activeModule='contractors' />;
+      case 'crm-clients':
+        return <CRM activeModule='crm-clients' />;
+      case 'crm-consultants':
+        return <CRM activeModule='crm-consultants' />;
+      case 'crm-contractors':
+        return <CRM activeModule='crm-contractors' />;
       case 'sales':
         return <CRM activeModule='sales' />;
+      case 'sales-pipeline':
+        return <SalesPipeline onNavigateToModule={setActiveModule} />;
+      case 'gantt':
+        return <GanttPage />;
+      case 'notes':
+        return <Notes onNavigateToModule={setActiveModule} />;
       case 'signature':
         return <DocumentControlCentre />;
       case 'tasks':
@@ -136,7 +200,7 @@ function AppContent() {
       case 'site-tools':
         return <SiteTools />;
       case 'procurement':
-        return <Procurement />;
+        return <Procurement onNavigateToModule={setActiveModule} />;
       case 'collaboration':
         return <Collaboration />;
       case 'chat':
@@ -171,6 +235,8 @@ function AppContent() {
         return <Agile />;
       case 'projects':
         return <Projects />;
+      case 'programme-manager':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
       case 'analytics':
         return <Analytics />;
       case 'settings':
@@ -205,8 +271,10 @@ function AppContent() {
         return <SidebarSettings />;
       case 'roadmap':
         return <Roadmap />;
+      case 'changelog':
+        return <Changelog />;
       case 'general-settings':
-        return <GeneralSettings />;
+        return <GeneralSettings onModuleChange={handleModuleChange} />;
       case 'user-management':
         return <RolesPermissionsMatrix defaultTab='users' />;
       case 'permissions':
@@ -222,7 +290,7 @@ function AppContent() {
       default:
         return (
           <Dashboard
-            onNavigateToModule={setActiveModule}
+            onNavigateToModule={handleModuleChange}
             activeModule={activeModule}
           />
         );
@@ -233,7 +301,7 @@ function AppContent() {
   if (isLoading) {
     return (
       <div className='min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900'>
-        <div className='animate-spin rounded-full h-20 w-20 border-8 border-green-500 border-t-white shadow-lg'></div>
+        <div className='animate-spin rounded-full h-20 w-20 border-8 border-accent border-t-white shadow-lg'></div>
       </div>
     );
   }
@@ -243,24 +311,30 @@ function AppContent() {
     return <LoginForm />;
   }
 
+
+
   return (
-    <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex safe-area-inset ios-accelerated'>
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-        activeModule={activeModule}
-        onModuleChange={handleModuleChange}
-      />
-      <div className='flex-1 flex flex-col transition-all duration-300 max-w-full w-full main-content sidebar-ios-fix'>
-        <TopBar
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col safe-area-inset ios-accelerated'>
+      <DemoModeIndicator isDemoMode={isDemoMode} onNavigateToSettings={handleNavigateToSettings} />
+      <div className='flex flex-1'>
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
           activeModule={activeModule}
           onModuleChange={handleModuleChange}
-          emailUnreadCount={unreadCount}
         />
-        <main className='flex-1 p-2 sm:p-4 md:p-6 w-full max-w-full overflow-x-auto sidebar-ios-fix safe-area-inset'>
-          {renderActiveModule()}
-        </main>
+        <div className='flex-1 flex flex-col transition-all duration-300 max-w-full w-full main-content sidebar-ios-fix'>
+          <TopBar
+            activeModule={activeModule}
+            onModuleChange={handleModuleChange}
+            emailUnreadCount={unreadCount}
+          />
+          <main className='flex-1 p-2 sm:p-4 md:p-6 w-full max-w-full sidebar-ios-fix safe-area-inset'>
+            {renderActiveModule()}
+          </main>
+        </div>
       </div>
+      <Footer onNavigateToModule={setActiveModule} />
     </div>
   );
 }
@@ -273,7 +347,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className='min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900'>
-        <div className='animate-spin rounded-full h-20 w-20 border-8 border-green-500 border-t-white shadow-lg'></div>
+        <div className='animate-spin rounded-full h-20 w-20 border-8 border-accent border-t-white shadow-lg'></div>
       </div>
     );
   }
@@ -286,6 +360,28 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
+  useEffect(() => {
+    // Initialize logging service
+    loggingService.logSystemInfo();
+    loggingService.info('Application started', { version: '1.0.0' }, 'App');
+    
+    // Add some more visible logs
+    loggingService.info('Console Logging UI is now available in General Settings', { feature: 'logging-ui' }, 'App');
+    loggingService.info('Application logging system initialized', { feature: 'logging' }, 'App');
+    
+    // Initialize demo data service
+    const initializeApp = async () => {
+      try {
+        await demoDataService.initializeDemoTables();
+        loggingService.info('Demo data service initialized successfully', { service: 'demoData' }, 'App');
+      } catch (error) {
+        loggingService.error('Failed to initialize demo data service', error as Error, { service: 'demoData' }, 'App');
+      }
+    };
+
+    initializeApp();
+  }, []);
+
   return (
     <Router
       future={{
@@ -327,5 +423,3 @@ function App() {
 }
 
 export default App;
-/ /   T e s t   c o m m e n t  
- 

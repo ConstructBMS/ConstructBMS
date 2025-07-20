@@ -117,7 +117,7 @@ const initDatabase = () => {
       )`);
 
       // Insert default organization
-      db.run(`INSERT OR IGNORE INTO organizations (id, name, domain) VALUES (1, 'Archer Build Ltd', 'archerbuild.com')`);
+      db.run(`INSERT OR IGNORE INTO organizations (id, name, domain) VALUES (1, 'ConstructBMS Ltd', 'constructbms.com')`);
 
       // Insert default roles
       db.run(`INSERT OR IGNORE INTO roles (id, name, description, permissions) VALUES 
@@ -126,13 +126,13 @@ const initDatabase = () => {
         (3, 'employee', 'Standard employee with limited access', '["dashboard", "projects", "tasks"]')`);
 
       // Insert default users
-      const defaultPassword = bcrypt.hashSync('ArcherBuild25', 10);
+      const defaultPassword = bcrypt.hashSync('ConstructBMS25', 10);
       db.run(`INSERT OR IGNORE INTO users (id, email, password, firstName, lastName, role) VALUES 
-        (1, 'archerbuildltd@gmail.com', ?, 'Archer', 'Admin', 'super_admin')`, [defaultPassword]);
+        (1, 'constructbms@gmail.com', ?, 'ConstructBMS', 'Admin', 'super_admin')`, [defaultPassword]);
       db.run(`INSERT OR IGNORE INTO users (id, email, password, firstName, lastName, role) VALUES 
-        (2, 'admin@archer.com', ?, 'Admin', 'User', 'admin')`, [defaultPassword]);
+        (2, 'admin@constructbms.com', ?, 'Admin', 'User', 'admin')`, [defaultPassword]);
       db.run(`INSERT OR IGNORE INTO users (id, email, password, firstName, lastName, role) VALUES 
-        (3, 'employee@archer.com', ?, 'Employee', 'User', 'employee')`, [defaultPassword]);
+        (3, 'employee@constructbms.com', ?, 'Employee', 'User', 'employee')`, [defaultPassword]);
 
       // Insert user-role relationships
       db.run(`INSERT OR IGNORE INTO user_roles (userId, roleId) VALUES (1, 1)`); // superadmin -> super_admin role
@@ -420,9 +420,9 @@ initDatabase()
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
       console.log(`🔐 Demo Accounts:`);
-      console.log(`   Super Admin: archerbuildltd@gmail.com / ArcherBuild25`);
-      console.log(`   Admin: admin@archer.com / ArcherBuild25`);
-      console.log(`   Employee: employee@archer.com / ArcherBuild25`);
+          console.log(`   Super Admin: constructbms@gmail.com / ConstructBMS25`);
+    console.log(`   Admin: admin@constructbms.com / ConstructBMS25`);
+    console.log(`   Employee: employee@constructbms.com / ConstructBMS25`);
     });
   })
   .catch(err => {

@@ -12,12 +12,13 @@ import {
 } from 'lucide-react';
 
 interface StickyNote {
-  id: string;
-  title: string;
-  content: string;
   color: string;
-  position: { x: number; y: number };
+  content: string;
   createdAt: string;
+  id: string;
+  position: { x: number; y: number 
+};
+  title: string;
   updatedAt: string;
 }
 
@@ -53,10 +54,10 @@ const COLORS = [
 
 // Simple Rich Text Editor Component
 const SimpleRichTextEditor: React.FC<{
-  value: string;
-  onChange: (value: string) => void;
   onBlur: () => void;
+  onChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
+  value: string;
 }> = ({ value, onChange, onBlur, onKeyDown }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isToolbarActive, setIsToolbarActive] = useState(false);
@@ -335,7 +336,7 @@ const StickyNotesModal: React.FC<StickyNotesModalProps> = ({
 
   // Load notes from localStorage on component mount
   useEffect(() => {
-    const savedNotes = localStorage.getItem('archer_sticky_notes');
+    const savedNotes = localStorage.getItem('constructbms_sticky_notes');
     if (savedNotes) {
       try {
         const parsedNotes = JSON.parse(savedNotes);
@@ -350,7 +351,7 @@ const StickyNotesModal: React.FC<StickyNotesModalProps> = ({
   // Save notes to localStorage whenever notes change
   useEffect(() => {
     if (isInitialLoadComplete) {
-      localStorage.setItem('archer_sticky_notes', JSON.stringify(notes));
+      localStorage.setItem('constructbms_sticky_notes', JSON.stringify(notes));
     }
   }, [notes, isInitialLoadComplete]);
 
@@ -481,7 +482,7 @@ const StickyNotesModal: React.FC<StickyNotesModalProps> = ({
           <div className='flex items-center space-x-3'>
             <button
               onClick={createNote}
-              className='flex items-center space-x-2 bg-archer-neon text-black px-4 py-2 rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+              className='flex items-center space-x-2 bg-constructbms-blue text-black px-4 py-2 rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
             >
               <Plus className='h-4 w-4' />
               <span>Add Note</span>
@@ -517,7 +518,7 @@ const StickyNotesModal: React.FC<StickyNotesModalProps> = ({
                 </p>
                 <button
                   onClick={createNote}
-                  className='flex items-center space-x-2 bg-archer-neon text-black px-6 py-3 rounded-lg hover:bg-archer-black hover:text-white transition-colors'
+                  className='flex items-center space-x-2 bg-constructbms-blue text-black px-6 py-3 rounded-lg hover:bg-constructbms-black hover:text-white transition-colors'
                 >
                   <Plus className='h-5 w-5' />
                   <span>Create Note</span>

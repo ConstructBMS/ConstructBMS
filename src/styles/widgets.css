@@ -1,0 +1,625 @@
+/* Widget System - Centralized Styling */
+
+/* Base Widget Container */
+.widget-base {
+  @apply h-full flex flex-col rounded-xl border border-gray-200 dark:border-gray-600 shadow-md overflow-hidden bg-white dark:bg-gray-800 dark:border-white/20;
+}
+
+/* Widget Header */
+.widget-header {
+  @apply flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-700;
+}
+
+.widget-header-content {
+  @apply flex items-center gap-2;
+}
+
+.widget-title {
+  @apply text-lg font-semibold text-gray-900 dark:text-white;
+}
+
+.widget-icon {
+  @apply h-5 w-5 text-gray-500 dark:text-gray-400;
+}
+
+.widget-settings-button {
+  @apply p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors;
+}
+
+/* Widget Content */
+.widget-content {
+  @apply flex-1 p-4;
+}
+
+.widget-content-scrollable {
+  @apply flex-1 p-4 overflow-y-auto;
+}
+
+/* Widget States */
+.widget-loading {
+  @apply animate-pulse;
+}
+
+.widget-error {
+  @apply text-red-500 dark:text-red-400;
+}
+
+.widget-empty {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+/* Widget Grid System */
+.widget-grid {
+  @apply grid grid-cols-6 gap-4 auto-rows-[180px];
+}
+
+.widget-grid-mobile {
+  @apply grid-cols-1;
+}
+
+.widget-grid-tablet {
+  @apply grid-cols-3;
+}
+
+.widget-grid-desktop {
+  @apply grid-cols-6;
+}
+
+/* Widget Size Classes */
+.widget-size-small {
+  @apply col-span-1 row-span-1;
+}
+
+.widget-size-medium {
+  @apply col-span-2 row-span-1;
+}
+
+.widget-size-large {
+  @apply col-span-3 row-span-2;
+}
+
+.widget-size-wide {
+  @apply col-span-3 row-span-1;
+}
+
+.widget-size-tall {
+  @apply col-span-1 row-span-2;
+}
+
+.widget-size-full {
+  @apply col-span-6 row-span-2;
+}
+
+/* Widget Categories */
+.widget-category-analytics {
+  @apply border-l-4 border-l-blue-500;
+}
+
+.widget-category-productivity {
+  @apply border-l-4 border-l-green-500;
+}
+
+.widget-category-monitoring {
+  @apply border-l-4 border-l-yellow-500;
+}
+
+.widget-category-communication {
+  @apply border-l-4 border-l-purple-500;
+}
+
+.widget-category-navigation {
+  @apply border-l-4 border-l-gray-500;
+}
+
+.widget-category-team {
+  @apply border-l-4 border-l-indigo-500;
+}
+
+.widget-category-scheduling {
+  @apply border-l-4 border-l-pink-500;
+}
+
+.widget-category-finance {
+  @apply border-l-4 border-l-emerald-500;
+}
+
+.widget-category-documents {
+  @apply border-l-4 border-l-orange-500;
+}
+
+.widget-category-operations {
+  @apply border-l-4 border-l-red-500;
+}
+
+.widget-category-it {
+  @apply border-l-4 border-l-cyan-500;
+}
+
+.widget-category-marketing {
+  @apply border-l-4 border-l-rose-500;
+}
+
+.widget-category-weather {
+  @apply border-l-4 border-l-sky-500;
+}
+
+.widget-category-custom {
+  @apply border-l-4 border-l-slate-500;
+}
+
+/* Widget Interactions */
+.widget-draggable {
+  @apply cursor-move;
+}
+
+.widget-dragging {
+  @apply opacity-50 scale-95 shadow-2xl;
+}
+
+.widget-drop-target {
+  @apply ring-2 ring-blue-500 ring-opacity-50;
+}
+
+.widget-resizable {
+  @apply relative;
+}
+
+.widget-resize-handle {
+  @apply absolute bottom-0 right-0 w-4 h-4 cursor-se-resize opacity-0 transition-opacity;
+}
+
+.widget-resizable:hover .widget-resize-handle {
+  @apply opacity-100;
+}
+
+/* Widget Content Types */
+.widget-content-metrics {
+  @apply grid grid-cols-2 gap-4;
+}
+
+.widget-content-list {
+  @apply space-y-3;
+}
+
+.widget-content-chart {
+  @apply h-full flex items-center justify-center;
+}
+
+.widget-content-form {
+  @apply space-y-4;
+}
+
+.widget-content-table {
+  @apply overflow-x-auto;
+}
+
+/* Widget Loading States */
+.widget-skeleton {
+  @apply animate-pulse;
+}
+
+.widget-skeleton-line {
+  @apply h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2;
+}
+
+.widget-skeleton-line-short {
+  @apply h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4;
+}
+
+.widget-skeleton-line-medium {
+  @apply h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-1/2;
+}
+
+/* Widget Error States */
+.widget-error-container {
+  @apply flex items-center justify-center h-full;
+}
+
+.widget-error-icon {
+  @apply w-8 h-8 text-red-500 dark:text-red-400 mb-2;
+}
+
+.widget-error-message {
+  @apply text-sm text-red-500 dark:text-red-400 text-center;
+}
+
+/* Widget Empty States */
+.widget-empty-container {
+  @apply flex items-center justify-center h-full;
+}
+
+.widget-empty-icon {
+  @apply w-8 h-8 text-gray-400 dark:text-gray-500 mb-2;
+}
+
+.widget-empty-message {
+  @apply text-sm text-gray-500 dark:text-gray-400 text-center;
+}
+
+/* Widget Actions */
+.widget-actions {
+  @apply flex items-center gap-2;
+}
+
+.widget-action-button {
+  @apply p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors;
+}
+
+.widget-action-button-primary {
+  @apply p-1 text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors;
+}
+
+.widget-action-button-danger {
+  @apply p-1 text-red-500 hover:text-red-600 dark:hover:text-red-400 transition-colors;
+}
+
+/* Widget Responsive Design */
+@media (max-width: 768px) {
+  .widget-grid {
+    @apply grid-cols-1 gap-3;
+  }
+  
+  .widget-content {
+    @apply p-3;
+  }
+  
+  .widget-header {
+    @apply px-3 py-2;
+  }
+  
+  .widget-title {
+    @apply text-base;
+  }
+}
+
+@media (max-width: 1024px) {
+  .widget-grid {
+    @apply grid-cols-3 gap-4;
+  }
+}
+
+/* Widget Animations */
+@keyframes widgetFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.widget-fade-in {
+  animation: widgetFadeIn 0.3s ease-out;
+}
+
+@keyframes widgetSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.widget-slide-in {
+  animation: widgetSlideIn 0.3s ease-out;
+}
+
+/* Widget Focus States */
+.widget-base:focus-within {
+  @apply ring-2 ring-blue-500 ring-opacity-50;
+}
+
+.widget-base:focus-within .widget-header {
+  @apply bg-blue-50 dark:bg-blue-900/20;
+}
+
+/* Widget Hover Effects */
+.widget-base:hover {
+  @apply shadow-lg transition-shadow duration-200;
+}
+
+.widget-base:hover .widget-header {
+  @apply bg-gray-50 dark:bg-gray-800/50;
+}
+
+/* Widget Selection States */
+.widget-selected {
+  @apply ring-2 ring-blue-500 ring-opacity-75;
+}
+
+.widget-selected .widget-header {
+  @apply bg-blue-50 dark:bg-blue-900/20;
+}
+
+/* Widget Disabled States */
+.widget-disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.widget-disabled .widget-content {
+  @apply pointer-events-none;
+}
+
+/* Widget Loading Overlay */
+.widget-loading-overlay {
+  @apply absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10;
+}
+
+.widget-loading-spinner {
+  @apply w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin;
+}
+
+/* Widget Tooltips */
+.widget-tooltip {
+  @apply relative;
+}
+
+.widget-tooltip::after {
+  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 pointer-events-none transition-opacity;
+  content: attr(data-tooltip);
+}
+
+.widget-tooltip:hover::after {
+  @apply opacity-100;
+}
+
+/* Widget Badges */
+.widget-badge {
+  @apply inline-flex items-center px-2 py-1 text-xs font-medium rounded-full;
+}
+
+.widget-badge-success {
+  @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+}
+
+.widget-badge-warning {
+  @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+}
+
+.widget-badge-error {
+  @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+}
+
+.widget-badge-info {
+  @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+}
+
+/* Widget Progress Indicators */
+.widget-progress {
+  @apply w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2;
+}
+
+.widget-progress-bar {
+  @apply h-2 rounded-full transition-all duration-300;
+}
+
+.widget-progress-success {
+  @apply bg-green-500;
+}
+
+.widget-progress-warning {
+  @apply bg-yellow-500;
+}
+
+.widget-progress-error {
+  @apply bg-red-500;
+}
+
+.widget-progress-info {
+  @apply bg-blue-500;
+}
+
+/* Widget Data Visualization */
+.widget-chart-container {
+  @apply h-full w-full flex items-center justify-center;
+}
+
+.widget-chart-loading {
+  @apply animate-pulse;
+}
+
+.widget-chart-error {
+  @apply text-red-500 dark:text-red-400 text-center;
+}
+
+.widget-chart-empty {
+  @apply text-gray-500 dark:text-gray-400 text-center;
+}
+
+/* Widget Form Elements */
+.widget-form {
+  @apply space-y-4;
+}
+
+.widget-form-group {
+  @apply space-y-2;
+}
+
+.widget-form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+
+.widget-form-input {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+.widget-form-select {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+.widget-form-textarea {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+/* Widget Table Styles */
+.widget-table {
+  @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.widget-table-header {
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.widget-table-header-cell {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+}
+
+.widget-table-body {
+  @apply bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.widget-table-row {
+  @apply hover:bg-gray-50 dark:hover:bg-gray-800;
+}
+
+.widget-table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white;
+}
+
+/* Widget List Styles */
+.widget-list {
+  @apply space-y-2;
+}
+
+.widget-list-item {
+  @apply flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors;
+}
+
+.widget-list-item-content {
+  @apply flex items-center space-x-3;
+}
+
+.widget-list-item-avatar {
+  @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium;
+}
+
+.widget-list-item-text {
+  @apply flex-1;
+}
+
+.widget-list-item-title {
+  @apply text-sm font-medium text-gray-900 dark:text-white;
+}
+
+.widget-list-item-subtitle {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.widget-list-item-action {
+  @apply text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300;
+}
+
+/* Widget Card Styles */
+.widget-card {
+  @apply p-4 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800;
+}
+
+.widget-card-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.widget-card-title {
+  @apply text-lg font-semibold text-gray-900 dark:text-white;
+}
+
+.widget-card-content {
+  @apply space-y-4;
+}
+
+.widget-card-footer {
+  @apply flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-600;
+}
+
+/* Widget Modal Styles */
+.widget-modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.widget-modal {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+.widget-modal-header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600;
+}
+
+.widget-modal-title {
+  @apply text-lg font-semibold text-gray-900 dark:text-white;
+}
+
+.widget-modal-content {
+  @apply p-6;
+}
+
+.widget-modal-footer {
+  @apply flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-600;
+}
+
+/* Widget Utility Classes */
+.widget-text-truncate {
+  @apply truncate;
+}
+
+.widget-text-ellipsis {
+  @apply overflow-hidden text-ellipsis;
+}
+
+.widget-flex-center {
+  @apply flex items-center justify-center;
+}
+
+.widget-flex-between {
+  @apply flex items-center justify-between;
+}
+
+.widget-flex-start {
+  @apply flex items-center justify-start;
+}
+
+.widget-flex-end {
+  @apply flex items-center justify-end;
+}
+
+.widget-space-y {
+  @apply space-y-4;
+}
+
+.widget-space-x {
+  @apply space-x-4;
+}
+
+.widget-gap {
+  @apply gap-4;
+}
+
+.widget-gap-small {
+  @apply gap-2;
+}
+
+.widget-gap-large {
+  @apply gap-6;
+}
+
+/* Widget Print Styles */
+@media print {
+  .widget-base {
+    @apply border border-gray-300 shadow-none;
+  }
+  
+  .widget-header {
+    @apply bg-gray-100;
+  }
+  
+  .widget-actions {
+    @apply hidden;
+  }
+  
+  .widget-resize-handle {
+    @apply hidden;
+  }
+} 

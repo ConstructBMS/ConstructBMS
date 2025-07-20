@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Development Workflow Automation
- * Quick scripts to speed up development tasks
+ * Simplified Development Workflow Script
+ * Essential development tasks for ConstructBMS
  */
 
 const { execSync } = require('child_process');
@@ -10,183 +10,184 @@ const fs = require('fs');
 const path = require('path');
 
 const commands = {
-  // Quick development commands
-  'dev:start': () => {
+  // Start development environment
+  'start': () => {
     console.log('🚀 Starting development environment...');
-    execSync('npm run dev', { stdio: 'inherit' });
+    try {
+      execSync('npm run dev:full', { stdio: 'inherit' });
+    } catch (error) {
+      console.error('❌ Failed to start development environment');
+      process.exit(1);
+    }
   },
 
-  'dev:full': () => {
-    console.log('🏢 Starting enterprise development environment...');
-    execSync('npm run dev:enterprise', { stdio: 'inherit' });
+  // Kill all Node processes
+  'kill': () => {
+    console.log('🛑 Stopping all Node.js processes...');
+    try {
+      execSync('npm run kill', { stdio: 'inherit' });
+      console.log('✅ All processes stopped');
+    } catch (error) {
+      console.log('ℹ No processes found or already stopped');
+    }
   },
 
-  'dev:monitor': () => {
-    console.log('📊 Starting development with monitoring...');
-    execSync('npm run dev:monitor', { stdio: 'inherit' });
-  },
-
-  // Code quality commands
-  'quality:check': () => {
-    console.log('🔍 Running code quality checks...');
-    execSync('npm run lint && npm run type-check', { stdio: 'inherit' });
-  },
-
-  'quality:fix': () => {
-    console.log('🔧 Fixing code quality issues...');
-    execSync('npm run lint:fix && npm run format', { stdio: 'inherit' });
-  },
-
-  'quality:full': () => {
-    console.log('🏢 Running full enterprise quality checks...');
-    execSync('npm run health:full', { stdio: 'inherit' });
-  },
-
-  // Testing commands
-  'test:quick': () => {
-    console.log('🧪 Running quick tests...');
-    execSync('npm run test', { stdio: 'inherit' });
-  },
-
-  'test:full': () => {
-    console.log('🧪 Running full test suite...');
-    execSync('npm run test:coverage', { stdio: 'inherit' });
-  },
-
-  'test:e2e': () => {
-    console.log('🧪 Running end-to-end tests...');
-    execSync('npm run test:e2e', { stdio: 'inherit' });
-  },
-
-  // Security commands
-  'security:check': () => {
-    console.log('🔒 Running security checks...');
-    execSync('npm run security:check', { stdio: 'inherit' });
-  },
-
-  'security:audit': () => {
-    console.log('🔒 Running security audit...');
-    execSync('npm run security:audit', { stdio: 'inherit' });
-  },
-
-  // Performance commands
-  'perf:test': () => {
-    console.log('⚡ Running performance tests...');
-    execSync('npm run performance:test', { stdio: 'inherit' });
-  },
-
-  'perf:analyze': () => {
-    console.log('⚡ Running performance analysis...');
-    execSync('npm run performance:analyze', { stdio: 'inherit' });
-  },
-
-  // Database commands
-  'db:status': () => {
-    console.log('🗄️ Checking database status...');
-    execSync('npm run db:status', { stdio: 'inherit' });
-  },
-
-  'db:migrate': () => {
-    console.log('🗄️ Running database migrations...');
-    execSync('npm run db:migrate', { stdio: 'inherit' });
-  },
-
-  // Deployment commands
-  'deploy:check': () => {
-    console.log('🚀 Running deployment checks...');
-    execSync('npm run deploy:check', { stdio: 'inherit' });
-  },
-
-  'deploy:staging': () => {
-    console.log('🚀 Preparing staging deployment...');
-    execSync('npm run deploy:staging', { stdio: 'inherit' });
-  },
-
-  'deploy:production': () => {
-    console.log('🚀 Preparing production deployment...');
-    execSync('npm run deploy:production', { stdio: 'inherit' });
-  },
-
-  // Utility commands
-  'clean': () => {
-    console.log('🧹 Cleaning build artifacts...');
-    execSync('npm run clean', { stdio: 'inherit' });
-  },
-
+  // Restart development server
   'restart': () => {
     console.log('🔄 Restarting development server...');
-    execSync('npm run restart', { stdio: 'inherit' });
+    try {
+      execSync('npm run kill', { stdio: 'inherit' });
+      console.log('⏳ Waiting for processes to stop...');
+      setTimeout(() => {
+        try {
+          execSync('npm run dev', { stdio: 'inherit' });
+        } catch (error) {
+          console.error('❌ Failed to restart development server');
+          process.exit(1);
+        }
+      }, 2000);
+    } catch (error) {
+      console.log('ℹ No processes to stop');
+      try {
+        execSync('npm run dev', { stdio: 'inherit' });
+      } catch (error) {
+        console.error('❌ Failed to start development server');
+        process.exit(1);
+      }
+    }
   },
 
-  'logs:clear': () => {
-    console.log('🗑️ Clearing application logs...');
-    execSync('npm run log:clear', { stdio: 'inherit' });
+  // Clean build artifacts
+  'clean': () => {
+    console.log('🧹 Cleaning build artifacts...');
+    try {
+      execSync('npm run clean', { stdio: 'inherit' });
+      console.log('✅ Build artifacts cleaned');
+    } catch (error) {
+      console.error('❌ Failed to clean build artifacts');
+      process.exit(1);
+    }
   },
 
-  'logs:export': () => {
-    console.log('📤 Exporting application logs...');
-    execSync('npm run log:export', { stdio: 'inherit' });
+  // Install dependencies
+  'install': () => {
+    console.log('📦 Installing dependencies...');
+    try {
+      execSync('npm install', { stdio: 'inherit' });
+      console.log('✅ Dependencies installed');
+    } catch (error) {
+      console.error('❌ Failed to install dependencies');
+      process.exit(1);
+    }
   },
 
-  // Help command
+  // Run linting
+  'lint': () => {
+    console.log('🔍 Running ESLint...');
+    try {
+      execSync('npm run lint', { stdio: 'inherit' });
+      console.log('✅ Linting completed');
+    } catch (error) {
+      console.error('❌ Linting failed');
+      process.exit(1);
+    }
+  },
+
+  // Fix linting issues
+  'lint:fix': () => {
+    console.log('🔧 Fixing linting issues...');
+    try {
+      execSync('npm run lint:fix', { stdio: 'inherit' });
+      console.log('✅ Linting issues fixed');
+    } catch (error) {
+      console.error('❌ Failed to fix linting issues');
+      process.exit(1);
+    }
+  },
+
+  // Type checking
+  'typecheck': () => {
+    console.log('🔍 Running TypeScript type checking...');
+    try {
+      execSync('npm run type-check', { stdio: 'inherit' });
+      console.log('✅ Type checking completed');
+    } catch (error) {
+      console.error('❌ Type checking failed');
+      process.exit(1);
+    }
+  },
+
+  // Build for production
+  'build': () => {
+    console.log('🏗️ Building for production...');
+    try {
+      execSync('npm run build', { stdio: 'inherit' });
+      console.log('✅ Build completed');
+    } catch (error) {
+      console.error('❌ Build failed');
+      process.exit(1);
+    }
+  },
+
+  // Setup development environment
+  'setup': () => {
+    console.log('⚙️ Setting up development environment...');
+    try {
+      execSync('npm run enterprise:setup', { stdio: 'inherit' });
+      console.log('✅ Development environment setup completed');
+    } catch (error) {
+      console.error('❌ Setup failed');
+      process.exit(1);
+    }
+  },
+
+  // Health check
+  'health': () => {
+    console.log('🏥 Running health check...');
+    try {
+      execSync('npm run health:check', { stdio: 'inherit' });
+      console.log('✅ Health check passed');
+    } catch (error) {
+      console.error('❌ Health check failed');
+      process.exit(1);
+    }
+  },
+
+  // Show help
   'help': () => {
     console.log(`
-🚀 Archer Development Workflow Commands
+🚀 ConstructBMS Development Workflow
 
-Development:
-  dev:start      - Start development server
-  dev:full       - Start enterprise development environment
-  dev:monitor    - Start development with monitoring
+Available commands:
+  start      - Start development environment (frontend + backend)
+  kill       - Kill all Node.js processes
+  restart    - Restart development server
+  clean      - Clean build artifacts
+  install    - Install dependencies
+  lint       - Run ESLint
+  lint:fix   - Fix linting issues
+  typecheck  - Run TypeScript type checking
+  build      - Build for production
+  setup      - Setup development environment
+  health     - Run health check
+  help       - Show this help
 
-Quality:
-  quality:check  - Run code quality checks
-  quality:fix    - Fix code quality issues
-  quality:full   - Run full enterprise quality checks
-
-Testing:
-  test:quick     - Run quick tests
-  test:full      - Run full test suite
-  test:e2e       - Run end-to-end tests
-
-Security:
-  security:check - Run security checks
-  security:audit - Run security audit
-
-Performance:
-  perf:test      - Run performance tests
-  perf:analyze   - Run performance analysis
-
-Database:
-  db:status      - Check database status
-  db:migrate     - Run database migrations
-
-Deployment:
-  deploy:check   - Run deployment checks
-  deploy:staging - Prepare staging deployment
-  deploy:production - Prepare production deployment
-
-Utilities:
-  clean          - Clean build artifacts
-  restart        - Restart development server
-  logs:clear     - Clear application logs
-  logs:export    - Export application logs
-
-Usage: node scripts/dev-workflow.js <command>
+Examples:
+  node scripts/dev-workflow.js start
+  node scripts/dev-workflow.js restart
+  node scripts/dev-workflow.js lint:fix
     `);
   }
 };
 
-// Main execution
-const command = process.argv[2];
+// Get command from command line arguments
+const command = process.argv[2] || 'help';
 
-if (!command || !commands[command]) {
-  console.log('❌ Invalid command. Use "help" to see available commands.');
-  process.exit(1);
-}
-
-try {
+// Execute command
+if (commands[command]) {
   commands[command]();
-} catch (error) {
-  console.error('❌ Error executing command:', error.message);
+} else {
+  console.error(`❌ Unknown command: ${command}`);
+  console.log('Run "node scripts/dev-workflow.js help" for available commands');
   process.exit(1);
 } 

@@ -1,5 +1,5 @@
 # PowerShell script to set up .env.local file for Supabase
-Write-Host "🚀 Archer Business Management - Supabase Setup" -ForegroundColor Cyan
+Write-Host "🚀 ConstructBMS - Supabase Setup" -ForegroundColor Cyan
 Write-Host "=" * 50
 
 # Check if .env.local already exists
@@ -65,12 +65,12 @@ try {
     Write-Host "   npm run dev"
     Write-Host ""
     Write-Host "3. Login with your credentials:"
-    Write-Host "   Email: archerbuildltd@gmail.com"
-    Write-Host "   Password: ArcherBuild25"
+    Write-Host "   Email: constructbms@gmail.com"
+Write-Host "   Password: ConstructBMS25"
     Write-Host ""
 } catch {
     Write-Host "❌ Error creating .env.local file: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "🎉 Setup complete! Your Archer Business Management System is ready to use." -ForegroundColor Green 
+Write-Host "🎉 Setup complete! Your ConstructBMS is ready to use." -ForegroundColor Green 
