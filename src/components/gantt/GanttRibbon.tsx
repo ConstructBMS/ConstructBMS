@@ -8,7 +8,8 @@ import {
   CogIcon,
   DocumentDuplicateIcon,
   DocumentChartBarIcon,
-  WrenchScrewdriverIcon
+  WrenchScrewdriverIcon,
+  ViewColumnsIcon
 } from '@heroicons/react/24/outline';
 import { HomeRibbonTab } from './GanttRibbon/HomeRibbonTab';
 import { ViewRibbonTab } from './GanttRibbon/ViewRibbonTab';
@@ -19,6 +20,7 @@ import { Tab4D } from './GanttRibbon/Tab4D';
 import { TabFormat } from './GanttRibbon/TabFormat';
 import { TabReporting } from './GanttRibbon/TabReporting';
 import { ToolsTab } from './GanttRibbon/ToolsTab';
+import { LayoutTab } from './GanttRibbon/LayoutTab';
 
 interface GanttRibbonProps {
   activeTab: string;
@@ -65,6 +67,7 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
     { id: 'allocation', label: 'Allocation', icon: ChartBarIcon },
     { id: '4d', label: '4D', icon: DocumentDuplicateIcon },
     { id: 'format', label: 'Format', icon: CogIcon },
+    { id: 'layout', label: 'Layout', icon: ViewColumnsIcon },
     { id: 'tools', label: 'Tools', icon: WrenchScrewdriverIcon },
     { id: 'reporting', label: 'Reporting', icon: DocumentChartBarIcon }
   ];
@@ -122,6 +125,8 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
         return <Tab4D />;
       case 'format':
         return <TabFormat />;
+      case 'layout':
+        return <LayoutTab />;
       case 'tools':
         return <ToolsTab />;
       case 'reporting':

@@ -31,9 +31,17 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
   leftPaneWidth
 }) => {
   const { state } = useProjectView();
-  const { zoomLevel, rowHeight, showGrid, showDependencies } = state.layoutSettings;
+  const { 
+    zoomLevel, 
+    rowHeight, 
+    showGrid, 
+    showDependencies, 
+    showCriticalPath, 
+    showProgress, 
+    showResources 
+  } = state.layoutSettings;
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [showCriticalPath, setShowCriticalPath] = useState(true);
+  const [localShowCriticalPath, setLocalShowCriticalPath] = useState(true);
   const [hoveredDependency, setHoveredDependency] = useState<string | null>(null);
   const [draggingTask, setDraggingTask] = useState<Task | null>(null);
   const [dragStartX, setDragStartX] = useState<number | null>(null);
@@ -823,7 +831,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
             <input
               type="checkbox"
               checked={showCriticalPath}
-              onChange={(e) => setShowCriticalPath(e.target.checked)}
+              onChange={(e) => setLocalShowCriticalPath(e.target.checked)}
               className="rounded"
             />
             <span className="text-sm font-medium text-gray-700">Show Critical Path</span>
