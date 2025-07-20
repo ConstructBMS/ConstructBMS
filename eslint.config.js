@@ -5,7 +5,6 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import security from 'eslint-plugin-security';
 import importPlugin from 'eslint-plugin-import';
 import typescriptSortKeys from 'eslint-plugin-typescript-sort-keys';
-import deprecation from 'eslint-plugin-deprecation';
 
 export default [
   {
@@ -30,7 +29,6 @@ export default [
       'security': security,
       'import': importPlugin,
       'typescript-sort-keys': typescriptSortKeys,
-      'deprecation': deprecation,
     },
     rules: {
       // Base JavaScript rules
@@ -91,9 +89,6 @@ export default [
       'typescript-sort-keys/interface': 'error',
       'typescript-sort-keys/string-enum': 'error',
       
-      // Deprecation warnings
-      'deprecation/deprecation': 'warn',
-      
       // Additional code quality rules
       'no-console': 'warn',
       'no-debugger': 'error',
@@ -147,27 +142,6 @@ export default [
       'no-unsafe-negation': 'error',
       'use-isnan': 'error',
       'valid-typeof': 'error',
-      
-      // React specific rules
-      'react/jsx-uses-react': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      'react/display-name': 'off',
-      'react/no-unknown-property': 'error',
-      'react/no-array-index-key': 'warn',
-      'react/no-danger': 'warn',
-      'react/no-deprecated': 'error',
-      'react/no-direct-mutation-state': 'error',
-      'react/no-find-dom-node': 'error',
-      'react/no-is-mounted': 'error',
-      'react/no-render-return-value': 'error',
-      'react/no-string-refs': 'error',
-      'react/no-unescaped-entities': 'error',
-      'react/no-unsafe': 'error',
-      'react/self-closing-comp': 'error',
-      'react/sort-comp': 'error',
-      'react/style-prop-object': 'error',
-      'react/void-dom-elements-no-children': 'error',
     },
   },
   {
