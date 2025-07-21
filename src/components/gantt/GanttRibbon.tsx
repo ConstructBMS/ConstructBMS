@@ -1,15 +1,59 @@
 import React, { useState } from 'react';
-import { 
-  DocumentTextIcon, 
-  HomeIcon, 
-  EyeIcon, 
-  FolderIcon, 
-  ChartBarIcon, 
+import {
+  DocumentTextIcon,
+  HomeIcon,
+  EyeIcon,
+  FolderIcon,
+  ChartBarIcon,
   CogIcon,
   DocumentDuplicateIcon,
   DocumentChartBarIcon,
   WrenchScrewdriverIcon,
-  ViewColumnsIcon
+  ViewColumnsIcon,
+  PlusIcon,
+  FolderOpenIcon,
+  DocumentArrowDownIcon,
+  PrinterIcon,
+  CameraIcon,
+  DocumentMagnifyingGlassIcon,
+  ClipboardDocumentIcon,
+  ArrowPathIcon,
+  CalendarIcon,
+  ClockIcon,
+  UserGroupIcon,
+  CurrencyDollarIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  PaintBrushIcon,
+  PresentationChartLineIcon,
+  TableCellsIcon,
+  AdjustmentsHorizontalIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  FlagIcon,
+  BookmarkIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+  XMarkIcon,
+  InformationCircleIcon,
+  DocumentTextIcon as DocumentTextIconSolid,
+  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
+  PhotoIcon,
+  DocumentIcon,
+  TableCellsIcon as TableCellsIconSolid,
+  DocumentArrowUpIcon,
+  DocumentArrowDownIcon as DocumentArrowDownIconSolid,
+  CogIcon as CogIconSolid,
+  WrenchScrewdriverIcon as WrenchScrewdriverIconSolid,
+  ChartBarIcon as ChartBarIconSolid,
+  EyeIcon as EyeIconSolid,
+  HomeIcon as HomeIconSolid,
+  FolderIcon as FolderIconSolid,
 } from '@heroicons/react/24/outline';
 import { HomeRibbonTab } from './GanttRibbon/HomeRibbonTab';
 import { ViewRibbonTab } from './GanttRibbon/ViewRibbonTab';
@@ -21,30 +65,33 @@ import { TabFormat } from './GanttRibbon/TabFormat';
 import { TabReporting } from './GanttRibbon/TabReporting';
 import { ToolsTab } from './GanttRibbon/ToolsTab';
 import { LayoutTab } from './GanttRibbon/LayoutTab';
+import { ScheduleTab } from './GanttRibbon/ScheduleTab';
+import { ReportTab } from './GanttRibbon/ReportTab';
 
 interface GanttRibbonProps {
   activeTab: string;
-  onTabChange: (tab: string) => void;
-  selectedTasks: string[];
-  onTaskAction: (action: string, taskIds?: string[]) => void;
   layoutSettings: {
-    zoomLevel: 'day' | 'week' | 'month';
-    showGrid: boolean;
-    showDependencies: boolean;
     rowHeight: number;
     showCriticalPath: boolean;
+    showDependencies: boolean;
+    showGrid: boolean;
     showProgress: boolean;
     showResources: boolean;
+    zoomLevel: 'day' | 'week' | 'month';
   };
-  onLayoutSettingsChange: (settings: any) => void;
   onExpandCollapseAll?: (expand: boolean) => void;
+  onLayoutSettingsChange: (settings: any) => void;
   onResetLayout?: () => void;
+  onTabChange: (tab: string) => void;
+  onTaskAction: (action: string, taskIds?: string[]) => void;
+  selectedTasks: string[];
 }
 
 interface Tab {
+  description?: string;
+  icon: React.ComponentType<any>;
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
 }
 
 export const GanttRibbon: React.FC<GanttRibbonProps> = ({
@@ -55,21 +102,82 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
   layoutSettings,
   onLayoutSettingsChange,
   onExpandCollapseAll,
-  onResetLayout
+  onResetLayout,
 }) => {
-  // Define ribbon tabs
+  // Define ribbon tabs with descriptions for tooltips
   const tabs: Tab[] = [
-    { id: 'file', label: 'File', icon: DocumentTextIcon },
-    { id: 'home', label: 'Home', icon: HomeIcon },
-    { id: 'view', label: 'View', icon: EyeIcon },
-    { id: 'project', label: 'Project', icon: FolderIcon },
-    { id: 'task', label: 'Task', icon: CogIcon },
-    { id: 'allocation', label: 'Allocation', icon: ChartBarIcon },
-    { id: '4d', label: '4D', icon: DocumentDuplicateIcon },
-    { id: 'format', label: 'Format', icon: CogIcon },
-    { id: 'layout', label: 'Layout', icon: ViewColumnsIcon },
-    { id: 'tools', label: 'Tools', icon: WrenchScrewdriverIcon },
-    { id: 'reporting', label: 'Reporting', icon: DocumentChartBarIcon }
+    {
+      id: 'file',
+      label: 'File',
+      icon: DocumentTextIcon,
+      description: 'File operations and project management',
+    },
+    {
+      id: 'home',
+      label: 'Home',
+      icon: HomeIcon,
+      description: 'Basic task operations and formatting',
+    },
+    {
+      id: 'view',
+      label: 'View',
+      icon: EyeIcon,
+      description: 'Layout and display options',
+    },
+    {
+      id: 'project',
+      label: 'Project',
+      icon: FolderIcon,
+      description: 'Project settings and properties',
+    },
+    {
+      id: 'task',
+      label: 'Task',
+      icon: CogIcon,
+      description: 'Task management and editing',
+    },
+    {
+      id: 'allocation',
+      label: 'Allocation',
+      icon: ChartBarIcon,
+      description: 'Resource allocation and management',
+    },
+    {
+      id: '4d',
+      label: '4D',
+      icon: DocumentDuplicateIcon,
+      description: '4D modeling and visualization',
+    },
+    {
+      id: 'format',
+      label: 'Format',
+      icon: PaintBrushIcon,
+      description: 'Visual formatting and styling',
+    },
+    {
+      id: 'schedule',
+      label: 'Schedule',
+      icon: CalendarIcon,
+      description: 'Scheduling and constraints',
+    },
+    {
+      id: 'layout',
+      label: 'Layout',
+      icon: ViewColumnsIcon,
+      description: 'Layout and arrangement tools',
+    },
+    {
+      id: 'tools',
+      label: 'Tools',
+      icon: WrenchScrewdriverIcon,
+      description: 'Utility tools and filters',
+    },
+    {
+      id: 'reporting',
+      label: 'Reporting',
+      icon: DocumentChartBarIcon,
+      description: 'Reports and exports',
+    },
   ];
 
   // Render tab content based on active tab
@@ -97,27 +205,93 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
         return <TaskTab />;
       case 'file':
         return (
-          <div className="flex flex-wrap gap-6 p-4 bg-white border-b border-gray-200">
-            <div className="flex flex-col">
-              <div className="flex space-x-1 mb-2">
-                <button className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors">
-                  <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-                  <span className="text-xs text-gray-700">New</span>
+          <div className='ribbon-tab-content'>
+            {/* File Operations Section */}
+            <div className='ribbon-section'>
+              <div className='ribbon-section-header'>File Operations</div>
+              <div className='ribbon-section-content'>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Create new project'
+                  onClick={() => onTaskAction('new-project')}
+                >
+                  <PlusIcon className='w-4 h-4' />
+                  <span>New</span>
                 </button>
-                <button className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors">
-                  <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-                  <span className="text-xs text-gray-700">Open</span>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Open existing project'
+                  onClick={() => onTaskAction('open-project')}
+                >
+                  <FolderOpenIcon className='w-4 h-4' />
+                  <span>Open</span>
                 </button>
-                <button className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors">
-                  <DocumentTextIcon className="h-5 w-5 mb-1 text-gray-700" />
-                  <span className="text-xs text-gray-700">Save</span>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Save current project'
+                  onClick={() => onTaskAction('save-project')}
+                >
+                  <DocumentArrowDownIcon className='w-4 h-4' />
+                  <span>Save</span>
                 </button>
               </div>
-              <div className="text-xs text-gray-600 font-medium">File</div>
+            </div>
+
+            {/* Export Section */}
+            <div className='ribbon-section'>
+              <div className='ribbon-section-header'>Export</div>
+              <div className='ribbon-section-content'>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Print project'
+                  onClick={() => onTaskAction('print-project')}
+                >
+                  <PrinterIcon className='w-4 h-4' />
+                  <span>Print</span>
+                </button>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Export to PDF'
+                  onClick={() => onTaskAction('export-pdf')}
+                >
+                  <DocumentArrowDownIcon className='w-4 h-4' />
+                  <span>PDF</span>
+                </button>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Export to Excel'
+                  onClick={() => onTaskAction('export-excel')}
+                >
+                  <TableCellsIcon className='w-4 h-4' />
+                  <span>Excel</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Project Info Section */}
+            <div className='ribbon-section'>
+              <div className='ribbon-section-header'>Project Info</div>
+              <div className='ribbon-section-content'>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Project properties'
+                  onClick={() => onTaskAction('project-properties')}
+                >
+                  <InformationCircleIcon className='w-4 h-4' />
+                  <span>Properties</span>
+                </button>
+                <button
+                  className='ribbon-button flex items-center space-x-1'
+                  title='Project status'
+                  onClick={() => onTaskAction('project-status')}
+                >
+                  <CheckCircleIcon className='w-4 h-4' />
+                  <span>Status</span>
+                </button>
+              </div>
             </div>
           </div>
         );
-
 
       case 'allocation':
         return <AllocationRibbonTab />;
@@ -125,34 +299,36 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
         return <Tab4D />;
       case 'format':
         return <TabFormat />;
+      case 'schedule':
+        return <ScheduleTab />;
       case 'layout':
         return <LayoutTab />;
       case 'tools':
         return <ToolsTab />;
       case 'reporting':
-        return <TabReporting />;
+        return <ReportTab />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="bg-gray-100 border-b border-gray-300">
+    <div className='ribbon-container'>
       {/* Tab Navigation */}
-      <div className="flex border-b border-gray-300">
-        {tabs.map((tab) => {
+      <div className='ribbon-tab-navigation'>
+        {tabs.map(tab => {
           const IconComponent = tab.icon;
+          const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600 bg-white'
-                  : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-              }`}
+              className={`ribbon-tab ${isActive ? 'ribbon-tab-active' : 'ribbon-tab-inactive'}`}
+              title={tab.description}
+              aria-selected={isActive}
+              role='tab'
             >
-              <IconComponent className="h-4 w-4" />
+              <IconComponent className='h-4 w-4' />
               <span>{tab.label}</span>
             </button>
           );
@@ -163,4 +339,4 @@ export const GanttRibbon: React.FC<GanttRibbonProps> = ({
       {renderTabContent()}
     </div>
   );
-}; 
+};

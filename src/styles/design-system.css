@@ -3,22 +3,22 @@
 /* ===== CSS VARIABLES ===== */
 :root {
   /* Color Palette - Archer Neon Green Theme */
-  --color-primary: #1A1A1A;
-  --color-secondary: #4D5A6C;
-  --color-accent: #00FF41; /* Archer neon green */
-  --color-accent-hover: #00CC33;
-  --color-accent-light: #33FF66;
+  --color-primary: #1a1a1a;
+  --color-secondary: #4d5a6c;
+  --color-accent: #00ff41; /* Archer neon green */
+  --color-accent-hover: #00cc33;
+  --color-accent-light: #33ff66;
   --color-accent-dark: #009926;
-  --color-background: #FFFFFF;
-  --color-surface: #F6F8FA;
-  --color-text: #1A1A1A;
-  --color-text-secondary: #4D5A6C;
-  --color-border: #E5E7EB;
-  --color-success: #00FF41; /* Using neon green for success */
-  --color-warning: #FFB84D;
-  --color-error: #E6504D;
-  --color-info: #3B82F6;
-  
+  --color-background: #ffffff;
+  --color-surface: #f6f8fa;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4d5a6c;
+  --color-border: #e5e7eb;
+  --color-success: #00ff41; /* Using neon green for success */
+  --color-warning: #ffb84d;
+  --color-error: #e6504d;
+  --color-info: #3b82f6;
+
   /* Spacing Scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -27,26 +27,26 @@
   --space-xl: 2rem;
   --space-2xl: 3rem;
   --space-3xl: 4rem;
-  
+
   /* Border Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --shadow-neon: 0 0 10px rgba(0, 255, 65, 0.3);
-  
+
   /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
-  
+
   /* Typography */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -56,7 +56,7 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
-  
+
   /* Z-Index Scale */
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -67,23 +67,138 @@
   --z-tooltip: 1070;
 }
 
-[data-theme="dark"] {
-  --color-primary: #FFFFFF;
-  --color-secondary: #D1D5DB;
-  --color-accent: #00FF41; /* Keep neon green in dark mode */
-  --color-accent-hover: #00CC33;
-  --color-accent-light: #33FF66;
+[data-theme='dark'] {
+  --color-primary: #ffffff;
+  --color-secondary: #d1d5db;
+  --color-accent: #00ff41; /* Keep neon green in dark mode */
+  --color-accent-hover: #00cc33;
+  --color-accent-light: #33ff66;
   --color-accent-dark: #009926;
-  --color-background: #0C1C2E;
-  --color-surface: #1A2B44;
-  --color-text: #FFFFFF;
-  --color-text-secondary: #D1D5DB;
+  --color-background: #0c1c2e;
+  --color-surface: #1a2b44;
+  --color-text: #ffffff;
+  --color-text-secondary: #d1d5db;
   --color-border: #374151;
 }
 
 /* ===== GLOBAL BUTTON SYSTEM ===== */
 .btn {
   @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+/* ===== RIBBON BUTTON SYSTEM ===== */
+.ribbon-button {
+  @apply inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium text-gray-800 bg-white border border-gray-300 rounded shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.ribbon-button:hover {
+  @apply bg-blue-50 border-blue-400 shadow-md;
+}
+
+.ribbon-button:active {
+  @apply bg-blue-100 transform scale-95;
+}
+
+.ribbon-button:focus {
+  @apply ring-2 ring-blue-300 ring-offset-1;
+}
+
+.ribbon-button-primary {
+  @apply bg-blue-600 text-white border-blue-600;
+}
+
+.ribbon-button-primary:hover {
+  @apply bg-blue-700 border-blue-700;
+}
+
+.ribbon-button-success {
+  @apply bg-green-600 text-white border-green-600;
+}
+
+.ribbon-button-success:hover {
+  @apply bg-green-700 border-green-700;
+}
+
+.ribbon-button-warning {
+  @apply bg-yellow-600 text-white border-yellow-600;
+}
+
+.ribbon-button-warning:hover {
+  @apply bg-yellow-700 border-yellow-700;
+}
+
+.ribbon-button-danger {
+  @apply bg-red-600 text-white border-red-600;
+}
+
+.ribbon-button-danger:hover {
+  @apply bg-red-700 border-red-700;
+}
+
+.ribbon-button-sm {
+  @apply px-2 py-1 text-xs;
+}
+
+.ribbon-button-lg {
+  @apply px-4 py-2 text-base;
+}
+
+.ribbon-button-icon {
+  @apply p-1.5;
+}
+
+.ribbon-button-icon .icon {
+  @apply w-4 h-4;
+}
+
+.ribbon-button-icon.ribbon-button-sm .icon {
+  @apply w-3 h-3;
+}
+
+.ribbon-button-icon.ribbon-button-lg .icon {
+  @apply w-5 h-5;
+}
+
+/* Ribbon Section Styles */
+.ribbon-section {
+  @apply space-y-1 w-48;
+}
+
+.ribbon-section-header {
+  @apply text-xs text-gray-700 font-medium px-2 py-1;
+}
+
+.ribbon-section-content {
+  @apply flex flex-wrap gap-2 px-2 pb-2;
+}
+
+.ribbon-separator {
+  @apply w-px bg-gray-300 mx-2;
+}
+
+/* Ribbon Container Styles */
+.ribbon-container {
+  @apply bg-gradient-to-b from-slate-200 via-white to-slate-100 border-b border-gray-300 shadow-inner;
+}
+
+.ribbon-tab-navigation {
+  @apply flex border-b border-gray-300 bg-white;
+}
+
+.ribbon-tab {
+  @apply flex items-center space-x-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors;
+}
+
+.ribbon-tab-active {
+  @apply border-blue-500 text-blue-600 bg-white;
+}
+
+.ribbon-tab-inactive {
+  @apply border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50;
+}
+
+.ribbon-tab-content {
+  @apply flex flex-wrap gap-6 p-4 bg-white border-b border-gray-200;
 }
 
 .btn-primary {
@@ -528,11 +643,11 @@
   .container {
     @apply px-4;
   }
-  
+
   .modal-container {
     @apply mx-4 max-w-sm;
   }
-  
+
   .metric-grid {
     grid-template-columns: 1fr;
   }
@@ -542,7 +657,7 @@
   .metric-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
-  
+
   .btn-lg {
     @apply px-4 py-2 text-sm;
   }
@@ -561,12 +676,12 @@
   .loading-spinner {
     display: none !important;
   }
-  
+
   .card {
     box-shadow: none !important;
     border: 1px solid #000 !important;
   }
-  
+
   .text-muted {
     color: #666 !important;
   }
@@ -585,11 +700,11 @@
   .btn {
     border-width: 2px;
   }
-  
+
   .card {
     border-width: 2px;
   }
-  
+
   .form-input,
   .form-select,
   .form-textarea {
@@ -603,12 +718,12 @@
   .scale-in {
     animation: none;
   }
-  
+
   .loading-spinner {
     animation: none;
   }
-  
+
   .loading-skeleton {
     animation: none;
   }
-} 
+}

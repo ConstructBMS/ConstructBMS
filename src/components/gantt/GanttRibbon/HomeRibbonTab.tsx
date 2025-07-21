@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-  ScissorsIcon, 
-  DocumentDuplicateIcon, 
+import {
+  ScissorsIcon,
+  DocumentDuplicateIcon,
   ClipboardDocumentIcon,
   TrashIcon,
   PlusIcon,
@@ -14,18 +14,20 @@ import {
   ChevronUpIcon,
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { useProjectView } from '../../../contexts/ProjectViewContext';
-
-interface HomeRibbonTabProps {
-  selectedTasks: string[];
-  onAction: (action: string, taskIds?: string[]) => void;
-}
-
 import { usePermissions } from '../../../hooks/usePermissions';
 
-export const HomeRibbonTab: React.FC<HomeRibbonTabProps> = ({ selectedTasks, onAction }) => {
+interface HomeRibbonTabProps {
+  onAction: (action: string, taskIds?: string[]) => void;
+  selectedTasks: string[];
+}
+
+export const HomeRibbonTab: React.FC<HomeRibbonTabProps> = ({
+  selectedTasks,
+  onAction,
+}) => {
   const { canAccess } = usePermissions();
   const projectView = useProjectView();
 
@@ -54,231 +56,235 @@ export const HomeRibbonTab: React.FC<HomeRibbonTabProps> = ({ selectedTasks, onA
   };
 
   return (
-    <div className="flex flex-wrap gap-6 p-4 bg-white border-b border-gray-200">
+    <div className='ribbon-tab-content'>
       {/* Edit Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>Edit</div>
+        <div className='ribbon-section-content'>
           {can('cut') && (
             <button
               onClick={() => handleAction('cut-tasks')}
               disabled={isActionDisabled('cut-tasks')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Cut selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Cut selected tasks'
             >
-              <ScissorsIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Cut</span>
+              <ScissorsIcon className='w-4 h-4' />
+              <span>Cut</span>
             </button>
           )}
-          
+
           {can('copy') && (
             <button
               onClick={() => handleAction('copy-tasks')}
               disabled={isActionDisabled('copy-tasks')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Copy selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Copy selected tasks'
             >
-              <DocumentDuplicateIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Copy</span>
+              <DocumentDuplicateIcon className='w-4 h-4' />
+              <span>Copy</span>
             </button>
           )}
-          
+
           {can('paste') && (
             <button
               onClick={() => handleAction('paste-tasks')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Paste tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Paste tasks'
             >
-              <ClipboardDocumentIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Paste</span>
+              <ClipboardDocumentIcon className='w-4 h-4' />
+              <span>Paste</span>
             </button>
           )}
-          
+
           {can('delete') && (
             <button
               onClick={() => handleAction('delete-task')}
               disabled={isActionDisabled('delete-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Delete selected tasks"
+              className='ribbon-button ribbon-button-danger flex items-center space-x-1'
+              title='Delete selected tasks'
             >
-              <TrashIcon className="h-5 w-5 mb-1 text-red-600" />
-              <span className="text-xs text-red-600">Delete</span>
+              <TrashIcon className='w-4 h-4' />
+              <span>Delete</span>
             </button>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">Edit</div>
       </div>
 
       {/* Insert Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>Insert</div>
+        <div className='ribbon-section-content'>
           {can('insert-task') && (
             <button
               onClick={() => handleAction('insert-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Insert new task"
+              className='ribbon-button flex items-center space-x-1'
+              title='Insert new task'
             >
-              <PlusIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Task</span>
+              <PlusIcon className='w-4 h-4' />
+              <span>Task</span>
             </button>
           )}
-          
+
           {can('insert-summary') && (
             <button
               onClick={() => handleAction('insert-summary')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Insert summary task"
+              className='ribbon-button flex items-center space-x-1'
+              title='Insert summary task'
             >
-              <FolderIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Summary</span>
+              <FolderIcon className='w-4 h-4' />
+              <span>Summary</span>
             </button>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">Insert</div>
       </div>
 
       {/* Structure Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>Structure</div>
+        <div className='ribbon-section-content'>
           {can('indent') && (
             <button
               onClick={() => handleAction('indent-task')}
               disabled={isActionDisabled('indent-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Indent selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Indent selected tasks'
             >
-              <ChevronRightIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Indent</span>
+              <ChevronRightIcon className='w-4 h-4' />
+              <span>Indent</span>
             </button>
           )}
-          
+
           {can('outdent') && (
             <button
               onClick={() => handleAction('outdent-task')}
               disabled={isActionDisabled('outdent-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Outdent selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Outdent selected tasks'
             >
-              <ChevronLeftIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Outdent</span>
+              <ChevronLeftIcon className='w-4 h-4' />
+              <span>Outdent</span>
             </button>
           )}
-          
+
           {can('link') && (
             <button
               onClick={() => handleAction('link-task')}
               disabled={isActionDisabled('link-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Link selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Link selected tasks'
             >
-              <LinkIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Link</span>
+              <LinkIcon className='w-4 h-4' />
+              <span>Link</span>
             </button>
           )}
-          
+
           {can('unlink') && (
             <button
               onClick={() => handleAction('unlink-task')}
               disabled={isActionDisabled('unlink-task')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors"
-              title="Unlink selected tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Unlink selected tasks'
             >
-              <NoSymbolIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Unlink</span>
+              <NoSymbolIcon className='w-4 h-4' />
+              <span>Unlink</span>
             </button>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">Structure</div>
       </div>
 
       {/* View Settings Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>View Settings</div>
+        <div className='ribbon-section-content'>
           {can('zoom') && (
-            <div className="flex flex-col items-center justify-center px-3 py-2 w-20 h-16 border border-gray-300 bg-white rounded">
-              <div className="flex items-center space-x-1 mb-1">
-                <MagnifyingGlassIcon className="h-4 w-4 text-gray-700" />
-                <span className="text-xs text-gray-700">Zoom</span>
+            <div className='flex items-center space-x-2'>
+              <div className='flex items-center space-x-1'>
+                <MagnifyingGlassIcon className='w-4 h-4 text-gray-600' />
+                <span className='text-sm text-gray-700'>Zoom:</span>
               </div>
               <select
                 value={projectView.state.layoutSettings.zoomLevel}
-                onChange={(e) =>
-                  projectView.updateLayoutSettings({ zoomLevel: e.target.value as 'day' | 'week' | 'month' })
+                onChange={e =>
+                  projectView.updateLayoutSettings({
+                    zoomLevel: e.target.value as 'day' | 'week' | 'month',
+                  })
                 }
-                className="border border-gray-300 rounded px-2 py-1 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                title="Select zoom level"
+                className='border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400'
+                title='Select zoom level'
               >
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
+                <option value='day'>Day</option>
+                <option value='week'>Week</option>
+                <option value='month'>Month</option>
               </select>
             </div>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">View Settings</div>
       </div>
 
       {/* Visibility Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>Visibility</div>
+        <div className='ribbon-section-content'>
           {can('expand') && (
             <button
               onClick={() => handleAction('expand-all')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Expand all tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Expand all tasks'
             >
-              <ChevronDownIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Expand All</span>
+              <ChevronDownIcon className='w-4 h-4' />
+              <span>Expand All</span>
             </button>
           )}
-          
+
           {can('collapse') && (
             <button
               onClick={() => handleAction('collapse-all')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Collapse all tasks"
+              className='ribbon-button flex items-center space-x-1'
+              title='Collapse all tasks'
             >
-              <ChevronUpIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Collapse All</span>
+              <ChevronUpIcon className='w-4 h-4' />
+              <span>Collapse All</span>
             </button>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">Visibility</div>
       </div>
 
       {/* History Group */}
-      <div className="flex flex-col">
-        <div className="flex space-x-1 mb-2">
+      <div className='ribbon-section'>
+        <div className='ribbon-section-header'>History</div>
+        <div className='ribbon-section-content'>
           {can('undo') && (
             <button
               onClick={() => handleAction('undo')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Undo last action"
+              className='ribbon-button flex items-center space-x-1'
+              title='Undo last action'
             >
-              <ArrowUturnLeftIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Undo</span>
+              <ArrowUturnLeftIcon className='w-4 h-4' />
+              <span>Undo</span>
             </button>
           )}
-          
+
           {can('redo') && (
             <button
               onClick={() => handleAction('redo')}
-              className="flex flex-col items-center justify-center px-3 py-2 w-16 h-16 border border-gray-300 bg-white hover:bg-blue-50 rounded transition-colors"
-              title="Redo last action"
+              className='ribbon-button flex items-center space-x-1'
+              title='Redo last action'
             >
-              <ArrowUturnRightIcon className="h-5 w-5 mb-1 text-gray-700" />
-              <span className="text-xs text-gray-700">Redo</span>
+              <ArrowUturnRightIcon className='w-4 h-4' />
+              <span>Redo</span>
             </button>
           )}
         </div>
-        <div className="text-xs text-gray-600 font-medium">History</div>
       </div>
 
       {/* Selection Info */}
-      <div className="flex flex-col justify-end ml-auto">
-        <div className="text-xs text-gray-500">
-          {selectedTasks.length > 0 ? `${selectedTasks.length} task(s) selected` : 'No tasks selected'}
+      <div className='flex flex-col justify-end ml-auto'>
+        <div className='text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded'>
+          {selectedTasks.length > 0
+            ? `${selectedTasks.length} task(s) selected`
+            : 'No tasks selected'}
         </div>
       </div>
     </div>
   );
-}; 
+};
