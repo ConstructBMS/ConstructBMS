@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 
 export type UserRole = 'viewer' | 'project_manager' | 'admin';
-export type Permission = 
+export type Permission =
   | 'view_projects'
   | 'edit_projects'
   | 'delete_projects'
@@ -37,12 +37,12 @@ export interface PermissionMatrix {
 }
 
 export interface UserPermissions {
-  userId: string;
-  role: UserRole;
   permissions: Permission[];
   projectPermissions?: {
     [projectId: string]: Permission[];
   };
+  role: UserRole;
+  userId: string;
 }
 
 export interface PermissionCheck {
@@ -80,7 +80,7 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     view_settings: false,
     edit_settings: false,
     view_activity_log: true,
-    delete_activity_log: false
+    delete_activity_log: false,
   },
   project_manager: {
     view_projects: true,
@@ -109,7 +109,7 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     view_settings: true,
     edit_settings: true,
     view_activity_log: true,
-    delete_activity_log: false
+    delete_activity_log: false,
   },
   admin: {
     view_projects: true,
@@ -138,8 +138,8 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     view_settings: true,
     edit_settings: true,
     view_activity_log: true,
-    delete_activity_log: true
-  }
+    delete_activity_log: true,
+  },
 };
 
 class PermissionsService {
@@ -169,8 +169,10 @@ class PermissionsService {
   // Load current user permissions
   async loadCurrentUserPermissions(): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         this.currentUserPermissions = null;
         return;
@@ -183,12 +185,52 @@ class PermissionsService {
         .eq('user_id', user.id)
         .single();
 
-      if (error || !userData) {
+      if (error) {
+        console.log(
+          'User role not found, creating default role for user:',
+          user.id
+        );
+
+        // Create default user role if not exists
+        const defaultRole = 'viewer';
+        const defaultPermissions = this.getPermissionsForRole(defaultRole);
+
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: user.id,
+            role: defaultRole,
+            permissions: defaultPermissions,
+            project_permissions: {},
+          });
+
+        if (insertError) {
+          console.error('Failed to create default user role:', insertError);
+          // Fallback to default role without database persistence
+          this.currentUserPermissions = {
+            userId: user.id,
+            role: defaultRole,
+            permissions: defaultPermissions,
+          };
+          return;
+        }
+
+        // Set the newly created permissions
+        this.currentUserPermissions = {
+          userId: user.id,
+          role: defaultRole,
+          permissions: defaultPermissions,
+          projectPermissions: {},
+        };
+        return;
+      }
+
+      if (!userData) {
         // Fallback to default role
         this.currentUserPermissions = {
           userId: user.id,
           role: 'viewer',
-          permissions: this.getPermissionsForRole('viewer')
+          permissions: this.getPermissionsForRole('viewer'),
         };
         return;
       }
@@ -196,12 +238,26 @@ class PermissionsService {
       this.currentUserPermissions = {
         userId: user.id,
         role: userData.role,
-        permissions: userData.permissions || this.getPermissionsForRole(userData.role),
-        projectPermissions: userData.project_permissions
+        permissions:
+          userData.permissions || this.getPermissionsForRole(userData.role),
+        projectPermissions: userData.project_permissions,
       };
     } catch (error) {
       console.error('Failed to load user permissions:', error);
-      this.currentUserPermissions = null;
+
+      // Fallback to default permissions
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        this.currentUserPermissions = {
+          userId: user.id,
+          role: 'viewer',
+          permissions: this.getPermissionsForRole('viewer'),
+        };
+      } else {
+        this.currentUserPermissions = null;
+      }
     }
   }
 
@@ -211,21 +267,23 @@ class PermissionsService {
       return {
         hasPermission: false,
         reason: 'User not authenticated',
-        requiredRole: 'viewer'
+        requiredRole: 'viewer',
       };
     }
 
     // Check project-specific permissions first
     if (projectId && this.currentUserPermissions.projectPermissions) {
-      const projectPerms = this.currentUserPermissions.projectPermissions[projectId];
+      const projectPerms =
+        this.currentUserPermissions.projectPermissions[projectId];
       if (projectPerms && projectPerms.includes(permission)) {
         return { hasPermission: true };
       }
     }
 
     // Check global permissions
-    const hasGlobalPermission = this.currentUserPermissions.permissions.includes(permission);
-    
+    const hasGlobalPermission =
+      this.currentUserPermissions.permissions.includes(permission);
+
     if (hasGlobalPermission) {
       return { hasPermission: true };
     }
@@ -236,12 +294,15 @@ class PermissionsService {
     return {
       hasPermission: false,
       reason: `Requires ${requiredRole} role`,
-      requiredRole
+      requiredRole,
     };
   }
 
   // Check if user has any of the given permissions
-  hasAnyPermission(permissions: Permission[], projectId?: string): PermissionCheck {
+  hasAnyPermission(
+    permissions: Permission[],
+    projectId?: string
+  ): PermissionCheck {
     for (const permission of permissions) {
       const check = this.hasPermission(permission, projectId);
       if (check.hasPermission) {
@@ -252,12 +313,15 @@ class PermissionsService {
     return {
       hasPermission: false,
       reason: `Requires one of: ${permissions.join(', ')}`,
-      requiredRole: 'project_manager'
+      requiredRole: 'project_manager',
     };
   }
 
   // Check if user has all of the given permissions
-  hasAllPermissions(permissions: Permission[], projectId?: string): PermissionCheck {
+  hasAllPermissions(
+    permissions: Permission[],
+    projectId?: string
+  ): PermissionCheck {
     for (const permission of permissions) {
       const check = this.hasPermission(permission, projectId);
       if (!check.hasPermission) {
@@ -302,14 +366,12 @@ class PermissionsService {
   // Update user role
   async updateUserRole(userId: string, role: UserRole): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: userId,
-          role,
-          permissions: this.getPermissionsForRole(role),
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('user_roles').upsert({
+        user_id: userId,
+        role,
+        permissions: this.getPermissionsForRole(role),
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         console.error('Failed to update user role:', error);
@@ -329,7 +391,11 @@ class PermissionsService {
   }
 
   // Grant project-specific permission
-  async grantProjectPermission(userId: string, projectId: string, permission: Permission): Promise<boolean> {
+  async grantProjectPermission(
+    userId: string,
+    projectId: string,
+    permission: Permission
+  ): Promise<boolean> {
     try {
       const { data: existing, error: fetchError } = await supabase
         .from('user_roles')
@@ -351,13 +417,11 @@ class PermissionsService {
         projectPermissions[projectId].push(permission);
       }
 
-      const { error } = await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: userId,
-          project_permissions: projectPermissions,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('user_roles').upsert({
+        user_id: userId,
+        project_permissions: projectPermissions,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         console.error('Failed to grant project permission:', error);
@@ -372,7 +436,11 @@ class PermissionsService {
   }
 
   // Revoke project-specific permission
-  async revokeProjectPermission(userId: string, projectId: string, permission: Permission): Promise<boolean> {
+  async revokeProjectPermission(
+    userId: string,
+    projectId: string,
+    permission: Permission
+  ): Promise<boolean> {
     try {
       const { data: existing, error: fetchError } = await supabase
         .from('user_roles')
@@ -387,16 +455,16 @@ class PermissionsService {
 
       const projectPermissions = existing?.project_permissions || {};
       if (projectPermissions[projectId]) {
-        projectPermissions[projectId] = projectPermissions[projectId].filter((p: Permission) => p !== permission);
+        projectPermissions[projectId] = projectPermissions[projectId].filter(
+          (p: Permission) => p !== permission
+        );
       }
 
-      const { error } = await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: userId,
-          project_permissions: projectPermissions,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('user_roles').upsert({
+        user_id: userId,
+        project_permissions: projectPermissions,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         console.error('Failed to revoke project permission:', error);
@@ -411,11 +479,13 @@ class PermissionsService {
   }
 
   // Get users with their roles
-  async getUsersWithRoles(): Promise<Array<{ userId: string; role: UserRole; email: string }>> {
+  async getUsersWithRoles(): Promise<
+    Array<{ email: string; role: UserRole; userId: string }>
+  > {
     try {
       const { data, error } = await supabase
         .from('user_roles')
-        .select('user_id, role, users!inner(email)')
+        .select('user_id, role')
         .order('role');
 
       if (error) {
@@ -426,7 +496,7 @@ class PermissionsService {
       return data.map(item => ({
         userId: item.user_id,
         role: item.role,
-        email: item.users?.email || 'Unknown'
+        email: 'Unknown', // Email not available in current schema
       }));
     } catch (error) {
       console.error('Failed to fetch users with roles:', error);
@@ -453,8 +523,8 @@ class PermissionsService {
       permissions: this.getPermissionsForRole('project_manager'),
       projectPermissions: {
         'demo-project-1': ['edit_tasks', 'create_tasks', 'delete_tasks'],
-        'demo-project-2': ['view_tasks', 'edit_tasks']
-      }
+        'demo-project-2': ['view_tasks', 'edit_tasks'],
+      },
     };
   }
 
@@ -467,4 +537,4 @@ class PermissionsService {
 export const permissionsService = new PermissionsService();
 
 // Initialize the service
-permissionsService.initialize().catch(console.error); 
+permissionsService.initialize().catch(console.error);

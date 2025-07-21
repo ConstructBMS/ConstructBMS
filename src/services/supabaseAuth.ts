@@ -19,15 +19,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Types for the user roles response
 export interface UserRole {
-    description: string;
-    id: string;
-    is_active: boolean;
-    is_system_role: boolean;
-    name: string;
-    permissions: string[];
-  role_id: string;
-  roles: {
-};
+  permissions: string[];
+  project_permissions?: Record<string, string[]>;
+  role: string;
 }
 
 // Function to get the current user's JWT token
@@ -87,7 +81,7 @@ export const makeAuthenticatedRequest = async (
 // Function to get user roles with proper authentication
 export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
   try {
-    const endpoint = `user_roles?select=role_id,roles(id,name,description,permissions,is_system_role,is_active)&user_id=eq.${userId}`;
+    const endpoint = `user_roles?select=role,permissions,project_permissions&user_id=eq.${userId}`;
 
     const roles = await makeAuthenticatedRequest(endpoint);
     return roles;
@@ -126,7 +120,6 @@ export const signOut = async () => {
       console.error('❌ Sign-out error:', error.message);
       throw error;
     }
-
   } catch (error) {
     console.error('Sign-out failed:', error);
     throw error;

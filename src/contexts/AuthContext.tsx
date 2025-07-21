@@ -200,22 +200,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
 
         setUser(updatedUser);
-  
 
         // Load user roles using the new authenticated REST API service
         try {
           const rolesData = await getUserRoles(authUser.id);
 
           if (rolesData && rolesData.length > 0) {
+            // Convert the new UserRole structure to Role structure
             const userRoles: Role[] = rolesData.map((ur: any) => ({
-              id: ur.roles.id,
-              name: ur.roles.name,
-              description: ur.roles.description,
-              level: ur.roles.name as SystemRoles,
-              permissions: ur.roles.permissions || {},
+              id: `role-${ur.role}`,
+              name: ur.role,
+              description: `${ur.role} role`,
+              level: ur.role as SystemRoles,
+              permissions: ur.permissions.reduce(
+                (acc: Record<Permissions, boolean>, perm: string) => {
+                  acc[perm as Permissions] = true;
+                  return acc;
+                },
+                {} as Record<Permissions, boolean>
+              ),
               customRules: [],
-              isSystemRole: ur.roles.is_system_role,
-              isActive: ur.roles.is_active,
+              isSystemRole: true,
+              isActive: true,
               organizationId: '',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
@@ -226,14 +232,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             setRoles(userRoles);
 
-            // Set permissions based on roles - convert to string array
-            const allPermissions = userRoles.flatMap(role =>
-              Object.entries(role.permissions)
-                .filter(([_, hasPermission]) => hasPermission)
-                .map(([permission]) => permission)
+            // Set permissions based on roles
+            const allPermissions = rolesData.flatMap(
+              (ur: any) => ur.permissions || []
             );
             setPermissions(allPermissions);
-
           } else {
             // Fallback to demo roles if no roles found
             console.log('⚠️ No roles found, using fallback');
