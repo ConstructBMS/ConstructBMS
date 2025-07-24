@@ -6,9 +6,9 @@ import EnterpriseGanttChart from './EnterpriseGanttChart';
 import { XMarkIcon, ArrowsPointingOutIcon, ArrowsPointingInIcon } from '@heroicons/react/24/outline';
 
 interface GanttPopoutWindowProps {
-  project: any;
   onClose: () => void;
   onMarkChanged?: () => void;
+  project: any;
 }
 
 const GanttPopoutWindow: React.FC<GanttPopoutWindowProps> = ({ project, onClose, onMarkChanged }) => {

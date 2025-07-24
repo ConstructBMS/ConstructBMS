@@ -21,25 +21,25 @@ import { WIDGET_SIZES } from '../widgets/WidgetTypes';
 
 interface WidgetBuilderProps {
   layoutName: string;
-  selectedLayout: string | null;
   onBack: () => void;
   onClose: () => void;
   onWidgetsChange?: (widgets: any[]) => void;
+  selectedLayout: string | null;
   widgets?: any[];
 }
 
 interface WidgetContent {
-  id: string;
-  type: 'metric' | 'statistic' | 'task-list' | 'project-list' | 'activity-feed' | 'chart' | 'calendar';
-  title: string;
   config: any;
+  id: string;
+  title: string;
+  type: 'metric' | 'statistic' | 'task-list' | 'project-list' | 'activity-feed' | 'chart' | 'calendar';
 }
 
 interface CustomWidget {
+  contents: WidgetContent[];
   id: string;
   name: string;
-  size: { width: number; height: number };
-  contents: WidgetContent[];
+  size: { height: number, width: number; };
 }
 
 const WidgetBuilder: React.FC<WidgetBuilderProps> = ({

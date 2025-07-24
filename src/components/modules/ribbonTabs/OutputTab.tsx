@@ -17,68 +17,68 @@ import type { RibbonTab } from '../GanttRibbon';
 
 // Types for output operations
 export interface OutputOperation {
-  type: 'print-profile' | 'export-format' | 'show-preview' | 'page-range' | 'include-legend' | 'save-profile' | 'print-export';
   data?: any;
+  type: 'print-profile' | 'export-format' | 'show-preview' | 'page-range' | 'include-legend' | 'save-profile' | 'print-export';
 }
 
 // Print profile interface
 export interface PrintProfile {
-  id: string;
-  name: string;
   description: string;
+  id: string;
+  isDefault: boolean;
+  name: string;
   settings: {
-    pageSize: string;
-    orientation: 'portrait' | 'landscape';
+    includeGrid: boolean;
+    includeLegend: boolean;
+    includeTimeline: boolean;
     margins: {
-      top: number;
       bottom: number;
       left: number;
       right: number;
+      top: number;
     };
-    scale: number;
-    includeLegend: boolean;
-    includeGrid: boolean;
-    includeTimeline: boolean;
+    orientation: 'portrait' | 'landscape';
+    pageSize: string;
     quality: 'draft' | 'normal' | 'high';
+    scale: number;
   };
-  isDefault: boolean;
 }
 
 // Export format options
 export interface ExportFormat {
+  description: string;
+  extension: string;
+  icon: React.ComponentType<any>;
   id: string;
   label: string;
-  description: string;
-  icon: React.ComponentType<any>;
-  extension: string;
   mimeType: string;
 }
 
 // Page range interface
 export interface PageRange {
-  start: number;
-  end: number;
   custom: boolean;
+  end: number;
+  start: number;
 }
 
 // Output state interface
 export interface OutputState {
-  selectedProfile: string;
   exportFormat: string;
-  pageRange: PageRange;
-  includeLegend: boolean;
   includeGrid: boolean;
+  includeLegend: boolean;
   includeTimeline: boolean;
+  pageRange: PageRange;
   quality: 'draft' | 'normal' | 'high';
+  selectedProfile: string;
   showPreview: boolean;
 }
 
 interface OutputTabProps {
-  onOutputOperation: (operation: OutputOperation) => void;
-  userRole: string;
-  currentOutputState?: OutputState;
-  onOutputStateChange?: (newState: Partial<OutputState>) => void;
   availableProfiles?: PrintProfile[];
+  currentOutputState?: OutputState;
+  onOutputOperation: (operation: OutputOperation) => void;
+  onOutputStateChange?: (newState: Partial<OutputState>) => void;
+  userRole: string;
 }
 
 const useOutputTab = (

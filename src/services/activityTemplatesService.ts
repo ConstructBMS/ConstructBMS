@@ -1,46 +1,46 @@
 import { supabase } from './supabase';
 
 export interface ActivityTemplate {
-  id: string;
-  name: string;
-  description?: string;
-  owner_id: string;
-  is_public: boolean;
   category?: string;
-  tags: string[];
   created_at: string;
+  description?: string;
+  id: string;
+  is_public: boolean;
+  name: string;
+  owner_id: string;
+  tags: string[];
   updated_at: string;
 }
 
 export interface TemplateStep {
-  id: string;
-  template_id: string;
-  label: string;
+  created_at: string;
+  dependencies: string[];
   description?: string;
   duration: number;
-  sequence: number;
+  id: string;
   is_milestone: boolean;
-  dependencies: string[];
-  created_at: string;
+  label: string;
+  sequence: number;
+  template_id: string;
   updated_at: string;
 }
 
 export interface TaskActivity {
-  id: string;
-  task_id: string;
-  template_id?: string;
-  label: string;
+  assigned_to?: string;
+  created_at: string;
+  dependencies: string[];
   description?: string;
   duration: number;
-  sequence: number;
-  is_milestone: boolean;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
-  progress: number;
-  assigned_to?: string;
-  start_date?: string;
   end_date?: string;
-  dependencies: string[];
-  created_at: string;
+  id: string;
+  is_milestone: boolean;
+  label: string;
+  progress: number;
+  sequence: number;
+  start_date?: string;
+  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
+  task_id: string;
+  template_id?: string;
   updated_at: string;
 }
 

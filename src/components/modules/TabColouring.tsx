@@ -24,21 +24,21 @@ import type {
 } from '../../services/tabColouringService';
 
 interface TabColouringProps {
-  projectId: string;
-  userRole: string;
   onViewChange?: (view: AstaView) => void;
   onViewCreate?: (view: AstaView) => void;
-  onViewUpdate?: (view: AstaView) => void;
   onViewDelete?: (viewId: string) => void;
+  onViewUpdate?: (view: AstaView) => void;
+  projectId: string;
   selectedViewId?: string;
+  userRole: string;
 }
 
 interface ViewEditState {
-  viewId: string | null;
-  name: string;
   description: string;
-  viewType: AstaView['view_type'];
+  name: string;
   tabColor: TabColor;
+  viewId: string | null;
+  viewType: AstaView['view_type'];
 }
 
 const TabColouring: React.FC<TabColouringProps> = ({

@@ -6,18 +6,18 @@ import type { OutputOperation, OutputState } from './ribbonTabs/OutputTab';
 
 interface AstaRibbonProps {
   activeTab: string;
-  userRole: string;
-  projectId?: string;
-  onViewOperation?: (operation: ViewOperation) => void;
-  currentViewState?: ViewState;
-  onViewStateChange?: (newState: Partial<ViewState>) => void;
-  onOutputOperation?: (operation: OutputOperation) => void;
   currentOutputState?: OutputState;
-  onOutputStateChange?: (newState: Partial<OutputState>) => void;
-  onTaskOperation?: (operation: any) => void;
+  currentViewState?: ViewState;
   onAllocationOperation?: (operation: any) => void;
-  selectedTasks?: string[];
+  onOutputOperation?: (operation: OutputOperation) => void;
+  onOutputStateChange?: (newState: Partial<OutputState>) => void;
   onTabChange?: (tabId: string) => void;
+  onTaskOperation?: (operation: any) => void;
+  onViewOperation?: (operation: ViewOperation) => void;
+  onViewStateChange?: (newState: Partial<ViewState>) => void;
+  projectId?: string;
+  selectedTasks?: string[];
+  userRole: string;
 }
 
 const AstaRibbon: React.FC<AstaRibbonProps> = ({
@@ -35,6 +35,24 @@ const AstaRibbon: React.FC<AstaRibbonProps> = ({
   selectedTasks = [],
   onTabChange
 }) => {
+  // Move all useState hooks to the top level
+  const [formatState, setFormatState] = useState<FormatState>({
+    barColoring: 'critical',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: 12,
+    barHeight: 20,
+    showMilestoneAsDiamond: true,
+    showFloatAsTrail: false,
+    customColors: {
+      critical: '#ef4444',
+      normal: '#3b82f6',
+      completed: '#10b981',
+      delayed: '#f59e0b',
+      resource1: '#7c3aed',
+      resource2: '#0891b2',
+      resource3: '#16a34a'
+    }
+  });
   const [loading, setLoading] = useState(false);
 
   const renderTabButtons = () => {
@@ -700,24 +718,6 @@ const AstaRibbon: React.FC<AstaRibbonProps> = ({
   };
 
   const renderFormatTab = () => {
-    const [formatState, setFormatState] = useState<FormatState>({
-      barColoring: 'critical',
-      fontFamily: 'Arial, sans-serif',
-      fontSize: 12,
-      barHeight: 20,
-      showMilestoneAsDiamond: true,
-      showFloatAsTrail: false,
-      customColors: {
-        critical: '#ef4444',
-        normal: '#3b82f6',
-        completed: '#10b981',
-        delayed: '#f59e0b',
-        resource1: '#7c3aed',
-        resource2: '#0891b2',
-        resource3: '#16a34a'
-      }
-    });
-
     const handleFormatOperation = (operation: FormatOperation) => {
       console.log('Format operation:', operation);
     };

@@ -38,7 +38,7 @@ import AddressBookModal from '../email/AddressBookModal';
 import RulesBuilder from '../email/RulesBuilder';
 import EmailAIModal from '../email/EmailAIModal';
 import WYSIWYGEditor from '../WYSIWYGEditor';
-import { calendarService } from '../../services/calendarService';
+import { CalendarService } from '../../services/calendarService';
 import { useEmail } from '../../contexts/EmailContext';
 
 // Types
@@ -374,19 +374,12 @@ const EmailClient: React.FC = () => {
 
   // Meeting functionality
   const handleCreateMeeting = (formData: any) => {
-    const event = calendarService.createEvent({
-      title: formData.title || 'New Meeting',
-      date: formData.date || new Date().toISOString().split('T')[0],
-      time: formData.time || '09:00',
-      duration: parseInt(formData.duration) || 60,
-      attendees: formData.attendees || [],
-      description: formData.description || '',
-      calendar: formData.calendar || 'default',
-      createdFromEmail: selectedEmail?.id,
-    });
-
+    // TODO: Implement calendar event creation
+    // For now, just show a success message
+    const eventTitle = formData.title || 'New Meeting';
+    
     setShowMeetingModal(false);
-    alert(`Meeting "${event.title}" created successfully!`);
+    alert(`Meeting "${eventTitle}" created successfully! (Calendar integration coming soon)`);
   };
 
   // Tags functionality

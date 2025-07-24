@@ -2,27 +2,27 @@ import type { Task } from './ganttTaskService';
 import type { Baseline } from './baselineService';
 
 export interface ProjectExport {
-  version: string;
-  exportedAt: Date;
-  projectName: string;
-  projectDescription?: string;
-  tasks: Task[];
   baselines?: Baseline[];
+  exportedAt: Date;
   metadata: {
-    totalTasks: number;
-    totalDuration: number;
-    totalCost: number;
-    projectStartDate: Date;
-    projectEndDate: Date;
     exportFormat: 'json' | 'xml' | 'csv';
+    projectEndDate: Date;
+    projectStartDate: Date;
+    totalCost: number;
+    totalDuration: number;
+    totalTasks: number;
   };
+  projectDescription?: string;
+  projectName: string;
+  tasks: Task[];
+  version: string;
 }
 
 export interface ExportOptions {
+  filename?: string;
+  format?: 'json' | 'xml' | 'csv';
   includeBaselines?: boolean;
   includeMetadata?: boolean;
-  format?: 'json' | 'xml' | 'csv';
-  filename?: string;
 }
 
 export class ProjectExportService {
@@ -189,7 +189,7 @@ export class ProjectExportService {
   /**
    * Import project from JSON
    */
-  async importFromJSON(jsonData: string): Promise<{ tasks: Task[]; projectName: string; projectDescription?: string }> {
+  async importFromJSON(jsonData: string): Promise<{ projectDescription?: string, projectName: string; tasks: Task[]; }> {
     try {
       const data: ProjectExport = JSON.parse(jsonData);
       
@@ -224,7 +224,7 @@ export class ProjectExportService {
   /**
    * Import project from XML
    */
-  async importFromXML(xmlData: string): Promise<{ tasks: Task[]; projectName: string; projectDescription?: string }> {
+  async importFromXML(xmlData: string): Promise<{ projectDescription?: string, projectName: string; tasks: Task[]; }> {
     try {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlData, 'text/xml');
@@ -288,7 +288,7 @@ export class ProjectExportService {
   /**
    * Import project from CSV
    */
-  async importFromCSV(csvData: string): Promise<{ tasks: Task[]; projectName: string }> {
+  async importFromCSV(csvData: string): Promise<{ projectName: string, tasks: Task[]; }> {
     try {
       const lines = csvData.split('\n').filter(line => line.trim());
       if (lines.length < 2) {

@@ -45,8 +45,11 @@ export const WIDGET_SIZES = {
 } as const;
 
 export interface WidgetConfig {
+  // How content should behave
+  aspectRatio?: number;
   category: string;
   configurable: boolean;
+  contentHeight?: 'auto' | 'fixed' | 'scrollable';
   defaultSize: { height: number, width: number; 
 };
   description: string;
@@ -54,10 +57,8 @@ export interface WidgetConfig {
   id: string;
   maxSize: { height: number, width: number; };
   minSize: { height: number, width: number; };
-  title: string;
-  type: string;
-  contentHeight?: 'auto' | 'fixed' | 'scrollable'; // How content should behave
-  aspectRatio?: number; // Optional aspect ratio for consistent sizing
+  title: string; 
+  type: string; // Optional aspect ratio for consistent sizing
 }
 
 export const availableWidgets: WidgetConfig[] = [

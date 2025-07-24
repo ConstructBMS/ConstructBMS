@@ -11,9 +11,15 @@ import {
   ArrowPathIcon,
   DocumentArrowUpIcon,
   DocumentArrowDownIcon,
-  PlayIcon
+  DocumentDuplicateIcon,
+  PlayIcon,
+  FlagIcon,
+  TagIcon,
+  FolderIcon,
+  PrinterIcon
 } from '@heroicons/react/24/outline';
-import AstaPowerProject from './AstaPowerProject';
+import { ProgrammeCollaborationProvider } from '../../contexts/ProgrammeCollaborationContext';
+import AstaPowerProjectScaffold from './AstaPowerProjectScaffold';
 import ViewTabTest from './ViewTabTest';
 import ProjectTabTest from './ProjectTabTest';
 import AllocationTabTest from './AllocationTabTest';
@@ -30,22 +36,34 @@ import RescheduleEngineTest from './RescheduleEngineTest';
 import AutoSaveTest from './AutoSaveTest';
 import PermissionsTest from './PermissionsTest';
 import ProjectSettingsTest from './ProjectSettingsTest';
+import ClipboardDemo from './ClipboardDemo';
+import ProgrammeCollaborationDemo from './ProgrammeCollaborationDemo';
+import ProgrammeUndoRedoDemo from './ProgrammeUndoRedoDemo';
+import ProgrammeFlagsDemo from './ProgrammeFlagsDemo';
+import WorkingCalendarDemo from './WorkingCalendarDemo';
+import MilestoneDemo from './MilestoneDemo';
+import PrintExportDemo from './PrintExportDemo';
+import TaskCalendarsDemo from './TaskCalendarsDemo';
+import CustomFieldsDemo from './CustomFieldsDemo';
+import TaskHierarchyDemo from './TaskHierarchyDemo';
+import TaskTagsDemo from './TaskTagsDemo';
+import ProgrammeVersioningDemo from './ProgrammeVersioningDemo';
 
 interface ProgrammeManagerProps {
   onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
 }
 
 interface Project {
-  id: string;
-  name: string;
-  client: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number;
-  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
-  manager: string;
-  budget: number;
   actualCost: number;
+  budget: number;
+  client: string;
+  endDate: Date;
+  id: string;
+  manager: string;
+  name: string;
+  progress: number;
+  startDate: Date;
+  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
 }
 
 const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule }) => {
@@ -54,7 +72,6 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [showAstaPowerProject, setShowAstaPowerProject] = useState(false);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [showViewTabTest, setShowViewTabTest] = useState(false);
   const [showProjectTabTest, setShowProjectTabTest] = useState(false);
@@ -72,6 +89,19 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
   const [showAutoSaveTest, setShowAutoSaveTest] = useState(false);
   const [showPermissionsTest, setShowPermissionsTest] = useState(false);
   const [showProjectSettingsTest, setShowProjectSettingsTest] = useState(false);
+  const [showAstaPowerProjectScaffold, setShowAstaPowerProjectScaffold] = useState(false);
+  const [showClipboardDemo, setShowClipboardDemo] = useState(false);
+  const [showCollaborationDemo, setShowCollaborationDemo] = useState(false);
+  const [showUndoRedoDemo, setShowUndoRedoDemo] = useState(false);
+  const [showFlagsDemo, setShowFlagsDemo] = useState(false);
+  const [showWorkingCalendarDemo, setShowWorkingCalendarDemo] = useState(false);
+  const [showMilestoneDemo, setShowMilestoneDemo] = useState(false);
+  const [showPrintExportDemo, setShowPrintExportDemo] = useState(false);
+  const [showTaskCalendarsDemo, setShowTaskCalendarsDemo] = useState(false);
+  const [showTaskHierarchyDemo, setShowTaskHierarchyDemo] = useState(false);
+  const [showCustomFieldsDemo, setShowCustomFieldsDemo] = useState(false);
+  const [showTaskTagsDemo, setShowTaskTagsDemo] = useState(false);
+  const [showProgrammeVersioningDemo, setShowProgrammeVersioningDemo] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -104,10 +134,10 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
 
       setProjects(programmeProjects);
       
-      // If we have projects, automatically open the first one in Asta PowerProject
+      // If we have projects, automatically open the first one in Asta PowerProject Scaffold
       if (programmeProjects.length > 0) {
         setActiveProjectId(programmeProjects[0]?.id || null);
-        setShowAstaPowerProject(true);
+        setShowAstaPowerProjectScaffold(true);
       }
     } catch (error) {
       console.error('Error loading projects:', error);
@@ -115,10 +145,10 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
       const sampleProjects = createSampleProjects();
       setProjects(sampleProjects);
       
-      // Automatically open the first sample project in Asta PowerProject
+      // Automatically open the first sample project in Asta PowerProject Scaffold
       if (sampleProjects.length > 0) {
         setActiveProjectId(sampleProjects[0]?.id || null);
-        setShowAstaPowerProject(true);
+        setShowAstaPowerProjectScaffold(true);
       }
     } finally {
       setLoading(false);
@@ -191,9 +221,9 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
     console.log('Create new project');
   };
 
-  const handleOpenAstaPowerProject = (project: Project) => {
+  const handleOpenAstaPowerProjectScaffold = (project: Project) => {
     setActiveProjectId(project.id);
-    setShowAstaPowerProject(true);
+    setShowAstaPowerProjectScaffold(true);
   };
 
   const handleImportProject = () => {
@@ -481,14 +511,145 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
     );
   }
 
-  if (showAstaPowerProject) {
+  if (showAstaPowerProjectScaffold) {
+    return <AstaPowerProjectScaffold />;
+  }
+
+  if (showClipboardDemo) {
+    return <ClipboardDemo />;
+  }
+
+  if (showCollaborationDemo) {
     return (
-      <AstaPowerProject 
-        projectId={activeProjectId || null}
-        onNavigateToModule={onNavigateToModule || (() => {})}
-      />
+      <ProgrammeCollaborationProvider>
+        <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+          <div className="p-4">
+            <button
+              onClick={() => setShowCollaborationDemo(false)}
+              className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              ← Back to Programme Manager
+            </button>
+            <ProgrammeCollaborationDemo projectId={activeProjectId || 'demo-project-1'} />
+          </div>
+        </div>
+      </ProgrammeCollaborationProvider>
     );
   }
+
+  if (showUndoRedoDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowUndoRedoDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <ProgrammeUndoRedoDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showFlagsDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowFlagsDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <ProgrammeFlagsDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showWorkingCalendarDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowWorkingCalendarDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <WorkingCalendarDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showMilestoneDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowMilestoneDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <MilestoneDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showTaskCalendarsDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowTaskCalendarsDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <TaskCalendarsDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showCustomFieldsDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowCustomFieldsDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <CustomFieldsDemo />
+        </div>
+      </div>
+    );
+  }
+
+  if (showTaskHierarchyDemo) {
+    return (
+      <div className="h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
+        <div className="p-4">
+          <button
+            onClick={() => setShowTaskHierarchyDemo(false)}
+            className="mb-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            ← Back to Programme Manager
+          </button>
+          <TaskHierarchyDemo />
+        </div>
+      </div>
+    );
+  }
+
+
 
   if (loading) {
     return (
@@ -499,7 +660,8 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
   }
 
   return (
-    <div className="programme-manager p-6">
+    <ProgrammeCollaborationProvider>
+      <div className="programme-manager p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between">
@@ -604,11 +766,81 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
                 Test Reschedule Engine
               </button>
               <button
+                onClick={() => setShowWorkingCalendarDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+              >
+                <CalendarIcon className="w-4 h-4" />
+                Working Calendar Demo
+              </button>
+              <button
+                onClick={() => setShowMilestoneDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <FlagIcon className="w-4 h-4" />
+                Milestone Management Demo
+              </button>
+              <button
+                onClick={() => setShowTaskCalendarsDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <CalendarIcon className="w-4 h-4" />
+                Task Calendars Demo
+              </button>
+              <button
+                onClick={() => setShowCustomFieldsDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <TagIcon className="w-4 h-4" />
+                Custom Fields Demo
+              </button>
+              <button
+                onClick={() => setShowTaskTagsDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <TagIcon className="w-4 h-4" />
+                Task Tags & Colour Coding Demo
+              </button>
+              <button
+                onClick={() => setShowTaskHierarchyDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <FolderIcon className="w-4 h-4" />
+                Task Hierarchy Demo
+              </button>
+              <button
                 onClick={() => setShowAutoSaveTest(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <CogIcon className="w-4 h-4" />
                 Test Auto Save
+              </button>
+              <button
+                onClick={() => setShowCollaborationDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+              >
+                <UserGroupIcon className="w-4 h-4" />
+                Live Collaboration Demo
+              </button>
+              <button
+                onClick={() => setShowUndoRedoDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <ArrowPathIcon className="w-4 h-4" />
+                Undo/Redo Demo
+              </button>
+              <button
+                onClick={() => setShowClipboardDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
+              >
+                <CogIcon className="w-4 h-4" />
+                Test Clipboard, Task, Structure, Link, Tools, Grouping, Fields, Secondary Tools, Project Information, Calendar, Constraints, Baselines & Properties Sections
+              </button>
+              <button
+                onClick={() => setShowFlagsDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              >
+                <FlagIcon className="w-4 h-4" />
+                Programme Flags & Notes Demo
               </button>
               <button
                 onClick={() => setShowPermissionsTest(true)}
@@ -623,6 +855,20 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
               >
                 <CogIcon className="w-4 h-4" />
                 Test Project Settings
+              </button>
+              <button
+                onClick={() => setShowPrintExportDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <PrinterIcon className="w-4 h-4" />
+                Print & PDF Export Demo
+              </button>
+              <button
+                onClick={() => setShowProgrammeVersioningDemo(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <DocumentDuplicateIcon className="w-4 h-4" />
+                Programme Versioning Demo
               </button>
             <button
               onClick={handleImportProject}
@@ -745,7 +991,17 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleOpenAstaPowerProject(project);
+                  handleOpenAstaPowerProjectScaffold(project);
+                }}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              >
+                <ChartBarIcon className="w-4 h-4" />
+                Open Scaffold
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenAstaPowerProjectScaffold(project);
                 }}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-blue/90 transition-colors text-sm font-medium"
               >
@@ -850,7 +1106,7 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={() => {
-                    handleOpenAstaPowerProject(selectedProject);
+                    handleOpenAstaPowerProjectScaffold(selectedProject);
                     setSelectedProject(null);
                   }}
                   className="flex items-center gap-2 px-4 py-2 bg-constructbms-blue text-black rounded-lg hover:bg-constructbms-blue/90 transition-colors"
@@ -869,7 +1125,74 @@ const ProgrammeManager: React.FC<ProgrammeManagerProps> = ({ onNavigateToModule 
           </div>
         </div>
       )}
-    </div>
+
+      {/* Task Tags Demo Modal */}
+      {showTaskTagsDemo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-7xl h-[90vh] mx-4 overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Task Tags & Colour Coding Demo
+              </h2>
+              <button
+                onClick={() => setShowTaskTagsDemo(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <TaskTagsDemo />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Programme Versioning Demo Modal */}
+      {showProgrammeVersioningDemo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-7xl h-[90vh] mx-4 overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Programme Versioning Demo
+              </h2>
+              <button
+                onClick={() => setShowProgrammeVersioningDemo(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <ProgrammeVersioningDemo />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Print & Export Demo Modal */}
+      {showPrintExportDemo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-7xl h-[90vh] mx-4 overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                Print & PDF Export Demo
+              </h2>
+              <button
+                onClick={() => setShowPrintExportDemo(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <PrintExportDemo />
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
+    </ProgrammeCollaborationProvider>
   );
 };
 

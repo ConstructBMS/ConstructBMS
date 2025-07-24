@@ -6,8 +6,6 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
 
 const AUTO_SAVE_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const COMMIT_MESSAGE_PREFIX = 'Auto-save: ';

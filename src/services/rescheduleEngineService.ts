@@ -2,102 +2,102 @@ import { supabase } from './supabase';
 
 // Asta-specific interfaces based on database schema
 export interface Task {
-  id: string;
-  project_id: string;
-  name: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  duration: number;
-  progress: number;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
   assigned_to?: string;
-  parent_task_id?: string;
-  dependencies?: string[];
-  constraint_type?: 'asap' | 'start-no-earlier' | 'must-finish' | 'finish-no-later' | 'start-no-later' | 'must-start';
   constraint_date?: string;
-  deadline?: string;
-  wbs_number?: string;
-  level: number;
+  constraint_type?: 'asap' | 'start-no-earlier' | 'must-finish' | 'finish-no-later' | 'start-no-later' | 'must-start';
   created_at: string;
+  deadline?: string;
+  dependencies?: string[];
+  description?: string;
+  duration: number;
+  end_date: string;
+  id: string;
+  level: number;
+  name: string;
+  parent_task_id?: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  progress: number;
+  project_id: string;
+  start_date: string;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
   updated_at: string;
+  wbs_number?: string;
 }
 
 export interface TaskLink {
+  created_at: string;
   id: string;
+  lag: number;
+  link_type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   project_id: string;
   source_task_id: string;
   target_task_id: string;
-  link_type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag: number;
-  created_at: string;
   updated_at: string;
 }
 
 export interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
-  status: string;
-  created_by: string;
   assigned_to?: string;
   created_at: string;
+  created_by: string;
+  description?: string;
+  end_date: string;
+  id: string;
+  name: string;
+  start_date: string;
+  status: string;
   updated_at: string;
 }
 
 export interface Calendar {
+  created_at: string;
+  holidays: string[];
   id: string;
   name: string;
-  working_days: number[];
-  working_hours: { start: string; end: string };
-  holidays: string[];
-  created_at: string;
   updated_at: string;
+  working_days: number[];
+  working_hours: { end: string, start: string; };
 }
 
 export interface RescheduleSettings {
-  skipWeekends: boolean;
-  respectConstraints: boolean;
-  forwardPass: boolean;
   backwardPass: boolean;
+  forwardPass: boolean;
   levelResources: boolean;
   maxDuration?: number;
+  respectConstraints: boolean;
+  skipWeekends: boolean;
 }
 
 export interface RescheduleChange {
-  taskId: string;
-  fieldName: string;
-  oldValue: string;
-  newValue: string;
   changeType: 'moved_forward' | 'moved_backward' | 'duration_changed';
+  fieldName: string;
+  newValue: string;
+  oldValue: string;
   reason: string;
+  taskId: string;
 }
 
 export interface RescheduleOperation {
-  id: string;
-  projectId: string;
-  userId: string;
-  operationType: 'forward_pass' | 'backward_pass' | 'full_reschedule';
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  settings: RescheduleSettings;
   changesCount: number;
-  createdAt: string;
   completedAt?: string;
+  createdAt: string;
+  id: string;
+  operationType: 'forward_pass' | 'backward_pass' | 'full_reschedule';
+  projectId: string;
+  settings: RescheduleSettings;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  userId: string;
 }
 
 export interface RescheduleResult {
-  success: boolean;
-  operationId: string;
   changes: RescheduleChange[];
+  error?: string;
+  operationId: string;
+  success: boolean;
   summary: {
-    tasksProcessed: number;
     tasksChanged: number;
+    tasksProcessed: number;
     totalDaysShifted: number;
   };
-  error?: string;
 }
 
 class RescheduleEngineService {

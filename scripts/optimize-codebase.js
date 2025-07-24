@@ -13,7 +13,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 class CodebaseOptimizer {
   constructor() {
@@ -241,7 +240,7 @@ class CodebaseOptimizer {
 
     // Analyze ESLint configuration
     try {
-      const eslintConfig = JSON.parse(fs.readFileSync('eslint.config.js', 'utf8'));
+      fs.readFileSync('eslint.config.js', 'utf8');
       optimizations.push({
         type: 'quality',
         message: 'ESLint configuration found - good for code consistency',

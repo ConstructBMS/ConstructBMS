@@ -10,7 +10,7 @@ import {
   Users,
   AlertCircle,
 } from 'lucide-react';
-import { calendarService } from '../../services/calendarService';
+import { CalendarService } from '../../services/calendarService';
 import type { CalendarEvent } from '../../services/calendarService';
 import { demoDataService } from '../../services/demoDataService';
 import type { DemoCalendarEvent } from '../../services/demoDataService';

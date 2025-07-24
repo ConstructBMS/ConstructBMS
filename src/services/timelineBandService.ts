@@ -1,40 +1,41 @@
 import { supabase } from './supabase';
 
 export interface TimelinePhase {
-  id: string;
-  project_id: string;
-  name: string;
-  description?: string;
-  start_date: string;
-  end_date: string;
   color: string;
-  sequence: number;
-  is_active: boolean;
-  created_by?: string;
   created_at: string;
+  created_by?: string;
+  description?: string;
+  end_date: string;
+  id: string;
+  is_active: boolean;
+  name: string;
+  project_id: string;
+  sequence: number;
+  start_date: string;
   updated_at: string;
 }
 
 export type ZoomLevel = 'day' | 'week' | 'month' | 'quarter' | 'year';
 
 export interface TimelineScale {
-  level: ZoomLevel;
-  unitWidth: number; // pixels per unit
+  // pixels per unit
   labelFormat: string;
+  level: ZoomLevel; 
   majorTickInterval: number;
   minorTickInterval: number;
+  unitWidth: number;
 }
 
 export interface TimelineConfig {
-  project_id: string;
-  zoom_level: ZoomLevel;
-  start_date: string;
+  created_at: string;
   end_date: string;
+  project_id: string;
+  show_holidays: boolean;
   show_today_marker: boolean;
   show_weekends: boolean;
-  show_holidays: boolean;
-  created_at: string;
+  start_date: string;
   updated_at: string;
+  zoom_level: ZoomLevel;
 }
 
 class TimelineBandService {

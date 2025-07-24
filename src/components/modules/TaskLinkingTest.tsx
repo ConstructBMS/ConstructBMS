@@ -20,14 +20,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Card } from '../ui';
 
 interface GanttTask {
+  assignedTo?: string;
+  endDate: Date;
+  float: number;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
   progress: number;
+  startDate: Date;
   status: string;
-  assignedTo?: string;
-  float: number;
 }
 
 const TaskLinkingTest: React.FC = () => {

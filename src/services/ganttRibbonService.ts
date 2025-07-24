@@ -2,9 +2,9 @@ import { ganttTaskService } from './ganttTaskService';
 import type { Task } from './ganttTaskService';
 
 export interface RibbonActionResult {
-  success: boolean;
-  message: string;
   data?: any;
+  message: string;
+  success: boolean;
 }
 
 export class GanttRibbonService {

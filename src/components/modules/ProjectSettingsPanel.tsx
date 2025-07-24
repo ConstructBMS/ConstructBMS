@@ -17,30 +17,30 @@ import { Card } from '../ui';
 import { supabase } from '../../services/supabase';
 
 interface ProjectSettings {
-  id: string;
-  name: string;
-  description: string;
-  language: string;
-  currency: string;
-  tags: string[];
-  default_calendar: string;
-  print_profile: string;
   constraint_settings: {
     allow_negative_float: boolean;
-    respect_calendars: boolean;
     auto_level_resources: boolean;
     critical_path_method: 'forward' | 'backward' | 'both';
     default_lag: number;
+    respect_calendars: boolean;
   };
   created_at: string;
+  currency: string;
+  default_calendar: string;
+  description: string;
+  id: string;
+  language: string;
+  name: string;
+  print_profile: string;
+  tags: string[];
   updated_at: string;
 }
 
 interface ProjectSettingsPanelProps {
-  projectId: string;
   isOpen: boolean;
   onClose: () => void;
   onSave?: (settings: ProjectSettings) => void;
+  projectId: string;
 }
 
 const ProjectSettingsPanel: React.FC<ProjectSettingsPanelProps> = ({

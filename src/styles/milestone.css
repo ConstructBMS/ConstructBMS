@@ -1,0 +1,306 @@
+/* Milestone Management Styles */
+
+.milestone-manager {
+  @apply relative;
+}
+
+.milestone-controls {
+  @apply flex items-center justify-between mb-4;
+}
+
+.milestone-display-area {
+  @apply relative border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900;
+}
+
+.milestone-display {
+  @apply absolute z-10;
+}
+
+.milestone-diamond {
+  @apply relative cursor-pointer transition-all duration-200;
+}
+
+.milestone-diamond:hover {
+  @apply scale-110 shadow-lg;
+}
+
+.milestone-diamond.selected {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+.milestone-diamond.demo {
+  @apply animate-pulse;
+}
+
+.milestone-diamond.critical {
+  @apply ring-2 ring-red-500 ring-offset-2;
+}
+
+/* Ribbon Section Styles */
+.ribbon-section {
+  @apply flex flex-col items-center min-w-fit;
+}
+
+.ribbon-buttons {
+  @apply flex items-center space-x-1;
+}
+
+.ribbon-button {
+  @apply px-3 py-1.5 text-xs font-medium rounded transition-colors;
+}
+
+.ribbon-button:not(:disabled) {
+  @apply bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600;
+}
+
+.ribbon-button:disabled {
+  @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+}
+
+.ribbon-label {
+  @apply text-xs text-center mt-1 text-gray-500;
+}
+
+.ribbon-demo-indicator {
+  @apply mt-2 px-2 py-1 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded text-xs;
+}
+
+/* Milestone Modal Styles */
+.milestone-modal {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.milestone-modal-content {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+.milestone-modal-header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700;
+}
+
+.milestone-modal-form {
+  @apply p-6 space-y-4;
+}
+
+.milestone-form-group {
+  @apply space-y-2;
+}
+
+.milestone-form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+
+.milestone-form-input {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+.milestone-form-input:disabled {
+  @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+}
+
+.milestone-form-select {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+.milestone-form-textarea {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white;
+}
+
+.milestone-form-checkbox {
+  @apply rounded border-gray-300 text-red-600 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50;
+}
+
+.milestone-form-checkbox:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.milestone-modal-actions {
+  @apply flex justify-end space-x-3 pt-4;
+}
+
+.milestone-btn {
+  @apply px-4 py-2 text-sm font-medium rounded transition-colors;
+}
+
+.milestone-btn-primary {
+  @apply text-white bg-blue-600 border border-transparent hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.milestone-btn-primary:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.milestone-btn-secondary {
+  @apply text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600;
+}
+
+.milestone-btn-danger {
+  @apply text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+}
+
+/* Demo Mode Styles */
+.demo-mode-indicator {
+  @apply bg-pink-50 dark:bg-pink-900/20 border-b border-pink-200 dark:border-pink-800 px-6 py-3;
+}
+
+.demo-mode-text {
+  @apply text-pink-800 dark:text-pink-200;
+}
+
+.demo-mode-subtext {
+  @apply text-pink-600 dark:text-pink-300;
+}
+
+.demo-mode-warning {
+  @apply bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-lg p-4;
+}
+
+.demo-mode-warning-text {
+  @apply text-pink-800 dark:text-pink-200;
+}
+
+.demo-mode-warning-list {
+  @apply text-pink-700 dark:text-pink-300;
+}
+
+/* Error Styles */
+.milestone-error {
+  @apply bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4;
+}
+
+.milestone-error-list {
+  @apply text-sm text-red-600 dark:text-red-400 space-y-1;
+}
+
+/* Tooltip Styles */
+.milestone-tooltip {
+  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50;
+}
+
+.milestone-tooltip-content {
+  @apply bg-black text-white text-xs px-2 py-1 rounded shadow-md whitespace-nowrap;
+}
+
+.milestone-tooltip-arrow {
+  @apply absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black;
+}
+
+/* Action Button Styles */
+.milestone-action-buttons {
+  @apply absolute top-full left-1/2 transform -translate-x-1/2 mt-1 flex space-x-1 z-40;
+}
+
+.milestone-action-btn {
+  @apply w-6 h-6 text-white rounded text-xs transition-colors;
+}
+
+.milestone-action-btn-edit {
+  @apply bg-blue-500 hover:bg-blue-600;
+}
+
+.milestone-action-btn-delete {
+  @apply bg-red-500 hover:bg-red-600;
+}
+
+/* Timeline Styles */
+.milestone-timeline {
+  @apply relative border-t border-gray-300 dark:border-gray-600;
+}
+
+.milestone-timeline-header {
+  @apply flex items-center justify-between mb-2 text-xs text-gray-600 dark:text-gray-400;
+}
+
+.milestone-timeline-grid {
+  @apply relative;
+}
+
+/* List Styles */
+.milestone-list {
+  @apply space-y-2;
+}
+
+.milestone-list-item {
+  @apply p-3 border rounded-lg transition-colors;
+}
+
+.milestone-list-item:hover {
+  @apply border-gray-300 dark:border-gray-600;
+}
+
+.milestone-list-item.selected {
+  @apply border-blue-500 bg-blue-50 dark:bg-blue-900/20;
+}
+
+.milestone-list-item-content {
+  @apply flex items-center justify-between;
+}
+
+.milestone-list-item-info {
+  @apply flex items-center space-x-3;
+}
+
+.milestone-list-item-details {
+  @apply flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400;
+}
+
+.milestone-list-item-actions {
+  @apply flex items-center space-x-2;
+}
+
+.milestone-list-item-action-btn {
+  @apply p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400;
+}
+
+.milestone-list-item-action-btn-delete {
+  @apply p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400;
+}
+
+/* Empty State Styles */
+.milestone-empty-state {
+  @apply text-center py-8 text-gray-500 dark:text-gray-400;
+}
+
+.milestone-empty-state-icon {
+  @apply w-12 h-12 mx-auto mb-3 opacity-50;
+}
+
+.milestone-empty-state-text {
+  @apply text-sm;
+}
+
+.milestone-empty-state-subtext {
+  @apply text-xs mt-1;
+}
+
+/* Loading State Styles */
+.milestone-loading {
+  @apply flex items-center justify-center p-4 text-gray-500;
+}
+
+.milestone-loading-icon {
+  @apply w-4 h-4 mr-2 animate-spin;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .milestone-controls {
+    @apply flex-col items-start space-y-2;
+  }
+  
+  .milestone-modal-content {
+    @apply mx-2 max-w-full;
+  }
+  
+  .milestone-action-buttons {
+    @apply flex-col space-y-1 space-x-0;
+  }
+  
+  .milestone-list-item-content {
+    @apply flex-col items-start space-y-2;
+  }
+  
+  .milestone-list-item-actions {
+    @apply w-full justify-end;
+  }
+} 

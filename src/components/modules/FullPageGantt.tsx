@@ -26,62 +26,63 @@ import {
   BuildingOfficeIcon as BuildingOfficeIconSolid, BanknotesIcon as BanknotesIconSolid,
   ChevronUpIcon, GlobeAltIcon
 } from '@heroicons/react/24/outline';
+import BaselineIntegration from './BaselineIntegration';
 
 interface FullPageGanttProps {
   project?: any;
 }
 
 interface GanttTask extends Task {
-  projectId?: string;
-  wbsId?: string;
-  parentId?: string | null;
-  isCritical?: boolean;
-  constraints?: {
-    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
-    date?: Date;
+  actuals?: {
+    cost?: number;
+    duration?: number;
+    end?: Date;
+    progress?: number;
+    start?: Date;
   };
+  baseline?: {
+    duration: number;
+    end: Date;
+    progress: number;
+    start: Date;
+  };
+  constraints?: {
+    date?: Date;
+    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
+  };
+  customFields?: Record<string, any>;
+  isCritical?: boolean;
+  notes?: string;
+  parentId?: string | null;
   powerProjectDependencies?: Array<{
     id: string;
-    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
     lag?: number;
+    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   }>;
+  projectId?: string;
   resources?: Array<{
+    cost?: number;
     id: string;
     name: string;
     type: 'work' | 'material' | 'cost';
     units: number;
-    cost?: number;
   }>;
-  baseline?: {
-    start: Date;
-    end: Date;
-    duration: number;
-    progress: number;
-  };
-  actuals?: {
-    start?: Date;
-    end?: Date;
-    duration?: number;
-    progress?: number;
-    cost?: number;
-  };
-  notes?: string;
-  customFields?: Record<string, any>;
+  wbsId?: string;
 }
 
 interface Resource {
+  availability: number;
+  calendar?: {
+    holidays: Date[];
+    workingDays: number[];
+    workingHours: { end: string, start: string; };
+  };
+  costPerUnit?: number;
+  currentUtilization: number;
   id: string;
+  maxUnits: number;
   name: string;
   type: 'work' | 'material' | 'cost';
-  maxUnits: number;
-  costPerUnit?: number;
-  calendar?: {
-    workingDays: number[];
-    workingHours: { start: string; end: string };
-    holidays: Date[];
-  };
-  availability: number;
-  currentUtilization: number;
 }
 
 const FullPageGantt: React.FC<FullPageGanttProps> = ({ project }) => {
@@ -408,7 +409,22 @@ const FullPageGantt: React.FC<FullPageGanttProps> = ({ project }) => {
   }
 
   return (
-    <div className="full-page-gantt h-screen flex flex-col bg-white dark:bg-gray-900">
+    <BaselineIntegration
+      projectId={project?.id || 'default-project'}
+      currentTasks={tasks.map(task => ({
+        id: task.id,
+        name: task.name,
+        startDate: task.start,
+        endDate: task.end,
+        percentComplete: task.progress,
+        isMilestone: task.type === 'milestone',
+        parentId: task.parentId
+      }))}
+      onBaselineChange={(baseline) => {
+        console.log('Baseline changed:', baseline);
+      }}
+    >
+      <div className="full-page-gantt h-screen flex flex-col bg-white dark:bg-gray-900">
       {/* PowerProject-Style Title Bar */}
       <div className="title-bar bg-blue-600 text-white px-4 py-2 flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -794,6 +810,7 @@ const FullPageGantt: React.FC<FullPageGanttProps> = ({ project }) => {
         </div>
       </div>
     </div>
+    </BaselineIntegration>
   );
 };
 

@@ -17,12 +17,12 @@ import { Card } from '../ui';
 import ActivityTemplatesModal from './ActivityTemplatesModal';
 
 interface TaskActivitiesProps {
+  onActivitiesChange?: (activities: TaskActivity[]) => void;
+  onActivityDelete?: (activityId: string) => void;
+  onActivityUpdate?: (activityId: string, updates: Partial<TaskActivity>) => void;
   taskId: string;
   userId: string;
   userRole: string;
-  onActivityUpdate?: (activityId: string, updates: Partial<TaskActivity>) => void;
-  onActivityDelete?: (activityId: string) => void;
-  onActivitiesChange?: (activities: TaskActivity[]) => void;
 }
 
 const TaskActivities: React.FC<TaskActivitiesProps> = ({

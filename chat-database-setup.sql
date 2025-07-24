@@ -282,15 +282,40 @@ CREATE TABLE IF NOT EXISTS asta_tasks (
     parent_task_id UUID REFERENCES asta_tasks(id) ON DELETE CASCADE,
     dependencies TEXT[], -- array of task IDs this task depends on
     -- Task constraints and deadlines
-    constraint_type VARCHAR(50) CHECK (constraint_type IN ('asap', 'start-no-earlier', 'must-finish', 'finish-no-later', 'start-no-later', 'must-start')),
+    constraint_type VARCHAR(50) CHECK (constraint_type IN ('none', 'MSO', 'SNET', 'FNLT', 'MFO')),
     constraint_date DATE,
+    constraint_violated BOOLEAN DEFAULT FALSE,
     deadline DATE,
     -- WBS numbering
     wbs_number VARCHAR(50),
     level INTEGER DEFAULT 0,
+    -- Progress tracking fields
+    percent_complete INTEGER DEFAULT 0 CHECK (percent_complete >= 0 AND percent_complete <= 100),
+    actual_start_date DATE,
+    actual_finish_date DATE,
+    progress_updated_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    progress_updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    demo BOOLEAN DEFAULT false,
+    -- Calendar assignment
+    calendar_id UUID REFERENCES programme_calendars(id) ON DELETE SET NULL,
     -- Additional fields
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Programme Tasks table (for constraint management)
+CREATE TABLE IF NOT EXISTS programme_tasks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    constraint_type VARCHAR(50) DEFAULT 'none' CHECK (constraint_type IN ('none', 'MSO', 'SNET', 'FNLT', 'MFO')),
+    constraint_date DATE,
+    constraint_reason TEXT,
+    constraint_violated BOOLEAN DEFAULT FALSE,
+    demo BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(task_id)
 );
 
 -- Asta Resources table
@@ -446,6 +471,19 @@ CREATE INDEX IF NOT EXISTS idx_asta_tasks_constraint_type ON asta_tasks(constrai
 CREATE INDEX IF NOT EXISTS idx_asta_tasks_deadline ON asta_tasks(deadline);
 CREATE INDEX IF NOT EXISTS idx_asta_tasks_wbs_number ON asta_tasks(wbs_number);
 CREATE INDEX IF NOT EXISTS idx_asta_tasks_level ON asta_tasks(level);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_percent_complete ON asta_tasks(percent_complete);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_actual_start_date ON asta_tasks(actual_start_date);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_actual_finish_date ON asta_tasks(actual_finish_date);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_progress_updated_at ON asta_tasks(progress_updated_at);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_demo ON asta_tasks(demo);
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_calendar_id ON asta_tasks(calendar_id);
+
+-- Indexes for programme_tasks
+CREATE INDEX IF NOT EXISTS idx_programme_tasks_project_id ON programme_tasks(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_tasks_task_id ON programme_tasks(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_tasks_constraint_type ON programme_tasks(constraint_type);
+CREATE INDEX IF NOT EXISTS idx_programme_tasks_constraint_violated ON programme_tasks(constraint_violated);
+CREATE INDEX IF NOT EXISTS idx_programme_tasks_demo ON programme_tasks(demo);
 
 -- Indexes for asta_resources
 CREATE INDEX IF NOT EXISTS idx_asta_resources_project_id ON asta_resources(project_id);
@@ -522,6 +560,10 @@ CREATE TRIGGER update_asta_projects_updated_at
 
 CREATE TRIGGER update_asta_tasks_updated_at 
     BEFORE UPDATE ON asta_tasks 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_programme_tasks_updated_at 
+    BEFORE UPDATE ON programme_tasks 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_asta_resources_updated_at 
@@ -922,6 +964,337 @@ BEGIN
         }';
     END IF;
 END $$;
+
+-- =====================================================
+-- PROGRAMME TASK FLAGS TABLES
+-- =====================================================
+
+-- Programme Task Flags table
+CREATE TABLE IF NOT EXISTS programme_task_flags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    flag_color VARCHAR(10) NOT NULL CHECK (flag_color IN ('red', 'yellow', 'green', 'blue')),
+    note TEXT NOT NULL,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    demo BOOLEAN DEFAULT false,
+    UNIQUE(task_id) -- Each task can have only one flag
+);
+
+-- =====================================================
+-- PROGRAMME BASELINES TABLES
+-- =====================================================
+
+-- Programme Baselines table
+CREATE TABLE IF NOT EXISTS programme_baselines (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT false,
+    demo BOOLEAN DEFAULT false
+);
+
+-- Programme Baseline Tasks table
+CREATE TABLE IF NOT EXISTS programme_baseline_tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    baseline_id UUID NOT NULL REFERENCES programme_baselines(id) ON DELETE CASCADE,
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    baseline_start DATE NOT NULL,
+    baseline_end DATE NOT NULL,
+    percent_complete INTEGER DEFAULT 0 CHECK (percent_complete >= 0 AND percent_complete <= 100),
+    is_milestone BOOLEAN DEFAULT false,
+    parent_id UUID REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Baseline Preferences table
+CREATE TABLE IF NOT EXISTS baseline_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    show_baseline_bars BOOLEAN DEFAULT true,
+    comparison_mode VARCHAR(20) DEFAULT 'bars' CHECK (comparison_mode IN ('bars', 'variance', 'delta')),
+    active_baseline_id UUID REFERENCES programme_baselines(id) ON DELETE SET NULL,
+    demo BOOLEAN DEFAULT false,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, project_id)
+);
+
+-- Indexes for programme task flags
+CREATE INDEX IF NOT EXISTS idx_programme_task_flags_task_id ON programme_task_flags(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_flags_project_id ON programme_task_flags(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_flags_flag_color ON programme_task_flags(flag_color);
+CREATE INDEX IF NOT EXISTS idx_programme_task_flags_created_at ON programme_task_flags(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_task_flags_demo ON programme_task_flags(demo);
+
+-- Indexes for programme baselines
+CREATE INDEX IF NOT EXISTS idx_programme_baselines_project_id ON programme_baselines(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_baselines_created_by ON programme_baselines(created_by);
+CREATE INDEX IF NOT EXISTS idx_programme_baselines_created_at ON programme_baselines(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_baselines_is_active ON programme_baselines(is_active);
+CREATE INDEX IF NOT EXISTS idx_programme_baselines_demo ON programme_baselines(demo);
+
+-- Indexes for programme baseline tasks
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_baseline_id ON programme_baseline_tasks(baseline_id);
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_task_id ON programme_baseline_tasks(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_baseline_start ON programme_baseline_tasks(baseline_start);
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_baseline_end ON programme_baseline_tasks(baseline_end);
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_parent_id ON programme_baseline_tasks(parent_id);
+CREATE INDEX IF NOT EXISTS idx_programme_baseline_tasks_demo ON programme_baseline_tasks(demo);
+
+-- Indexes for baseline preferences
+CREATE INDEX IF NOT EXISTS idx_baseline_preferences_user_id ON baseline_preferences(user_id);
+CREATE INDEX IF NOT EXISTS idx_baseline_preferences_project_id ON baseline_preferences(project_id);
+CREATE INDEX IF NOT EXISTS idx_baseline_preferences_active_baseline_id ON baseline_preferences(active_baseline_id);
+CREATE INDEX IF NOT EXISTS idx_baseline_preferences_demo ON baseline_preferences(demo);
+
+-- RLS Policies for programme task flags
+ALTER TABLE programme_task_flags ENABLE ROW LEVEL SECURITY;
+
+-- Users can view flags for projects they have access to
+CREATE POLICY "Users can view programme task flags" ON programme_task_flags
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_task_flags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.flag.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can insert flags if they have edit permission
+CREATE POLICY "Users can insert programme task flags" ON programme_task_flags
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_task_flags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.flag.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update flags if they have edit permission
+CREATE POLICY "Users can update programme task flags" ON programme_task_flags
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_task_flags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.flag.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete flags if they have edit permission
+CREATE POLICY "Users can delete programme task flags" ON programme_task_flags
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_task_flags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.flag.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme tasks (constraints)
+ALTER TABLE programme_tasks ENABLE ROW LEVEL SECURITY;
+
+-- Users can view constraints for projects they have access to
+CREATE POLICY "Users can view programme task constraints" ON programme_tasks
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tasks.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.constraints.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can insert constraints if they have assign permission
+CREATE POLICY "Users can insert programme task constraints" ON programme_tasks
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tasks.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.constraints.assign' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update constraints if they have assign permission
+CREATE POLICY "Users can update programme task constraints" ON programme_tasks
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tasks.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.constraints.assign' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete constraints if they have assign permission
+CREATE POLICY "Users can delete programme task constraints" ON programme_tasks
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tasks.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.constraints.assign' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme baselines
+ALTER TABLE programme_baselines ENABLE ROW LEVEL SECURITY;
+
+-- Users can view baselines for projects they have access to
+CREATE POLICY "Users can view programme baselines" ON programme_baselines
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_baselines.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create baselines if they have baseline create permissions
+CREATE POLICY "Users can create programme baselines" ON programme_baselines
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_baselines.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.create' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update baselines if they have baseline manage permissions
+CREATE POLICY "Users can update programme baselines" ON programme_baselines
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_baselines.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete baselines if they have baseline manage permissions
+CREATE POLICY "Users can delete programme baselines" ON programme_baselines
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_baselines.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme baseline tasks
+ALTER TABLE programme_baseline_tasks ENABLE ROW LEVEL SECURITY;
+
+-- Users can view baseline tasks for projects they have access to
+CREATE POLICY "Users can view programme baseline tasks" ON programme_baseline_tasks
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM programme_baselines b
+            JOIN asta_projects p ON p.id = b.project_id
+            WHERE b.id = programme_baseline_tasks.baseline_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create baseline tasks if they have baseline create permissions
+CREATE POLICY "Users can create programme baseline tasks" ON programme_baseline_tasks
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM programme_baselines b
+            JOIN asta_projects p ON p.id = b.project_id
+            WHERE b.id = programme_baseline_tasks.baseline_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.create' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update baseline tasks if they have baseline manage permissions
+CREATE POLICY "Users can update programme baseline tasks" ON programme_baseline_tasks
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM programme_baselines b
+            JOIN asta_projects p ON p.id = b.project_id
+            WHERE b.id = programme_baseline_tasks.baseline_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete baseline tasks if they have baseline manage permissions
+CREATE POLICY "Users can delete programme baseline tasks" ON programme_baseline_tasks
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM programme_baselines b
+            JOIN asta_projects p ON p.id = b.project_id
+            WHERE b.id = programme_baseline_tasks.baseline_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.baseline.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for baseline preferences
+ALTER TABLE baseline_preferences ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own baseline preferences
+CREATE POLICY "Users can view their own baseline preferences" ON baseline_preferences
+    FOR SELECT USING (user_id = auth.uid());
+
+-- Users can create their own baseline preferences
+CREATE POLICY "Users can create their own baseline preferences" ON baseline_preferences
+    FOR INSERT WITH CHECK (user_id = auth.uid());
+
+-- Users can update their own baseline preferences
+CREATE POLICY "Users can update their own baseline preferences" ON baseline_preferences
+    FOR UPDATE USING (user_id = auth.uid());
+
+-- Users can delete their own baseline preferences
+CREATE POLICY "Users can delete their own baseline preferences" ON baseline_preferences
+    FOR DELETE USING (user_id = auth.uid());
 
 -- =====================================================
 -- STEP 6: Insert demo data
@@ -1556,3 +1929,1110 @@ INSERT INTO project_user_permissions (project_id, user_id, permissions) VALUES
     ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', ARRAY['view_tasks', 'edit_tasks']),
     ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000003', ARRAY['view_tasks'])
 ON CONFLICT (project_id, user_id) DO NOTHING; 
+
+-- =====================================================
+-- AUDIT TRAIL TABLES
+-- =====================================================
+
+-- Programme Audit Logs table
+CREATE TABLE IF NOT EXISTS programme_audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID REFERENCES asta_projects(id) ON DELETE CASCADE,
+    task_id UUID REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    action_type VARCHAR(50) NOT NULL,
+    description TEXT NOT NULL,
+    before JSONB,
+    after JSONB,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for audit logs
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_project_id ON programme_audit_logs(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_task_id ON programme_audit_logs(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_user_id ON programme_audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_action_type ON programme_audit_logs(action_type);
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_created_at ON programme_audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_audit_logs_demo ON programme_audit_logs(demo);
+
+-- RLS Policies for audit logs
+ALTER TABLE programme_audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- Users can view audit logs for projects they have access to
+CREATE POLICY "Users can view project audit logs" ON programme_audit_logs
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_audit_logs.project_id 
+            AND (
+                created_by = auth.uid() OR 
+                assigned_to = auth.uid() OR
+                EXISTS (
+                    SELECT 1 FROM asta_tasks 
+                    WHERE project_id = asta_projects.id 
+                    AND assigned_to = auth.uid()
+                )
+            )
+        )
+    );
+
+-- Users can insert audit logs for projects they have access to
+CREATE POLICY "Users can insert project audit logs" ON programme_audit_logs
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_audit_logs.project_id 
+            AND (
+                created_by = auth.uid() OR 
+                assigned_to = auth.uid() OR
+                EXISTS (
+                    SELECT 1 FROM asta_tasks 
+                    WHERE project_id = asta_projects.id 
+                    AND assigned_to = auth.uid()
+                )
+            )
+        )
+    );
+
+-- Only admins can delete audit logs
+CREATE POLICY "Admins can delete audit logs" ON programme_audit_logs
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM user_roles 
+            WHERE user_id = auth.uid() 
+            AND role IN ('admin', 'super_admin')
+        )
+    );
+
+-- Trigger to update updated_at column
+CREATE OR REPLACE FUNCTION update_programme_audit_logs_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.created_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_programme_audit_logs_updated_at
+    BEFORE UPDATE ON programme_audit_logs
+    FOR EACH ROW
+    EXECUTE FUNCTION update_programme_audit_logs_updated_at(); 
+
+-- =====================================================
+-- PROGRAMME WORKING CALENDARS TABLES
+-- =====================================================
+
+-- Programme Calendars table
+CREATE TABLE IF NOT EXISTS programme_calendars (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL DEFAULT 'Default',
+    workdays TEXT[] NOT NULL DEFAULT ARRAY['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    shift_start VARCHAR(5) NOT NULL DEFAULT '08:00',
+    shift_end VARCHAR(5) NOT NULL DEFAULT '16:00',
+    use_global_holidays BOOLEAN DEFAULT true,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    demo BOOLEAN DEFAULT false,
+    UNIQUE(project_id, name)
+);
+
+-- Programme Calendar Exceptions table
+CREATE TABLE IF NOT EXISTS programme_calendar_exceptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    calendar_id UUID NOT NULL REFERENCES programme_calendars(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('non-working', 'custom-shift')),
+    custom_shift_start VARCHAR(5),
+    custom_shift_end VARCHAR(5),
+    description TEXT,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    demo BOOLEAN DEFAULT false,
+    UNIQUE(calendar_id, date)
+);
+
+-- Global Holidays table (for system-wide holidays)
+CREATE TABLE IF NOT EXISTS global_holidays (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    country VARCHAR(3) DEFAULT 'GBR',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(date, country)
+);
+
+-- Indexes for programme calendars
+CREATE INDEX IF NOT EXISTS idx_programme_calendars_project_id ON programme_calendars(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_calendars_name ON programme_calendars(name);
+CREATE INDEX IF NOT EXISTS idx_programme_calendars_demo ON programme_calendars(demo);
+CREATE INDEX IF NOT EXISTS idx_programme_calendars_created_at ON programme_calendars(created_at);
+
+-- Indexes for programme calendar exceptions
+CREATE INDEX IF NOT EXISTS idx_programme_calendar_exceptions_calendar_id ON programme_calendar_exceptions(calendar_id);
+CREATE INDEX IF NOT EXISTS idx_programme_calendar_exceptions_date ON programme_calendar_exceptions(date);
+CREATE INDEX IF NOT EXISTS idx_programme_calendar_exceptions_type ON programme_calendar_exceptions(type);
+CREATE INDEX IF NOT EXISTS idx_programme_calendar_exceptions_demo ON programme_calendar_exceptions(demo);
+
+-- Indexes for global holidays
+CREATE INDEX IF NOT EXISTS idx_global_holidays_date ON global_holidays(date);
+CREATE INDEX IF NOT EXISTS idx_global_holidays_country ON global_holidays(country);
+CREATE INDEX IF NOT EXISTS idx_global_holidays_is_active ON global_holidays(is_active);
+
+-- RLS Policies for programme_calendars
+ALTER TABLE programme_calendars ENABLE ROW LEVEL SECURITY;
+
+-- Users can view calendars for projects they have access to
+CREATE POLICY "Users can view programme calendars" ON programme_calendars
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_calendars.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can insert calendars if they have edit permission
+CREATE POLICY "Users can insert programme calendars" ON programme_calendars
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_calendars.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update calendars if they have edit permission
+CREATE POLICY "Users can update programme calendars" ON programme_calendars
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_calendars.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete calendars if they have edit permission
+CREATE POLICY "Users can delete programme calendars" ON programme_calendars
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_calendars.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme_calendar_exceptions
+ALTER TABLE programme_calendar_exceptions ENABLE ROW LEVEL SECURITY;
+
+-- Users can view exceptions for calendars they have access to
+CREATE POLICY "Users can view programme calendar exceptions" ON programme_calendar_exceptions
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM programme_calendars pc
+            JOIN asta_projects ap ON pc.project_id = ap.id
+            WHERE pc.id = programme_calendar_exceptions.calendar_id
+            AND (ap.manager_id = auth.uid() OR ap.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can insert exceptions if they have edit permission
+CREATE POLICY "Users can insert programme calendar exceptions" ON programme_calendar_exceptions
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM programme_calendars pc
+            JOIN asta_projects ap ON pc.project_id = ap.id
+            WHERE pc.id = programme_calendar_exceptions.calendar_id
+            AND (ap.manager_id = auth.uid() OR ap.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update exceptions if they have edit permission
+CREATE POLICY "Users can update programme calendar exceptions" ON programme_calendar_exceptions
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM programme_calendars pc
+            JOIN asta_projects ap ON pc.project_id = ap.id
+            WHERE pc.id = programme_calendar_exceptions.calendar_id
+            AND (ap.manager_id = auth.uid() OR ap.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete exceptions if they have edit permission
+CREATE POLICY "Users can delete programme calendar exceptions" ON programme_calendar_exceptions
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM programme_calendars pc
+            JOIN asta_projects ap ON pc.project_id = ap.id
+            WHERE pc.id = programme_calendar_exceptions.calendar_id
+            AND (ap.manager_id = auth.uid() OR ap.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.calendar.edit' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for global_holidays (read-only for all authenticated users)
+ALTER TABLE global_holidays ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view global holidays" ON global_holidays
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Insert some default UK holidays for 2024-2025
+INSERT INTO global_holidays (name, date, country) VALUES
+    ('New Year''s Day', '2024-01-01', 'GBR'),
+    ('Good Friday', '2024-03-29', 'GBR'),
+    ('Easter Monday', '2024-04-01', 'GBR'),
+    ('Early May Bank Holiday', '2024-05-06', 'GBR'),
+    ('Spring Bank Holiday', '2024-05-27', 'GBR'),
+    ('Summer Bank Holiday', '2024-08-26', 'GBR'),
+    ('Christmas Day', '2024-12-25', 'GBR'),
+    ('Boxing Day', '2024-12-26', 'GBR'),
+    ('New Year''s Day', '2025-01-01', 'GBR'),
+    ('Good Friday', '2025-04-18', 'GBR'),
+    ('Easter Monday', '2025-04-21', 'GBR'),
+    ('Early May Bank Holiday', '2025-05-05', 'GBR'),
+    ('Spring Bank Holiday', '2025-05-26', 'GBR'),
+    ('Summer Bank Holiday', '2025-08-25', 'GBR'),
+    ('Christmas Day', '2025-12-25', 'GBR'),
+    ('Boxing Day', '2025-12-26', 'GBR')
+ON CONFLICT (date, country) DO NOTHING;
+
+-- Triggers for updated_at columns
+CREATE OR REPLACE FUNCTION update_programme_calendars_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_programme_calendars_updated_at
+    BEFORE UPDATE ON programme_calendars
+    FOR EACH ROW
+    EXECUTE FUNCTION update_programme_calendars_updated_at();
+
+CREATE OR REPLACE FUNCTION update_global_holidays_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_global_holidays_updated_at
+    BEFORE UPDATE ON global_holidays
+    FOR EACH ROW
+    EXECUTE FUNCTION update_global_holidays_updated_at();
+
+-- =====================================================
+-- TIMELINE ZOOM SETTINGS TABLES
+-- =====================================================
+
+-- Timeline Zoom Settings table
+CREATE TABLE IF NOT EXISTS timeline_zoom_settings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    project_id VARCHAR(255) NOT NULL,
+    zoom_level VARCHAR(20) NOT NULL CHECK (zoom_level IN ('hour', 'day', 'week', 'month')),
+    scroll_position_x INTEGER DEFAULT 0,
+    scroll_position_y INTEGER DEFAULT 0,
+    visible_range_start TIMESTAMP WITH TIME ZONE NOT NULL,
+    visible_range_end TIMESTAMP WITH TIME ZONE NOT NULL,
+    demo BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, project_id)
+);
+
+-- Indexes for timeline zoom settings
+CREATE INDEX IF NOT EXISTS idx_timeline_zoom_settings_user_id ON timeline_zoom_settings(user_id);
+CREATE INDEX IF NOT EXISTS idx_timeline_zoom_settings_project_id ON timeline_zoom_settings(project_id);
+CREATE INDEX IF NOT EXISTS idx_timeline_zoom_settings_zoom_level ON timeline_zoom_settings(zoom_level);
+CREATE INDEX IF NOT EXISTS idx_timeline_zoom_settings_demo ON timeline_zoom_settings(demo);
+CREATE INDEX IF NOT EXISTS idx_timeline_zoom_settings_updated_at ON timeline_zoom_settings(updated_at);
+
+-- RLS Policies for timeline_zoom_settings
+ALTER TABLE timeline_zoom_settings ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own zoom settings
+CREATE POLICY "Users can view their own timeline zoom settings" ON timeline_zoom_settings
+    FOR SELECT USING (auth.uid() = user_id);
+
+-- Users can insert their own zoom settings
+CREATE POLICY "Users can insert their own timeline zoom settings" ON timeline_zoom_settings
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Users can update their own zoom settings
+CREATE POLICY "Users can update their own timeline zoom settings" ON timeline_zoom_settings
+    FOR UPDATE USING (auth.uid() = user_id);
+
+-- Users can delete their own zoom settings
+CREATE POLICY "Users can delete their own timeline zoom settings" ON timeline_zoom_settings
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Trigger for updated_at column
+CREATE OR REPLACE FUNCTION update_timeline_zoom_settings_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_timeline_zoom_settings_updated_at
+    BEFORE UPDATE ON timeline_zoom_settings
+    FOR EACH ROW
+    EXECUTE FUNCTION update_timeline_zoom_settings_updated_at();
+
+-- =====================================================
+-- END OF TIMELINE ZOOM SETTINGS TABLES
+-- =====================================================
+
+-- =====================================================
+-- END OF PROGRAMME WORKING CALENDARS TABLES
+-- =====================================================
+
+-- =====================================================
+-- PROGRAMME TASK TAGS TABLES
+-- =====================================================
+
+-- Programme Tags table
+CREATE TABLE IF NOT EXISTS programme_tags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    label VARCHAR(255) NOT NULL,
+    color VARCHAR(7) NOT NULL DEFAULT '#3b82f6', -- Hex color code
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    is_global BOOLEAN DEFAULT false,
+    project_id UUID REFERENCES asta_projects(id) ON DELETE CASCADE,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(label, project_id) -- Prevent duplicate labels within a project
+);
+
+-- Add tagId column to asta_tasks table if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'asta_tasks' AND column_name = 'tag_id') THEN
+        ALTER TABLE asta_tasks ADD COLUMN tag_id UUID REFERENCES programme_tags(id) ON DELETE SET NULL;
+    END IF;
+END $$;
+
+-- Indexes for programme tags
+CREATE INDEX IF NOT EXISTS idx_programme_tags_project_id ON programme_tags(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_tags_created_by ON programme_tags(created_by);
+CREATE INDEX IF NOT EXISTS idx_programme_tags_is_global ON programme_tags(is_global);
+CREATE INDEX IF NOT EXISTS idx_programme_tags_demo ON programme_tags(demo);
+CREATE INDEX IF NOT EXISTS idx_programme_tags_label ON programme_tags(label);
+
+-- Index for asta_tasks tag_id
+CREATE INDEX IF NOT EXISTS idx_asta_tasks_tag_id ON asta_tasks(tag_id);
+
+-- RLS Policies for programme tags
+ALTER TABLE programme_tags ENABLE ROW LEVEL SECURITY;
+
+-- Users can view tags for projects they have access to
+CREATE POLICY "Users can view programme tags" ON programme_tags
+    FOR SELECT USING (
+        is_global = true OR EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.tag.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create tags if they have tag manage permissions
+CREATE POLICY "Users can create programme tags" ON programme_tags
+    FOR INSERT WITH CHECK (
+        is_global = false AND EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.tag.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update tags if they have tag manage permissions
+CREATE POLICY "Users can update programme tags" ON programme_tags
+    FOR UPDATE USING (
+        is_global = false AND EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.tag.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete tags if they have tag manage permissions
+CREATE POLICY "Users can delete programme tags" ON programme_tags
+    FOR DELETE USING (
+        is_global = false AND EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_tags.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.tag.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Trigger for programme tags updated_at
+CREATE OR REPLACE FUNCTION update_programme_tags_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_programme_tags_updated_at 
+    BEFORE UPDATE ON programme_tags 
+    FOR EACH ROW EXECUTE FUNCTION update_programme_tags_updated_at();
+
+-- =====================================================
+-- END OF PROGRAMME TASK TAGS TABLES
+-- ===================================================== 
+
+-- =====================================================
+-- CUSTOM FIELDS SETUP
+-- =====================================================
+
+-- Programme Custom Fields table
+CREATE TABLE IF NOT EXISTS programme_custom_fields (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    project_id UUID NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL CHECK (type IN ('text', 'number', 'date', 'dropdown')),
+    options TEXT[] DEFAULT '{}',
+    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    is_required BOOLEAN DEFAULT false,
+    is_visible_in_grid BOOLEAN DEFAULT true,
+    is_visible_in_modal BOOLEAN DEFAULT true,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Programme Task Custom Values table
+CREATE TABLE IF NOT EXISTS programme_task_custom_values (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    task_id UUID NOT NULL,
+    custom_field_id UUID NOT NULL REFERENCES programme_custom_fields(id) ON DELETE CASCADE,
+    value TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(task_id, custom_field_id)
+);
+
+-- Create indexes for custom fields
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_project_id ON programme_custom_fields(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_created_by ON programme_custom_fields(created_by);
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_type ON programme_custom_fields(type);
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_is_visible_in_grid ON programme_custom_fields(is_visible_in_grid);
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_is_visible_in_modal ON programme_custom_fields(is_visible_in_modal);
+CREATE INDEX IF NOT EXISTS idx_programme_custom_fields_demo ON programme_custom_fields(demo);
+
+-- Create indexes for custom field values
+CREATE INDEX IF NOT EXISTS idx_programme_task_custom_values_task_id ON programme_task_custom_values(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_custom_values_custom_field_id ON programme_task_custom_values(custom_field_id);
+
+-- Create updated_at triggers
+CREATE TRIGGER update_programme_custom_fields_updated_at 
+    BEFORE UPDATE ON programme_custom_fields 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_programme_task_custom_values_updated_at 
+    BEFORE UPDATE ON programme_task_custom_values 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- RLS Policies for programme_custom_fields
+ALTER TABLE programme_custom_fields ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Users can view custom fields for projects they have access to
+CREATE POLICY "Users can view custom fields for accessible projects" ON programme_custom_fields
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE asta_projects.id = programme_custom_fields.project_id
+            AND (
+                asta_projects.created_by = auth.uid() 
+                OR asta_projects.assigned_to = auth.uid()
+                OR asta_projects.demo = true
+            )
+        )
+    );
+
+-- Policy: Users can create custom fields for projects they own or manage
+CREATE POLICY "Users can create custom fields for owned projects" ON programme_custom_fields
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE asta_projects.id = programme_custom_fields.project_id
+            AND asta_projects.created_by = auth.uid()
+        )
+        AND created_by = auth.uid()
+    );
+
+-- Policy: Users can update custom fields for projects they own
+CREATE POLICY "Users can update custom fields for owned projects" ON programme_custom_fields
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE asta_projects.id = programme_custom_fields.project_id
+            AND asta_projects.created_by = auth.uid()
+        )
+    );
+
+-- Policy: Users can delete custom fields for projects they own
+CREATE POLICY "Users can delete custom fields for owned projects" ON programme_custom_fields
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE asta_projects.id = programme_custom_fields.project_id
+            AND asta_projects.created_by = auth.uid()
+        )
+    );
+
+-- RLS Policies for programme_task_custom_values
+ALTER TABLE programme_task_custom_values ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Users can view custom field values for tasks they have access to
+CREATE POLICY "Users can view custom field values for accessible tasks" ON programme_task_custom_values
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_tasks 
+            WHERE asta_tasks.id = programme_task_custom_values.task_id
+            AND (
+                asta_tasks.created_by = auth.uid() 
+                OR asta_tasks.assigned_to = auth.uid()
+                OR asta_tasks.demo = true
+            )
+        )
+    );
+
+-- Policy: Users can insert custom field values for tasks they can edit
+CREATE POLICY "Users can insert custom field values for editable tasks" ON programme_task_custom_values
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_tasks 
+            WHERE asta_tasks.id = programme_task_custom_values.task_id
+            AND (
+                asta_tasks.created_by = auth.uid() 
+                OR asta_tasks.assigned_to = auth.uid()
+            )
+        )
+    );
+
+-- Policy: Users can update custom field values for tasks they can edit
+CREATE POLICY "Users can update custom field values for editable tasks" ON programme_task_custom_values
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_tasks 
+            WHERE asta_tasks.id = programme_task_custom_values.task_id
+            AND (
+                asta_tasks.created_by = auth.uid() 
+                OR asta_tasks.assigned_to = auth.uid()
+            )
+        )
+    );
+
+-- Policy: Users can delete custom field values for tasks they can edit
+CREATE POLICY "Users can delete custom field values for editable tasks" ON programme_task_custom_values
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_tasks 
+            WHERE asta_tasks.id = programme_task_custom_values.task_id
+            AND (
+                asta_tasks.created_by = auth.uid() 
+                OR asta_tasks.assigned_to = auth.uid()
+            )
+        )
+    );
+
+-- =====================================================
+-- END OF CUSTOM FIELDS SETUP
+-- =====================================================
+
+-- =====================================================
+-- TASK COMMENTS & HISTORY TABLES
+-- =====================================================
+
+-- Programme Task Comments table
+CREATE TABLE IF NOT EXISTS programme_task_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    author_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    author_name VARCHAR(255) NOT NULL,
+    author_role VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    parent_comment_id UUID REFERENCES programme_task_comments(id) ON DELETE CASCADE,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Programme Task History table
+CREATE TABLE IF NOT EXISTS programme_task_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    changed_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    field_changed VARCHAR(100) NOT NULL,
+    previous_value TEXT,
+    new_value TEXT,
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for task comments
+CREATE INDEX IF NOT EXISTS idx_programme_task_comments_task_id ON programme_task_comments(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_comments_author_id ON programme_task_comments(author_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_comments_parent_id ON programme_task_comments(parent_comment_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_comments_created_at ON programme_task_comments(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_task_comments_demo ON programme_task_comments(demo);
+
+-- Indexes for task history
+CREATE INDEX IF NOT EXISTS idx_programme_task_history_task_id ON programme_task_history(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_task_history_changed_by ON programme_task_history(changed_by);
+CREATE INDEX IF NOT EXISTS idx_programme_task_history_field_changed ON programme_task_history(field_changed);
+CREATE INDEX IF NOT EXISTS idx_programme_task_history_created_at ON programme_task_history(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_task_history_demo ON programme_task_history(demo);
+
+-- RLS Policies for task comments
+ALTER TABLE programme_task_comments ENABLE ROW LEVEL SECURITY;
+
+-- Users can view comments for tasks in projects they have access to
+CREATE POLICY "Users can view task comments" ON programme_task_comments
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_tasks t
+            JOIN asta_projects p ON t.project_id = p.id
+            JOIN user_roles ur ON ur.user_id = auth.uid()
+            WHERE t.id = programme_task_comments.task_id
+            AND ur.organization_id = p.organization_id
+            AND ur.permissions ? 'programme.comments.view'
+        )
+    );
+
+-- Users can create comments if they have programme.comments.create permission
+CREATE POLICY "Users can create task comments" ON programme_task_comments
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_tasks t
+            JOIN asta_projects p ON t.project_id = p.id
+            JOIN user_roles ur ON ur.user_id = auth.uid()
+            WHERE t.id = programme_task_comments.task_id
+            AND ur.organization_id = p.organization_id
+            AND ur.permissions ? 'programme.comments.create'
+        )
+    );
+
+-- Users can update their own comments
+CREATE POLICY "Users can update own comments" ON programme_task_comments
+    FOR UPDATE USING (author_id = auth.uid());
+
+-- Users can delete their own comments
+CREATE POLICY "Users can delete own comments" ON programme_task_comments
+    FOR DELETE USING (author_id = auth.uid());
+
+-- RLS Policies for task history
+ALTER TABLE programme_task_history ENABLE ROW LEVEL SECURITY;
+
+-- Users can view history for tasks in projects they have access to
+CREATE POLICY "Users can view task history" ON programme_task_history
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_tasks t
+            JOIN asta_projects p ON t.project_id = p.id
+            JOIN user_roles ur ON ur.user_id = auth.uid()
+            WHERE t.id = programme_task_history.task_id
+            AND ur.organization_id = p.organization_id
+            AND ur.permissions ? 'programme.audit.view'
+        )
+    );
+
+-- System can insert history records (triggered by task updates)
+CREATE POLICY "System can insert task history" ON programme_task_history
+    FOR INSERT WITH CHECK (true);
+
+-- Trigger to update task comments updated_at column
+CREATE OR REPLACE FUNCTION update_programme_task_comments_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_programme_task_comments_updated_at
+    BEFORE UPDATE ON programme_task_comments
+    FOR EACH ROW
+    EXECUTE FUNCTION update_programme_task_comments_updated_at();
+
+-- =====================================================
+-- END OF TASK COMMENTS & HISTORY TABLES
+-- ===================================================== 
+
+-- =====================================================
+-- PROGRAMME VERSIONING TABLES
+-- =====================================================
+
+-- Programme Versions table
+CREATE TABLE IF NOT EXISTS programme_versions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    label VARCHAR(255) NOT NULL,
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_auto_snapshot BOOLEAN DEFAULT false,
+    notes TEXT,
+    demo BOOLEAN DEFAULT false
+);
+
+-- Programme Version Data table
+CREATE TABLE IF NOT EXISTS programme_version_data (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    version_id UUID NOT NULL REFERENCES programme_versions(id) ON DELETE CASCADE,
+    task_id UUID NOT NULL REFERENCES asta_tasks(id) ON DELETE CASCADE,
+    snapshot JSONB NOT NULL, -- Contains all task data at time of snapshot
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Programme Version Preferences table
+CREATE TABLE IF NOT EXISTS programme_version_preferences (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    auto_snapshot_enabled BOOLEAN DEFAULT false,
+    auto_snapshot_interval INTEGER DEFAULT 24, -- hours
+    max_versions_per_project INTEGER DEFAULT 50,
+    demo BOOLEAN DEFAULT false,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, project_id)
+);
+
+-- Indexes for programme versions
+CREATE INDEX IF NOT EXISTS idx_programme_versions_project_id ON programme_versions(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_versions_created_by ON programme_versions(created_by);
+CREATE INDEX IF NOT EXISTS idx_programme_versions_created_at ON programme_versions(created_at);
+CREATE INDEX IF NOT EXISTS idx_programme_versions_is_auto_snapshot ON programme_versions(is_auto_snapshot);
+CREATE INDEX IF NOT EXISTS idx_programme_versions_demo ON programme_versions(demo);
+
+-- Indexes for programme version data
+CREATE INDEX IF NOT EXISTS idx_programme_version_data_version_id ON programme_version_data(version_id);
+CREATE INDEX IF NOT EXISTS idx_programme_version_data_task_id ON programme_version_data(task_id);
+CREATE INDEX IF NOT EXISTS idx_programme_version_data_demo ON programme_version_data(demo);
+
+-- Indexes for programme version preferences
+CREATE INDEX IF NOT EXISTS idx_programme_version_preferences_user_id ON programme_version_preferences(user_id);
+CREATE INDEX IF NOT EXISTS idx_programme_version_preferences_project_id ON programme_version_preferences(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_version_preferences_demo ON programme_version_preferences(demo);
+
+-- RLS Policies for programme versions
+ALTER TABLE programme_versions ENABLE ROW LEVEL SECURITY;
+
+-- Users can view versions for projects they have access to
+CREATE POLICY "Users can view programme versions" ON programme_versions
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_versions.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create versions if they have create permission
+CREATE POLICY "Users can create programme versions" ON programme_versions
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_versions.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.create' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update versions if they have manage permission
+CREATE POLICY "Users can update programme versions" ON programme_versions
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_versions.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete versions if they have manage permission
+CREATE POLICY "Users can delete programme versions" ON programme_versions
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_versions.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme version data
+ALTER TABLE programme_version_data ENABLE ROW LEVEL SECURITY;
+
+-- Users can view version data for versions they can access
+CREATE POLICY "Users can view programme version data" ON programme_version_data
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM programme_versions v
+            JOIN asta_projects p ON v.project_id = p.id
+            WHERE v.id = programme_version_data.version_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create version data if they can create versions
+CREATE POLICY "Users can create programme version data" ON programme_version_data
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM programme_versions v
+            JOIN asta_projects p ON v.project_id = p.id
+            WHERE v.id = programme_version_data.version_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.create' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update version data if they can manage versions
+CREATE POLICY "Users can update programme version data" ON programme_version_data
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM programme_versions v
+            JOIN asta_projects p ON v.project_id = p.id
+            WHERE v.id = programme_version_data.version_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete version data if they can manage versions
+CREATE POLICY "Users can delete programme version data" ON programme_version_data
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM programme_versions v
+            JOIN asta_projects p ON v.project_id = p.id
+            WHERE v.id = programme_version_data.version_id
+            AND (p.manager_id = auth.uid() OR p.id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.version.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- RLS Policies for programme version preferences
+ALTER TABLE programme_version_preferences ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own preferences
+CREATE POLICY "Users can view programme version preferences" ON programme_version_preferences
+    FOR SELECT USING (user_id = auth.uid());
+
+-- Users can create their own preferences
+CREATE POLICY "Users can create programme version preferences" ON programme_version_preferences
+    FOR INSERT WITH CHECK (user_id = auth.uid());
+
+-- Users can update their own preferences
+CREATE POLICY "Users can update programme version preferences" ON programme_version_preferences
+    FOR UPDATE USING (user_id = auth.uid());
+
+-- Users can delete their own preferences
+CREATE POLICY "Users can delete programme version preferences" ON programme_version_preferences
+    FOR DELETE USING (user_id = auth.uid());
+
+-- Triggers for programme versioning tables
+CREATE TRIGGER update_programme_versions_updated_at 
+    BEFORE UPDATE ON programme_versions 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_programme_version_data_updated_at 
+    BEFORE UPDATE ON programme_version_data 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_programme_version_preferences_updated_at 
+    BEFORE UPDATE ON programme_version_preferences 
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- PROGRAMME BAR STYLES TABLES
+-- =====================================================
+
+-- Programme Bar Styles table
+CREATE TABLE IF NOT EXISTS programme_bar_styles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES asta_projects(id) ON DELETE CASCADE,
+    rule_name VARCHAR(255) NOT NULL,
+    condition JSONB NOT NULL, -- { field: string, operator: '=' | '!=' | 'contains', value: string }
+    style JSONB NOT NULL, -- { barColor: string, borderColor: string, textColor: string, pattern?: 'dashed' | 'solid' | 'none' }
+    created_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    is_default BOOLEAN DEFAULT false, -- system-applied (e.g. critical path)
+    demo BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for programme bar styles
+CREATE INDEX IF NOT EXISTS idx_programme_bar_styles_project_id ON programme_bar_styles(project_id);
+CREATE INDEX IF NOT EXISTS idx_programme_bar_styles_created_by ON programme_bar_styles(created_by);
+CREATE INDEX IF NOT EXISTS idx_programme_bar_styles_is_default ON programme_bar_styles(is_default);
+CREATE INDEX IF NOT EXISTS idx_programme_bar_styles_demo ON programme_bar_styles(demo);
+CREATE INDEX IF NOT EXISTS idx_programme_bar_styles_created_at ON programme_bar_styles(created_at);
+
+-- RLS Policies for programme bar styles
+ALTER TABLE programme_bar_styles ENABLE ROW LEVEL SECURITY;
+
+-- Users can view bar styles for projects they have access to
+CREATE POLICY "Users can view programme bar styles" ON programme_bar_styles
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_bar_styles.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.barstyles.view' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can create bar styles if they have manage permission
+CREATE POLICY "Users can create programme bar styles" ON programme_bar_styles
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_bar_styles.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.barstyles.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can update bar styles if they have manage permission
+CREATE POLICY "Users can update programme bar styles" ON programme_bar_styles
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_bar_styles.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.barstyles.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Users can delete bar styles if they have manage permission
+CREATE POLICY "Users can delete programme bar styles" ON programme_bar_styles
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM asta_projects 
+            WHERE id = programme_bar_styles.project_id 
+            AND (manager_id = auth.uid() OR id IN (
+                SELECT project_id FROM project_user_permissions 
+                WHERE user_id = auth.uid() AND 'programme.barstyles.manage' = ANY(permissions)
+            ))
+        )
+    );
+
+-- Trigger for programme bar styles updated_at
+CREATE OR REPLACE FUNCTION update_programme_bar_styles_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_programme_bar_styles_updated_at 
+    BEFORE UPDATE ON programme_bar_styles 
+    FOR EACH ROW EXECUTE FUNCTION update_programme_bar_styles_updated_at();
+
+-- Insert default bar styles for demo projects
+INSERT INTO programme_bar_styles (id, project_id, rule_name, condition, style, created_by, is_default, demo) VALUES
+-- Critical path style
+('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000001', 'Critical Path', 
+ '{"field": "isCritical", "operator": "=", "value": "true"}',
+ '{"barColor": "#EF4444", "borderColor": "#DC2626", "textColor": "#FFFFFF", "pattern": "solid"}',
+ '00000000-0000-0000-0000-000000000001', true, true),
+
+-- Milestone style
+('22222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000001', 'Milestones', 
+ '{"field": "type", "operator": "=", "value": "milestone"}',
+ '{"barColor": "#8B5CF6", "borderColor": "#7C3AED", "textColor": "#FFFFFF", "pattern": "solid"}',
+ '00000000-0000-0000-0000-000000000001', true, true),
+
+-- Snagging tasks style
+('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000001', 'Snagging Tasks', 
+ '{"field": "tagId", "operator": "contains", "value": "snagging"}',
+ '{"barColor": "#F97316", "borderColor": "#EA580C", "textColor": "#FFFFFF", "pattern": "dashed"}',
+ '00000000-0000-0000-0000-000000000001', false, true)
+
+ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================
+-- END OF PROGRAMME BAR STYLES TABLES
+-- =====================================================
+
+-- =====================================================
+-- DEMO DATA FOR CONSTRAINTS
+-- =====================================================
+
+-- Insert demo constraint data
+INSERT INTO programme_tasks (project_id, task_id, constraint_type, constraint_date, constraint_reason, demo, created_at, updated_at)
+VALUES 
+  ('00000000-0000-0000-0000-000000000001', 'demo_task_1', 'SNET', (CURRENT_DATE + INTERVAL '7 days'), 'Material delivery scheduled', true, NOW(), NOW()),
+  ('00000000-0000-0000-0000-000000000001', 'demo_task_2', 'SNET', (CURRENT_DATE + INTERVAL '14 days'), 'Site preparation required', true, NOW(), NOW())
+ON CONFLICT (task_id) DO NOTHING;

@@ -1,17 +1,17 @@
 import { supabase } from './supabase';
 
 export interface AstaView {
-  id: string;
-  project_id: string;
-  name: string;
-  description?: string;
-  view_type: 'gantt' | 'timeline' | 'calendar' | 'resource' | 'cost' | 'custom';
-  tab_color: TabColor;
-  is_default: boolean;
-  sort_order: number;
-  created_by?: string;
   created_at: string;
+  created_by?: string;
+  description?: string;
+  id: string;
+  is_default: boolean;
+  name: string;
+  project_id: string;
+  sort_order: number;
+  tab_color: TabColor;
   updated_at: string;
+  view_type: 'gantt' | 'timeline' | 'calendar' | 'resource' | 'cost' | 'custom';
 }
 
 export type TabColor = 
@@ -20,12 +20,12 @@ export type TabColor =
   | 'emerald' | 'cyan' | 'sky' | 'violet' | 'fuchsia' | 'rose';
 
 export interface TabColorOption {
-  value: TabColor;
-  label: string;
   bgClass: string;
-  textClass: string;
   borderClass: string;
   description: string;
+  label: string;
+  textClass: string;
+  value: TabColor;
 }
 
 class TabColouringService {

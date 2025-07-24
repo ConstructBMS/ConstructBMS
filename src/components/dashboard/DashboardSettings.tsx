@@ -17,16 +17,16 @@ import WidgetPlacement from './WidgetPlacement';
 import { WIDGET_SIZES } from '../widgets/WidgetTypes';
 
 interface DashboardSettingsProps {
+  activeTab?: string;
   isLocked: boolean;
   onClose: () => void;
+  onLoadDashboardState?: (state: any) => void;
   onToggleGrid: () => void;
   onToggleLock: () => void;
-  showGrid: boolean;
   onWidgetsChange?: (widgets: any[]) => void;
-  widgets?: any[];
-  activeTab?: string;
+  showGrid: boolean;
   tabs?: any[];
-  onLoadDashboardState?: (state: any) => void;
+  widgets?: any[];
 }
 
 type SettingsView = 'main' | 'widget-builder' | 'layout-designer' | 'widget-placement' | 'saved-layouts';

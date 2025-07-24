@@ -55,82 +55,82 @@ import {
 } from './GanttModals';
 
 interface EnterpriseGanttChartProps {
-  project: any;
   onMarkChanged?: () => void;
+  project: any;
 }
 
 interface WbsTask {
-  id: string;
-  name: string;
-  wbsId: string;
-  parentId: string | null;
-  type: 'summary' | 'task' | 'milestone';
-  start: Date;
-  end: Date;
-  duration: number;
-  progress: number;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  actuals?: {
+    cost?: number;
+    duration?: number;
+    end?: Date;
+    progress?: number;
+    start?: Date;
+  };
   assignee: string;
-  isCritical: boolean;
-  expanded: boolean;
+  baseline?: {
+    duration: number;
+    end: Date;
+    progress: number;
+    start: Date;
+  };
   children?: WbsTask[];
-  level?: number;
   // Advanced PowerProject features
   constraints?: {
-    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
     date?: Date;
+    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
   };
+  customFields?: Record<string, any>;
   dependencies?: Array<{
     id: string;
-    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
     lag?: number;
+    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   }>;
+  duration: number;
+  end: Date;
+  expanded: boolean;
+  id: string;
+  isCritical: boolean;
+  level?: number;
+  name: string;
+  notes?: string;
+  parentId: string | null;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  progress: number;
   resources?: Array<{
+    cost?: number;
     id: string;
     name: string;
     type: 'work' | 'material' | 'cost';
     units: number;
-    cost?: number;
   }>;
-  baseline?: {
-    start: Date;
-    end: Date;
-    duration: number;
-    progress: number;
-  };
-  actuals?: {
-    start?: Date;
-    end?: Date;
-    duration?: number;
-    progress?: number;
-    cost?: number;
-  };
-  notes?: string;
-  customFields?: Record<string, any>;
+  start: Date;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  type: 'summary' | 'task' | 'milestone';
+  wbsId: string;
 }
 
 interface Resource {
+  availability: number;
+  calendar?: {
+    holidays: Date[];
+    workingDays: number[];
+    workingHours: { end: string, start: string; };
+  };
+  costPerUnit?: number;
+  currentUtilization: number;
   id: string;
+  maxUnits: number;
   name: string;
   type: 'work' | 'material' | 'cost';
-  maxUnits: number;
-  costPerUnit?: number;
-  calendar?: {
-    workingDays: number[];
-    workingHours: { start: string; end: string };
-    holidays: Date[];
-  };
-  availability: number;
-  currentUtilization: number;
 }
 
 interface CriticalPathAnalysis {
+  criticalPathDuration: number;
   criticalTasks: string[];
-  totalFloat: Record<string, number>;
   freeFloat: Record<string, number>;
   projectDuration: number;
-  criticalPathDuration: number;
+  totalFloat: Record<string, number>;
 }
 
 const EnterpriseGanttChart: React.FC<EnterpriseGanttChartProps> = ({ project, onMarkChanged }) => {

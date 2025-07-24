@@ -2,12 +2,12 @@ import React from 'react';
 import { usePermissions, type Permission } from '../../hooks/usePermissions';
 
 interface PermissionGuardProps {
+  children: React.ReactNode;
+  className?: string;
+  fallback?: React.ReactNode;
   permission: Permission;
   projectId?: string;
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
   showTooltip?: boolean;
-  className?: string;
 }
 
 const PermissionGuard: React.FC<PermissionGuardProps> = ({
@@ -42,15 +42,15 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
 
 // Permission-based button component
 interface PermissionButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  onClick: () => void;
   permission: Permission;
   projectId?: string;
-  onClick: () => void;
-  children: React.ReactNode;
-  disabled?: boolean;
-  className?: string;
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
   showTooltip?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
 }
 
 export const PermissionButton: React.FC<PermissionButtonProps> = ({
@@ -124,15 +124,15 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
 
 // Permission-based input component
 interface PermissionInputProps {
-  permission: Permission;
-  projectId?: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  type?: 'text' | 'email' | 'password' | 'number';
   className?: string;
   disabled?: boolean;
+  onChange: (value: string) => void;
+  permission: Permission;
+  placeholder?: string;
+  projectId?: string;
   showTooltip?: boolean;
+  type?: 'text' | 'email' | 'password' | 'number';
+  value: string;
 }
 
 export const PermissionInput: React.FC<PermissionInputProps> = ({

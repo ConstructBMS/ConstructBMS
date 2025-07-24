@@ -14,38 +14,38 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Card } from '../ui';
 
 interface GanttTask {
+  assignedTo?: string;
+  endDate: Date;
+  float: number;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
   progress: number;
+  startDate: Date;
   status: string;
-  assignedTo?: string;
-  float: number;
 }
 
 interface TaskLinkingCanvasProps {
-  projectId: string;
-  tasks: GanttTask[];
+  containerRef: React.RefObject<HTMLDivElement>;
   links: TaskLink[];
   onLinkCreate?: (link: TaskLink) => void;
-  onLinkUpdate?: (linkId: string, updates: Partial<TaskLink>) => void;
   onLinkDelete?: (linkId: string) => void;
+  onLinkUpdate?: (linkId: string, updates: Partial<TaskLink>) => void;
+  projectId: string;
+  tasks: GanttTask[];
   userRole: string;
-  containerRef: React.RefObject<HTMLDivElement>;
 }
 
 interface DragState {
+  currentPoint: { x: number; y: number } | null;
   isDragging: boolean;
   sourceTaskId: string | null;
   startPoint: { x: number; y: number } | null;
-  currentPoint: { x: number; y: number } | null;
 }
 
 interface EditState {
+  lagDays: number;
   linkId: string | null;
   linkType: LinkType;
-  lagDays: number;
 }
 
 const TaskLinkingCanvas: React.FC<TaskLinkingCanvasProps> = ({
@@ -73,7 +73,7 @@ const TaskLinkingCanvas: React.FC<TaskLinkingCanvasProps> = ({
 
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
-  const [showContextMenu, setShowContextMenu] = useState<{ x: number; y: number; linkId: string } | null>(null);
+  const [showContextMenu, setShowContextMenu] = useState<{ linkId: string, x: number; y: number; } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const canvasRef = useRef<SVGSVGElement>(null);

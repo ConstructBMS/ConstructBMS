@@ -3,10 +3,10 @@ import React from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 interface ModalProps {
+  children: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {

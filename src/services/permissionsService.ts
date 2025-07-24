@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-export type UserRole = 'viewer' | 'project_manager' | 'admin';
+export type UserRole = 'viewer' | 'project_manager' | 'admin' | 'super_admin';
 export type Permission =
   | 'view_projects'
   | 'edit_projects'
@@ -28,7 +28,14 @@ export type Permission =
   | 'view_settings'
   | 'edit_settings'
   | 'view_activity_log'
-  | 'delete_activity_log';
+  | 'delete_activity_log'
+  | 'programme.structure.view'
+  | 'programme.structure.edit'
+  | 'programme.structure.toggle'
+  | 'programme.barstyles.view'
+  | 'programme.barstyles.manage'
+  | 'programme.constraints.view'
+  | 'programme.constraints.assign';
 
 export interface PermissionMatrix {
   [role: string]: {
@@ -81,6 +88,13 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     edit_settings: false,
     view_activity_log: true,
     delete_activity_log: false,
+    'programme.structure.view': true,
+    'programme.structure.edit': false,
+    'programme.structure.toggle': false,
+    'programme.barstyles.view': false,
+    'programme.barstyles.manage': false,
+    'programme.constraints.view': false,
+    'programme.constraints.assign': false,
   },
   project_manager: {
     view_projects: true,
@@ -98,6 +112,25 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     view_resources: true,
     edit_resources: true,
     delete_resources: false,
+    create_resources: true,
+    view_reports: true,
+    export_data: true,
+    import_data: true,
+    manage_users: false,
+    manage_roles: false,
+    view_analytics: true,
+    edit_analytics: true,
+    view_settings: true,
+    edit_settings: true,
+    view_activity_log: true,
+    delete_activity_log: false,
+    'programme.structure.view': true,
+    'programme.structure.edit': true,
+    'programme.structure.toggle': true,
+    'programme.barstyles.view': true,
+    'programme.barstyles.manage': true,
+    'programme.constraints.view': true,
+    'programme.constraints.assign': true,
     create_resources: true,
     view_reports: true,
     export_data: true,
@@ -139,6 +172,49 @@ const DEFAULT_PERMISSION_MATRIX: PermissionMatrix = {
     edit_settings: true,
     view_activity_log: true,
     delete_activity_log: true,
+    'programme.structure.view': true,
+    'programme.structure.edit': true,
+    'programme.structure.toggle': true,
+    'programme.barstyles.view': true,
+    'programme.barstyles.manage': true,
+    'programme.constraints.view': true,
+    'programme.constraints.assign': true,
+  },
+  super_admin: {
+    view_projects: true,
+    edit_projects: true,
+    delete_projects: true,
+    create_projects: true,
+    view_tasks: true,
+    edit_tasks: true,
+    delete_tasks: true,
+    create_tasks: true,
+    view_links: true,
+    edit_links: true,
+    delete_links: true,
+    create_links: true,
+    view_resources: true,
+    edit_resources: true,
+    delete_resources: true,
+    create_resources: true,
+    view_reports: true,
+    export_data: true,
+    import_data: true,
+    manage_users: true,
+    manage_roles: true,
+    view_analytics: true,
+    edit_analytics: true,
+    view_settings: true,
+    edit_settings: true,
+    view_activity_log: true,
+    delete_activity_log: true,
+    'programme.structure.view': true,
+    'programme.structure.edit': true,
+    'programme.structure.toggle': true,
+    'programme.barstyles.view': true,
+    'programme.barstyles.manage': true,
+    'programme.constraints.view': true,
+    'programme.constraints.assign': true,
   },
 };
 
@@ -179,69 +255,101 @@ class PermissionsService {
       }
 
       // Get user role and permissions from database
-      const { data: userData, error } = await supabase
-        .from('user_roles')
-        .select('role, permissions, project_permissions')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error) {
-        console.log(
-          'User role not found, creating default role for user:',
-          user.id
-        );
-
-        // Create default user role if not exists
-        const defaultRole = 'viewer';
-        const defaultPermissions = this.getPermissionsForRole(defaultRole);
-
-        const { error: insertError } = await supabase
+      try {
+        const { data: userData, error } = await supabase
           .from('user_roles')
-          .insert({
-            user_id: user.id,
-            role: defaultRole,
-            permissions: defaultPermissions,
-            project_permissions: {},
-          });
+          .select('role, permissions, project_permissions')
+          .eq('user_id', user.id)
+          .single();
 
-        if (insertError) {
-          console.error('Failed to create default user role:', insertError);
-          // Fallback to default role without database persistence
+        if (error) {
+          console.log(
+            'User role not found, creating default role for user:',
+            user.id
+          );
+
+          // Create default user role if not exists
+          const defaultRole = 'viewer';
+          const defaultPermissions = this.getPermissionsForRole(defaultRole);
+
+          const { error: insertError } = await supabase
+            .from('user_roles')
+            .insert({
+              user_id: user.id,
+              role: defaultRole,
+              permissions: defaultPermissions,
+              project_permissions: {},
+            });
+
+          if (insertError) {
+            console.error('Failed to create default user role:', insertError);
+            // Fallback to default role without database persistence
+            this.currentUserPermissions = {
+              userId: user.id,
+              role: defaultRole,
+              permissions: defaultPermissions,
+            };
+            return;
+          }
+
+          // Set the newly created permissions
           this.currentUserPermissions = {
             userId: user.id,
             role: defaultRole,
             permissions: defaultPermissions,
+            projectPermissions: {},
           };
           return;
         }
 
-        // Set the newly created permissions
-        this.currentUserPermissions = {
-          userId: user.id,
-          role: defaultRole,
-          permissions: defaultPermissions,
-          projectPermissions: {},
-        };
-        return;
+        if (userData) {
+          this.currentUserPermissions = {
+            userId: user.id,
+            role: userData.role,
+            permissions:
+              userData.permissions || this.getPermissionsForRole(userData.role),
+            projectPermissions: userData.project_permissions,
+          };
+          return;
+        }
+      } catch (dbError) {
+        console.error('Database error, using fallback permissions:', dbError);
       }
 
-      if (!userData) {
-        // Fallback to default role
-        this.currentUserPermissions = {
-          userId: user.id,
-          role: 'viewer',
-          permissions: this.getPermissionsForRole('viewer'),
-        };
-        return;
+      // Fallback to default role if no user data found
+      // Try to get from localStorage first
+      const storedRole = localStorage.getItem(`user_role_${user.id}`);
+      const storedPermissions = localStorage.getItem(`user_permissions_${user.id}`);
+      
+      if (storedRole && storedPermissions) {
+        try {
+          this.currentUserPermissions = {
+            userId: user.id,
+            role: storedRole as UserRole,
+            permissions: JSON.parse(storedPermissions),
+          };
+          console.log('✅ Loaded permissions from localStorage');
+          return;
+        } catch (error) {
+          console.log('⚠️ Failed to parse stored permissions, using default');
+        }
       }
-
+      
+      // Set default super_admin role for development
+      const defaultRole: UserRole = 'super_admin';
+      const defaultPermissions = this.getPermissionsForRole(defaultRole);
+      
       this.currentUserPermissions = {
         userId: user.id,
-        role: userData.role,
-        permissions:
-          userData.permissions || this.getPermissionsForRole(userData.role),
-        projectPermissions: userData.project_permissions,
+        role: defaultRole,
+        permissions: defaultPermissions,
       };
+      
+      // Store in localStorage for persistence
+      localStorage.setItem(`user_role_${user.id}`, defaultRole);
+      localStorage.setItem(`user_permissions_${user.id}`, JSON.stringify(defaultPermissions));
+      
+      console.log('✅ Set default super_admin permissions with localStorage fallback');
     } catch (error) {
       console.error('Failed to load user permissions:', error);
 

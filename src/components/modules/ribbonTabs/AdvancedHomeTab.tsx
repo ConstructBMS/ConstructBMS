@@ -39,56 +39,56 @@ import {
 } from '@heroicons/react/24/outline';
 
 export interface AdvancedTaskOperation {
-  type: 'add-task' | 'delete-task' | 'edit-task' | 'duplicate-task' | 'indent-task' | 'outdent-task' | 'move-up' | 'move-down' | 'add-milestone' | 'add-summary' | 'link-tasks' | 'unlink-tasks' | 'split-task' | 'merge-tasks';
   data?: any;
+  type: 'add-task' | 'delete-task' | 'edit-task' | 'duplicate-task' | 'indent-task' | 'outdent-task' | 'move-up' | 'move-down' | 'add-milestone' | 'add-summary' | 'link-tasks' | 'unlink-tasks' | 'split-task' | 'merge-tasks';
 }
 
 export interface AdvancedScheduleOperation {
-  type: 'auto-schedule' | 'manual-schedule' | 'level-resources' | 'optimize-schedule' | 'calculate-critical-path' | 'apply-constraints' | 'remove-constraints' | 'set-baseline' | 'clear-baseline' | 'update-progress' | 'recalculate';
   data?: any;
+  type: 'auto-schedule' | 'manual-schedule' | 'level-resources' | 'optimize-schedule' | 'calculate-critical-path' | 'apply-constraints' | 'remove-constraints' | 'set-baseline' | 'clear-baseline' | 'update-progress' | 'recalculate';
 }
 
 export interface AdvancedProjectOperation {
-  type: 'import-data' | 'export-data' | 'sync-asta' | 'backup-project' | 'restore-project' | 'validate-project' | 'optimize-project' | 'generate-reports' | 'publish-project';
   data?: any;
+  type: 'import-data' | 'export-data' | 'sync-asta' | 'backup-project' | 'restore-project' | 'validate-project' | 'optimize-project' | 'generate-reports' | 'publish-project';
 }
 
 export interface AdvancedViewOperation {
-  type: 'toggle-critical-path' | 'toggle-baseline' | 'toggle-actuals' | 'toggle-constraints' | 'toggle-dependencies' | 'toggle-resources' | 'toggle-notes' | 'toggle-custom-fields' | 'zoom-in' | 'zoom-out' | 'fit-to-window' | 'go-to-date' | 'go-to-task';
   data?: any;
+  type: 'toggle-critical-path' | 'toggle-baseline' | 'toggle-actuals' | 'toggle-constraints' | 'toggle-dependencies' | 'toggle-resources' | 'toggle-notes' | 'toggle-custom-fields' | 'zoom-in' | 'zoom-out' | 'fit-to-window' | 'go-to-date' | 'go-to-task';
 }
 
 export interface AdvancedFilterOperation {
-  type: 'apply-filter' | 'clear-filter' | 'save-filter' | 'load-filter' | 'filter-by-status' | 'filter-by-assignee' | 'filter-by-date-range' | 'filter-by-critical-path' | 'filter-by-constraints' | 'filter-by-resources';
   data?: any;
+  type: 'apply-filter' | 'clear-filter' | 'save-filter' | 'load-filter' | 'filter-by-status' | 'filter-by-assignee' | 'filter-by-date-range' | 'filter-by-critical-path' | 'filter-by-constraints' | 'filter-by-resources';
 }
 
 export interface AdvancedSortOperation {
-  type: 'sort-by-name' | 'sort-by-start-date' | 'sort-by-end-date' | 'sort-by-duration' | 'sort-by-priority' | 'sort-by-assignee' | 'sort-by-status' | 'sort-by-float' | 'sort-by-wbs' | 'custom-sort';
   data?: any;
+  type: 'sort-by-name' | 'sort-by-start-date' | 'sort-by-end-date' | 'sort-by-duration' | 'sort-by-priority' | 'sort-by-assignee' | 'sort-by-status' | 'sort-by-float' | 'sort-by-wbs' | 'custom-sort';
 }
 
 export interface AdvancedToolsOperation {
-  type: 'what-if-analysis' | 'scenario-manager' | 'risk-analysis' | 'earned-value-analysis' | 'resource-leveling' | 'cost-analysis' | 'schedule-compression' | 'monte-carlo-simulation' | 'ai-optimization' | 'performance-analysis';
   data?: any;
+  type: 'what-if-analysis' | 'scenario-manager' | 'risk-analysis' | 'earned-value-analysis' | 'resource-leveling' | 'cost-analysis' | 'schedule-compression' | 'monte-carlo-simulation' | 'ai-optimization' | 'performance-analysis';
 }
 
 export interface AdvancedHomeTabProps {
-  onTaskOperation: (operation: AdvancedTaskOperation) => void;
-  onScheduleOperation: (operation: AdvancedScheduleOperation) => void;
-  onProjectOperation: (operation: AdvancedProjectOperation) => void;
-  onViewOperation: (operation: AdvancedViewOperation) => void;
-  onFilterOperation: (operation: AdvancedFilterOperation) => void;
-  onSortOperation: (operation: AdvancedSortOperation) => void;
-  onToolsOperation: (operation: AdvancedToolsOperation) => void;
-  userRole: string;
-  selectedTasks: string[];
-  canEdit: boolean;
-  projectStatus: 'planning' | 'execution' | 'monitoring' | 'closing';
-  hasBaseline: boolean;
-  hasActuals: boolean;
-  criticalPathEnabled: boolean;
   autoScheduleEnabled: boolean;
+  canEdit: boolean;
+  criticalPathEnabled: boolean;
+  hasActuals: boolean;
+  hasBaseline: boolean;
+  onFilterOperation: (operation: AdvancedFilterOperation) => void;
+  onProjectOperation: (operation: AdvancedProjectOperation) => void;
+  onScheduleOperation: (operation: AdvancedScheduleOperation) => void;
+  onSortOperation: (operation: AdvancedSortOperation) => void;
+  onTaskOperation: (operation: AdvancedTaskOperation) => void;
+  onToolsOperation: (operation: AdvancedToolsOperation) => void;
+  onViewOperation: (operation: AdvancedViewOperation) => void;
+  projectStatus: 'planning' | 'execution' | 'monitoring' | 'closing';
+  selectedTasks: string[];
+  userRole: string;
 }
 
 const AdvancedHomeTab: React.FC<AdvancedHomeTabProps> = ({

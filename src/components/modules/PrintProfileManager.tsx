@@ -26,18 +26,18 @@ import { printProfileService } from '../../services/printProfileService';
 import type { PrintProfile, PrintSettings, PaperSize, PaperSizeOption } from '../../services/printProfileService';
 
 interface PrintProfileManagerProps {
+  onExport?: (format: 'pdf' | 'png' | 'jpg') => void;
+  onProfileChange?: (profile: PrintProfile) => void;
   projectId?: string;
+  selectedProfileId?: string;
   userId?: string;
   userRole: string;
-  onProfileChange?: (profile: PrintProfile) => void;
-  onExport?: (format: 'pdf' | 'png' | 'jpg') => void;
-  selectedProfileId?: string;
 }
 
 interface ProfileEditState {
-  profileId: string | null;
-  name: string;
   description: string;
+  name: string;
+  profileId: string | null;
   settings: PrintSettings;
 }
 

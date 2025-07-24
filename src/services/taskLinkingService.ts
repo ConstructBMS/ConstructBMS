@@ -1,13 +1,13 @@
 import { supabase } from './supabase';
 
 export interface TaskLink {
+  created_at: string;
   id: string;
+  lag_days: number;
+  link_type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   project_id: string;
   source_task_id: string;
   target_task_id: string;
-  link_type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag_days: number;
-  created_at: string;
   updated_at: string;
 }
 
@@ -17,10 +17,10 @@ export interface LinkPoint {
 }
 
 export interface LinkPath {
-  start: LinkPoint;
-  end: LinkPoint;
   control1: LinkPoint;
   control2: LinkPoint;
+  end: LinkPoint;
+  start: LinkPoint;
 }
 
 export type LinkType = 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';

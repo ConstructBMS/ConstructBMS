@@ -14,27 +14,27 @@ import {
 import type { GanttTask, GanttLink } from './GanttCanvas';
 
 export interface TaskTableProps {
-  tasks: GanttTask[];
+  expandedTasks: Set<string>;
   links: GanttLink[];
-  selectedTaskId?: string;
+  onScrollSync?: (scrollTop: number) => void;
   onTaskSelect?: (taskId: string) => void;
   onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void;
-  onScrollSync?: (scrollTop: number) => void;
-  userRole: string;
-  expandedTasks: Set<string>;
   onToggleExpansion: (taskId: string) => void;
+  selectedTaskId?: string;
+  tasks: GanttTask[];
+  userRole: string;
 }
 
 interface EditingCell {
-  taskId: string;
   field: keyof GanttTask;
+  taskId: string;
   value: string;
 }
 
 interface ValidationError {
-  taskId: string;
   field: string;
   message: string;
+  taskId: string;
 }
 
 const TaskTable: React.FC<TaskTableProps> = ({
@@ -51,7 +51,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
   const tableRef = useRef<HTMLDivElement>(null);
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const [sortConfig, setSortConfig] = useState<{ field: keyof GanttTask; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ direction: 'asc' | 'desc', field: keyof GanttTask; } | null>(null);
   const [groupByWBS, setGroupByWBS] = useState(true);
 
   const canEdit = userRole !== 'viewer';
@@ -121,7 +121,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
   }, [sortConfig]);
 
   // Group tasks by WBS
-  const getGroupedTasks = useCallback((tasks: GanttTask[]): (GanttTask | { type: 'group'; wbs: string; tasks: GanttTask[] })[] => {
+  const getGroupedTasks = useCallback((tasks: GanttTask[]): (GanttTask | { tasks: GanttTask[], type: 'group'; wbs: string; })[] => {
     if (!groupByWBS) return tasks;
 
     const groups: { [key: string]: GanttTask[] } = {};
@@ -134,7 +134,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
       groups[wbsPrefix].push(task);
     });
 
-    const result: (GanttTask | { type: 'group'; wbs: string; tasks: GanttTask[] })[] = [];
+    const result: (GanttTask | { tasks: GanttTask[], type: 'group'; wbs: string; })[] = [];
     
     Object.entries(groups).forEach(([wbs, groupTasks]) => {
       if (groupTasks.length > 1) {
@@ -426,7 +426,7 @@ const TaskTable: React.FC<TaskTableProps> = ({
   ]);
 
   // Render group header
-  const renderGroupHeader = useCallback((group: { type: 'group'; wbs: string; tasks: GanttTask[] }) => {
+  const renderGroupHeader = useCallback((group: { tasks: GanttTask[], type: 'group'; wbs: string; }) => {
     const totalDuration = group.tasks.reduce((sum, task) => sum + calculateDuration(task.startDate, task.endDate), 0);
     const avgProgress = group.tasks.reduce((sum, task) => sum + task.progress, 0) / group.tasks.length;
 

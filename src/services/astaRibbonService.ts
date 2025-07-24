@@ -1,20 +1,20 @@
 import { supabase } from './supabase';
 
 export interface RibbonTab {
+  active: boolean;
+  icon: string;
   id: string;
   label: string;
-  icon: string;
-  active: boolean;
-  visible: boolean;
   order: number;
   permissions?: string[];
+  visible: boolean;
 }
 
 export interface RibbonConfig {
   tabs: RibbonTab[];
   userPreferences: {
-    defaultTab: string;
     customTabs: string[];
+    defaultTab: string;
   };
 }
 

@@ -5,31 +5,31 @@ import type { WidgetConfig } from './widgets/WidgetTypes';
 import WidgetRenderer from './widgets/WidgetRenderer';
 
 interface WidgetInstance {
+  config?: any;
+  height: number;
   id: string;
   type: string;
   width: number;
-  height: number;
-  config?: any;
   x?: number; // Grid position X
   y?: number; // Grid position Y
 }
 
 interface DragState {
   draggedWidget: { id: string; sourceIndex: number; widget: WidgetInstance } | null;
+  draggedWidgetSize?: { height: number, width: number; };
   dropTarget: { index: number; x: number; y: number } | null;
   isDragging: boolean;
-  draggedWidgetSize?: { width: number; height: number };
 }
 
 interface PageBuilderProps {
-  widgets: WidgetInstance[];
-  onWidgetsChange: (widgets: WidgetInstance[]) => void;
+  isLocked?: boolean;
   onNavigateToModule?: (module: string, params?: Record<string, any>) => void;
-  showWidgetPalette?: boolean;
+  onToggleLock?: () => void;
+  onWidgetsChange: (widgets: WidgetInstance[]) => void;
   setShowWidgetPalette?: (show: boolean) => void;
   showGrid?: boolean;
-  isLocked?: boolean;
-  onToggleLock?: () => void;
+  showWidgetPalette?: boolean;
+  widgets: WidgetInstance[];
 }
 
 const GRID_COLUMNS = 6;
@@ -223,7 +223,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({
   };
 
   // Calculate drop zone dimensions based on dragged widget size
-  const getDropZoneStyle = (widgetSize: { width: number; height: number }) => {
+  const getDropZoneStyle = (widgetSize: { height: number, width: number; }) => {
     const columnWidth = `calc((100% - ${GRID_COLUMNS - 1} * ${GRID_GAP}px) / ${GRID_COLUMNS})`;
     const width = `calc(${columnWidth} * ${widgetSize.width} + ${GRID_GAP}px * ${widgetSize.width - 1})`;
     const height = `${widgetSize.height * GRID_ROW_HEIGHT + (widgetSize.height - 1) * GRID_GAP}px`;

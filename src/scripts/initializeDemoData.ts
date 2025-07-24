@@ -8,6 +8,8 @@ import { mobileIntegrationService } from '../services/mobileIntegration';
 import { aiAutomationService } from '../services/aiAutomation';
 import { bimIntegrationService } from '../services/bimIntegration';
 import { advancedBIService } from '../services/advancedBusinessIntelligence';
+import { supabase } from '../lib/supabaseClient';
+import { initializeCustomFieldsDemo } from './initializeCustomFieldsDemo';
 
 export async function initializeComprehensiveDemoData() {
   console.log('🚀 Initializing comprehensive demo data for Napwood...');
@@ -53,6 +55,12 @@ export async function initializeComprehensiveDemoData() {
 
     // Generate business intelligence data
     await generateBusinessIntelligenceData();
+
+    // Initialize demo programme task flags
+    await initializeDemoProgrammeTaskFlags();
+
+    // Initialize demo custom fields
+    await initializeCustomFieldsDemo();
 
     console.log('🎉 Comprehensive demo data initialization completed successfully!');
     console.log('📈 Generated data summary:');
@@ -407,6 +415,43 @@ async function generateBusinessIntelligenceData() {
 
   console.log(`✅ Generated ${queries.length} analytics queries`);
 }
+
+// Initialize demo programme task flags
+export const initializeDemoProgrammeTaskFlags = async () => {
+  try {
+    console.log('Initializing demo programme task flags...');
+    
+    const { data: tasks, error: tasksError } = await supabase
+      .from('asta_tasks')
+      .select('id, project_id')
+      .eq('demo', true)
+      .limit(5);
+
+    if (tasksError) throw tasksError;
+
+    if (tasks && tasks.length > 0) {
+      // Add one demo flag (demo mode restriction: only 1 flag per 5 tasks)
+      const demoTask = tasks[0];
+      
+      const { error: flagError } = await supabase
+        .from('programme_task_flags')
+        .insert({
+          task_id: demoTask.id,
+          project_id: demoTask.project_id,
+          flag_color: 'blue',
+          note: 'Demo flag - Confirm steel delivery before site visit. Limited note capacity in demo mode.',
+          created_by: 'demo-user',
+          demo: true
+        });
+
+      if (flagError) throw flagError;
+      
+      console.log('Demo programme task flag created successfully');
+    }
+  } catch (error) {
+    console.error('Error initializing demo programme task flags:', error);
+  }
+};
 
 // Export the main initialization function
 export default initializeComprehensiveDemoData; 

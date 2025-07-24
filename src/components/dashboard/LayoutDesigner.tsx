@@ -9,27 +9,27 @@ import {
 import { WIDGET_SIZES } from '../widgets/WidgetTypes';
 
 interface LayoutDesignerProps {
-  selectedLayout: string | null;
+  existingWidgets?: any[];
   layoutName: string;
-  setLayoutName: (name: string) => void;
   onBack: () => void;
   onClose: () => void;
   onSubmit: () => void;
-  existingWidgets?: any[];
+  selectedLayout: string | null;
+  setLayoutName: (name: string) => void;
 }
 
 interface LayoutPlaceholder {
   id: string;
-  size: { width: number; height: number };
+  size: { height: number, width: number; };
+  type: 'placeholder';
   x: number;
   y: number;
-  type: 'placeholder';
 }
 
 interface PredefinedLayout {
+  description: string;
   id: string;
   name: string;
-  description: string;
   placeholders: LayoutPlaceholder[];
 }
 
@@ -243,7 +243,7 @@ const LayoutDesigner: React.FC<LayoutDesignerProps> = ({
     return { x: 0, y: maxY };
   };
 
-  const handleAddPlaceholder = (size: { width: number; height: number }) => {
+  const handleAddPlaceholder = (size: { height: number, width: number; }) => {
     const position = findBestPosition(size.width, size.height);
     
     const newPlaceholder: LayoutPlaceholder = {

@@ -2,150 +2,150 @@
 // This service provides enterprise-grade project management capabilities
 
 export interface GanttTask {
-  id: string;
-  name: string;
-  wbsId: string;
-  parentId: string | null;
-  type: 'summary' | 'task' | 'milestone';
-  start: Date;
-  end: Date;
-  duration: number;
-  progress: number;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  assignee: string;
-  isCritical: boolean;
-  expanded: boolean;
-  children?: GanttTask[];
-  level?: number;
-  constraints?: TaskConstraint;
-  dependencies?: TaskDependency[];
-  resources?: TaskResource[];
-  baseline?: TaskBaseline;
   actuals?: TaskActuals;
-  notes?: string;
+  assignee: string;
+  baseline?: TaskBaseline;
+  children?: GanttTask[];
+  constraints?: TaskConstraint;
   customFields?: Record<string, any>;
+  dependencies?: TaskDependency[];
+  duration: number;
+  end: Date;
+  expanded: boolean;
+  id: string;
+  isCritical: boolean;
+  level?: number;
+  name: string;
+  notes?: string;
+  parentId: string | null;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  progress: number;
+  resources?: TaskResource[];
+  start: Date;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  type: 'summary' | 'task' | 'milestone';
+  wbsId: string;
 }
 
 export interface TaskConstraint {
-  type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
   date?: Date;
+  type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
 }
 
 export interface TaskDependency {
   id: string;
-  type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   lag?: number;
+  type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
 }
 
 export interface TaskResource {
+  cost?: number;
   id: string;
   name: string;
   type: 'work' | 'material' | 'cost';
   units: number;
-  cost?: number;
 }
 
 export interface TaskBaseline {
-  start: Date;
-  end: Date;
   duration: number;
+  end: Date;
   progress: number;
+  start: Date;
 }
 
 export interface TaskActuals {
-  start?: Date;
-  end?: Date;
-  duration?: number;
-  progress?: number;
   cost?: number;
+  duration?: number;
+  end?: Date;
+  progress?: number;
+  start?: Date;
 }
 
 export interface Resource {
+  availability: number;
+  calendar?: ResourceCalendar;
+  costPerUnit?: number;
+  currentUtilization: number;
   id: string;
+  maxUnits: number;
   name: string;
   type: 'work' | 'material' | 'cost';
-  maxUnits: number;
-  costPerUnit?: number;
-  calendar?: ResourceCalendar;
-  availability: number;
-  currentUtilization: number;
 }
 
 export interface ResourceCalendar {
-  workingDays: number[];
-  workingHours: { start: string; end: string };
   holidays: Date[];
+  workingDays: number[];
+  workingHours: { end: string, start: string; };
 }
 
 export interface CriticalPathAnalysis {
+  criticalPathDuration: number;
   criticalTasks: string[];
-  totalFloat: Record<string, number>;
   freeFloat: Record<string, number>;
   projectDuration: number;
-  criticalPathDuration: number;
   slack: Record<string, number>;
+  totalFloat: Record<string, number>;
 }
 
 export interface ScheduleOptimization {
-  optimizedTasks: GanttTask[];
-  resourceLeveling: ResourceLevelingResult;
   costOptimization: CostOptimizationResult;
   durationOptimization: DurationOptimizationResult;
+  optimizedTasks: GanttTask[];
+  resourceLeveling: ResourceLevelingResult;
 }
 
 export interface ResourceLevelingResult {
   leveledTasks: GanttTask[];
-  resourceConflicts: ResourceConflict[];
   levelingActions: LevelingAction[];
+  resourceConflicts: ResourceConflict[];
 }
 
 export interface ResourceConflict {
+  conflictPeriod: { end: Date, start: Date; };
+  conflictingTasks: string[];
   resourceId: string;
   resourceName: string;
-  conflictingTasks: string[];
-  conflictPeriod: { start: Date; end: Date };
   severity: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export interface LevelingAction {
-  type: 'delay' | 'split' | 'reassign' | 'extend';
-  taskId: string;
   description: string;
-  impact: { duration: number; cost: number };
+  impact: { cost: number, duration: number; };
+  taskId: string;
+  type: 'delay' | 'split' | 'reassign' | 'extend';
 }
 
 export interface CostOptimizationResult {
-  originalCost: number;
-  optimizedCost: number;
-  savings: number;
   optimizationActions: OptimizationAction[];
+  optimizedCost: number;
+  originalCost: number;
+  savings: number;
 }
 
 export interface DurationOptimizationResult {
-  originalDuration: number;
-  optimizedDuration: number;
-  reduction: number;
   optimizationActions: OptimizationAction[];
+  optimizedDuration: number;
+  originalDuration: number;
+  reduction: number;
 }
 
 export interface OptimizationAction {
-  type: 'crash' | 'fast-track' | 'resource-reallocation' | 'scope-reduction';
-  taskId: string;
   description: string;
-  impact: { duration: number; cost: number; risk: number };
+  impact: { cost: number; duration: number; risk: number };
+  taskId: string;
+  type: 'crash' | 'fast-track' | 'resource-reallocation' | 'scope-reduction';
 }
 
 export interface PerformanceMetrics {
-  schedulePerformanceIndex: number;
+  actualCost: number;
   costPerformanceIndex: number;
-  resourceUtilization: number;
   criticalPathVariance: number;
   earnedValue: number;
-  plannedValue: number;
-  actualCost: number;
   estimateAtCompletion: number;
   estimateToComplete: number;
+  plannedValue: number;
+  resourceUtilization: number;
+  schedulePerformanceIndex: number;
   varianceAtCompletion: number;
 }
 
@@ -384,11 +384,11 @@ class AdvancedGanttService {
 
   // Schedule Optimization
   optimizeSchedule(options: {
-    optimizeDuration?: boolean;
-    optimizeCost?: boolean;
-    optimizeResources?: boolean;
-    maxDuration?: number;
     maxCost?: number;
+    maxDuration?: number;
+    optimizeCost?: boolean;
+    optimizeDuration?: boolean;
+    optimizeResources?: boolean;
   }): ScheduleOptimization {
     const optimizationActions: OptimizationAction[] = [];
     let optimizedTasks = [...this.tasks];

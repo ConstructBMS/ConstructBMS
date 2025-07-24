@@ -17,51 +17,54 @@ import type { RibbonTab } from '../GanttRibbon';
 
 // Types for allocation operations
 export interface AllocationOperation {
-  type: 'assign-resource' | 'combine-work-rate' | 'set-delay' | 'load-profiles' | 'update-allocation';
   data?: any;
+  type: 'assign-resource' | 'combine-work-rate' | 'set-delay' | 'load-profiles' | 'update-allocation';
 }
 
 // Resource interface
 export interface Resource {
-  id: string;
-  name: string;
-  type: 'work' | 'material' | 'cost';
-  max_units: number;
-  cost_per_unit: number;
   availability: number;
+  cost_per_unit: number;
   current_utilization: number;
-  skills?: string[];
   hourly_rate?: number;
+  id: string;
+  max_units: number;
+  name: string;
+  skills?: string[];
+  type: 'work' | 'material' | 'cost';
 }
 
 // Task allocation interface
 export interface TaskAllocation {
-  id: string;
-  task_id: string;
-  resource_id: string;
-  allocation_rate: number; // percentage (0-100)
-  delay: number; // days
-  work_type: 'effort-driven' | 'fixed-units' | 'fixed-duration' | 'fixed-work';
-  units: number; // resource units
-  start_date?: Date;
+  allocation_rate: number;
+  // percentage (0-100)
+  delay: number;
   end_date?: Date;
+  id: string; 
+  resource_id: string; 
+  // resource units
+  start_date?: Date;
+  task_id: string; 
+  units: number;
+  // days
+  work_type: 'effort-driven' | 'fixed-units' | 'fixed-duration' | 'fixed-work';
 }
 
 // Work type options
 export interface WorkType {
-  id: string;
-  label: string;
   description: string;
   icon: React.ComponentType<any>;
+  id: string;
+  label: string;
 }
 
 interface AllocationTabProps {
-  onAllocationOperation: (operation: AllocationOperation) => void;
-  userRole: string;
-  selectedTasks: string[];
+  availableResources?: Resource[];
   canEdit: boolean;
   currentAllocations?: TaskAllocation[];
-  availableResources?: Resource[];
+  onAllocationOperation: (operation: AllocationOperation) => void;
+  selectedTasks: string[];
+  userRole: string;
 }
 
 const useAllocationTab = (

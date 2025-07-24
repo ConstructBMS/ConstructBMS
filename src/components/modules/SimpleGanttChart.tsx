@@ -2,10 +2,10 @@ import React from 'react';
 import type { GanttTask, GanttLink } from './GanttCanvas';
 
 interface SimpleGanttChartProps {
-  tasks: GanttTask[];
+  endDate: Date;
   links: GanttLink[];
   startDate: Date;
-  endDate: Date;
+  tasks: GanttTask[];
 }
 
 const SimpleGanttChart: React.FC<SimpleGanttChartProps> = ({

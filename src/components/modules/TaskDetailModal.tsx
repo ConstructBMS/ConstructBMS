@@ -17,6 +17,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import TaskHistoryTab from './TaskHistoryTab';
 
 interface Task {
   actualHours?: number;
@@ -364,36 +365,17 @@ const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     </div>
   );
 
-  const renderHistoryTab = () => (
-    <div className="space-y-4">
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Task History</h3>
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Task completed</p>
-              <p className="text-xs text-gray-500">By Tom Harvey • 2 hours ago</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Status changed to In Progress</p>
-              <p className="text-xs text-gray-500">By Sarah Williams • 1 day ago</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Task created</p>
-              <p className="text-xs text-gray-500">By James Mitchell • 3 days ago</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const renderHistoryTab = () => {
+    if (!task) return null;
+    
+    return (
+      <TaskHistoryTab
+        taskId={task.id}
+        projectId={task.project_id}
+        taskName={task.title}
+      />
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

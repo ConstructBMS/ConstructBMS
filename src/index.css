@@ -11,6 +11,18 @@
 /* Import widget styles */
 @import './styles/widgets.css';
 
+/* Import layout styles */
+@import './styles/layout.css';
+
+/* Import milestone styles */
+@import './styles/milestone.css';
+
+/* Import critical path styles */
+@import './styles/critical-path.css';
+
+/* Import print and export styles */
+@import './styles/print-export.css';
+
 /* Base styles */
 * {
   box-sizing: border-box;

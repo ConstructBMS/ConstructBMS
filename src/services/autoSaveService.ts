@@ -3,23 +3,23 @@ import { supabase } from './supabase';
 export interface AutoSaveState {
   isDirty: boolean;
   isSaving: boolean;
-  lastSaved: Date | null;
   lastError: string | null;
+  lastSaved: Date | null;
   pendingChanges: Map<string, any>;
 }
 
 export interface AutoSaveConfig {
-  debounceMs: number;
   autoSaveIntervalMs: number;
+  debounceMs: number;
   maxRetries: number;
   retryDelayMs: number;
 }
 
 export interface TableConfig {
-  tableName: string;
   primaryKey: string;
-  updateFields: string[];
+  tableName: string;
   transformData?: (data: any) => any;
+  updateFields: string[];
   validateData?: (data: any) => string[] | null;
 }
 

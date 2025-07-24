@@ -529,6 +529,122 @@
   }
 }
 
+/* ===== TIMELINE PRINT STYLES ===== */
+.timeline-print-preview {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  background: white;
+}
+
+.timeline-print-preview .timeline-print-container {
+  max-width: 210mm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.timeline-print-preview .timeline-print-watermark {
+  display: none;
+}
+
+/* Print-specific styles for timeline */
+@media print {
+  .timeline-print-container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  .timeline-print-header {
+    page-break-after: avoid;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+  }
+  
+  .timeline-print-content {
+    page-break-inside: avoid;
+  }
+  
+  .timeline-print-footer {
+    page-break-before: avoid;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    font-size: 10px;
+    text-align: center;
+  }
+  
+  .timeline-print-page-break {
+    page-break-before: always;
+  }
+  
+  .timeline-print-watermark {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
+    font-size: 48px !important;
+    font-weight: bold !important;
+    color: rgba(255, 0, 0, 0.1) !important;
+    z-index: 1000 !important;
+    pointer-events: none !important;
+  }
+  
+  .timeline-print-task-row {
+    page-break-inside: avoid;
+    margin-bottom: 8px;
+  }
+  
+  .timeline-print-task-bar {
+    height: 20px;
+    background: #3b82f6;
+    border-radius: 3px;
+    position: relative;
+  }
+  
+  .timeline-print-task-bar.critical {
+    background: #ef4444;
+  }
+  
+  .timeline-print-task-bar.completed {
+    background: #10b981;
+  }
+  
+  .timeline-print-grid {
+    background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .timeline-print-time-header {
+    background: #f3f4f6;
+    border-bottom: 1px solid #d1d5db;
+    padding: 8px 0;
+    font-weight: 600;
+  }
+  
+  .timeline-print-filters {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 11px;
+  }
+  
+  .timeline-print-branding {
+    text-align: center;
+    font-size: 10px;
+    color: #6b7280;
+    margin-top: 10px;
+  }
+}
+
 /* ===== ACCESSIBILITY ===== */
 .focus-visible {
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;

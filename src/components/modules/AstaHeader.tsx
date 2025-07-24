@@ -15,8 +15,8 @@ import { astaHeaderService } from '../../services/astaHeaderService';
 interface AstaHeaderProps {
   activeProject: any;
   autoSaveStatus: string;
-  userRole: string;
   onProjectChange?: (project: any) => void;
+  userRole: string;
 }
 
 const AstaHeader: React.FC<AstaHeaderProps> = ({

@@ -45,7 +45,7 @@ export default {
         },
         
         // ConstructBMS brand colors
-        constructbms: {
+        brand: {
           blue: '#3B82F6', // Light blue accent (replacing neon green)
           'blue-hover': '#2563EB', // Darker blue for hover
           black: '#000000', // Black

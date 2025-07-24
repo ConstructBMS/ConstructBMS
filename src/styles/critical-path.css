@@ -1,0 +1,304 @@
+/* Critical Path Highlighting Styles */
+
+/* Critical Task Bar Styles */
+.critical-task-bar {
+  filter: drop-shadow(0 2px 4px rgba(239, 68, 68, 0.3));
+  animation: critical-pulse 2s ease-in-out infinite;
+}
+
+.critical-task-bar:hover {
+  filter: drop-shadow(0 4px 8px rgba(239, 68, 68, 0.5));
+  transform: translateY(-1px);
+}
+
+/* Critical Milestone Styles */
+.critical-milestone {
+  filter: drop-shadow(0 2px 4px rgba(239, 68, 68, 0.4));
+  animation: critical-pulse 2s ease-in-out infinite;
+}
+
+.critical-milestone:hover {
+  filter: drop-shadow(0 4px 8px rgba(239, 68, 68, 0.6));
+  transform: scale(1.1);
+}
+
+/* Critical Link Styles */
+.critical-link {
+  filter: drop-shadow(0 1px 2px rgba(239, 68, 68, 0.3));
+  animation: critical-dash 1s linear infinite;
+}
+
+/* Critical Path Pulse Animation */
+@keyframes critical-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Critical Path Dash Animation for Links */
+@keyframes critical-dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* Critical Path Tooltip Styles */
+.critical-path-tooltip {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: 2px solid #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.critical-path-tooltip::before {
+  border-top-color: #dc2626;
+}
+
+/* Critical Path Badge Styles */
+.critical-path-badge {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Demo Mode Critical Path Styles */
+.demo-critical-task-bar {
+  filter: drop-shadow(0 1px 2px rgba(239, 68, 68, 0.2));
+  opacity: 0.8;
+}
+
+.demo-critical-milestone {
+  filter: drop-shadow(0 1px 2px rgba(239, 68, 68, 0.2));
+  opacity: 0.8;
+}
+
+.demo-critical-link {
+  filter: drop-shadow(0 1px 2px rgba(239, 68, 68, 0.2));
+  opacity: 0.8;
+}
+
+/* Critical Path Legend Styles */
+.critical-path-legend {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.critical-path-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #374151;
+}
+
+.critical-path-legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.critical-path-legend-color.task {
+  background: #ef4444;
+}
+
+.critical-path-legend-color.milestone {
+  background: #ef4444;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.critical-path-legend-color.link {
+  background: #ef4444;
+  height: 3px;
+}
+
+/* Critical Path Info Panel Styles */
+.critical-path-info {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.critical-path-info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 8px;
+}
+
+.critical-path-info-content {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.4;
+}
+
+/* Critical Path Float Display */
+.critical-path-float {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.critical-path-float.zero {
+  background: #ef4444;
+  color: white;
+}
+
+.critical-path-float.positive {
+  background: #10b981;
+  color: white;
+}
+
+.critical-path-float.negative {
+  background: #f59e0b;
+  color: white;
+}
+
+/* Critical Path Selection Styles */
+.critical-path-selected {
+  outline: 3px solid #ef4444;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Critical Path Filter Styles */
+.critical-path-filter {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.critical-path-filter.active {
+  background: #ef4444;
+  color: white;
+}
+
+/* Critical Path Timeline Indicator */
+.critical-path-timeline-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  z-index: 10;
+  opacity: 0.8;
+}
+
+/* Critical Path Summary Styles */
+.critical-path-summary {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.critical-path-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.critical-path-summary-title {
+  font-weight: 600;
+  color: #dc2626;
+  font-size: 16px;
+}
+
+.critical-path-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.critical-path-stat {
+  text-align: center;
+  padding: 8px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+}
+
+.critical-path-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+.critical-path-stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .critical-path-summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .critical-path-legend {
+    padding: 6px 8px;
+  }
+  
+  .critical-path-info {
+    padding: 8px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .critical-path-info {
+    background: linear-gradient(135deg, #1f2937, #111827);
+    border-color: #374151;
+  }
+  
+  .critical-path-info-content {
+    color: #d1d5db;
+  }
+  
+  .critical-path-summary {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .critical-path-stat {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .critical-path-stat-label {
+    color: #9ca3af;
+  }
+  
+  .critical-path-legend {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+  
+  .critical-path-legend-item {
+    color: #d1d5db;
+  }
+} 

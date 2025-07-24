@@ -3,48 +3,57 @@ import { loggingService } from './loggingService';
 
 // Enhanced Dependency interface
 export interface Dependency {
-  from: string; // Task ID this dependency comes from
-  type: 'FS' | 'SS' | 'FF' | 'SF'; // Finish-to-Start, Start-to-Start, Finish-to-Finish, Start-to-Finish
-  lag: number; // Lag/lead time in days (positive = lag, negative = lead)
+  from: string; 
+  // Finish-to-Start, Start-to-Start, Finish-to-Finish, Start-to-Finish
+  lag: number; 
+  // Task ID this dependency comes from
+  type: 'FS' | 'SS' | 'FF' | 'SF'; // Lag/lead time in days (positive = lag, negative = lead)
 }
 
 // Enhanced Task interface
 export interface Task {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  duration: number;
-  percentComplete: number;
-  status: 'not-started' | 'in-progress' | 'completed';
-  level: number; // Hierarchy level (0 = root, 1 = child, etc.)
-  parentId?: string;
-  position: number; // Order within its parent (0 = first, 1 = second, etc.)
-  children?: string[]; // Array of child task IDs
-  isExpanded?: boolean;
-  isSelected?: boolean;
-  taskType?: 'normal' | 'milestone' | 'summary' | 'hammock' | 'level-of-effort' | 'wbs' | 'deliverable';
-  priority?: 'low' | 'medium' | 'high' | 'critical';
   assignedTo?: string;
-  dependencies?: Dependency[]; // Enhanced dependencies with types and lag
-  predecessors?: { id: string; type: 'FS' | 'SS' | 'FF' | 'SF' }[]; // Enhanced predecessors with type
-  successors?: { id: string; type: 'FS' | 'SS' | 'FF' | 'SF' }[]; // Enhanced successors with type
-  constraintType?: 'asap' | 'must-start-on' | 'must-finish-on' | 'finish-no-later';
-  constraintDate?: Date;
-  deadline?: Date;
-  resources?: string[]; // Assigned resource IDs
-  cost?: number;
-  notes?: string;
-  // Allocation properties
-  workHours?: number;
-  effortType?: 'fixed-work' | 'fixed-duration' | 'fixed-units';
-  // 4D BIM properties
-  ifcObjectId?: string; // e.g. BIM/IFC object ref
-  // Bar chart styling properties
-  barStyle?: 'standard' | 'critical' | 'custom';
   barColor?: string;
+  // e.g. BIM/IFC object ref
+// Bar chart styling properties
+  barStyle?: 'standard' | 'critical' | 'custom';
+  // Order within its parent (0 = first, 1 = second, etc.)
+  children?: string[];
+  constraintDate?: Date;
+  // Enhanced successors with type
+  constraintType?: 'asap' | 'must-start-on' | 'must-finish-on' | 'finish-no-later';
+  // Assigned resource IDs
+  cost?: number;
+  deadline?: Date; 
+  dependencies?: Dependency[];
+  duration: number; 
+  effortType?: 'fixed-work' | 'fixed-duration' | 'fixed-units'; 
+  endDate: Date;
   fontSize?: number;
+  id: string;
+  // 4D BIM properties
+  ifcObjectId?: string;
+  // Array of child task IDs
+  isExpanded?: boolean;
+  isSelected?: boolean; 
+  level: number; 
+  name: string; 
+  notes?: string;
+  // Hierarchy level (0 = root, 1 = child, etc.)
+  parentId?: string;
+  percentComplete: number;
+  position: number; 
+  // Enhanced dependencies with types and lag
+  predecessors?: { id: string; type: 'FS' | 'SS' | 'FF' | 'SF' }[]; 
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+  resources?: string[];
   showLabel?: boolean;
+  startDate: Date;
+  status: 'not-started' | 'in-progress' | 'completed';
+  // Enhanced predecessors with type
+  successors?: { id: string; type: 'FS' | 'SS' | 'FF' | 'SF' }[];
+  taskType?: 'normal' | 'milestone' | 'summary' | 'hammock' | 'level-of-effort' | 'wbs' | 'deliverable';
+  workHours?: number;
 }
 
 // Sample project data based on Asta screenshots
@@ -405,7 +414,7 @@ export class GanttTaskService {
   }
 
   // Validate task dates
-  validateTaskDates(taskId: string): { isValid: boolean; errors: string[] } {
+  validateTaskDates(taskId: string): { errors: string[], isValid: boolean; } {
     const task = this.getTaskById(taskId);
     if (!task) return { isValid: false, errors: ['Task not found'] };
 

@@ -1,52 +1,53 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { persistentStorage } from '../services/persistentStorage';
 
 export interface LayoutSettings {
-  zoomLevel: 'day' | 'week' | 'month';
-  showGrid: boolean;
-  showDependencies: boolean;
-  showBarLabels: boolean;
+  autoSave: boolean;
   rowHeight: number;
+  showActuals: boolean;
+  showBarLabels: boolean;
+  showBaseline: boolean;
   showCriticalPath: boolean;
+  showDependencies: boolean;
+  showGrid: boolean;
   showProgress: boolean;
   showResources: boolean;
-  showBaseline: boolean;
-  showActuals: boolean;
   showVariance: boolean;
-  timelineWidth: number;
   taskGridWidth: number;
-  autoSave: boolean;
   theme: 'light' | 'dark' | 'auto';
+  timelineWidth: number;
+  zoomLevel: 'day' | 'week' | 'month';
 }
 
 export interface ProjectViewState {
-  layoutSettings: LayoutSettings;
-  selectedTasks: string[];
   expandedTasks: string[];
   filters: {
-    status: string[];
-    priority: string[];
     assignee: string[];
-    dateRange: { start: Date | null; end: Date | null };
+    dateRange: { end: Date | null, start: Date | null; };
+    priority: string[];
+    status: string[];
   };
+  layoutSettings: LayoutSettings;
+  selectedTasks: string[];
   sortBy: {
-    field: string;
     direction: 'asc' | 'desc';
+    field: string;
   };
   viewMode: 'gantt' | 'list' | 'board' | 'timeline';
 }
 
 interface ProjectViewContextType {
-  state: ProjectViewState;
-  updateLayoutSettings: (settings: Partial<LayoutSettings>) => void;
-  updateFilters: (filters: Partial<ProjectViewState['filters']>) => void;
-  updateSortBy: (sortBy: ProjectViewState['sortBy']) => void;
-  setViewMode: (mode: ProjectViewState['viewMode']) => void;
-  toggleTaskSelection: (taskId: string) => void;
-  setSelectedTasks: (taskIds: string[]) => void;
-  toggleTaskExpansion: (taskId: string) => void;
-  setExpandedTasks: (taskIds: string[]) => void;
   resetToDefaults: () => void;
+  setExpandedTasks: (taskIds: string[]) => void;
+  setSelectedTasks: (taskIds: string[]) => void;
+  setViewMode: (mode: ProjectViewState['viewMode']) => void;
+  state: ProjectViewState;
+  toggleTaskExpansion: (taskId: string) => void;
+  toggleTaskSelection: (taskId: string) => void;
+  updateFilters: (filters: Partial<ProjectViewState['filters']>) => void;
+  updateLayoutSettings: (settings: Partial<LayoutSettings>) => void;
+  updateSortBy: (sortBy: ProjectViewState['sortBy']) => void;
 }
 
 const defaultLayoutSettings: LayoutSettings = {
@@ -95,34 +96,42 @@ export const ProjectViewProvider: React.FC<ProjectViewProviderProps> = ({
   children, 
   projectId = 'default' 
 }) => {
-  const [state, setState] = useState<ProjectViewState>(() => {
-    // Load saved state from localStorage
-    try {
-      const savedState = localStorage.getItem(`projectView_${projectId}`);
-      if (savedState) {
-        const parsed = JSON.parse(savedState);
-        return {
-          ...defaultState,
-          ...parsed,
-          layoutSettings: {
-            ...defaultLayoutSettings,
-            ...parsed.layoutSettings
-          }
-        };
-      }
-    } catch (error) {
-      console.warn('Failed to load project view state from localStorage:', error);
-    }
-    return defaultState;
-  });
+  const [state, setState] = useState<ProjectViewState>(defaultState);
 
-  // Save state to localStorage whenever it changes
+  // Load saved state from persistent storage on mount
   useEffect(() => {
-    try {
-      localStorage.setItem(`projectView_${projectId}`, JSON.stringify(state));
-    } catch (error) {
-      console.warn('Failed to save project view state to localStorage:', error);
-    }
+    const loadSavedState = async () => {
+      try {
+        const savedState = await persistentStorage.getSetting(`projectView_${projectId}`, 'project_view');
+        if (savedState) {
+          setState({
+            ...defaultState,
+            ...savedState,
+            layoutSettings: {
+              ...defaultLayoutSettings,
+              ...savedState.layoutSettings
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to load project view state from persistent storage:', error);
+      }
+    };
+    
+    loadSavedState();
+  }, [projectId]);
+
+  // Save state to persistent storage whenever it changes
+  useEffect(() => {
+    const saveState = async () => {
+      try {
+        await persistentStorage.setSetting(`projectView_${projectId}`, state, 'project_view');
+      } catch (error) {
+        console.warn('Failed to save project view state to persistent storage:', error);
+      }
+    };
+    
+    saveState();
   }, [state, projectId]);
 
   const updateLayoutSettings = (settings: Partial<LayoutSettings>) => {

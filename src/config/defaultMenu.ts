@@ -107,6 +107,16 @@ export const defaultMenu: MenuItem[] = [
         visible: true,
         order: 2,
       },
+      {
+        id: 'baseline-management',
+        label: 'Baseline Management',
+        icon: 'bookmark',
+        type: 'child',
+        parentId: 'projects',
+        moduleKey: 'baseline-management',
+        visible: true,
+        order: 3,
+      },
     ],
   },
   {

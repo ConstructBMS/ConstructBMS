@@ -24,7 +24,7 @@ class TaskTableService {
   }
 
   // Update task with validation
-  async updateTask(taskId: string, updates: Partial<GanttTask>): Promise<{ success: boolean; errors: string[] }> {
+  async updateTask(taskId: string, updates: Partial<GanttTask>): Promise<{ errors: string[], success: boolean; }> {
     const errors: string[] = [];
 
     try {
@@ -245,7 +245,7 @@ class TaskTableService {
   }
 
   // Batch update tasks
-  async batchUpdateTasks(updates: Array<{ taskId: string; updates: Partial<GanttTask> }>): Promise<{ success: boolean; errors: string[] }> {
+  async batchUpdateTasks(updates: Array<{ taskId: string; updates: Partial<GanttTask> }>): Promise<{ errors: string[], success: boolean; }> {
     const errors: string[] = [];
 
     try {

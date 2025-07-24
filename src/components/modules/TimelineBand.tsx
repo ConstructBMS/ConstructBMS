@@ -17,21 +17,21 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Card } from '../ui';
 
 interface TimelineBandProps {
-  projectId: string;
-  userRole: string;
-  onScrollSync?: (scrollLeft: number) => void;
-  scrollLeft?: number;
-  width?: number;
   height?: number;
+  onScrollSync?: (scrollLeft: number) => void;
+  projectId: string;
+  scrollLeft?: number;
+  userRole: string;
+  width?: number;
 }
 
 interface PhaseEditState {
-  phaseId: string | null;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
   color: string;
+  description: string;
+  endDate: string;
+  name: string;
+  phaseId: string | null;
+  startDate: string;
 }
 
 const TimelineBand: React.FC<TimelineBandProps> = ({

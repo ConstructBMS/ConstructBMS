@@ -22,23 +22,23 @@ import {
 export type UserRole = 'super_admin' | 'project_manager' | 'viewer' | 'scheduler' | 'estimator' | 'procurement';
 
 export interface SidebarItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<any>;
-  path: string;
-  roles: UserRole[];
   badge?: string | number;
   children?: SidebarItem[];
+  icon: React.ComponentType<any>;
+  id: string;
   isActive?: boolean;
+  label: string;
+  path: string;
+  roles: UserRole[];
 }
 
 interface GanttSidebarProps {
-  collapsed: boolean;
-  onToggle: () => void;
   activeSection: string;
-  userRole: UserRole;
-  onSectionChange: (section: string) => void;
   className?: string;
+  collapsed: boolean;
+  onSectionChange: (section: string) => void;
+  onToggle: () => void;
+  userRole: UserRole;
 }
 
 const GanttSidebar: React.FC<GanttSidebarProps> = ({

@@ -9,7 +9,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { dataSourceService } from '../../services/dataSourceService';
-import { DatabaseStatus } from '../DatabaseStatus';
+import DatabaseStatus from '../DatabaseStatus';
 
 interface StatCard {
   change: string;

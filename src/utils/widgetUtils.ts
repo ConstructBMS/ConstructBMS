@@ -1,13 +1,13 @@
 import { WIDGET_SIZES } from '../components/widgets/WidgetTypes';
 
 export interface WidgetSize {
-  width: number;
   height: number;
+  width: number;
 }
 
 export interface ContentBehavior {
-  contentHeight: 'auto' | 'fixed' | 'scrollable';
   aspectRatio?: number;
+  contentHeight: 'auto' | 'fixed' | 'scrollable';
 }
 
 /**
@@ -18,7 +18,7 @@ export const calculateWidgetDimensions = (
   gridRowHeight: number = 120,
   gridGap: number = 16,
   gridColumns: number = 6
-): { width: number; height: number } => {
+): { height: number, width: number; } => {
   const columnWidth = `calc((100% - ${gridColumns - 1} * ${gridGap}px) / ${gridColumns})`;
   const width = `calc(${columnWidth} * ${widgetSize.width} + ${gridGap}px * ${widgetSize.width - 1})`;
   const height = widgetSize.height * gridRowHeight + (widgetSize.height - 1) * gridGap;
@@ -95,7 +95,7 @@ export const canResizeWidget = (
  * Calculate optimal widget placement in a grid
  */
 export const calculateOptimalPlacement = (
-  widgets: Array<{ id: string; width: number; height: number; x?: number; y?: number }>,
+  widgets: Array<{ height: number; id: string; width: number; x?: number; y?: number }>,
   gridColumns: number = 6
 ): Array<{ id: string; x: number; y: number }> => {
   const grid: boolean[][] = Array(20).fill(null).map(() => Array(gridColumns).fill(false));

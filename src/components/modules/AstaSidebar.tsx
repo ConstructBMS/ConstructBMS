@@ -16,12 +16,12 @@ import {
 // Remove the import since we're not using the service
 
 interface AstaSidebarProps {
-  collapsed: boolean;
-  onToggleCollapse: () => void;
   activeProject: any;
-  userRole: string;
-  onNavigation?: (itemId: string) => void;
   activeViewMode?: string;
+  collapsed: boolean;
+  onNavigation?: (itemId: string) => void;
+  onToggleCollapse: () => void;
+  userRole: string;
 }
 
 const AstaSidebar: React.FC<AstaSidebarProps> = ({

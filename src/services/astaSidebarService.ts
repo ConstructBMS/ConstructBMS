@@ -1,13 +1,13 @@
 import { supabase } from './supabase';
 
 export interface SidebarMenuItem {
+  active: boolean;
+  icon: string;
   id: string;
   label: string;
-  icon: string;
-  active: boolean;
-  visible: boolean;
   order: number;
   permissions?: string[];
+  visible: boolean;
 }
 
 export interface SidebarConfig {

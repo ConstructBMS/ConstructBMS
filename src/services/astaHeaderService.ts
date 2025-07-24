@@ -1,22 +1,22 @@
 import { supabase } from './supabase';
 
 export interface Project {
-  id: string;
-  name: string;
   client: string;
-  status: string;
-  startDate: Date;
   endDate: Date;
-  progress: number;
+  id: string;
   manager: string;
+  name: string;
+  progress: number;
+  startDate: Date;
+  status: string;
 }
 
 export interface UserProfile {
+  avatar?: string;
+  email: string;
   id: string;
   name: string;
-  email: string;
   role: string;
-  avatar?: string;
 }
 
 class AstaHeaderService {

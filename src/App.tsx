@@ -13,6 +13,7 @@ import { EmailProvider, useEmail } from './contexts/EmailContext';
 import { MenuProvider } from './contexts/MenuContext';
 import { LogoProvider } from './contexts/LogoContext';
 import { ChatProvider } from './contexts/ChatContext';
+import { ProgrammeUndoRedoProvider } from './contexts/ProgrammeUndoRedoContext';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import CRM from './components/modules/CRM';
@@ -46,6 +47,7 @@ import HR from './components/modules/HR';
 import PAYE from './components/modules/PAYE';
 import Marketing from './components/modules/Marketing';
 import EmailClient from './components/modules/EmailClient';
+import { TimelinePaneDemo } from './components/modules/Timeline';
 import Agile from './components/modules/Agile';
 import TopBar from './components/TopBar';
 import GeneralSettings from './components/modules/GeneralSettings';
@@ -60,14 +62,24 @@ import LandingPage from './components/LandingPage';
 import RolesPermissionsMatrix from './components/modules/RolesPermissionsMatrix';
 import SalesPipeline from './components/modules/SalesPipeline';
 import Notes from './components/modules/Notes';
-import GanttPage from './components/modules/GanttPage';
 import ProgrammeManager from './components/modules/ProgrammeManager';
+import BaselineComprehensiveDemo from './components/modules/BaselineComprehensiveDemo';
 import DemoModeIndicator from './components/DemoModeIndicator';
 import DemoDataInitializer from './components/DemoDataInitializer';
 import Footer from './components/Footer';
 import { demoDataService } from './services/demoData';
 import { loggingService } from './services/loggingService';
 import { initializeDemoData, hasDemoData } from './utils/initializeDemoData';
+
+// Placeholder component for Gantt functionality
+const GanttPlaceholder: React.FC = () => (
+  <div className="flex items-center justify-center h-64 text-gray-500">
+    <div className="text-center">
+      <h3 className="text-lg font-medium mb-2">Gantt Chart</h3>
+      <p className="text-sm">Gantt functionality is available in the Programme Manager module.</p>
+    </div>
+  </div>
+);
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -78,8 +90,24 @@ function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Handle direct navigation to Programme Manager sub-routes
+  useEffect(() => {
+    const pathSegments = location.pathname.split('/');
+    if (pathSegments[1] === 'programme-manager') {
+      setActiveModule('programme-manager');
+    }
+  }, [location.pathname]);
+
   const handleModuleChange = (module: string, params?: Record<string, any>) => {
     setActiveModule(module);
+    
+    // Handle Programme Manager sub-routes
+    if (module === 'programme-manager') {
+      // If no specific tab is provided, default to home
+      navigate('/programme-manager/home');
+      return;
+    }
+    
     // Update URL to reflect the active module
     navigate(`/${module}`);
     
@@ -89,7 +117,6 @@ function AppContent() {
       sessionStorage.setItem('openProject', JSON.stringify(params['openProject']));
     }
     if (params?.['openTask']) {
-      // Store the task data in sessionStorage for the Tasks module to access
       sessionStorage.setItem('openTask', JSON.stringify(params['openTask']));
     }
   };
@@ -164,6 +191,20 @@ function AppContent() {
   }, [activeModule, isMobile]);
 
   const renderActiveModule = () => {
+    // Check if we're in Programme Manager and handle sub-routes
+    if (activeModule === 'programme-manager') {
+      const pathSegments = location.pathname.split('/');
+      const subRoute = pathSegments[2]; // programme-manager/[subRoute]
+      
+      // If we have a sub-route, let the Programme Manager handle it
+      if (subRoute && ['file', 'home', 'project', 'view', 'allocation', '4d', 'format'].includes(subRoute)) {
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      }
+      
+      // Default to home if no valid sub-route
+      return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+    }
+    
     switch (activeModule) {
       case 'dashboard':
       case 'quick-start':
@@ -188,7 +229,7 @@ function AppContent() {
       case 'sales-pipeline':
         return <SalesPipeline onNavigateToModule={setActiveModule} />;
       case 'gantt':
-        return <GanttPage />;
+        return <GanttPlaceholder />;
       case 'notes':
         return <Notes onNavigateToModule={setActiveModule} />;
       case 'signature':
@@ -229,6 +270,8 @@ function AppContent() {
         return <PAYE />;
       case 'marketing':
         return <Marketing />;
+      case 'timelinePane':
+        return <TimelinePaneDemo />;
       case 'email':
         return <EmailClient />;
       case 'agile':
@@ -236,6 +279,22 @@ function AppContent() {
       case 'projects':
         return <Projects />;
       case 'programme-manager':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'baseline-management':
+        return <BaselineComprehensiveDemo />;
+      case 'programme-manager/file':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/home':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/project':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/view':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/allocation':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/4d':
+        return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
+      case 'programme-manager/format':
         return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
       case 'analytics':
         return <Analytics />;
@@ -330,7 +389,9 @@ function AppContent() {
             emailUnreadCount={unreadCount}
           />
           <main className='flex-1 p-2 sm:p-4 md:p-6 w-full max-w-full sidebar-ios-fix safe-area-inset'>
-            {renderActiveModule()}
+            <ProgrammeUndoRedoProvider projectId="default">
+              {renderActiveModule()}
+            </ProgrammeUndoRedoProvider>
           </main>
         </div>
       </div>
@@ -403,6 +464,15 @@ function App() {
                     />
                     <Route path='/login' element={<LoginForm />} />
                     <Route path='/signup' element={<SignUpForm />} />
+                    
+                    {/* Programme Manager routes */}
+                    <Route path='/programme-manager/*' element={
+                      <ProtectedRoute>
+                        <AppContent />
+                      </ProtectedRoute>
+                    } />
+                    
+                    {/* All other routes */}
                     <Route
                       path='*'
                       element={

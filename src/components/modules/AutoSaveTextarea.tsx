@@ -2,19 +2,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAutoSaveField } from '../../contexts/AutoSaveContext';
 
 interface AutoSaveTextareaProps {
-  tableName: string;
-  recordId: string;
+  className?: string;
+  disabled?: boolean;
   fieldName: string;
   initialValue: string;
-  placeholder?: string;
-  className?: string;
-  rows?: number;
-  required?: boolean;
-  disabled?: boolean;
   maxLength?: number;
   minLength?: number;
-  onValueChange?: (value: string) => void;
   onSave?: (value: string) => void;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  recordId: string;
+  required?: boolean;
+  rows?: number;
+  tableName: string;
   validate?: (value: string) => string | null;
 }
 

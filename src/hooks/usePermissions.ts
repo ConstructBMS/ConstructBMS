@@ -1,9 +1,9 @@
 import { useAuth } from '../contexts/AuthContext';
 
 export interface Permission {
+  description?: string;
   id: string;
   name: string;
-  description?: string;
 }
 
 export interface Role {
@@ -50,7 +50,19 @@ export const usePermissions = () => {
         'gantt.allocation.level',
         'gantt.4d.view',
         'gantt.format.style',
-        'gantt.format.layout'
+        'gantt.format.layout',
+        'programme.collab.view',
+        'programme.task.edit',
+        'programme.progress.view',
+        'programme.progress.edit',
+        'programme.undo',
+        'programme.edit.undo-redo',
+        'programme.audit.view-task',
+        'programme.audit.view-all',
+        'programme.print',
+        'programme.export.pdf',
+        'programme.import.asta',
+        'programme.export.asta'
       ],
       'employee': [
         'gantt.home.copy',
@@ -60,7 +72,18 @@ export const usePermissions = () => {
         'gantt.view.zoom',
         'gantt.view.toggle',
         'gantt.project.info',
-        'gantt.4d.view'
+        'gantt.4d.view',
+        'programme.collab.view',
+        'programme.task.edit',
+        'programme.progress.view',
+        'programme.progress.edit',
+        'programme.undo',
+        'programme.edit.undo-redo',
+        'programme.audit.view-task',
+        'programme.import.asta',
+        'programme.export.asta',
+        'programme.print',
+        'programme.export.pdf'
       ],
       'viewer': [
         'gantt.home.expand',
@@ -68,7 +91,9 @@ export const usePermissions = () => {
         'gantt.view.zoom',
         'gantt.view.toggle',
         'gantt.project.info',
-        'gantt.4d.view'
+        'gantt.4d.view',
+        'programme.collab.view',
+        'programme.progress.view'
       ]
     };
 
@@ -195,6 +220,80 @@ export const usePermissions = () => {
     return rolePermissions[user.role] || [];
   };
 
+  // Add the missing hasPermission and checkPermission functions
+  const hasPermission = (permission: Permission, projectId?: string): boolean => {
+    if (!user) return false;
+    
+    // Super admin has all permissions
+    if (user.role === 'super_admin') return true;
+    
+    // Check if user has the specific permission
+    return canAccess(permission.id);
+  };
+
+  const checkPermission = (permission: Permission, projectId?: string): { hasPermission: boolean; reason?: string; requiredRole?: string } => {
+    if (!user) {
+      return { 
+        hasPermission: false, 
+        reason: 'User not authenticated',
+        requiredRole: 'authenticated'
+      };
+    }
+
+    // Super admin has all permissions
+    if (user.role === 'super_admin') {
+      return { hasPermission: true };
+    }
+
+    // Check if user has the specific permission
+    const hasAccess = canAccess(permission.id);
+    
+    if (hasAccess) {
+      return { hasPermission: true };
+    }
+
+    // Determine required role for this permission
+    const requiredRole = getRequiredRoleForPermission(permission.id);
+    
+    return {
+      hasPermission: false,
+      reason: `Requires ${requiredRole} role`,
+      requiredRole
+    };
+  };
+
+  const getRequiredRoleForPermission = (permissionId: string): string => {
+    // Define which roles have access to which permissions
+    const permissionRoleMap: Record<string, string> = {
+      'gantt.home.cut': 'admin',
+      'gantt.home.delete': 'admin',
+      'gantt.home.insert-task': 'admin',
+      'gantt.home.insert-summary': 'admin',
+      'gantt.home.indent': 'admin',
+      'gantt.home.outdent': 'admin',
+      'gantt.home.link': 'admin',
+      'gantt.home.unlink': 'admin',
+      'gantt.file.new': 'admin',
+      'gantt.file.save': 'admin',
+      'gantt.file.export': 'admin',
+      'gantt.project.calendar': 'admin',
+      'gantt.allocation.resource': 'admin',
+      'gantt.allocation.level': 'admin',
+      'gantt.format.style': 'admin',
+      'gantt.format.layout': 'admin',
+      'gantt.home.copy': 'employee',
+      'gantt.home.paste': 'employee',
+      'gantt.home.expand': 'viewer',
+      'gantt.home.collapse': 'viewer',
+      'gantt.view.zoom': 'viewer',
+      'gantt.view.toggle': 'viewer',
+      'gantt.project.info': 'viewer',
+      'gantt.4d.view': 'viewer'
+    };
+
+    return permissionRoleMap[permissionId] || 'viewer';
+  };
+
   // Gantt-specific permission helpers
   const canEditTasks = (): boolean => {
     return canAccess('gantt.home.cut') || canAccess('gantt.home.delete');
@@ -220,6 +319,8 @@ export const usePermissions = () => {
 
   return {
     canAccess,
+    hasPermission,
+    checkPermission,
     hasRole,
     hasAnyRole,
     getUserRole,

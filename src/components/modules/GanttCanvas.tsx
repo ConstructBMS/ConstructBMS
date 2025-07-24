@@ -8,67 +8,76 @@ import {
   UserIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline';
+import { useBarStyles } from '../../hooks/useBarStyles';
 
 // Types for Gantt data
 export interface GanttTask {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number; // 0-100
-  isMilestone: boolean;
-  isCritical: boolean;
-  level: number; // Indentation level
-  parentId?: string;
-  children?: string[];
   assignedTo?: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
-  float: number; // Float time in days
-  constraintType?: 'asap' | 'start-no-earlier' | 'must-finish';
+  children?: string[];
   constraintDate?: Date;
+  // Constraint type for the new system
+  constraintType?: 'none' | 'MSO' | 'SNET' | 'FNLT' | 'MFO';
+  constraintViolated?: boolean;
+  endDate: Date; 
+  float: number;
+  id: string;
+  isCritical: boolean; 
+  // 0-100
+  isMilestone: boolean;
+  level: number;
+  name: string;
+  // Indentation level
+  parentId?: string;
+  progress: number; 
+  startDate: Date;
+  status: 'not-started' | 'in-progress' | 'completed' | 'delayed';
   wbsNumber?: string;
 }
 
 export interface GanttLink {
   id: string;
+  lag: number;
   sourceTaskId: string;
   targetTaskId: string;
-  type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag: number; // Lag in days
+  type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish'; // Lag in days
 }
 
 export interface GanttCanvasProps {
-  tasks: GanttTask[];
-  links: GanttLink[];
-  startDate: Date;
   endDate: Date;
-  zoomLevel: number; // 1 = day, 7 = week, 30 = month
+  links: GanttLink[];
+  onTaskSelect?: (taskId: string) => void;
+  onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void;
+  selectedTaskId?: string | undefined; 
+  showFloat: boolean;
+  // 1 = day, 7 = week, 30 = month
   showGridlines: boolean;
   showTaskLinks: boolean;
-  showFloat: boolean;
-  onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void;
-  onTaskSelect?: (taskId: string) => void;
-  selectedTaskId?: string | undefined;
+  showCriticalPath: boolean;
+  criticalOnly: boolean;
+  startDate: Date;
+  tasks: GanttTask[];
   userRole: string;
+  zoomLevel: number;
+  projectId?: string;
 }
 
 interface CanvasDimensions {
-  width: number;
+  canvasWidth: number;
+  headerHeight: number;
   height: number;
   leftColumnWidth: number;
-  canvasWidth: number;
   rowHeight: number;
-  headerHeight: number;
+  width: number;
 }
 
 interface DragState {
-  isDragging: boolean;
-  taskId: string | null;
   dragType: 'move' | 'resize-start' | 'resize-end' | null;
+  isDragging: boolean;
+  originalEndDate: Date | null;
+  originalStartDate: Date | null;
   startX: number;
   startY: number;
-  originalStartDate: Date | null;
-  originalEndDate: Date | null;
+  taskId: string | null;
 }
 
 const GanttCanvas: React.FC<GanttCanvasProps> = ({
@@ -80,10 +89,13 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
   showGridlines,
   showTaskLinks,
   showFloat,
+  showCriticalPath,
+  criticalOnly,
   onTaskUpdate,
   onTaskSelect,
   selectedTaskId,
-  userRole
+  userRole,
+  projectId
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState<CanvasDimensions>({
@@ -105,6 +117,12 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
   });
   const [hoveredTaskId, setHoveredTaskId] = useState<string | null>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+
+  // Bar styles hook
+  const { getBarStyleForTask } = useBarStyles({ 
+    projectId: projectId || '', 
+    enabled: true 
+  });
 
   const canEdit = userRole !== 'viewer';
 
@@ -317,9 +335,9 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
     const isHovered = hoveredTaskId === task.id;
 
     if (task.isMilestone) {
-      // Render milestone as diamond
+      // Render milestone as diamond with enhanced styling
       const centerX = startX;
-      const diamondSize = 12;
+      const diamondSize = 14; // Slightly larger for better visibility
       const points = [
         `${centerX},${y + dimensions.rowHeight / 2 - diamondSize}`,
         `${centerX + diamondSize},${y + dimensions.rowHeight / 2}`,
@@ -327,25 +345,87 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
         `${centerX - diamondSize},${y + dimensions.rowHeight / 2}`
       ].join(' ');
 
+      // Critical path styling for milestones
+      const isCritical = showCriticalPath && task.isCritical;
+      const shouldShow = !criticalOnly || isCritical;
+      
+      if (!shouldShow) return null;
+
+      // Determine fill color based on critical path, critical status and demo mode
+      let fillColor = '#3b82f6'; // Default blue
+      if (isCritical) {
+        fillColor = '#ef4444'; // Red for critical path
+      } else if (task.isCritical) {
+        fillColor = '#ef4444'; // Red for critical
+      } else if ((task as any).demo) {
+        fillColor = '#ec4899'; // Pink for demo
+      }
+
+      // Determine stroke color
+      const strokeColor = isCritical ? '#dc2626' : (isSelected ? '#1e40af' : '#1e3a8a');
+
       return (
         <g key={task.id}>
+          {/* Main diamond */}
           <polygon
             points={points}
-            fill={task.isCritical ? '#ef4444' : '#3b82f6'}
-            stroke={isSelected ? '#1e40af' : '#1e3a8a'}
-            strokeWidth={isSelected ? 2 : 1}
-            className="cursor-pointer"
+            fill={fillColor}
+            stroke={strokeColor}
+            strokeWidth={isCritical ? 3 : (isSelected ? 2 : 1)}
+            className={`cursor-pointer ${isCritical ? 'critical-milestone' : ''}`}
             onMouseEnter={() => setHoveredTaskId(task.id)}
             onMouseLeave={() => setHoveredTaskId(null)}
             onClick={() => onTaskSelect?.(task.id)}
           />
+          
+          {/* Progress indicator for milestones */}
           {task.progress > 0 && (
             <circle
               cx={centerX}
               cy={y + dimensions.rowHeight / 2}
-              r={diamondSize * 0.3}
+              r={diamondSize * 0.25}
               fill="#10b981"
+              stroke="#ffffff"
+              strokeWidth={1}
             />
+          )}
+
+          {/* Demo mode watermark */}
+          {(task as any).demo && (
+            <text
+              x={centerX}
+              y={y + dimensions.rowHeight / 2 + diamondSize + 12}
+              fontSize="8"
+              fill="#ec4899"
+              textAnchor="middle"
+              className="pointer-events-none"
+            >
+              DEMO MILESTONE
+            </text>
+          )}
+
+          {/* Task name label */}
+          <text
+            x={centerX + diamondSize + 8}
+            y={y + dimensions.rowHeight / 2 + 4}
+            fontSize="11"
+            fill="#1f2937"
+            className="pointer-events-none"
+          >
+            {task.name}
+          </text>
+
+          {/* Tag indicator if present */}
+          {(task as any).tag && (
+            <text
+              x={centerX + diamondSize + 8}
+              y={y + dimensions.rowHeight / 2 + 16}
+              fontSize="9"
+              fill="#6b7280"
+              className="pointer-events-none"
+            >
+              {(task as any).tag}
+            </text>
           )}
         </g>
       );
@@ -356,6 +436,37 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
     const barY = y + (dimensions.rowHeight - barHeight) / 2;
     const progressWidth = (width * task.progress) / 100;
 
+    // Critical path styling
+    const isCritical = showCriticalPath && task.isCritical;
+    const shouldShow = !criticalOnly || isCritical;
+    
+    if (!shouldShow) return null;
+
+    // Get custom bar style for this task
+    const customStyle = getBarStyleForTask(task);
+    
+    // Determine bar colors and styling
+    let fillColor = '#e5e7eb';
+    let strokeColor = '#d1d5db';
+    let strokeWidth = 1;
+    let textColor = '#1f2937';
+    let strokeDasharray = 'none';
+    
+    if (customStyle) {
+      fillColor = customStyle.barColor;
+      strokeColor = customStyle.borderColor;
+      textColor = customStyle.textColor;
+      if (customStyle.pattern === 'dashed') {
+        strokeDasharray = '5,5';
+      } else if (customStyle.pattern === 'dotted') {
+        strokeDasharray = '2,2';
+      }
+    } else if (isCritical) {
+      fillColor = '#fecaca';
+      strokeColor = '#ef4444';
+      strokeWidth = 2;
+    }
+
     return (
       <g key={task.id}>
         {/* Background bar */}
@@ -364,11 +475,12 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
           y={barY}
           width={width}
           height={barHeight}
-          fill={task.isCritical ? '#fecaca' : '#e5e7eb'}
-          stroke={task.isCritical ? '#ef4444' : '#d1d5db'}
-          strokeWidth={1}
+          fill={fillColor}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          strokeDasharray={strokeDasharray}
           rx={4}
-          className="cursor-pointer"
+          className={`cursor-pointer gantt-task-bar ${isCritical ? 'critical-task-bar' : ''}`}
           onMouseEnter={() => setHoveredTaskId(task.id)}
           onMouseLeave={() => setHoveredTaskId(null)}
           onClick={() => onTaskSelect?.(task.id)}
@@ -381,9 +493,30 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
             y={barY}
             width={progressWidth}
             height={barHeight}
-            fill={task.isCritical ? '#ef4444' : '#3b82f6'}
+            fill={customStyle ? customStyle.barColor : (isCritical ? '#ef4444' : '#3b82f6')}
             rx={4}
           />
+        )}
+        
+        {/* Constraint violation indicator */}
+        {task.constraintViolated && (
+          <g>
+            <ExclamationTriangleIcon
+              x={endX - 16}
+              y={barY - 8}
+              width={16}
+              height={16}
+              fill="#ef4444"
+              className="pointer-events-none"
+            />
+            <circle
+              cx={endX - 8}
+              cy={barY - 4}
+              r={8}
+              fill="#ef4444"
+              opacity={0.2}
+            />
+          </g>
         )}
         
         {/* Task name on bar */}
@@ -391,7 +524,7 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
           x={startX + 8}
           y={barY + barHeight / 2 + 4}
           fontSize="12"
-          fill="#1f2937"
+          fill={textColor}
           className="pointer-events-none"
         >
           {task.name}
@@ -459,6 +592,11 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
       
       if (!sourceTask || !targetTask) return null;
 
+      // Check if this is a critical dependency
+      const isCriticalLink = showCriticalPath && 
+        sourceTask.isCritical && 
+        targetTask.isCritical;
+
       const sourceX = dateToPixel(sourceTask.endDate);
       const sourceY = getVisibleTasks().findIndex(t => t.id === sourceTask.id) * dimensions.rowHeight + dimensions.rowHeight / 2;
       const targetX = dateToPixel(targetTask.startDate);
@@ -475,7 +613,7 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
               refY="3.5"
               orient="auto"
             >
-              <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" />
+              <polygon points="0 0, 10 3.5, 0 7" fill={isCriticalLink ? "#ef4444" : "#6b7280"} />
             </marker>
           </defs>
           <line
@@ -483,14 +621,15 @@ const GanttCanvas: React.FC<GanttCanvasProps> = ({
             y1={sourceY}
             x2={targetX}
             y2={targetY}
-            stroke="#6b7280"
-            strokeWidth={2}
+            stroke={isCriticalLink ? "#ef4444" : "#6b7280"}
+            strokeWidth={isCriticalLink ? 3 : 2}
             markerEnd={`url(#arrowhead-${link.id})`}
+            className={isCriticalLink ? 'critical-link' : ''}
           />
         </g>
       );
     });
-  }, [links, tasks, showTaskLinks, dateToPixel, getVisibleTasks, dimensions.rowHeight]);
+  }, [links, tasks, showTaskLinks, showCriticalPath, dateToPixel, getVisibleTasks, dimensions.rowHeight]);
 
   // Render time header
   const renderTimeHeader = useCallback(() => {

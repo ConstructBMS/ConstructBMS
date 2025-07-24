@@ -9,38 +9,38 @@ import { WIDGET_SIZES } from '../widgets/WidgetTypes';
 
 interface WidgetPlacementProps {
   layoutName: string;
-  selectedLayout: string | null;
-  placeholders: LayoutPlaceholder[];
   onBack: () => void;
   onClose: () => void;
   onSave: (widgets: PlacedWidget[]) => void;
+  placeholders: LayoutPlaceholder[];
+  selectedLayout: string | null;
 }
 
 interface LayoutPlaceholder {
   id: string;
-  size: { width: number; height: number };
+  size: { height: number, width: number; };
+  type: 'placeholder';
   x: number;
   y: number;
-  type: 'placeholder';
 }
 
 interface PlacedWidget {
+  content: any;
   id: string;
   placeholderId: string;
-  type: string;
+  size: { height: number, width: number; };
   title: string;
-  content: any;
-  size: { width: number; height: number };
+  type: string;
 }
 
 interface PreMadeWidget {
-  id: string;
-  type: string;
-  title: string;
+  category: string;
+  content: any;
   description: string;
   icon: React.ComponentType<any>;
-  content: any;
-  category: string;
+  id: string;
+  title: string;
+  type: string;
 }
 
 const WidgetPlacement: React.FC<WidgetPlacementProps> = ({

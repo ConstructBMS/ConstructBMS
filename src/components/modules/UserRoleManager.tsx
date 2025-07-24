@@ -14,9 +14,9 @@ import { permissionsService } from '../../services/permissionsService';
 import { Card } from '../ui';
 
 interface UserWithRole {
-  userId: string;
-  role: UserRole;
   email: string;
+  role: UserRole;
+  userId: string;
 }
 
 interface UserRoleManagerProps {

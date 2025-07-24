@@ -16,154 +16,178 @@ import {
   UserGroupIcon,
   CurrencyPoundIcon,
   CalendarDaysIcon,
-  ClockIcon as ClockIconSolid
+  ClockIcon as ClockIconSolid,
+  FunnelIcon,
+  FlagIcon
 } from '@heroicons/react/24/outline';
+import { filterService, type FilterState } from '../../services/filterService';
+import FilterButton from './FilterButton';
+import { flagService, type TaskFlag } from '../../services/flagService';
+import TaskFlagComponent from './TaskFlag';
 
 // Advanced PowerProject-style interfaces
 export interface AdvancedGanttTask {
-  id: string;
-  name: string;
-  wbsId: string;
-  parentId: string | null;
-  type: 'summary' | 'task' | 'milestone';
-  start: Date;
-  end: Date;
-  duration: number;
-  progress: number;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  actuals?: {
+    cost?: number;
+    duration?: number;
+    end?: Date;
+    progress?: number;
+    start?: Date;
+  };
   assignee: string;
-  isCritical: boolean;
-  expanded: boolean;
+  baseline?: {
+    duration: number;
+    end: Date;
+    progress: number;
+    start: Date;
+  };
   children?: string[];
-  level?: number;
-  
+  // Display properties
+  color?: string;
   // Advanced PowerProject features
   constraints?: {
-    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
     date?: Date;
+    type: 'start-no-earlier-than' | 'finish-no-later-than' | 'must-start-on' | 'must-finish-on' | 'as-soon-as-possible' | 'as-late-as-possible';
   };
+  // hours
+  cost: number;
+  criticalPath: boolean;
+  customFields?: Record<string, any>;
   dependencies?: Array<{
     id: string;
-    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
     lag?: number;
+    type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   }>;
+  duration: number;
+  earlyFinish: Date;
+  earlyStart: Date;
+  end: Date;
+  expanded: boolean;
+  freeFloat: number;
+  id: string;
+  isCritical: boolean;
+  lateFinish: Date;
+  lateStart: Date;
+  level?: number;
+  name: string;
+  notes?: string;
+  parentId: string | null;
+  pattern?: 'solid' | 'dashed' | 'dotted';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  progress: number;
+  // Progress tracking fields
+  percentComplete?: number; // 0-100 for progress tracking
+  autoProgress?: boolean; // true = auto-calculate from children
+  demoMode?: boolean; // true if updated in demo mode
+  updatedBy?: string; // User who last updated progress
+  updatedAt?: Date; // When progress was last updated
+  // Drag reschedule fields
+  isDraggable?: boolean; // true if task can be dragged
+  dragConstraints?: {
+    minStart?: Date;
+    maxEnd?: Date;
+    locked?: boolean;
+  };
+  // Task resize fields
+  isResizable?: boolean; // true if task can be resized
+  resizeConstraints?: {
+    minDuration?: number;
+    maxDuration?: number;
+    allowStartResize?: boolean;
+    allowEndResize?: boolean;
+  };
+  milestoneDate?: Date; // For milestones only
+  resourceId?: string;
   resources?: Array<{
+    cost?: number;
     id: string;
     name: string;
     type: 'work' | 'material' | 'cost';
     units: number;
-    cost?: number;
   }>;
-  baseline?: {
-    start: Date;
-    end: Date;
-    duration: number;
-    progress: number;
-  };
-  actuals?: {
-    start?: Date;
-    end?: Date;
-    duration?: number;
-    progress?: number;
-    cost?: number;
-  };
-  notes?: string;
-  customFields?: Record<string, any>;
-  
-  // Scheduling properties
-  earlyStart: Date;
-  earlyFinish: Date;
-  lateStart: Date;
-  lateFinish: Date;
-  totalFloat: number;
-  freeFloat: number;
-  criticalPath: boolean;
-  
-  // Resource properties
-  work: number; // hours
-  cost: number;
-  resourceId?: string;
-  
-  // Display properties
-  color?: string;
-  pattern?: 'solid' | 'dashed' | 'dotted';
-  showBaseline?: boolean;
   showActuals?: boolean;
+  showBaseline?: boolean;
+  start: Date;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  totalFloat: number;
+  type: 'summary' | 'task' | 'milestone' | 'phase';
+  wbsId: string;
+  work: number;
 }
 
 export interface AdvancedGanttLink {
+  critical: boolean;
   id: string;
+  lag: number;
   sourceTaskId: string;
   targetTaskId: string;
   type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag: number;
-  critical: boolean;
 }
 
 export interface Resource {
+  availability: ResourceAvailability[];
+  calendar: ResourceCalendar;
+  costPerUnit: number;
   id: string;
+  maxUnits: number;
   name: string;
   type: 'work' | 'material' | 'cost';
-  maxUnits: number;
-  costPerUnit: number;
-  calendar: ResourceCalendar;
-  availability: ResourceAvailability[];
 }
 
 export interface ResourceCalendar {
-  workingDays: number[]; // 0-6 (Sunday-Saturday)
-  workingHours: { start: string; end: string };
-  holidays: Date[];
   exceptions: Array<{
     date: Date;
     hours: number;
-  }>;
+  }>; 
+  holidays: Date[];
+  workingDays: number[];
+  // 0-6 (Sunday-Saturday)
+  workingHours: { end: string, start: string; };
 }
 
 export interface ResourceAvailability {
-  startDate: Date;
   endDate: Date;
+  startDate: Date;
   units: number;
 }
 
 export interface CriticalPathAnalysis {
+  criticalPathDuration: number;
   criticalTasks: string[];
-  totalFloat: Record<string, number>;
   freeFloat: Record<string, number>;
   projectDuration: number;
-  criticalPathDuration: number;
   slackAnalysis: Record<string, {
-    totalSlack: number;
-    freeSlack: number;
     critical: boolean;
+    freeSlack: number;
+    totalSlack: number;
   }>;
+  totalFloat: Record<string, number>;
 }
 
 export interface ViewMode {
-  type: 'day' | 'week' | 'month' | 'quarter' | 'year';
-  zoom: number;
-  showWeekends: boolean;
   showHolidays: boolean;
+  showWeekends: boolean;
+  type: 'day' | 'week' | 'month' | 'quarter' | 'year';
   workingTimeOnly: boolean;
+  zoom: number;
 }
 
 export interface AdvancedGanttProps {
-  projectId: string;
-  tasks: AdvancedGanttTask[];
   links: AdvancedGanttLink[];
+  onTaskSelect: (taskId: string) => void;
+  onTaskUpdate: (taskId: string, updates: Partial<AdvancedGanttTask>) => void;
+  projectId: string;
   resources: Resource[];
-  viewMode: ViewMode;
-  showCriticalPath: boolean;
-  showBaseline: boolean;
+  selectedTaskId?: string;
   showActuals: boolean;
+  showBaseline: boolean;
   showConstraints: boolean;
+  showCriticalPath: boolean;
   showDependencies: boolean;
   showResourceAllocation: boolean;
-  onTaskUpdate: (taskId: string, updates: Partial<AdvancedGanttTask>) => void;
-  onTaskSelect: (taskId: string) => void;
-  selectedTaskId?: string;
+  tasks: AdvancedGanttTask[];
   userRole: string;
+  viewMode: ViewMode;
 }
 
 const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
@@ -207,6 +231,10 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [criticalPathAnalysis, setCriticalPathAnalysis] = useState<CriticalPathAnalysis | null>(null);
   const [resourceAllocation, setResourceAllocation] = useState<Record<string, any>>({});
+  const [filterState, setFilterState] = useState<FilterState>(filterService.getFilterState());
+  const [filteredTasks, setFilteredTasks] = useState<AdvancedGanttTask[]>(tasks);
+  const [flags, setFlags] = useState<TaskFlag[]>([]);
+  const [showOnlyFlagged, setShowOnlyFlagged] = useState(false);
   
   const canEdit = userRole !== 'viewer';
 
@@ -275,6 +303,37 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
     }
   }, [calculateTimeScale]);
 
+  // Load flags for project
+  useEffect(() => {
+    const loadFlags = async () => {
+      const projectFlags = await flagService.getFlagsForProject(projectId);
+      setFlags(projectFlags);
+    };
+    loadFlags();
+  }, [projectId]);
+
+  // Apply filters to tasks
+  useEffect(() => {
+    let filtered = filterService.applyFilters(tasks);
+    
+    // Apply flag filtering
+    if (showOnlyFlagged) {
+      filtered = filtered.filter(task => flagService.hasFlag(task.id));
+    }
+    
+    setFilteredTasks(filtered);
+  }, [tasks, filterState, showOnlyFlagged, flags]);
+
+  // Handle filter changes
+  const handleFilterChange = (newFilterState: FilterState) => {
+    setFilterState(newFilterState);
+  };
+
+  // Handle flag changes
+  const handleFlagChange = (newFlags: TaskFlag[]) => {
+    setFlags(newFlags);
+  };
+
   // Get visible tasks (flattened hierarchy)
   const getVisibleTasks = useCallback((): AdvancedGanttTask[] => {
     const visible: AdvancedGanttTask[] = [];
@@ -285,7 +344,7 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
       
       if (expandedTasks.has(task.id) && task.children) {
         task.children.forEach(childId => {
-          const childTask = tasks.find(t => t.id === childId);
+          const childTask = filteredTasks.find(t => t.id === childId);
           if (childTask) {
             addTask(childTask, level + 1);
           }
@@ -294,11 +353,11 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
     };
 
     // Fix: Only compare string to string, not string to object
-    const rootTasks = tasks.filter(task => !task.parentId || !tasks.some(t => t.id === task.parentId));
+    const rootTasks = filteredTasks.filter(task => !task.parentId || !filteredTasks.some(t => t.id === task.parentId));
     rootTasks.forEach(task => addTask(task));
 
     return visible;
-  }, [tasks, expandedTasks]);
+  }, [filteredTasks, expandedTasks]);
 
   // Critical path analysis
   const calculateCriticalPath = useCallback(() => {
@@ -491,6 +550,7 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
     const isSelected = selectedTaskId === task.id;
     const isHovered = hoveredTaskId === task.id;
     const isCritical = showCriticalPath && task.criticalPath;
+    const taskFlag = flagService.getFlagByTaskId(task.id);
     
     const barY = y + dimensions.rowHeight * 0.2;
     const barHeight = dimensions.rowHeight * 0.6;
@@ -662,6 +722,40 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
           >
             {task.name}
           </text>
+        )}
+
+        {/* Flag indicator */}
+        {taskFlag && (
+          <g>
+            {/* Flag background circle */}
+            <circle
+              cx={endX - 8}
+              cy={barY - 4}
+              r={6}
+              fill="#ffffff"
+              stroke="#1f2937"
+              strokeWidth={1}
+            />
+            {/* Flag icon placeholder - would need SVG icon rendering */}
+            <text
+              x={endX - 8}
+              y={barY - 4}
+              fontSize="8"
+              fill={taskFlag.color === 'red-600' ? '#dc2626' : 
+                    taskFlag.color === 'yellow-600' ? '#ca8a04' :
+                    taskFlag.color === 'orange-600' ? '#ea580c' :
+                    taskFlag.color === 'blue-600' ? '#2563eb' :
+                    taskFlag.color === 'purple-600' ? '#7c3aed' :
+                    taskFlag.color === 'green-600' ? '#16a34a' :
+                    taskFlag.color === 'pink-600' ? '#db2777' :
+                    '#6b7280'}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontWeight="bold"
+            >
+              ⚠️
+            </text>
+          </g>
         )}
       </g>
     );
@@ -1004,8 +1098,28 @@ const AdvancedAstaGantt: React.FC<AdvancedGanttProps> = ({
             {criticalPathAnalysis && (
               <span>Critical Path: {criticalPathAnalysis.criticalTasks.length} tasks</span>
             )}
+            {filterState.activeFilters.length > 0 && (
+              <span className="text-blue-600">Filtered: {filterState.activeFilters.length} active</span>
+            )}
           </div>
           <div className="flex items-center space-x-4">
+            <FilterButton
+              tasks={tasks}
+              onFilterChange={handleFilterChange}
+            />
+            <button
+              onClick={() => setShowOnlyFlagged(!showOnlyFlagged)}
+              className={`flex items-center px-2 py-1 rounded text-xs font-medium transition-colors ${
+                showOnlyFlagged
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+              title={showOnlyFlagged ? 'Show all tasks' : 'Show flagged tasks only'}
+            >
+              <FlagIcon className="w-3 h-3 mr-1" />
+              {showOnlyFlagged ? 'Flagged Only' : 'All Tasks'}
+            </button>
+            <span>Flags: {flags.length}</span>
             <span>Zoom: {viewMode.zoom}%</span>
             <span>View: {viewMode.type}</span>
             {showCriticalPath && <span className="text-red-600">Critical Path Active</span>}

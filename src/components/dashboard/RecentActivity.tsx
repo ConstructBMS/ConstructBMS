@@ -10,17 +10,17 @@ import {
 import { dataSourceService } from '../../services/dataSourceService';
 
 interface Activity {
+  clientData?: any;
   color: string;
+  dealData?: any;
   description: string;
   icon: any;
   id: number;
+  projectData?: any;
+  taskData?: any;
   time: string;
   title: string;
   type: 'document' | 'message' | 'task' | 'alert' | 'user';
-  projectData?: any;
-  taskData?: any;
-  clientData?: any;
-  dealData?: any;
 }
 
 interface RecentActivityProps {

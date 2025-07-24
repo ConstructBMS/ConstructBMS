@@ -87,7 +87,12 @@ export const getUserRoles = async (userId: string): Promise<UserRole[]> => {
     return roles;
   } catch (error) {
     console.error('❌ Failed to load user roles:', error);
-    throw error;
+    // Return default role instead of throwing error
+    return [{
+      role: 'viewer',
+      permissions: ['view_projects', 'view_tasks', 'view_links', 'view_resources'],
+      project_permissions: {}
+    }];
   }
 };
 

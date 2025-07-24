@@ -9,9 +9,9 @@ import { useAutoSave } from '../../contexts/AutoSaveContext';
 
 interface AutoSaveStatusProps {
   className?: string;
-  showTimestamp?: boolean;
-  showError?: boolean;
   compact?: boolean;
+  showError?: boolean;
+  showTimestamp?: boolean;
 }
 
 const AutoSaveStatus: React.FC<AutoSaveStatusProps> = ({

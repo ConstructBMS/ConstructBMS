@@ -2,20 +2,20 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAutoSaveField } from '../../contexts/AutoSaveContext';
 
 interface AutoSaveInputProps {
-  tableName: string;
-  recordId: string;
+  className?: string;
+  disabled?: boolean;
   fieldName: string;
   initialValue: string;
-  placeholder?: string;
-  className?: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'url' | 'tel';
-  required?: boolean;
-  disabled?: boolean;
   maxLength?: number;
   minLength?: number;
-  pattern?: string;
-  onValueChange?: (value: string) => void;
   onSave?: (value: string) => void;
+  onValueChange?: (value: string) => void;
+  pattern?: string;
+  placeholder?: string;
+  recordId: string;
+  required?: boolean;
+  tableName: string;
+  type?: 'text' | 'email' | 'password' | 'number' | 'url' | 'tel';
   validate?: (value: string) => string | null;
 }
 

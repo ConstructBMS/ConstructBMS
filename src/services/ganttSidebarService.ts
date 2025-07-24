@@ -4,36 +4,36 @@ import type { UserRole } from '../components/modules/GanttSidebar';
 
 // Service-specific interface without icon requirement
 export interface SidebarItemConfig {
+  badge?: string | number;
+  children?: SidebarItemConfig[];
   id: string;
+  isActive?: boolean;
   label: string;
   path: string;
   roles: UserRole[];
-  badge?: string | number;
-  children?: SidebarItemConfig[];
-  isActive?: boolean;
 }
 
 export interface SidebarConfig {
-  id: string;
-  name: string;
-  items: SidebarItemConfig[];
-  isActive: boolean;
   createdAt: Date;
+  id: string;
+  isActive: boolean;
+  items: SidebarItemConfig[];
+  name: string;
   updatedAt: Date;
 }
 
 export interface UserSidebarPreferences {
-  userId: string;
-  sidebarConfigId: string;
   collapsed: boolean;
-  expandedItems: string[];
   customOrder: string[];
+  expandedItems: string[];
   preferences: {
+    autoExpand: boolean;
+    compactMode: boolean;
     showBadges: boolean;
     showIcons: boolean;
-    compactMode: boolean;
-    autoExpand: boolean;
   };
+  sidebarConfigId: string;
+  userId: string;
 }
 
 class GanttSidebarService {

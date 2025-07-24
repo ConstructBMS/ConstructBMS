@@ -143,7 +143,7 @@ class GanttCanvasService {
   }
 
   // Get project date range
-  getProjectDateRange(tasks: GanttTask[]): { startDate: Date; endDate: Date } {
+  getProjectDateRange(tasks: GanttTask[]): { endDate: Date, startDate: Date; } {
     if (tasks.length === 0) {
       const now = new Date();
       return {
@@ -369,7 +369,7 @@ class GanttCanvasService {
   }
 
   // Validate task dates
-  validateTaskDates(task: GanttTask, tasks: GanttTask[], links: GanttLink[]): { isValid: boolean; errors: string[] } {
+  validateTaskDates(task: GanttTask, tasks: GanttTask[], links: GanttLink[]): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     // Check if end date is after start date

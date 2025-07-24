@@ -16,27 +16,27 @@ import { Card } from '../ui';
 
 interface ActivityTemplatesModalProps {
   isOpen: boolean;
-  onClose: () => void;
   onApplyTemplate: (templateId: string) => void;
+  onClose: () => void;
   taskId: string;
   userId: string;
 }
 
 interface TemplateFormData {
-  name: string;
-  description: string;
   category: string;
+  description: string;
   is_public: boolean;
+  name: string;
   tags: string[];
 }
 
 interface StepFormData {
-  label: string;
+  dependencies: string[];
   description: string;
   duration: number;
-  sequence: number;
   is_milestone: boolean;
-  dependencies: string[];
+  label: string;
+  sequence: number;
 }
 
 const ActivityTemplatesModal: React.FC<ActivityTemplatesModalProps> = ({

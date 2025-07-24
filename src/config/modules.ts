@@ -9,6 +9,7 @@ export const modules = {
   'crm-contractors': { name: 'Contractors', type: 'core', active: true },
   projects: { name: 'Projects', type: 'core', active: true },
   'programme-manager': { name: 'Programme Manager', type: 'core', active: true },
+  'baseline-management': { name: 'Baseline Management', type: 'core', active: true },
   calendar: { name: 'Calendar', type: 'core', active: true },
   salesPipeline: { name: 'Sales Pipeline', type: 'core', active: true },
   library: { name: 'Library', type: 'core', active: true },
@@ -33,4 +34,5 @@ export const modules = {
   roadmap: { name: 'Roadmap', type: 'additional', active: true },
   changelog: { name: 'Changelog', type: 'additional', active: true },
   marketing: { name: 'Marketing', type: 'additional', active: true },
+  timelinePane: { name: 'Timeline Pane', type: 'additional', active: true },
 };

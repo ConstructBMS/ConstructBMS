@@ -24,22 +24,22 @@ import type { RibbonTab, RibbonGroup, RibbonButton, RibbonDropdownItem } from '.
 
 // Types for task operations
 export interface TaskOperation {
-  type: 'add' | 'delete' | 'milestone' | 'link' | 'unlink' | 'indent' | 'outdent' | 'progress';
   data?: any;
+  type: 'add' | 'delete' | 'milestone' | 'link' | 'unlink' | 'indent' | 'outdent' | 'progress';
 }
 
 export interface LinkType {
+  abbreviation: string;
+  description: string;
   id: string;
   label: string;
-  description: string;
-  abbreviation: string;
 }
 
 export interface ProgressOption {
+  icon: React.ComponentType<any>;
   id: string;
   label: string;
   value: number;
-  icon: React.ComponentType<any>;
 }
 
 // Link types for task dependencies
@@ -93,10 +93,10 @@ const PROGRESS_OPTIONS: ProgressOption[] = [
 ];
 
 interface HomeTabProps {
-  onTaskOperation: (operation: TaskOperation) => void;
-  userRole: string;
-  selectedTasks: string[];
   canEdit: boolean;
+  onTaskOperation: (operation: TaskOperation) => void;
+  selectedTasks: string[];
+  userRole: string;
 }
 
 const useHomeTab = (
@@ -184,8 +184,17 @@ const useHomeTab = (
             tooltip: 'Edit selected task'
           },
           {
+            id: 'add-milestone',
+            label: 'Add Milestone',
+            icon: FlagIcon,
+            type: 'button',
+            action: () => onTaskOperation({ type: 'add-milestone' }),
+            disabled: isViewer || !canEdit,
+            tooltip: 'Add new milestone'
+          },
+          {
             id: 'toggle-milestone',
-            label: 'Milestone',
+            label: 'Toggle Milestone',
             icon: FlagIcon,
             type: 'toggle',
             action: () => onTaskOperation({ type: 'milestone' }),

@@ -15,32 +15,32 @@ import {
 // Types
 export interface Project {
   id: string;
+  lastModified: Date;
   name: string;
   status: 'active' | 'archived' | 'draft';
-  lastModified: Date;
 }
 
 export interface BreadcrumbItem {
+  icon?: React.ComponentType<any>;
   id: string;
   label: string;
   path: string;
-  icon?: React.ComponentType<any>;
 }
 
 export interface AutosaveStatus {
-  status: 'saved' | 'saving' | 'error' | 'pending';
-  lastSaved?: Date;
   errorMessage?: string;
+  lastSaved?: Date;
+  status: 'saved' | 'saving' | 'error' | 'pending';
 }
 
 interface GanttHeaderProps {
-  currentProject: Project;
-  breadcrumbs: BreadcrumbItem[];
   autosaveStatus: AutosaveStatus;
-  onProjectChange?: (projectId: string) => void;
-  onProfileAction?: (action: 'profile' | 'logout' | 'settings') => void;
-  onBreadcrumbClick?: (item: BreadcrumbItem) => void;
+  breadcrumbs: BreadcrumbItem[];
   className?: string;
+  currentProject: Project;
+  onBreadcrumbClick?: (item: BreadcrumbItem) => void;
+  onProfileAction?: (action: 'profile' | 'logout' | 'settings') => void;
+  onProjectChange?: (projectId: string) => void;
 }
 
 const GanttHeader: React.FC<GanttHeaderProps> = ({

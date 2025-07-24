@@ -8,63 +8,65 @@ import {
   EyeIcon,
   EyeSlashIcon,
   CogIcon,
-  AdjustmentsHorizontalIcon
+  AdjustmentsHorizontalIcon,
+  PaletteIcon
 } from '@heroicons/react/24/outline';
 import type { RibbonTab } from '../GanttRibbon';
 
 // Types for format operations
 export interface FormatOperation {
-  type: 'bar-coloring' | 'font-settings' | 'bar-height' | 'milestone-style' | 'float-style' | 'save-preferences' | 'display-options' | 'advanced-formatting';
   data?: any;
+  type: 'bar-coloring' | 'font-settings' | 'bar-height' | 'milestone-style' | 'float-style' | 'save-preferences' | 'display-options' | 'advanced-formatting' | 'manage-bar-styles';
 }
 
 // Bar coloring options
 export interface BarColoringOption {
-  id: string;
-  label: string;
+  colors?: {
+    completed: string;
+    critical: string;
+    delayed: string;
+    normal: string;
+  };
   description: string;
   icon: React.ComponentType<any>;
-  colors?: {
-    critical: string;
-    normal: string;
-    completed: string;
-    delayed: string;
-  };
+  id: string;
+  label: string;
 }
 
 // Font options
 export interface FontOption {
+  family: string;
   id: string;
   label: string;
-  family: string;
-  size: number;
   preview: string;
+  size: number;
 }
 
 // Format state interface
 export interface FormatState {
-  barColoring: string; // 'critical' | 'status' | 'resource'
-  fontFamily: string;
-  fontSize: number;
+  barColoring: string; 
   barHeight: number;
-  showMilestoneAsDiamond: boolean;
-  showFloatAsTrail: boolean;
   customColors?: {
-    critical: string;
-    normal: string;
     completed: string;
+    critical: string;
     delayed: string;
+    normal: string;
     resource1: string;
     resource2: string;
     resource3: string;
   };
+  // 'critical' | 'status' | 'resource'
+  fontFamily: string;
+  fontSize: number;
+  showFloatAsTrail: boolean;
+  showMilestoneAsDiamond: boolean;
 }
 
 interface FormatTabProps {
-  onFormatOperation: (operation: FormatOperation) => void;
-  userRole: string;
   currentFormatState?: FormatState;
+  onFormatOperation: (operation: FormatOperation) => void;
   onFormatStateChange?: (newState: Partial<FormatState>) => void;
+  userRole: string;
 }
 
 const useFormatTab = (
@@ -226,6 +228,26 @@ const useFormatTab = (
         ]
       },
 
+      // Bar Styles Rules Group
+      {
+        id: 'bar-styles-rules',
+        title: 'Bar Styles',
+        buttons: [
+          {
+            id: 'manage-bar-styles',
+            label: 'Manage Styles',
+            icon: PaintBrushIcon,
+            type: 'button',
+            action: () => onFormatOperation({ 
+              type: 'manage-bar-styles', 
+              data: { action: 'open-manager' } 
+            }),
+            disabled: isViewer || !canEdit,
+            tooltip: 'Manage custom bar style rules'
+          }
+        ]
+      },
+
       // Text Formatting Group
       {
         id: 'text-formatting',
@@ -260,15 +282,15 @@ const useFormatTab = (
           {
             id: 'font-size',
             label: 'Font Size',
-            icon: FontFamilyIcon,
+            icon: DocumentTextIcon,
             type: 'dropdown',
             action: () => {},
             disabled: isViewer || !canEdit,
             tooltip: 'Set font size',
             dropdownItems: fontSizeOptions.map(size => ({
               id: `size-${size}`,
-              label: `${size}pt`,
-              icon: FontFamilyIcon,
+              label: `${size}px`,
+              icon: DocumentTextIcon,
               action: () => {
                 onFormatOperation({ 
                   type: 'font-settings', 
@@ -298,40 +320,40 @@ const useFormatTab = (
       // Display Options Group
       {
         id: 'display-options',
-        title: 'Display Options',
+        title: 'Display',
         buttons: [
           {
             id: 'milestone-style',
-            label: 'Milestone Diamond',
-            icon: DiamondIcon,
-            type: 'toggle',
+            label: 'Milestone Style',
+            icon: ChartBarIcon,
+            type: 'button',
             action: () => {
               const newValue = !currentFormatState?.showMilestoneAsDiamond;
               onFormatOperation({ 
                 type: 'milestone-style', 
-                data: { showAsDiamond: newValue } 
+                data: { show: newValue } 
               });
               onFormatStateChange?.({ showMilestoneAsDiamond: newValue });
             },
             disabled: isViewer || !canEdit,
-            tooltip: 'Show milestones as diamonds',
+            tooltip: 'Toggle milestone diamond style',
             isActive: currentFormatState?.showMilestoneAsDiamond || false
           },
           {
             id: 'float-style',
             label: 'Float Trail',
-            icon: ChartBarIcon,
-            type: 'toggle',
+            icon: EyeIcon,
+            type: 'button',
             action: () => {
               const newValue = !currentFormatState?.showFloatAsTrail;
               onFormatOperation({ 
                 type: 'float-style', 
-                data: { showAsTrail: newValue } 
+                data: { show: newValue } 
               });
               onFormatStateChange?.({ showFloatAsTrail: newValue });
             },
             disabled: isViewer || !canEdit,
-            tooltip: 'Show float as thin trail',
+            tooltip: 'Show float as trail',
             isActive: currentFormatState?.showFloatAsTrail || false
           },
           {

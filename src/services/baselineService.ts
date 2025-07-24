@@ -1,413 +1,660 @@
-import type { Task } from './ganttTaskService';
+import { supabase } from './supabase';
 
+// Baseline interfaces
 export interface Baseline {
   id: string;
+  projectId: string;
   name: string;
-  description?: string;
+  createdBy: string;
   createdAt: Date;
-  projectData: {
-    tasks: Task[];
-    projectStartDate: Date;
-    projectEndDate: Date;
-    totalDuration: number;
-    totalCost: number;
-  };
-  metadata: {
-    version: string;
-    createdBy: string;
-    notes?: string;
-  };
+  isActive: boolean;
+  demo?: boolean;
+}
+
+export interface BaselineTask {
+  id: string;
+  baselineId: string;
+  taskId: string;
+  baselineStart: Date;
+  baselineEnd: Date;
+  percentComplete: number;
+  isMilestone: boolean;
+  parentId?: string;
+  name: string;
+  demo?: boolean;
+}
+
+export interface BaselineVariance {
+  taskId: string;
+  baselineStart: Date;
+  baselineEnd: Date;
+  currentStart: Date;
+  currentEnd: Date;
+  startVariance: number; // days
+  endVariance: number; // days
+  durationVariance: number; // days
+  startVariancePercent: number;
+  endVariancePercent: number;
+  durationVariancePercent: number;
+}
+
+export interface BaselinePreferences {
+  userId: string;
+  projectId: string;
+  showBaselineBars: boolean;
+  comparisonMode: 'bars' | 'variance' | 'delta';
+  activeBaselineId: string | null;
+  demo: boolean;
 }
 
 export interface BaselineComparison {
-  baselineId: string;
-  baselineName: string;
-  currentData: {
-    tasks: Task[];
-    projectStartDate: Date;
-    projectEndDate: Date;
-    totalDuration: number;
-    totalCost: number;
-  };
-  differences: {
-    addedTasks: Task[];
-    removedTasks: Task[];
-    modifiedTasks: Array<{
-      taskId: string;
-      taskName: string;
-      changes: Array<{
-        field: string;
-        baselineValue: any;
-        currentValue: any;
-      }>;
-    }>;
-    scheduleVariance: {
-      startDateVariance: number;
-      endDateVariance: number;
-      durationVariance: number;
-    };
-    costVariance: {
-      totalCostVariance: number;
-      costVariancePercentage: number;
-    };
-  };
+  onTimeTasks: number;
+  delayedTasks: number;
+  earlyTasks: number;
+  totalDurationChange: number;
+  totalTasks: number;
 }
 
-export class BaselineService {
-  private static instance: BaselineService;
+// Demo mode configuration
+const DEMO_MODE_CONFIG = {
+  maxBaselinesPerProject: 1,
+  maxTasksPerBaseline: 10,
+  tooltipMessage: 'DEMO BASELINE – Limited comparison',
+  baselineStateTag: 'demo'
+};
+
+class BaselineService {
   private baselines: Map<string, Baseline> = new Map();
+  private baselineTasks: Map<string, BaselineTask[]> = new Map();
+  private preferences: BaselinePreferences;
+  private isDemoMode = false;
 
-  static getInstance(): BaselineService {
-    if (!BaselineService.instance) {
-      BaselineService.instance = new BaselineService();
-    }
-    return BaselineService.instance;
-  }
-
-  /**
-   * Create a new baseline
-   */
-  createBaseline(
-    name: string,
-    tasks: Task[],
-    description?: string,
-    createdBy: string = 'System',
-    notes?: string
-  ): Baseline {
-    const id = `baseline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Calculate project metrics
-    const projectStartDate = this.getProjectStartDate(tasks);
-    const projectEndDate = this.getProjectEndDate(tasks);
-    const totalDuration = this.getProjectDuration(tasks);
-    const totalCost = this.getProjectCost(tasks);
-
-    const baseline: Baseline = {
-      id,
-      name,
-      ...(description && { description }),
-      createdAt: new Date(),
-      projectData: {
-        tasks: JSON.parse(JSON.stringify(tasks)), // Deep copy
-        projectStartDate,
-        projectEndDate,
-        totalDuration,
-        totalCost
-      },
-      metadata: {
-        version: '1.0',
-        createdBy,
-        ...(notes && { notes })
-      }
+  constructor() {
+    this.isDemoMode = this.checkDemoMode();
+    this.preferences = {
+      userId: 'current-user',
+      projectId: 'current-project',
+      showBaselineBars: true,
+      comparisonMode: 'bars',
+      activeBaselineId: null,
+      demo: this.isDemoMode
     };
+  }
 
-    this.baselines.set(id, baseline);
-    this.saveBaselinesToStorage();
-    
-    return baseline;
+  private checkDemoMode(): boolean {
+    // Check user role or environment to determine demo mode
+    return false; // Set to true for demo mode testing
   }
 
   /**
-   * Get all baselines
-   */
-  getAllBaselines(): Baseline[] {
-    return Array.from(this.baselines.values()).sort((a, b) => 
-      b.createdAt.getTime() - a.createdAt.getTime()
-    );
-  }
-
-  /**
-   * Get a specific baseline
+   * Get baseline by ID
    */
   getBaseline(baselineId: string): Baseline | null {
     return this.baselines.get(baselineId) || null;
   }
 
   /**
-   * Delete a baseline
+   * Get all baselines for project
    */
-  deleteBaseline(baselineId: string): boolean {
-    const deleted = this.baselines.delete(baselineId);
-    if (deleted) {
-      this.saveBaselinesToStorage();
-    }
-    return deleted;
-  }
+  async getBaselinesForProject(projectId: string): Promise<Baseline[]> {
+    try {
+      const { data, error } = await supabase
+        .from('programme_baselines')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
 
-  /**
-   * Update baseline metadata
-   */
-  updateBaseline(baselineId: string, updates: Partial<Baseline>): Baseline | null {
-    const baseline = this.baselines.get(baselineId);
-    if (!baseline) return null;
+      if (error) throw error;
 
-    const updatedBaseline = { ...baseline, ...updates };
-    this.baselines.set(baselineId, updatedBaseline);
-    this.saveBaselinesToStorage();
-    
-    return updatedBaseline;
-  }
-
-  /**
-   * Compare current project with a baseline
-   */
-  compareWithBaseline(baselineId: string, currentTasks: Task[]): BaselineComparison | null {
-    const baseline = this.baselines.get(baselineId);
-    if (!baseline) return null;
-
-    const baselineTasks = baseline.projectData.tasks;
-    const currentData = {
-      tasks: currentTasks,
-      projectStartDate: this.getProjectStartDate(currentTasks),
-      projectEndDate: this.getProjectEndDate(currentTasks),
-      totalDuration: this.getProjectDuration(currentTasks),
-      totalCost: this.getProjectCost(currentTasks)
-    };
-
-    // Find added, removed, and modified tasks
-    const baselineTaskIds = new Set(baselineTasks.map(t => t.id));
-    const currentTaskIds = new Set(currentTasks.map(t => t.id));
-
-    const addedTasks = currentTasks.filter(task => !baselineTaskIds.has(task.id));
-    const removedTasks = baselineTasks.filter(task => !currentTaskIds.has(task.id));
-
-    const modifiedTasks = this.findModifiedTasks(baselineTasks, currentTasks);
-
-    // Calculate schedule variance
-    const scheduleVariance = {
-      startDateVariance: currentData.projectStartDate.getTime() - baseline.projectData.projectStartDate.getTime(),
-      endDateVariance: currentData.projectEndDate.getTime() - baseline.projectData.projectEndDate.getTime(),
-      durationVariance: currentData.totalDuration - baseline.projectData.totalDuration
-    };
-
-    // Calculate cost variance
-    const costVariance = {
-      totalCostVariance: currentData.totalCost - baseline.projectData.totalCost,
-      costVariancePercentage: baseline.projectData.totalCost > 0 
-        ? ((currentData.totalCost - baseline.projectData.totalCost) / baseline.projectData.totalCost) * 100
-        : 0
-    };
-
-    return {
-      baselineId,
-      baselineName: baseline.name,
-      currentData,
-      differences: {
-        addedTasks,
-        removedTasks,
-        modifiedTasks,
-        scheduleVariance,
-        costVariance
-      }
-    };
-  }
-
-  /**
-   * Find tasks that have been modified between baseline and current
-   */
-  private findModifiedTasks(baselineTasks: Task[], currentTasks: Task[]): Array<{
-    taskId: string;
-    taskName: string;
-    changes: Array<{
-      field: string;
-      baselineValue: any;
-      currentValue: any;
-    }>;
-  }> {
-    const modifiedTasks: Array<{
-      taskId: string;
-      taskName: string;
-      changes: Array<{
-        field: string;
-        baselineValue: any;
-        currentValue: any;
-      }>;
-    }> = [];
-
-    const baselineTaskMap = new Map(baselineTasks.map(t => [t.id, t]));
-    const currentTaskMap = new Map(currentTasks.map(t => [t.id, t]));
-
-    // Check for modifications in existing tasks
-    for (const [taskId, baselineTask] of baselineTaskMap) {
-      const currentTask = currentTaskMap.get(taskId);
-      if (!currentTask) continue; // Task was removed (handled separately)
-
-      const changes: Array<{
-        field: string;
-        baselineValue: any;
-        currentValue: any;
-      }> = [];
-
-      // Compare key fields
-      const fieldsToCompare = [
-        'name', 'startDate', 'endDate', 'duration', 'percentComplete', 
-        'status', 'priority', 'assignedTo', 'cost', 'predecessors', 'successors'
-      ];
-
-      for (const field of fieldsToCompare) {
-        const baselineValue = (baselineTask as any)[field];
-        const currentValue = (currentTask as any)[field];
-
-        if (this.hasValueChanged(baselineValue, currentValue)) {
-          changes.push({
-            field,
-            baselineValue,
-            currentValue
+      // Clear existing baselines and add new ones
+      this.baselines.clear();
+      if (data) {
+        data.forEach(baseline => {
+          this.baselines.set(baseline.id, {
+            ...baseline,
+            createdAt: new Date(baseline.created_at),
+            demo: this.isDemoMode
           });
-        }
-      }
-
-      if (changes.length > 0) {
-        modifiedTasks.push({
-          taskId,
-          taskName: currentTask.name,
-          changes
         });
       }
-    }
 
-    return modifiedTasks;
-  }
-
-  /**
-   * Check if two values are different
-   */
-  private hasValueChanged(baselineValue: any, currentValue: any): boolean {
-    // Handle arrays (like predecessors, successors)
-    if (Array.isArray(baselineValue) && Array.isArray(currentValue)) {
-      if (baselineValue.length !== currentValue.length) return true;
-      return baselineValue.some((val, index) => val !== currentValue[index]);
-    }
-
-    // Handle dates
-    if (baselineValue instanceof Date && currentValue instanceof Date) {
-      return baselineValue.getTime() !== currentValue.getTime();
-    }
-
-    // Handle primitive values
-    return baselineValue !== currentValue;
-  }
-
-  /**
-   * Get project start date
-   */
-  private getProjectStartDate(tasks: Task[]): Date {
-    if (tasks.length === 0) return new Date();
-    
-    const startDates = tasks.map(task => task.startDate);
-    return new Date(Math.min(...startDates.map(date => date.getTime())));
-  }
-
-  /**
-   * Get project end date
-   */
-  private getProjectEndDate(tasks: Task[]): Date {
-    if (tasks.length === 0) return new Date();
-    
-    const endDates = tasks.map(task => task.endDate);
-    return new Date(Math.max(...endDates.map(date => date.getTime())));
-  }
-
-  /**
-   * Get project duration
-   */
-  private getProjectDuration(tasks: Task[]): number {
-    if (tasks.length === 0) return 0;
-    
-    const startDate = this.getProjectStartDate(tasks);
-    const endDate = this.getProjectEndDate(tasks);
-    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-  }
-
-  /**
-   * Get project total cost
-   */
-  private getProjectCost(tasks: Task[]): number {
-    return tasks.reduce((total, task) => total + (task.cost || 0), 0);
-  }
-
-  /**
-   * Save baselines to localStorage
-   */
-  private saveBaselinesToStorage(): void {
-    try {
-      const baselinesArray = Array.from(this.baselines.values());
-      localStorage.setItem('gantt_baselines', JSON.stringify(baselinesArray));
+      return Array.from(this.baselines.values());
     } catch (error) {
-      console.error('Failed to save baselines to storage:', error);
+      console.error('Error loading baselines:', error);
+      return [];
     }
   }
 
   /**
-   * Load baselines from localStorage
+   * Get baseline tasks
    */
-  loadBaselinesFromStorage(): void {
+  async getBaselineTasks(baselineId: string): Promise<BaselineTask[]> {
     try {
-      const stored = localStorage.getItem('gantt_baselines');
-      if (stored) {
-        const baselinesArray = JSON.parse(stored);
-        this.baselines.clear();
-        
-        baselinesArray.forEach((baseline: any) => {
-          // Convert date strings back to Date objects
-          baseline.createdAt = new Date(baseline.createdAt);
-          baseline.projectData.projectStartDate = new Date(baseline.projectData.projectStartDate);
-          baseline.projectData.projectEndDate = new Date(baseline.projectData.projectEndDate);
-          baseline.projectData.tasks.forEach((task: any) => {
-            task.startDate = new Date(task.startDate);
-            task.endDate = new Date(task.endDate);
-          });
-          
-          this.baselines.set(baseline.id, baseline);
-        });
+      const { data, error } = await supabase
+        .from('programme_baseline_tasks')
+        .select('*')
+        .eq('baseline_id', baselineId);
+
+      if (error) throw error;
+
+      const tasks = data?.map(task => ({
+        ...task,
+        baselineStart: new Date(task.baseline_start),
+        baselineEnd: new Date(task.baseline_end),
+        percentComplete: task.percent_complete || 0,
+        isMilestone: task.is_milestone || false,
+        parentId: task.parent_id,
+        name: task.name,
+        demo: this.isDemoMode
+      })) || [];
+
+      this.baselineTasks.set(baselineId, tasks);
+      return tasks;
+    } catch (error) {
+      console.error('Error loading baseline tasks:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Create new baseline
+   */
+  async createBaseline(
+    projectId: string,
+    name: string,
+    tasks: Array<{ 
+      id: string; 
+      start: Date; 
+      end: Date; 
+      percentComplete?: number;
+      isMilestone?: boolean;
+      parentId?: string;
+      name: string;
+    }>
+  ): Promise<Baseline | null> {
+    // Check demo mode restrictions
+    if (this.isDemoMode) {
+      const existingBaselines = Array.from(this.baselines.values());
+      if (existingBaselines.length >= DEMO_MODE_CONFIG.maxBaselinesPerProject) {
+        console.warn('Maximum baselines reached in demo mode');
+        return null;
       }
-    } catch (error) {
-      console.error('Failed to load baselines from storage:', error);
+
+      if (tasks.length > DEMO_MODE_CONFIG.maxTasksPerBaseline) {
+        console.warn('Maximum tasks per baseline reached in demo mode');
+        return null;
+      }
     }
-  }
 
-  /**
-   * Clear all baselines
-   */
-  clearAllBaselines(): void {
-    this.baselines.clear();
-    localStorage.removeItem('gantt_baselines');
-  }
-
-  /**
-   * Get baseline statistics
-   */
-  getBaselineStatistics(): {
-    totalBaselines: number;
-    oldestBaseline: Date | null;
-    newestBaseline: Date | null;
-    averageTasksPerBaseline: number;
-  } {
-    const baselines = this.getAllBaselines();
-    
-    if (baselines.length === 0) {
-      return {
-        totalBaselines: 0,
-        oldestBaseline: null,
-        newestBaseline: null,
-        averageTasksPerBaseline: 0
+    try {
+      const now = new Date();
+      const baselineData = {
+        project_id: projectId,
+        name: name,
+        created_by: 'current-user', // This should come from auth context
+        created_at: now.toISOString(),
+        is_active: false,
+        demo: this.isDemoMode
       };
-    }
 
-    const dates = baselines.map(b => b.createdAt);
-    const totalTasks = baselines.reduce((sum, b) => sum + b.projectData.tasks.length, 0);
+      // Create baseline
+      const { data: baseline, error: baselineError } = await supabase
+        .from('programme_baselines')
+        .insert(baselineData)
+        .select()
+        .single();
+
+      if (baselineError) throw baselineError;
+
+      // Create baseline tasks
+      const baselineTasksData = tasks.map(task => ({
+        baseline_id: baseline.id,
+        task_id: task.id,
+        baseline_start: task.start.toISOString().split('T')[0], // Convert to DATE format
+        baseline_end: task.end.toISOString().split('T')[0], // Convert to DATE format
+        percent_complete: task.percentComplete || 0,
+        is_milestone: task.isMilestone || false,
+        parent_id: task.parentId || null,
+        name: task.name,
+        demo: this.isDemoMode
+      }));
+
+      const { error: tasksError } = await supabase
+        .from('programme_baseline_tasks')
+        .insert(baselineTasksData);
+
+      if (tasksError) throw tasksError;
+
+      // Update local cache
+      const newBaseline: Baseline = {
+        ...baseline,
+        createdAt: now,
+        demo: this.isDemoMode
+      };
+      this.baselines.set(baseline.id, newBaseline);
+
+      // Cache baseline tasks
+      const baselineTasks = tasks.map(task => ({
+        id: `${baseline.id}-${task.id}`,
+        baselineId: baseline.id,
+        taskId: task.id,
+        baselineStart: task.start,
+        baselineEnd: task.end,
+        percentComplete: task.percentComplete || 0,
+        isMilestone: task.isMilestone || false,
+        parentId: task.parentId,
+        name: task.name,
+        demo: this.isDemoMode
+      }));
+      this.baselineTasks.set(baseline.id, baselineTasks);
+
+      return newBaseline;
+    } catch (error) {
+      console.error('Error creating baseline:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Set active baseline
+   */
+  async setActiveBaseline(baselineId: string): Promise<boolean> {
+    try {
+      // Deactivate all other baselines
+      const { error: deactivateError } = await supabase
+        .from('programme_baselines')
+        .update({ is_active: false })
+        .eq('project_id', this.preferences.projectId);
+
+      if (deactivateError) throw deactivateError;
+
+      // Activate selected baseline
+      const { error: activateError } = await supabase
+        .from('programme_baselines')
+        .update({ is_active: true })
+        .eq('id', baselineId);
+
+      if (activateError) throw activateError;
+
+      // Update local cache
+      this.baselines.forEach(baseline => {
+        baseline.isActive = baseline.id === baselineId;
+      });
+
+      // Update preferences
+      this.preferences.activeBaselineId = baselineId;
+      await this.savePreferences();
+
+      return true;
+    } catch (error) {
+      console.error('Error setting active baseline:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Delete baseline
+   */
+  async deleteBaseline(baselineId: string): Promise<boolean> {
+    try {
+      // Delete baseline tasks first
+      const { error: tasksError } = await supabase
+        .from('programme_baseline_tasks')
+        .delete()
+        .eq('baseline_id', baselineId);
+
+      if (tasksError) throw tasksError;
+
+      // Delete baseline
+      const { error: baselineError } = await supabase
+        .from('programme_baselines')
+        .delete()
+        .eq('id', baselineId);
+
+      if (baselineError) throw baselineError;
+
+      // Update local cache
+      this.baselines.delete(baselineId);
+      this.baselineTasks.delete(baselineId);
+
+      // If this was the active baseline, clear it
+      if (this.preferences.activeBaselineId === baselineId) {
+        this.preferences.activeBaselineId = null;
+        await this.savePreferences();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting baseline:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get active baseline
+   */
+  getActiveBaseline(): Baseline | null {
+    return Array.from(this.baselines.values()).find(b => b.isActive) || null;
+  }
+
+  /**
+   * Get active baseline for project
+   */
+  async getActiveBaseline(projectId: string): Promise<Baseline | null> {
+    try {
+      const { data, error } = await supabase
+        .from('programme_baselines')
+        .select('*')
+        .eq('project_id', projectId)
+        .eq('is_active', true)
+        .single();
+
+      if (error || !data) return null;
+
+      const baseline: Baseline = {
+        ...data,
+        createdAt: new Date(data.created_at),
+        demo: this.isDemoMode
+      };
+
+      return baseline;
+    } catch (error) {
+      console.error('Error getting active baseline:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get project baselines
+   */
+  async getProjectBaselines(projectId: string): Promise<Baseline[]> {
+    return this.getBaselinesForProject(projectId);
+  }
+
+  /**
+   * Set baseline active
+   */
+  async setBaselineActive(baselineId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const success = await this.setActiveBaseline(baselineId);
+      return { success };
+    } catch (error) {
+      console.error('Error setting baseline active:', error);
+      return { success: false, error: 'Failed to set baseline active' };
+    }
+  }
+
+  /**
+   * Create baseline with enhanced interface
+   */
+  async createBaseline(params: {
+    projectId: string;
+    name?: string;
+    tasks: Array<{
+      id: string;
+      startDate: Date;
+      endDate: Date;
+      percentComplete?: number;
+      isMilestone?: boolean;
+      parentId?: string;
+      name: string;
+    }>;
+  }): Promise<{ success: boolean; baseline?: Baseline; error?: string }> {
+    try {
+      const baseline = await this.createBaseline(
+        params.projectId,
+        params.name || `Baseline ${new Date().toLocaleDateString()}`,
+        params.tasks.map(task => ({
+          id: task.id,
+          start: task.startDate,
+          end: task.endDate,
+          percentComplete: task.percentComplete || 0,
+          isMilestone: task.isMilestone || false,
+          parentId: task.parentId,
+          name: task.name
+        }))
+      );
+
+      if (baseline) {
+        return { success: true, baseline };
+      } else {
+        return { success: false, error: 'Failed to create baseline' };
+      }
+    } catch (error) {
+      console.error('Error creating baseline:', error);
+      return { success: false, error: 'Failed to create baseline' };
+    }
+  }
+
+  /**
+   * Delete baseline with enhanced interface
+   */
+  async deleteBaseline(baselineId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const success = await this.deleteBaseline(baselineId);
+      return { success };
+    } catch (error) {
+      console.error('Error deleting baseline:', error);
+      return { success: false, error: 'Failed to delete baseline' };
+    }
+  }
+
+  /**
+   * Calculate baseline deltas
+   */
+  async calculateBaselineDeltas(projectId: string, currentTasks: Array<{
+    id: string;
+    startDate: Date;
+    endDate: Date;
+  }>): Promise<BaselineComparison | null> {
+    const activeBaseline = await this.getActiveBaseline(projectId);
+    if (!activeBaseline) return null;
+
+    const baselineTasks = await this.getBaselineTasks(activeBaseline.id);
+    const variances = await this.getVarianceForActiveBaseline(
+      currentTasks.map(task => ({
+        id: task.id,
+        start: task.startDate,
+        end: task.endDate
+      }))
+    );
+
+    const onTimeTasks = variances.filter(v => Math.abs(v.startVariance) <= 1 && Math.abs(v.endVariance) <= 1).length;
+    const delayedTasks = variances.filter(v => v.startVariance > 1 || v.endVariance > 1).length;
+    const earlyTasks = variances.filter(v => v.startVariance < -1 || v.endVariance < -1).length;
+    const totalDurationChange = variances.reduce((sum, v) => sum + v.durationVariance, 0);
 
     return {
-      totalBaselines: baselines.length,
-      oldestBaseline: new Date(Math.min(...dates.map(d => d.getTime()))),
-      newestBaseline: new Date(Math.max(...dates.map(d => d.getTime()))),
-      averageTasksPerBaseline: Math.round(totalTasks / baselines.length)
+      onTimeTasks,
+      delayedTasks,
+      earlyTasks,
+      totalDurationChange,
+      totalTasks: variances.length
     };
+  }
+
+  /**
+   * Get demo mode restrictions
+   */
+  getDemoModeRestrictions(): string[] {
+    return [
+      `Maximum ${DEMO_MODE_CONFIG.maxBaselinesPerProject} baseline per project`,
+      `Maximum ${DEMO_MODE_CONFIG.maxTasksPerBaseline} tasks per baseline`,
+      'All data tagged as demo',
+      'Limited comparison features'
+    ];
+  }
+
+  /**
+   * Calculate variance between baseline and current dates
+   */
+  calculateVariance(
+    baselineTask: BaselineTask,
+    currentStart: Date,
+    currentEnd: Date
+  ): BaselineVariance {
+    const baselineStart = baselineTask.baselineStart;
+    const baselineEnd = baselineTask.baselineEnd;
+
+    // Calculate variances in days
+    const startVariance = Math.round((currentStart.getTime() - baselineStart.getTime()) / (1000 * 60 * 60 * 24));
+    const endVariance = Math.round((currentEnd.getTime() - baselineEnd.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Calculate duration variances
+    const baselineDuration = Math.round((baselineEnd.getTime() - baselineStart.getTime()) / (1000 * 60 * 60 * 24));
+    const currentDuration = Math.round((currentEnd.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24));
+    const durationVariance = currentDuration - baselineDuration;
+
+    // Calculate percentage variances
+    const startVariancePercent = baselineDuration > 0 ? (startVariance / baselineDuration) * 100 : 0;
+    const endVariancePercent = baselineDuration > 0 ? (endVariance / baselineDuration) * 100 : 0;
+    const durationVariancePercent = baselineDuration > 0 ? (durationVariance / baselineDuration) * 100 : 0;
+
+    return {
+      taskId: baselineTask.taskId,
+      baselineStart,
+      baselineEnd,
+      currentStart,
+      currentEnd,
+      startVariance,
+      endVariance,
+      durationVariance,
+      startVariancePercent,
+      endVariancePercent,
+      durationVariancePercent
+    };
+  }
+
+  /**
+   * Get variance for all tasks in active baseline
+   */
+  async getVarianceForActiveBaseline(currentTasks: Array<{ id: string; start: Date; end: Date }>): Promise<BaselineVariance[]> {
+    const activeBaseline = this.getActiveBaseline();
+    if (!activeBaseline) return [];
+
+    const baselineTasks = await this.getBaselineTasks(activeBaseline.id);
+    const variances: BaselineVariance[] = [];
+
+    baselineTasks.forEach(baselineTask => {
+      const currentTask = currentTasks.find(t => t.id === baselineTask.taskId);
+      if (currentTask) {
+        const variance = this.calculateVariance(baselineTask, currentTask.start, currentTask.end);
+        variances.push(variance);
+      }
+    });
+
+    return variances;
+  }
+
+  /**
+   * Get variance for specific task
+   */
+  async getVarianceForTask(taskId: string, currentStart: Date, currentEnd: Date): Promise<BaselineVariance | null> {
+    const activeBaseline = this.getActiveBaseline();
+    if (!activeBaseline) return null;
+
+    const baselineTasks = await this.getBaselineTasks(activeBaseline.id);
+    const baselineTask = baselineTasks.find(t => t.taskId === taskId);
+    
+    if (!baselineTask) return null;
+
+    return this.calculateVariance(baselineTask, currentStart, currentEnd);
+  }
+
+  /**
+   * Load baseline preferences
+   */
+  async loadPreferences(userId: string, projectId: string): Promise<void> {
+    try {
+      const { data, error } = await supabase
+        .from('baseline_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('project_id', projectId)
+        .single();
+
+      if (error || !data) {
+        return;
+      }
+
+      this.preferences = {
+        userId: data.user_id || 'current-user',
+        projectId: data.project_id || 'current-project',
+        showBaselineBars: data.show_baseline_bars ?? true,
+        comparisonMode: data.comparison_mode || 'bars',
+        activeBaselineId: data.active_baseline_id,
+        demo: this.isDemoMode
+      };
+    } catch (error) {
+      console.error('Error loading baseline preferences:', error);
+    }
+  }
+
+  /**
+   * Save baseline preferences
+   */
+  async savePreferences(): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('baseline_preferences')
+        .upsert({
+          user_id: this.preferences.userId,
+          project_id: this.preferences.projectId,
+          show_baseline_bars: this.preferences.showBaselineBars,
+          comparison_mode: this.preferences.comparisonMode,
+          active_baseline_id: this.preferences.activeBaselineId,
+          demo: this.isDemoMode,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving baseline preferences:', error);
+    }
+  }
+
+  /**
+   * Update preferences
+   */
+  async updatePreferences(updates: Partial<BaselinePreferences>): Promise<void> {
+    this.preferences = { ...this.preferences, ...updates };
+    await this.savePreferences();
+  }
+
+  /**
+   * Get current preferences
+   */
+  getPreferences(): BaselinePreferences {
+    return { ...this.preferences };
+  }
+
+  /**
+   * Get demo mode configuration
+   */
+  getDemoModeConfig() {
+    return DEMO_MODE_CONFIG;
+  }
+
+  /**
+   * Check if current mode is demo
+   */
+  isInDemoMode(): boolean {
+    return this.isDemoMode;
+  }
+
+  /**
+   * Get baseline change callback
+   */
+  onBaselineChange?: (baselines: Baseline[]) => void;
+
+  /**
+   * Cleanup
+   */
+  destroy(): void {
+    this.baselines.clear();
+    this.baselineTasks.clear();
   }
 }
 
-export const baselineService = BaselineService.getInstance();
-
-// Load baselines on service initialization
-baselineService.loadBaselinesFromStorage(); 
+// Export singleton instance
+export const baselineService = new BaselineService(); 

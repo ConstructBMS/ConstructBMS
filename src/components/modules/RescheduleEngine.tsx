@@ -12,9 +12,9 @@ import type { RescheduleSettings, RescheduleResult } from '../../services/resche
 import { useAuth } from '../../contexts/AuthContext';
 
 interface RescheduleEngineProps {
-  projectId: string;
-  onRescheduleComplete?: (result: RescheduleResult) => void;
   disabled?: boolean;
+  onRescheduleComplete?: (result: RescheduleResult) => void;
+  projectId: string;
 }
 
 const RescheduleEngine: React.FC<RescheduleEngineProps> = ({ 

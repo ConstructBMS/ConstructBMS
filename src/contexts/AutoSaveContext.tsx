@@ -3,12 +3,12 @@ import type { AutoSaveState, AutoSaveConfig } from '../services/autoSaveService'
 import { autoSaveService } from '../services/autoSaveService';
 
 interface AutoSaveContextType {
-  state: AutoSaveState;
-  markDirty: (tableName: string, recordId: string, data: any) => void;
-  forceSave: () => Promise<boolean>;
   clearDirty: () => void;
-  setConfig: (config: Partial<AutoSaveConfig>) => void;
   configureTable: (tableName: string, config: any) => void;
+  forceSave: () => Promise<boolean>;
+  markDirty: (tableName: string, recordId: string, data: any) => void;
+  setConfig: (config: Partial<AutoSaveConfig>) => void;
+  state: AutoSaveState;
 }
 
 const AutoSaveContext = createContext<AutoSaveContextType | undefined>(undefined);

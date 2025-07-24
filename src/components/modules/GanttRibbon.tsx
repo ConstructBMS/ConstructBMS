@@ -60,48 +60,48 @@ import {
 
 // Types
 export interface RibbonButton {
-  id: string;
-  label: string;
-  icon: React.ComponentType<any>;
-  type: 'button' | 'dropdown' | 'toggle' | 'split';
   action?: () => void;
   disabled?: boolean;
-  tooltip?: string;
   dropdownItems?: RibbonDropdownItem[];
+  icon: React.ComponentType<any>;
+  id: string;
   isActive?: boolean;
+  label: string;
   size?: 'small' | 'medium' | 'large';
+  tooltip?: string;
+  type: 'button' | 'dropdown' | 'toggle' | 'split';
 }
 
 export interface RibbonDropdownItem {
-  id: string;
-  label: string;
-  icon?: React.ComponentType<any>;
   action: () => void;
   disabled?: boolean;
+  icon?: React.ComponentType<any>;
+  id: string;
+  label: string;
   separator?: boolean;
 }
 
 export interface RibbonGroup {
-  id: string;
-  title: string;
   buttons: RibbonButton[];
   collapsed?: boolean;
+  id: string;
+  title: string;
 }
 
 export interface RibbonTab {
+  disabled?: boolean;
+  groups: RibbonGroup[];
+  icon?: React.ComponentType<any>;
   id: string;
   label: string;
-  icon?: React.ComponentType<any>;
-  groups: RibbonGroup[];
-  disabled?: boolean;
 }
 
 interface GanttRibbonProps {
-  tabs: RibbonTab[];
   activeTab: string;
-  onTabChange: (tabId: string) => void;
-  onButtonClick?: (buttonId: string, tabId: string, groupId: string) => void;
   className?: string;
+  onButtonClick?: (buttonId: string, tabId: string, groupId: string) => void;
+  onTabChange: (tabId: string) => void;
+  tabs: RibbonTab[];
 }
 
 const GanttRibbon: React.FC<GanttRibbonProps> = ({

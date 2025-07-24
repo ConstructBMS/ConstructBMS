@@ -3,11 +3,11 @@ import { loggingService } from './loggingService';
 import type { Project, BreadcrumbItem, AutosaveStatus } from '../components/modules/GanttHeader';
 
 export interface ProjectChange {
+  changeType: 'create' | 'update' | 'delete' | 'save';
+  details?: string;
   projectId: string;
   timestamp: Date;
   userId: string;
-  changeType: 'create' | 'update' | 'delete' | 'save';
-  details?: string;
 }
 
 class GanttHeaderService {
@@ -275,7 +275,7 @@ class GanttHeaderService {
   }
 
   // Get user profile information
-  async getUserProfile(): Promise<{ name: string; email: string; role: string } | null> {
+  async getUserProfile(): Promise<{ email: string; name: string; role: string } | null> {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       

@@ -4,37 +4,38 @@ import { loggingService } from './loggingService';
 // Types for layout persistence
 export interface LayoutState {
   id?: string;
-  userId: string;
-  projectId?: string;
-  sidebarCollapsed: boolean;
-  viewMode: 'gantt' | 'timeline' | 'calendar' | 'resource' | 'cost';
-  userRole: 'admin' | 'project_manager' | 'scheduler' | 'viewer';
   lastActive: Date;
   preferences: {
     autoSave: boolean;
-    autoSaveInterval: number; // seconds
-    theme: 'light' | 'dark' | 'auto';
+    autoSaveInterval: number; 
+    criticalPathHighlight: boolean;
+    gridLines: boolean;
+    resourceOverloadWarning: boolean;
     ribbonVisible: boolean;
     statusBarVisible: boolean;
-    gridLines: boolean;
-    criticalPathHighlight: boolean;
-    resourceOverloadWarning: boolean;
+    // seconds
+    theme: 'light' | 'dark' | 'auto';
   };
+  projectId?: string;
+  sidebarCollapsed: boolean;
+  userId: string;
+  userRole: 'admin' | 'project_manager' | 'scheduler' | 'viewer';
+  viewMode: 'gantt' | 'timeline' | 'calendar' | 'resource' | 'cost';
 }
 
 export interface ProjectState {
-  id: string;
-  name: string;
-  client: string;
-  startDate: Date;
-  endDate: Date;
-  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
-  lastModified: Date;
-  createdBy: string;
+  actualCost?: number;
   assignedTo?: string;
   budget?: number;
-  actualCost?: number;
+  client: string;
+  createdBy: string;
+  endDate: Date;
+  id: string;
+  lastModified: Date;
+  name: string;
   progress: number;
+  startDate: Date;
+  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
 }
 
 class AstaLayoutService {

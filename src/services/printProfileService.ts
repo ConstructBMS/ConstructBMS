@@ -1,63 +1,67 @@
 import { supabase } from './supabase';
 
 export interface PrintSettings {
-  paperSize: PaperSize;
-  orientation: 'portrait' | 'landscape';
-  dateRange: {
-    start: string;
-    end: string;
-  };
-  includeTimeline: boolean;
-  includeTaskTable: boolean;
-  includeNotes: boolean;
   border: boolean;
-  frame: boolean;
-  margins: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  header: {
-    enabled: boolean;
-    title: string;
-    showDate: boolean;
+  dateRange: {
+    end: string;
+    start: string;
   };
   footer: {
     enabled: boolean;
-    showPageNumbers: boolean;
     showDate: boolean;
+    showPageNumbers: boolean;
   };
+  frame: boolean;
+  header: {
+    enabled: boolean;
+    showDate: boolean;
+    title: string;
+  };
+  includeNotes: boolean;
+  includeTaskTable: boolean;
+  includeTimeline: boolean;
+  margins: {
+    bottom: number;
+    left: number;
+    right: number;
+    top: number;
+  };
+  orientation: 'portrait' | 'landscape';
+  paperSize: PaperSize;
 }
 
 export interface PrintProfile {
-  id: string;
-  name: string;
+  created_at: string;
   description?: string;
-  user_id?: string;
-  project_id?: string;
-  settings: PrintSettings;
+  id: string;
   is_default: boolean;
   is_shared: boolean;
-  created_at: string;
+  name: string;
+  project_id?: string;
+  settings: PrintSettings;
   updated_at: string;
+  user_id?: string;
 }
 
 export type PaperSize = 'A4' | 'A3' | 'A2' | 'A1' | 'A0' | 'Letter' | 'Legal' | 'Tabloid' | 'Custom';
 
 export interface PaperSizeOption {
-  value: PaperSize;
-  label: string;
-  width: number; // mm
-  height: number; // mm
+  // mm
   description: string;
+  // mm
+  height: number;
+  label: string; 
+  value: PaperSize; 
+  width: number;
 }
 
 export interface ExportOptions {
-  format: 'pdf' | 'png' | 'jpg';
-  quality: number; // 1-100
-  scale: number; // 1-3
+  // 1-3
   filename: string;
+  format: 'pdf' | 'png' | 'jpg'; 
+  quality: number; 
+  // 1-100
+  scale: number;
 }
 
 class PrintProfileService {
