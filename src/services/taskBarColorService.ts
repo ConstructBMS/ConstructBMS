@@ -1,26 +1,26 @@
 import { demoModeService } from './demoModeService';
 
 export interface TaskColorRule {
-  id: string;
-  type: 'custom' | 'tag' | 'status' | 'default';
   color: string;
-  label: string;
   description: string;
+  id: string;
+  label: string;
   priority: number;
+  type: 'custom' | 'tag' | 'status' | 'default';
 }
 
 export interface TaskStatus {
-  id: string;
-  name: string;
   color: string;
   demo?: boolean;
+  id: string;
+  name: string;
 }
 
 export interface TaskTag {
-  id: string;
-  name: string;
   color: string;
   demo?: boolean;
+  id: string;
+  name: string;
 }
 
 export interface TaskColorInfo {
@@ -213,7 +213,7 @@ class TaskBarColorService {
   /**
    * Validate custom color
    */
-  validateCustomColor(color: string): { isValid: boolean; error?: string } {
+  validateCustomColor(color: string): { error?: string, isValid: boolean; } {
     // Check if it's a valid hex color
     if (color.startsWith('#')) {
       const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
@@ -267,7 +267,7 @@ class TaskBarColorService {
   /**
    * Check if task has valid color configuration for demo mode
    */
-  async validateTaskColorForDemoMode(task: any): Promise<{ isValid: boolean; error?: string }> {
+  async validateTaskColorForDemoMode(task: any): Promise<{ error?: string, isValid: boolean; }> {
     const isDemoMode = await demoModeService.isDemoMode();
     
     if (!isDemoMode) {
@@ -326,7 +326,7 @@ class TaskBarColorService {
   /**
    * Get all available Tailwind colors
    */
-  getAvailableTailwindColors(): Array<{ name: string; class: string; shades: string[] }> {
+  getAvailableTailwindColors(): Array<{ class: string; name: string; shades: string[] }> {
     return [
       { name: 'Slate', class: 'slate', shades: ['400', '500', '600', '700'] },
       { name: 'Gray', class: 'gray', shades: ['400', '500', '600', '700'] },

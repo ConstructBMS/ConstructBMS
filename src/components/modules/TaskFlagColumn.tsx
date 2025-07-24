@@ -2,9 +2,9 @@ import React from 'react';
 import TaskFlagIndicator from './TaskFlagIndicator';
 
 interface TaskFlagColumnProps {
-  taskId: string;
-  projectId: string;
   isDemoMode: boolean;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskFlagColumn: React.FC<TaskFlagColumnProps> = ({

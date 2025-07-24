@@ -3,9 +3,9 @@ import FieldsDropdown from './FieldsDropdown';
 import type { FieldConfig } from './FieldsDropdown';
 
 interface FieldsSectionProps {
+  disabled?: boolean;
   fields: FieldConfig[];
   onToggleField: (fieldId: string) => void;
-  disabled?: boolean;
 }
 
 const FieldsSection: React.FC<FieldsSectionProps> = ({

@@ -3,15 +3,15 @@ import { PlusIcon, BookOpenIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface CustomFieldsSectionProps {
-  onOpenAddField: () => void;
-  onOpenFieldLibrary: () => void;
-  onOpenFieldPosition: () => void;
   disabled?: boolean;
   loading?: {
     add?: boolean;
     library?: boolean;
     position?: boolean;
   };
+  onOpenAddField: () => void;
+  onOpenFieldLibrary: () => void;
+  onOpenFieldPosition: () => void;
 }
 
 const CustomFieldsSection: React.FC<CustomFieldsSectionProps> = ({

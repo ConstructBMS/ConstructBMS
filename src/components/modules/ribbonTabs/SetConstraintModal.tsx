@@ -10,17 +10,17 @@ export type ConstraintType =
   | 'MFO'; // Must Finish On
 
 export interface TaskConstraint {
-  type: ConstraintType;
   date: string;
   demo?: boolean;
+  type: ConstraintType;
 }
 
 interface SetConstraintModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (constraint: TaskConstraint) => void;
   selectedTasks: string[];
-  isDemoMode?: boolean;
 }
 
 const SetConstraintModal: React.FC<SetConstraintModalProps> = ({

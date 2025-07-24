@@ -29,7 +29,7 @@ class DemoModeService {
   /**
    * Check if current mode is demo
    */
-  async isDemoMode(): Promise<boolean> {
+  async checkDemoModeAsync(): Promise<boolean> {
     return this.isDemoMode;
   }
 

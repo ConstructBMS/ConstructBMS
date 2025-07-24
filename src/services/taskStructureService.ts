@@ -1,9 +1,9 @@
 import type { TaskData } from '../components/modules/ribbonTabs/TaskEditModal';
 
 export interface StructureOperation {
-  type: 'indent' | 'outdent' | 'summary';
-  taskIds: string[];
   affectedTasks: TaskData[];
+  taskIds: string[];
+  type: 'indent' | 'outdent' | 'summary';
 }
 
 export class TaskStructureService {

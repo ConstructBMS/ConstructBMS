@@ -9,24 +9,24 @@ import {
 } from '@heroicons/react/24/outline';
 
 interface TimelineDisplaySectionProps {
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-  onFitToView: () => void;
-  onScrollToToday: () => void;
-  onScrollToDate: (date: Date) => void;
-  onTimeScaleChange: (scale: 'hour' | 'day' | 'week' | 'month') => void;
+  availableScales: Array<{ description: string, label: string; value: 'hour' | 'day' | 'week' | 'month'; }>;
   currentZoomLevel: 'hour' | 'day' | 'week' | 'month';
-  availableScales: Array<{ value: 'hour' | 'day' | 'week' | 'month'; label: string; description: string }>;
-  isDemoMode: boolean;
   disabled?: boolean;
+  isDemoMode: boolean;
   loading?: {
+    fitToView?: boolean;
+    scrollToDate?: boolean;
+    scrollToToday?: boolean;
+    timeScale?: boolean;
     zoomIn?: boolean;
     zoomOut?: boolean;
-    fitToView?: boolean;
-    scrollToToday?: boolean;
-    scrollToDate?: boolean;
-    timeScale?: boolean;
   };
+  onFitToView: () => void;
+  onScrollToDate: (date: Date) => void;
+  onScrollToToday: () => void;
+  onTimeScaleChange: (scale: 'hour' | 'day' | 'week' | 'month') => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
 }
 
 const TimelineDisplaySection: React.FC<TimelineDisplaySectionProps> = ({

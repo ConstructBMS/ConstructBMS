@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type GridOptionToggleType = 'pin' | 'wrapText' | 'stripeRows';
 
 interface GridOptionToggleProps {
-  type: GridOptionToggleType;
-  isActive: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: GridOptionToggleType;
 }
 
 const GridOptionToggle: React.FC<GridOptionToggleProps> = ({

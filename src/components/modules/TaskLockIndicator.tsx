@@ -8,9 +8,9 @@ import { useProgrammeCollaboration } from '../../contexts/ProgrammeCollaboration
 import type { TaskLock } from '../../services/programmeCollaborationService';
 
 interface TaskLockIndicatorProps {
-  taskId: string;
   className?: string;
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  taskId: string;
 }
 
 const TaskLockIndicator: React.FC<TaskLockIndicatorProps> = ({

@@ -4,12 +4,12 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import { TimelineZone } from './AddZoneModal';
 
 interface EditZonesModalProps {
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  zones: TimelineZone[];
-  onUpdateZone: (zone: TimelineZone) => void;
   onDeleteZone: (zoneId: string) => void;
-  disabled?: boolean;
+  onUpdateZone: (zone: TimelineZone) => void;
+  zones: TimelineZone[];
 }
 
 const EditZonesModal: React.FC<EditZonesModalProps> = ({

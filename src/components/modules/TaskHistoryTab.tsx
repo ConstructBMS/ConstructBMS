@@ -9,9 +9,9 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../../services/demoModeService';
 
 interface TaskHistoryTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode?: boolean;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskHistoryTab: React.FC<TaskHistoryTabProps> = ({

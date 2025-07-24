@@ -3,23 +3,23 @@ import { dragRescheduleService, type SnapConfig } from '../../services/dragResch
 import { toastService } from './ToastNotification';
 
 interface DraggableGanttBarProps {
-  taskId: string;
-  taskName: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number;
-  isCritical?: boolean;
-  isSelected?: boolean;
-  isDemo?: boolean;
-  showProgress?: boolean;
-  height?: number;
+  className?: string;
   dayWidth?: number;
-  snapConfig: SnapConfig;
+  endDate: Date;
+  height?: number;
+  isCritical?: boolean;
+  isDemo?: boolean;
+  isSelected?: boolean;
+  onDependencyRecalculate?: () => void;
   onProgressChange?: (taskId: string, newProgress: number) => void;
   onTaskClick?: (taskId: string) => void;
   onTaskReschedule?: (taskId: string, newStart: Date, newEnd: Date) => void;
-  onDependencyRecalculate?: () => void;
-  className?: string;
+  progress: number;
+  showProgress?: boolean;
+  snapConfig: SnapConfig;
+  startDate: Date;
+  taskName: string;
+  taskId: string;
 }
 
 const DraggableGanttBar: React.FC<DraggableGanttBarProps> = ({

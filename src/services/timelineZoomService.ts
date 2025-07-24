@@ -3,32 +3,32 @@ import { demoModeService } from './demoModeService';
 import { permissionsService } from './permissionsService';
 
 export interface TimelineZoomSettings {
-  id: string;
-  userId: string;
-  projectId: string;
-  zoomLevel: 'hour' | 'day' | 'week' | 'month';
-  scrollPosition: { x: number; y: number };
-  visibleRange: { start: Date; end: Date };
-  updatedAt: Date;
   demo: boolean;
+  id: string;
+  projectId: string;
+  scrollPosition: { x: number; y: number };
+  updatedAt: Date;
+  userId: string;
+  visibleRange: { end: Date, start: Date; };
+  zoomLevel: 'hour' | 'day' | 'week' | 'month';
 }
 
 export interface ZoomNavigationResult {
-  success: boolean;
   error?: string;
   settings?: TimelineZoomSettings;
+  success: boolean;
 }
 
 export interface ScrollToDateResult {
-  success: boolean;
   error?: string;
   scrollPosition?: { x: number; y: number };
+  success: boolean;
 }
 
 export interface FitToViewResult {
-  success: boolean;
   error?: string;
   settings?: TimelineZoomSettings;
+  success: boolean;
 }
 
 class TimelineZoomService {
@@ -343,7 +343,7 @@ class TimelineZoomService {
   /**
    * Fit timeline to view all tasks
    */
-  async fitToView(projectId: string, tasks: Array<{ startDate: Date; endDate: Date }>): Promise<FitToViewResult> {
+  async fitToView(projectId: string, tasks: Array<{ endDate: Date, startDate: Date; }>): Promise<FitToViewResult> {
     try {
       if (tasks.length === 0) {
         return { success: false, error: 'No tasks to fit to view' };
@@ -401,7 +401,7 @@ class TimelineZoomService {
   /**
    * Get available zoom scales based on demo mode
    */
-  getAvailableScales(isDemoMode: boolean): Array<{ value: 'hour' | 'day' | 'week' | 'month'; label: string; description: string }> {
+  getAvailableScales(isDemoMode: boolean): Array<{ description: string, label: string; value: 'hour' | 'day' | 'week' | 'month'; }> {
     const allScales = [
       { value: 'hour' as const, label: 'Hour', description: 'Show timeline by hours' },
       { value: 'day' as const, label: 'Day', description: 'Show timeline by days' },

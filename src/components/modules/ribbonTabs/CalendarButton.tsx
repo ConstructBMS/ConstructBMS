@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type CalendarButtonType = 'project' | 'manage';
 
 interface CalendarButtonProps {
-  type: CalendarButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: CalendarButtonType;
 }
 
 const CalendarButton: React.FC<CalendarButtonProps> = ({

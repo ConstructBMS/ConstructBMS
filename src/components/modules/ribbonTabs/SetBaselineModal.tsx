@@ -3,21 +3,21 @@ import { XMarkIcon, BookmarkIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface Baseline {
-  id: string;
-  name: string;
   createdAt: string;
   createdBy: string;
+  demo?: boolean;
+  id: string;
+  name: string;
   projectId: string;
   snapshot: any[];
-  demo?: boolean;
 }
 
 interface SetBaselineModalProps {
+  currentUser?: string;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (baseline: Omit<Baseline, 'id' | 'createdAt' | 'createdBy'>) => void;
-  isDemoMode?: boolean;
-  currentUser?: string;
 }
 
 const SetBaselineModal: React.FC<SetBaselineModalProps> = ({

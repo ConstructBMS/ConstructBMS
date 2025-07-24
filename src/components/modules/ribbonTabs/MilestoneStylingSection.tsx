@@ -7,18 +7,18 @@ export type MilestoneIconType = 'diamond' | 'flag' | 'dot' | 'star';
 export type MilestoneColorOption = 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'gray';
 
 interface MilestoneStylingSectionProps {
-  milestoneIcon: MilestoneIconType;
-  onMilestoneIconChange: (icon: MilestoneIconType) => void;
-  milestoneColor: MilestoneColorOption;
-  onMilestoneColorChange: (color: MilestoneColorOption) => void;
-  showMilestoneLabels: boolean;
-  onToggleMilestoneLabels: () => void;
   disabled?: boolean;
   loading?: {
-    icon?: boolean;
     color?: boolean;
+    icon?: boolean;
     labels?: boolean;
   };
+  milestoneColor: MilestoneColorOption;
+  milestoneIcon: MilestoneIconType;
+  onMilestoneColorChange: (color: MilestoneColorOption) => void;
+  onMilestoneIconChange: (icon: MilestoneIconType) => void;
+  onToggleMilestoneLabels: () => void;
+  showMilestoneLabels: boolean;
 }
 
 const MilestoneStylingSection: React.FC<MilestoneStylingSectionProps> = ({

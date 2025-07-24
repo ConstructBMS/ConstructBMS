@@ -6,8 +6,8 @@ export type GridlineStyle = 'none' | 'solid' | 'dotted' | 'dashed';
 
 interface GridlineStyleDropdownProps {
   currentStyle: GridlineStyle;
-  onStyleChange: (style: GridlineStyle) => void;
   disabled?: boolean;
+  onStyleChange: (style: GridlineStyle) => void;
 }
 
 const GridlineStyleDropdown: React.FC<GridlineStyleDropdownProps> = ({
@@ -22,10 +22,10 @@ const GridlineStyleDropdown: React.FC<GridlineStyleDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const styleOptions: Array<{
-    value: GridlineStyle;
-    label: string;
     description: string;
+    label: string;
     preview: string;
+    value: GridlineStyle;
   }> = [
     {
       value: 'none',

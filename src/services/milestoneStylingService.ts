@@ -4,16 +4,16 @@ export type MilestoneIconType = 'diamond' | 'flag' | 'dot' | 'star';
 export type MilestoneColorOption = 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'gray';
 
 export interface MilestoneStylingSettings {
-  icon: MilestoneIconType;
   color: MilestoneColorOption;
-  showLabel: boolean;
   demo?: boolean;
+  icon: MilestoneIconType;
+  showLabel: boolean;
 }
 
 export interface MilestoneStylingConfig {
-  enabled: boolean;
   autoApply: boolean;
   demo?: boolean;
+  enabled: boolean;
 }
 
 // Default ConstructBMS milestone styling settings
@@ -298,7 +298,7 @@ class MilestoneStylingService {
   /**
    * Validate milestone styling settings
    */
-  validateMilestoneStylingSettings(settings: MilestoneStylingSettings): { isValid: boolean; errors: string[] } {
+  validateMilestoneStylingSettings(settings: MilestoneStylingSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate icon

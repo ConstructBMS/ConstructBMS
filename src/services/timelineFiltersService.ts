@@ -2,27 +2,27 @@ import { persistentStorage } from './persistentStorage';
 import { demoModeService } from './demoModeService';
 
 export interface TimelineFilters {
-  status: string[];
-  type: string[];
-  tags: string[];
   assignees: string[];
+  status: string[];
+  tags: string[];
+  type: string[];
 }
 
 export interface FilterPreferences {
+  demo?: boolean;
+  filters: TimelineFilters;
   id: string;
   projectId: string;
-  userId: string;
   type: 'timeline';
-  filters: TimelineFilters;
   updatedAt: Date;
-  demo?: boolean;
+  userId: string;
 }
 
 export interface FilterOption {
+  color?: string;
+  count: number;
   id: string;
   label: string;
-  count: number;
-  color?: string;
 }
 
 class TimelineFiltersService {
@@ -74,7 +74,7 @@ class TimelineFiltersService {
   /**
    * Update filter preferences
    */
-  async updateFilterPreferences(projectId: string, filters: Partial<TimelineFilters>): Promise<{ success: boolean; error?: string }> {
+  async updateFilterPreferences(projectId: string, filters: Partial<TimelineFilters>): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allPreferences = await this.getAllFilterPreferences();
@@ -147,7 +147,7 @@ class TimelineFiltersService {
   /**
    * Clear all filters for a project
    */
-  async clearFilters(projectId: string): Promise<{ success: boolean; error?: string }> {
+  async clearFilters(projectId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const emptyFilters: TimelineFilters = {
         status: [],
@@ -167,15 +167,15 @@ class TimelineFiltersService {
    * Get available filter options from tasks
    */
   getFilterOptions(tasks: any[]): {
-    status: FilterOption[];
-    type: FilterOption[];
-    tags: FilterOption[];
     assignees: FilterOption[];
+    status: FilterOption[];
+    tags: FilterOption[];
+    type: FilterOption[];
   } {
-    const statusMap = new Map<string, { label: string; count: number; color?: string }>();
-    const typeMap = new Map<string, { label: string; count: number }>();
-    const tagMap = new Map<string, { label: string; count: number; color?: string }>();
-    const assigneeMap = new Map<string, { label: string; count: number }>();
+    const statusMap = new Map<string, { color?: string, count: number; label: string; }>();
+    const typeMap = new Map<string, { count: number, label: string; }>();
+    const tagMap = new Map<string, { color?: string, count: number; label: string; }>();
+    const assigneeMap = new Map<string, { count: number, label: string; }>();
     
     tasks.forEach(task => {
       // Status options

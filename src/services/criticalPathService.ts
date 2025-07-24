@@ -2,37 +2,37 @@ import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
 
 export interface CriticalPathTask {
-  id: string;
-  earlyStart: number;
   earlyFinish: number;
-  lateStart: number;
-  lateFinish: number;
-  totalFloat: number;
+  earlyStart: number;
+  id: string;
   isCritical: boolean;
+  lateFinish: number;
+  lateStart: number;
+  totalFloat: number;
 }
 
 export interface CriticalPathResult {
-  criticalTasks: string[];
   criticalDependencies: string[];
+  criticalTasks: string[];
   projectDuration: number;
   tasks: Record<string, CriticalPathTask>;
 }
 
 export interface TaskSchedule {
+  dependencies: string[];
+  duration: number;
+  end: Date;
   id: string;
   name: string;
   start: Date;
-  end: Date;
-  duration: number;
-  dependencies: string[];
 }
 
 export interface TaskDependency {
   id: string;
+  lag: number;
   sourceTaskId: string;
   targetTaskId: string;
   type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag: number;
 }
 
 // Demo mode configuration
@@ -189,8 +189,8 @@ class CriticalPathService {
    * Get critical path settings for project
    */
   async getCriticalPathSettings(projectId: string): Promise<{
-    showCriticalPath: boolean;
     criticalOnly: boolean;
+    showCriticalPath: boolean;
   }> {
     try {
       const { data, error } = await supabase
@@ -222,8 +222,8 @@ class CriticalPathService {
   async saveCriticalPathSettings(
     projectId: string,
     settings: {
-      showCriticalPath: boolean;
       criticalOnly: boolean;
+      showCriticalPath: boolean;
     }
   ): Promise<void> {
     try {
@@ -285,8 +285,8 @@ class CriticalPathService {
   /**
    * Calculate early start and finish times (forward pass)
    */
-  private calculateEarlyTimes(graph: Map<string, string[]>, tasks: TaskSchedule[]): Record<string, { earlyStart: number; earlyFinish: number }> {
-    const earlyTimes: Record<string, { earlyStart: number; earlyFinish: number }> = {};
+  private calculateEarlyTimes(graph: Map<string, string[]>, tasks: TaskSchedule[]): Record<string, { earlyFinish: number, earlyStart: number; }> {
+    const earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }> = {};
     const visited = new Set<string>();
     
     // Find tasks with no predecessors (start tasks)
@@ -350,9 +350,9 @@ class CriticalPathService {
   private calculateLateTimes(
     graph: Map<string, string[]>,
     tasks: TaskSchedule[],
-    earlyTimes: Record<string, { earlyStart: number; earlyFinish: number }>
-  ): Record<string, { lateStart: number; lateFinish: number }> {
-    const lateTimes: Record<string, { lateStart: number; lateFinish: number }> = {};
+    earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }>
+  ): Record<string, { lateFinish: number, lateStart: number; }> {
+    const lateTimes: Record<string, { lateFinish: number, lateStart: number; }> = {};
     const visited = new Set<string>();
     
     // Find project duration
@@ -418,7 +418,7 @@ class CriticalPathService {
     dependency: TaskDependency,
     sourceTask: CriticalPathTask,
     targetTask: CriticalPathTask,
-    earlyTimes: Record<string, { earlyStart: number; earlyFinish: number }>
+    earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }>
   ): boolean {
     // A dependency is critical if:
     // 1. Both tasks are critical

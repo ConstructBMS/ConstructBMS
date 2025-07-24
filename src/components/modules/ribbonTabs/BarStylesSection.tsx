@@ -2,13 +2,13 @@ import React from 'react';
 import BarStylesButton from './BarStylesButton';
 
 interface BarStylesSectionProps {
-  onEditStyles: () => void;
-  onResetStyles: () => void;
   disabled?: boolean;
   loading?: {
     edit?: boolean;
     reset?: boolean;
   };
+  onEditStyles: () => void;
+  onResetStyles: () => void;
 }
 
 const BarStylesSection: React.FC<BarStylesSectionProps> = ({

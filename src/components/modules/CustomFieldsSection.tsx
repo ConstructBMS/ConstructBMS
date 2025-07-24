@@ -5,9 +5,9 @@ import { demoModeService } from '../services/demoModeService';
 import { programmeCustomFieldsService, CustomFieldWithValue } from '../services/programmeCustomFieldsService';
 
 interface CustomFieldsSectionProps {
-  taskId?: string;
-  projectId: string;
   onFieldChange?: (fieldId: string, value: any) => void;
+  projectId: string;
+  taskId?: string;
 }
 
 const CustomFieldsSection: React.FC<CustomFieldsSectionProps> = ({

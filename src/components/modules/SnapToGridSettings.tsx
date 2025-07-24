@@ -3,10 +3,10 @@ import { CogIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { type SnapConfig } from '../../services/dragRescheduleService';
 
 interface SnapToGridSettingsProps {
-  snapConfig: SnapConfig;
-  onSnapConfigChange: (config: SnapConfig) => void;
-  dayWidth: number;
   className?: string;
+  dayWidth: number;
+  onSnapConfigChange: (config: SnapConfig) => void;
+  snapConfig: SnapConfig;
 }
 
 const SnapToGridSettings: React.FC<SnapToGridSettingsProps> = ({

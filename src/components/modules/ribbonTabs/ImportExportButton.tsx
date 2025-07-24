@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ImportExportButtonType = 'importAsta' | 'exportAsta';
 
 interface ImportExportButtonProps {
-  type: ImportExportButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ImportExportButtonType;
 }
 
 const ImportExportButton: React.FC<ImportExportButtonProps> = ({

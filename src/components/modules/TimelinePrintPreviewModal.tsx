@@ -10,18 +10,18 @@ import {
 import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../../services/timelinePrintService';
 
 interface TimelinePrintPreviewModalProps {
+  currentView: any;
+  filters: any;
+  isDemoMode: boolean;
   isOpen: boolean;
+  onBack: () => void;
   onClose: () => void;
   onPrint: (options: TimelinePrintOptions) => void;
-  onBack: () => void;
   options: TimelinePrintOptions;
   projectId: string;
-  projectName: string;
   projectIdDisplay: string;
   tasks: any[];
-  filters: any;
-  currentView: any;
-  isDemoMode: boolean;
+  projectName: string;
 }
 
 const TimelinePrintPreviewModal: React.FC<TimelinePrintPreviewModalProps> = ({

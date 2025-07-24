@@ -3,30 +3,30 @@ import { demoModeService } from './demoModeService';
 import { persistentStorage } from './persistentStorage';
 
 export interface TaskBarInteraction {
-  taskId: string;
-  type: 'drag' | 'resize' | 'click';
-  startDate: Date;
-  endDate: Date;
-  originalStartDate: Date;
-  originalEndDate: Date;
-  timestamp: Date;
-  userId: string;
   demo?: boolean;
+  endDate: Date;
+  originalEndDate: Date;
+  originalStartDate: Date;
+  startDate: Date;
+  taskId: string;
+  timestamp: Date;
+  type: 'drag' | 'resize' | 'click';
+  userId: string;
 }
 
 export interface DragConstraints {
-  minStartDate?: Date;
-  maxEndDate?: Date;
+  gridSize?: number;
   maxDuration?: number;
-  snapToGrid?: boolean;
-  gridSize?: number; // in days
+  maxEndDate?: Date;
+  minStartDate?: Date;
+  snapToGrid?: boolean; // in days
 }
 
 export interface ResizeConstraints {
-  minDuration?: number;
   maxDuration?: number;
-  preserveStartDate?: boolean;
+  minDuration?: number;
   preserveEndDate?: boolean;
+  preserveStartDate?: boolean;
 }
 
 class TaskBarInteractionService {
@@ -41,7 +41,7 @@ class TaskBarInteractionService {
     newStartDate: Date,
     newEndDate: Date,
     constraints?: DragConstraints
-  ): Promise<{ isValid: boolean; errors: string[]; adjustedDates?: { startDate: Date; endDate: Date } }> {
+  ): Promise<{ adjustedDates?: { endDate: Date, startDate: Date; }, errors: string[]; isValid: boolean; }> {
     const errors: string[] = [];
     let adjustedStartDate = new Date(newStartDate);
     let adjustedEndDate = new Date(newEndDate);
@@ -113,7 +113,7 @@ class TaskBarInteractionService {
     newEndDate: Date,
     resizeHandle: 'left' | 'right',
     constraints?: ResizeConstraints
-  ): Promise<{ isValid: boolean; errors: string[]; adjustedDates?: { startDate: Date; endDate: Date } }> {
+  ): Promise<{ adjustedDates?: { endDate: Date, startDate: Date; }, errors: string[]; isValid: boolean; }> {
     const errors: string[] = [];
     let adjustedStartDate = new Date(newStartDate);
     let adjustedEndDate = new Date(newEndDate);
@@ -195,7 +195,7 @@ class TaskBarInteractionService {
     originalStartDate: Date,
     originalEndDate: Date,
     projectId: string
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ error?: string, success: boolean; }> {
     try {
       // Validate the drag operation
       const validation = await this.validateDrag(taskId, newStartDate, newEndDate);
@@ -244,7 +244,7 @@ class TaskBarInteractionService {
     originalEndDate: Date,
     resizeHandle: 'left' | 'right',
     projectId: string
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ error?: string, success: boolean; }> {
     try {
       // Validate the resize operation
       const validation = await this.validateResize(taskId, newStartDate, newEndDate, resizeHandle);

@@ -3,27 +3,27 @@ import { ChevronDownIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface Calendar {
-  id: string;
-  name: string;
+  demo?: boolean;
   description: string;
+  holidays: string[];
+  id: string;
+  isDefault?: boolean;
+  name: string;
   workingDays: number[];
   workingHours: {
-    start: string;
     end: string;
+    start: string;
   };
-  holidays: string[];
-  isDefault?: boolean;
-  demo?: boolean;
 }
 
 interface ApplyCalendarDropdownProps {
   calendars: Calendar[];
   currentCalendar?: Calendar | undefined;
+  disabled?: boolean;
+  hasSelectedTasks?: boolean;
+  loading?: boolean;
   onApplyToProject: (calendarId: string) => void;
   onApplyToTasks: (calendarId: string) => void;
-  disabled?: boolean;
-  loading?: boolean;
-  hasSelectedTasks?: boolean;
 }
 
 const ApplyCalendarDropdown: React.FC<ApplyCalendarDropdownProps> = ({

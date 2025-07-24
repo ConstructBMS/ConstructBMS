@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ProjectInfoButtonType = 'details' | 'notes';
 
 interface ProjectInfoButtonProps {
-  type: ProjectInfoButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ProjectInfoButtonType;
 }
 
 const ProjectInfoButton: React.FC<ProjectInfoButtonProps> = ({

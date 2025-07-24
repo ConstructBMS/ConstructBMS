@@ -14,25 +14,25 @@ import { multiProjectService } from '../services/multiProjectService';
 import { toastService } from './ToastNotification';
 
 interface TimelineExportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  projectId: string;
-  projectName: string;
+  currentDateRange?: {
+    end: Date;
+    start: Date;
+  };
   currentFilters?: {
-    status?: string[];
-    priority?: string[];
-    tags?: string[];
     assignee?: string[];
+    priority?: string[];
+    status?: string[];
+    tags?: string[];
   };
   currentZoomLevel?: 'days' | 'weeks' | 'months' | 'quarters';
-  currentDateRange?: {
-    start: Date;
-    end: Date;
-  };
-  isMultiProjectMode?: boolean;
-  selectedProjects?: string[];
-  onExport: (format: 'pdf' | 'png', options: TimelineExportOptions) => void;
   isExporting?: boolean;
+  isMultiProjectMode?: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+  onExport: (format: 'pdf' | 'png', options: TimelineExportOptions) => void;
+  projectId: string;
+  projectName: string;
+  selectedProjects?: string[];
 }
 
 const TimelineExportModal: React.FC<TimelineExportModalProps> = ({

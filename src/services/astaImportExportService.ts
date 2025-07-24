@@ -5,68 +5,68 @@ import { persistentStorage } from './persistentStorage';
 
 // Asta field mapping interfaces
 export interface AstaTask {
-  id: string;
-  name: string;
-  startDate: string;
-  finishDate: string;
-  duration: number;
-  percentComplete: number;
-  isMilestone: boolean;
-  dependencies: string[];
   calendarId?: string;
-  structureLevel: number;
+  dependencies: string[];
+  duration: number;
+  finishDate: string;
+  id: string;
+  importedAt: string;
+  isMilestone: boolean;
+  name: string;
   originalId: string;
   originalStructure: string;
+  percentComplete: number;
   sourceFileName: string;
-  importedAt: string;
+  startDate: string;
+  structureLevel: number;
 }
 
 export interface AstaImportMetadata {
-  taskId: string;
+  demo: boolean;
+  importedAt: string;
   importedFrom: 'Asta';
   originalId: string;
   originalStructure: string;
   sourceFileName: string;
-  importedAt: string;
-  demo: boolean;
+  taskId: string;
 }
 
 export interface AstaExportSettings {
-  fileType: 'xer' | 'mpx' | 'csv' | 'json';
   dateRange: {
-    start: Date;
     end: Date;
+    start: Date;
   };
-  includeConstraints: boolean;
+  demo: boolean;
+  fileType: 'xer' | 'mpx' | 'csv' | 'json';
   includeBaselines: boolean;
+  includeCalendars: boolean;
+  includeConstraints: boolean;
   includeNotes: boolean;
   includeResources: boolean;
-  includeCalendars: boolean;
-  demo: boolean;
 }
 
 export interface ParsedAstaProgramme {
+  calendars: any[];
+  constraints: any[];
+  demo: boolean;
+  importedFrom: 'Asta';
   projectName: string;
+  resources: any[];
   taskCount: number;
   tasks: AstaTask[];
-  constraints: any[];
-  calendars: any[];
-  resources: any[];
-  importedFrom: 'Asta';
-  demo: boolean;
 }
 
 export interface ImportExportResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface ExportResult {
-  success: boolean;
+  errors: string[];
   fileName: string;
   fileSize: number;
-  errors: string[];
+  success: boolean;
 }
 
 class AstaImportExportService {
@@ -290,8 +290,8 @@ class AstaImportExportService {
    * Get import/export history
    */
   async getImportExportHistory(projectId: string = 'demo'): Promise<{
-    imports: any[];
     exports: any[];
+    imports: any[];
   }> {
     try {
       const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];

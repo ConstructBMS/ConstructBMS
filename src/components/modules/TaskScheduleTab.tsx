@@ -10,9 +10,9 @@ import { taskCalendarService, TaskCalendar } from '../../services/taskCalendarSe
 import { demoModeService } from '../../services/demoModeService';
 
 interface TaskScheduleTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode?: boolean;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskScheduleTab: React.FC<TaskScheduleTabProps> = ({

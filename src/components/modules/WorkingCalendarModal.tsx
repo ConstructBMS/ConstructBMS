@@ -8,15 +8,15 @@ import {
   TrashIcon,
   CheckIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { programmeWorkingCalendarService, type ProgrammeCalendar, type CalendarException, type GlobalHoliday } from '../../services/programmeWorkingCalendarService';
 import { demoModeService } from '../../services/demoModeService';
 
 interface WorkingCalendarModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
   onSave?: (calendar: ProgrammeCalendar) => void;
+  projectId: string;
 }
 
 const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({

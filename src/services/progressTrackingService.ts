@@ -3,28 +3,29 @@ import { demoModeService } from './demoModeService';
 
 // Progress tracking interfaces
 export interface TaskProgress {
-  id: string;
-  percentComplete: number; // 0-100
-  actualStartDate: string | null;
   actualFinishDate: string | null;
-  progressUpdatedBy: string | null;
-  progressUpdatedAt: Date | null;
+  // 0-100
+  actualStartDate: string | null; 
   demo: boolean;
+  id: string;
+  percentComplete: number;
+  progressUpdatedAt: Date | null;
+  progressUpdatedBy: string | null;
 }
 
 export interface ProgressUpdate {
-  taskId: string;
-  percentComplete: number;
-  actualStartDate?: string | null;
   actualFinishDate?: string | null;
+  actualStartDate?: string | null;
   demoMode?: boolean;
+  percentComplete: number;
+  taskId: string;
 }
 
 export interface ProgressAggregation {
-  taskId: string;
   calculatedProgress: number;
   childCount: number;
   hasChildren: boolean;
+  taskId: string;
 }
 
 // Demo mode configuration
@@ -217,10 +218,10 @@ class ProgressTrackingService {
    * Get progress bar styling based on mode and progress
    */
   getProgressBarStyle(progress: number, isDemo: boolean = false): {
-    width: string;
     color: string;
     tooltip: string;
     watermarkClass?: string;
+    width: string;
   } {
     const maxProgress = isDemo ? DEMO_MODE_CONFIG.maxProgress : 100;
     const width = `${Math.min(progress, maxProgress)}%`;
@@ -269,9 +270,9 @@ class ProgressTrackingService {
    * Get actual date marker styling
    */
   getActualDateMarkerStyle(date: string | null, type: 'start' | 'finish'): {
+    color: string;
     icon: string;
     tooltip: string;
-    color: string;
   } {
     if (!date) {
       return {

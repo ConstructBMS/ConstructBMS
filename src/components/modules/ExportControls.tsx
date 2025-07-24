@@ -5,9 +5,9 @@ import { demoModeService } from '../services/demoModeService';
 import ExportOptionsModal from './ExportOptionsModal';
 
 interface ExportControlsProps {
+  onExport: (format: 'pdf' | 'png', options: any) => void;
   projectId: string;
   projectName: string;
-  onExport: (format: 'pdf' | 'png', options: any) => void;
 }
 
 const ExportControls: React.FC<ExportControlsProps> = ({

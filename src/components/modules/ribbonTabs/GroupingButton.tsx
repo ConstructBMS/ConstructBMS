@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type GroupingButtonType = 'expandSelected' | 'collapseSelected' | 'toggleAll';
 
 interface GroupingButtonProps {
-  type: GroupingButtonType;
-  isActive?: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: GroupingButtonType;
 }
 
 const GroupingButton: React.FC<GroupingButtonProps> = ({

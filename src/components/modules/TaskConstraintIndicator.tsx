@@ -9,12 +9,12 @@ import { taskConstraintService } from '../services/taskConstraintService';
 import type { TaskConstraint, ConstraintType } from './TaskConstraintsTab';
 
 interface TaskConstraintIndicatorProps {
-  taskId: string;
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
-  size?: 'sm' | 'md' | 'lg';
-  showTooltip?: boolean;
   className?: string;
   onViolationClick?: (violations: any[]) => void;
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+  showTooltip?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  taskId: string;
 }
 
 const TaskConstraintIndicator: React.FC<TaskConstraintIndicatorProps> = ({

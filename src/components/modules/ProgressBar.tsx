@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { progressTrackingService } from '../../services/progressTrackingService';
 
 interface ProgressBarProps {
-  taskId: string;
-  progress: number; // 0-100
-  isDemo?: boolean;
-  showLabel?: boolean;
   className?: string;
-  height?: string;
+  height?: string; // 0-100
+  isDemo?: boolean;
   onProgressChange?: ((newProgress: number) => void) | undefined;
+  progress: number;
   readOnly?: boolean;
+  showLabel?: boolean;
+  taskId: string;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({

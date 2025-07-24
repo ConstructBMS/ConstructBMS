@@ -3,13 +3,13 @@ import { PrinterIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface PrintExportSectionProps {
-  onPrintView: () => void;
-  onExportPDF: () => void;
   disabled?: boolean;
   loading?: {
-    print?: boolean;
     pdf?: boolean;
+    print?: boolean;
   };
+  onExportPDF: () => void;
+  onPrintView: () => void;
 }
 
 const PrintExportSection: React.FC<PrintExportSectionProps> = ({

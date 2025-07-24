@@ -4,11 +4,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { ViewConfig } from '../../../services/viewService';
 
 interface SaveViewModalProps {
+  currentConfig: ViewConfig;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (viewName: string, isShared: boolean, config: ViewConfig) => void;
-  currentConfig: ViewConfig;
-  isDemoMode?: boolean;
 }
 
 const SaveViewModal: React.FC<SaveViewModalProps> = ({

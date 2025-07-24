@@ -3,34 +3,34 @@ import { XMarkIcon, MagnifyingGlassIcon, PencilIcon, TrashIcon } from '@heroicon
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TaskIfcLink {
+  autoMatched: boolean;
+  demo?: boolean;
+  endDate: Date;
   id: string;
-  taskId: string;
-  taskName: string;
   ifcElementId: string;
   ifcElementName: string;
   ifcElementType: string;
-  startDate: Date;
-  endDate: Date;
   linkStatus: 'active' | 'broken';
-  autoMatched: boolean;
-  demo?: boolean;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
 }
 
 interface IfcElement {
   id: string;
+  level: string;
   name: string;
   type: string;
-  level: string;
 }
 
 interface LinkInspectorModalProps {
+  disabled?: boolean;
+  ifcElements: IfcElement[];
   isOpen: boolean;
   onClose: () => void;
   onEditLink: (linkId: string, newIfcElementId: string) => void;
   onRemoveLink: (linkId: string) => void;
   taskIfcLinks: TaskIfcLink[];
-  ifcElements: IfcElement[];
-  disabled?: boolean;
 }
 
 const LinkInspectorModal: React.FC<LinkInspectorModalProps> = ({

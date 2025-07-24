@@ -3,22 +3,22 @@ import { XMarkIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface ProjectDetails {
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  owner: string;
   client: string;
-  referenceId: string;
   demo?: boolean;
+  description: string;
+  endDate: string;
+  name: string;
+  owner: string;
+  referenceId: string;
+  startDate: string;
 }
 
 interface ProjectDetailsModalProps {
+  details: ProjectDetails;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (details: ProjectDetails) => void;
-  details: ProjectDetails;
-  isDemoMode?: boolean;
 }
 
 const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({

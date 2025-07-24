@@ -3,16 +3,16 @@ import type { ParsedProgramme } from '../components/modules/ribbonTabs/ImportAst
 import type { AstaExportSettings } from '../components/modules/ribbonTabs/ExportAstaModal';
 
 export interface ImportExportResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface ExportResult {
-  success: boolean;
+  errors: string[];
   fileName: string;
   fileSize: number;
-  errors: string[];
+  success: boolean;
 }
 
 export class ImportExportService {
@@ -243,8 +243,8 @@ export class ImportExportService {
    * Get import/export history
    */
   static async getImportExportHistory(projectId: string = 'demo'): Promise<{
-    imports: any[];
     exports: any[];
+    imports: any[];
   }> {
     try {
       const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];

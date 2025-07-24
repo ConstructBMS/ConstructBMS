@@ -3,9 +3,9 @@ import { ViewColumnsIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface RowStripingToggleProps {
+  disabled?: boolean;
   isEnabled: boolean;
   onToggle: () => void;
-  disabled?: boolean;
 }
 
 const RowStripingToggle: React.FC<RowStripingToggleProps> = ({

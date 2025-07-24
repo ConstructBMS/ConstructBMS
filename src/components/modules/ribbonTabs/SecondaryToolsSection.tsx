@@ -3,15 +3,15 @@ import SecondaryToolsButton from './SecondaryToolsButton';
 import type { SecondaryToolType } from './SecondaryToolsButton';
 
 interface SecondaryToolsSectionProps {
-  onRecalculateSlack: () => void;
-  onClearConstraints: () => void;
-  onValidateLogic: () => void;
   disabled?: boolean;
   loading?: {
-    recalculateSlack?: boolean;
     clearConstraints?: boolean;
+    recalculateSlack?: boolean;
     validateLogic?: boolean;
   };
+  onClearConstraints: () => void;
+  onRecalculateSlack: () => void;
+  onValidateLogic: () => void;
 }
 
 const SecondaryToolsSection: React.FC<SecondaryToolsSectionProps> = ({

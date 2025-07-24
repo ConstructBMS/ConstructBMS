@@ -4,27 +4,27 @@ import { usePermissions } from '../../../hooks/usePermissions';
 
 interface IfcElement {
   id: string;
-  name: string;
-  type: string;
   level: string;
   material?: string;
+  name: string;
+  type: string;
 }
 
 interface TaskIfcMapping {
-  taskId: string;
-  taskName: string;
+  autoMatched: boolean;
   ifcElementId: string;
   ifcElementName: string;
-  autoMatched: boolean;
+  taskId: string;
+  taskName: string;
 }
 
 interface SyncTasksIfcModalProps {
+  disabled?: boolean;
+  ifcElements: IfcElement[];
   isOpen: boolean;
   onClose: () => void;
   onSync: (mappings: TaskIfcMapping[]) => void;
   tasks: any[];
-  ifcElements: IfcElement[];
-  disabled?: boolean;
 }
 
 const SyncTasksIfcModal: React.FC<SyncTasksIfcModalProps> = ({

@@ -2,47 +2,47 @@ import { demoModeService } from './demoModeService';
 import { supabase } from './supabaseAuth';
 
 export interface TimelinePrintOptions {
-  orientation: 'portrait' | 'landscape';
-  pageSize: 'A3' | 'A4' | 'fit-to-width';
+  customDateRange?: {
+    end: Date;
+    start: Date;
+  };
+  demo: boolean;
   includeBranding: boolean;
   includeFilters: boolean;
-  timeRange: 'current-view' | 'custom';
-  customDateRange?: {
-    start: Date;
-    end: Date;
-  };
-  pageBreaks: 'auto' | 'manual';
-  includeProjectHeader: boolean;
   includeFooter: boolean;
   includePageNumbers: boolean;
-  demo: boolean;
+  includeProjectHeader: boolean;
+  orientation: 'portrait' | 'landscape';
+  pageBreaks: 'auto' | 'manual';
+  pageSize: 'A3' | 'A4' | 'fit-to-width';
+  timeRange: 'current-view' | 'custom';
 }
 
 export interface TimelinePrintData {
-  projectId: string;
-  projectName: string;
-  projectIdDisplay: string;
-  printDate: Date;
-  tasks: any[];
-  filters: any;
-  currentView: any;
   branding: {
-    logo?: string;
     companyName: string;
+    logo?: string;
     poweredBy: string;
   };
+  currentView: any;
+  filters: any;
+  printDate: Date;
+  projectId: string;
+  projectIdDisplay: string;
+  projectName: string;
+  tasks: any[];
 }
 
 export interface TimelinePrintResult {
-  success: boolean;
   error?: string;
   previewHtml?: string;
   printMetadata?: {
-    totalPages: number;
-    totalTasks: number;
     dateRange: string;
     demo: boolean;
+    totalPages: number;
+    totalTasks: number;
   };
+  success: boolean;
 }
 
 class TimelinePrintService {

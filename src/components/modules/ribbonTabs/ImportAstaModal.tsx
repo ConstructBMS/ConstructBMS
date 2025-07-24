@@ -3,21 +3,21 @@ import { XMarkIcon, ArrowUpTrayIcon, DocumentTextIcon } from '@heroicons/react/2
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface ParsedProgramme {
-  projectName: string;
-  taskCount: number;
-  sampleTasks: any[];
-  constraints: any[];
   calendars: any[];
-  resources: any[];
-  importedFrom: 'asta';
+  constraints: any[];
   demo?: boolean;
+  importedFrom: 'asta';
+  projectName: string;
+  resources: any[];
+  sampleTasks: any[];
+  taskCount: number;
 }
 
 interface ImportAstaModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onImport: (parsedData: ParsedProgramme) => void;
-  isDemoMode?: boolean;
 }
 
 const ImportAstaModal: React.FC<ImportAstaModalProps> = ({

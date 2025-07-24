@@ -2,91 +2,92 @@ import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
 
 export interface ProgrammeVersion {
-  id: string;
-  projectId: string;
-  label: string;
-  createdBy: string;
   createdAt: Date;
-  isAutoSnapshot: boolean;
-  notes?: string;
+  createdBy: string;
   demo: boolean;
+  id: string;
+  isAutoSnapshot: boolean;
+  label: string;
+  notes?: string;
+  projectId: string;
 }
 
 export interface ProgrammeVersionData {
-  id: string;
-  versionId: string;
-  taskId: string;
-  snapshot: TaskSnapshot;
-  demo: boolean;
   createdAt: Date;
+  demo: boolean;
+  id: string;
+  snapshot: TaskSnapshot;
+  taskId: string;
+  versionId: string;
 }
 
 export interface TaskSnapshot {
-  name: string;
-  startDate: Date;
-  finishDate: Date;
-  percentComplete: number;
-  dependencies: string[];
+  actualFinishDate?: Date;
+  actualStartDate?: Date;
+  assignedTo?: string;
   calendarId?: string;
-  constraintType?: string;
   constraintDate?: Date;
+  constraintType?: string;
+  cost: number;
   customFields: Record<string, any>;
+  dependencies: string[];
+  description?: string;
+  duration: number;
+  finishDate: Date;
+  isMilestone: boolean;
+  name: string;
+  notes?: string;
   structure: {
     level: number;
     parentId?: string;
     wbsNumber?: string;
   };
-  tagId?: string;
-  status: string;
   priority: string;
-  assignedTo?: string;
-  description?: string;
-  notes?: string;
-  isMilestone: boolean;
-  actualStartDate?: Date;
-  actualFinishDate?: Date;
-  duration: number;
+  startDate: Date;
+  status: string;
+  tagId?: string;
   work: number;
-  cost: number;
+  percentComplete: number;
   resourceAssignments: Array<{
+    cost: number;
     resourceId: string;
     units: number;
     work: number;
-    cost: number;
   }>;
 }
 
 export interface VersionComparison {
-  versionA: ProgrammeVersion;
-  versionB: ProgrammeVersion;
   differences: TaskDifference[];
   summary: {
     addedTasks: number;
-    removedTasks: number;
     modifiedTasks: number;
+    removedTasks: number;
     unchangedTasks: number;
   };
+  versionA: ProgrammeVersion;
+  versionB: ProgrammeVersion;
 }
 
 export interface TaskDifference {
+  changes: {
+    field: string;
+    newValue: any;
+    oldValue: any;
+  }[];
   taskId: string;
   taskName: string;
   type: 'added' | 'removed' | 'modified' | 'unchanged';
-  changes: {
-    field: string;
-    oldValue: any;
-    newValue: any;
-  }[];
 }
 
 export interface VersionPreferences {
-  userId: string;
-  projectId: string;
   autoSnapshotEnabled: boolean;
-  autoSnapshotInterval: number; // hours
-  maxVersionsPerProject: number;
+  autoSnapshotInterval: number;
   demo: boolean;
+  // hours
+  maxVersionsPerProject: number; 
+  projectId: string;
   updatedAt: Date;
+  userId: string;
 }
 
 // Demo mode configuration
@@ -143,7 +144,7 @@ class ProgrammeVersioningService {
   async createVersion(
     projectId: string,
     label: string,
-    tasks: Array<{ id: string; [key: string]: any }>,
+    tasks: Array<{ [key: string]: any, id: string; }>,
     notes?: string,
     isAutoSnapshot: boolean = false
   ): Promise<ProgrammeVersion | null> {
@@ -553,8 +554,8 @@ class ProgrammeVersioningService {
   /**
    * Compare two task snapshots
    */
-  private compareTaskSnapshots(snapshotA: TaskSnapshot, snapshotB: TaskSnapshot): Array<{ field: string; oldValue: any; newValue: any }> {
-    const changes: Array<{ field: string; oldValue: any; newValue: any }> = [];
+  private compareTaskSnapshots(snapshotA: TaskSnapshot, snapshotB: TaskSnapshot): Array<{ field: string; newValue: any, oldValue: any; }> {
+    const changes: Array<{ field: string; newValue: any, oldValue: any; }> = [];
     const fields = [
       'name', 'startDate', 'finishDate', 'percentComplete', 'status', 'priority',
       'assignedTo', 'description', 'notes', 'isMilestone', 'duration', 'work', 'cost'

@@ -2,10 +2,10 @@ import React from 'react';
 import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ResetLayoutModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  isDemoMode?: boolean;
 }
 
 const ResetLayoutModal: React.FC<ResetLayoutModalProps> = ({

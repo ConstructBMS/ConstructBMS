@@ -2,20 +2,20 @@ import { persistentStorage } from './persistentStorage';
 import { demoDataService } from './demoDataService';
 
 export interface AssignedResource {
-  resourceId: string;
-  type: 'labour' | 'material' | 'cost';
-  quantity: number;
-  unit: string;
-  rate: number;
-  fromDate: Date;
-  toDate: Date;
   demo?: boolean;
+  fromDate: Date;
+  quantity: number;
+  rate: number;
+  resourceId: string;
+  toDate: Date;
+  type: 'labour' | 'material' | 'cost';
+  unit: string;
 }
 
 export interface TaskResourceAssignment {
-  taskId: string;
   assignedResources: AssignedResource[];
   demo?: boolean;
+  taskId: string;
 }
 
 export interface ResourceAssignmentConfig {
@@ -24,19 +24,19 @@ export interface ResourceAssignmentConfig {
 }
 
 export interface ResourceAssignmentResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface QuickAssignResource {
+  defaultQuantity: number;
+  defaultRate: number;
+  defaultUnit: string;
+  frequency: number;
   id: string;
   name: string;
   type: 'labour' | 'material' | 'cost';
-  defaultQuantity: number;
-  defaultUnit: string;
-  defaultRate: number;
-  frequency: number;
 }
 
 const DEFAULT_CONFIG: ResourceAssignmentConfig = {
@@ -242,8 +242,8 @@ class ResourceAssignmentService {
     return this.config.assignments;
   }
 
-  getResourceUsage(resourceId: string): { taskId: string; assignment: AssignedResource }[] {
-    const usage: { taskId: string; assignment: AssignedResource }[] = [];
+  getResourceUsage(resourceId: string): { assignment: AssignedResource, taskId: string; }[] {
+    const usage: { assignment: AssignedResource, taskId: string; }[] = [];
     
     Object.entries(this.config.assignments).forEach(([taskId, taskAssignment]) => {
       taskAssignment.assignedResources.forEach(assignment => {

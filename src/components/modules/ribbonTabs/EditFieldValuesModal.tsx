@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { CustomField } from './FieldTemplateDropdown';
 
 interface EditFieldValuesModalProps {
+  customFields: CustomField[];
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  customFields: CustomField[];
+  onSaveValues: (taskId: string, fieldId: string, value: any) => void;
   selectedTasks: string[];
   taskFieldValues: Record<string, Record<string, any>>;
-  onSaveValues: (taskId: string, fieldId: string, value: any) => void;
-  isDemoMode?: boolean;
 }
 
 const EditFieldValuesModal: React.FC<EditFieldValuesModalProps> = ({

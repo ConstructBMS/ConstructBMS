@@ -10,70 +10,70 @@ import ProjectMetadataSection from './ProjectMetadataSection';
 export type ProjectStatus = 'draft' | 'active' | 'on-hold' | 'completed' | 'archived';
 
 interface FileTabProps {
-  // Project Save Section
-  onSaveChanges: () => void;
-  onSaveAsTemplate: () => void;
-  onToggleAutoSave: () => void;
   autoSaveEnabled: boolean;
-  
-  // Import & Export Section
-  onImportProject: () => void;
-  onExportPDF: () => void;
-  onExportCSV: () => void;
-  onExportImage: () => void;
-  onExportTimeline?: () => void;
-  onPrintTimeline?: () => void;
-  
-  // Print & Export Section
-  onPrintView: () => void;
-  onExportPDFCustom: () => void;
-  
-  // 2-Way Sync Section
-  onSyncWithAsta: () => void;
-  onViewSyncLog: () => void;
-  lastSyncTime?: string;
-  syncStatus?: 'success' | 'error' | 'pending' | 'none';
-  
-  // Asta Import/Export Section
-  projectId?: string;
-  projectName?: string;
-  onTaskOperation?: (operation: any) => void;
-  
-  // Project Metadata Section
-  onOpenProjectProperties: () => void;
-  onChangeProjectStatus: (status: ProjectStatus) => void;
-  onArchiveProject: () => void;
   currentStatus: ProjectStatus;
-  
   // Global state
   disabled?: boolean;
+  lastSyncTime?: string;
+  
   loading?: {
-    // Project Save
-    save?: boolean;
-    template?: boolean;
+    archive?: boolean;
     autoSave?: boolean;
+    csv?: boolean;
     
+    image?: boolean;
     // Import & Export
     import?: boolean;
+    log?: boolean;
     pdf?: boolean;
-    csv?: boolean;
-    image?: boolean;
-    timeline?: boolean;
+    pdfCustom?: boolean;
     print?: boolean;
     
     // Print & Export
     printView?: boolean;
-    pdfCustom?: boolean;
+    // Project Metadata
+    properties?: boolean;
+    
+    // Project Save
+    save?: boolean;
+    status?: boolean;
     
     // 2-Way Sync
     sync?: boolean;
-    log?: boolean;
-    
-    // Project Metadata
-    properties?: boolean;
-    status?: boolean;
-    archive?: boolean;
+    template?: boolean;
+    timeline?: boolean;
   };
+  onArchiveProject: () => void;
+  onChangeProjectStatus: (status: ProjectStatus) => void;
+  onExportCSV: () => void;
+  onExportImage: () => void;
+  onExportPDF: () => void;
+  
+  onExportPDFCustom: () => void;
+  onExportTimeline?: () => void;
+  
+  // 2-Way Sync Section
+  onSyncWithAsta: () => void;
+  // Project Metadata Section
+  onOpenProjectProperties: () => void;
+  // Project Save Section
+  onSaveChanges: () => void;
+  syncStatus?: 'success' | 'error' | 'pending' | 'none';
+  
+  onSaveAsTemplate: () => void;
+  projectName?: string;
+  onTaskOperation?: (operation: any) => void;
+  
+  onViewSyncLog: () => void;
+  // Print & Export Section
+  onPrintView: () => void;
+  onPrintTimeline?: () => void;
+  // Asta Import/Export Section
+  projectId?: string;
+  
+  onToggleAutoSave: () => void;
+  // Import & Export Section
+  onImportProject: () => void;
 }
 
 const FileTab: React.FC<FileTabProps> = ({

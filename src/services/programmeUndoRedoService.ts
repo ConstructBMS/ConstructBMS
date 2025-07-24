@@ -6,31 +6,31 @@ import { constraintsService } from './constraintsService';
 import { milestoneService } from './milestoneService';
 
 export interface ProgrammeAction {
-  id: string;
-  userId: string;
-  projectId: string;
   actionType: 'task_create' | 'task_update' | 'task_delete' | 'bar_move' | 'bar_resize' | 'dependency_link' | 'dependency_unlink' | 'milestone_create' | 'milestone_edit' | 'flag_update' | 'note_update' | 'structure_collapse' | 'structure_expand' | 'calendar_override';
-  timestamp: Date;
-  beforeState: any;
   afterState: any;
-  taskId?: string;
-  description: string;
+  beforeState: any;
   demo?: boolean;
+  description: string;
+  id: string;
+  projectId: string;
+  taskId?: string;
+  timestamp: Date;
+  userId: string;
 }
 
 export interface ProgrammeUndoRedoState {
-  undoStack: ProgrammeAction[];
-  redoStack: ProgrammeAction[];
   maxStackSize: number;
+  redoStack: ProgrammeAction[];
+  undoStack: ProgrammeAction[];
 }
 
 export interface ActionPayload {
   actionType: ProgrammeAction['actionType'];
-  taskId?: string;
-  projectId: string;
-  beforeState: any;
   afterState: any;
+  beforeState: any;
   description: string;
+  projectId: string;
+  taskId?: string;
 }
 
 class ProgrammeUndoRedoService {
@@ -82,7 +82,7 @@ class ProgrammeUndoRedoService {
   /**
    * Record an action for undo/redo
    */
-  async recordAction(payload: ActionPayload): Promise<{ success: boolean; error?: string }> {
+  async recordAction(payload: ActionPayload): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -127,7 +127,7 @@ class ProgrammeUndoRedoService {
   /**
    * Undo the last action
    */
-  async undo(projectId: string, userId: string): Promise<{ success: boolean; error?: string; action?: ProgrammeAction }> {
+  async undo(projectId: string, userId: string): Promise<{ action?: ProgrammeAction, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -175,7 +175,7 @@ class ProgrammeUndoRedoService {
   /**
    * Redo the last undone action
    */
-  async redo(projectId: string, userId: string): Promise<{ success: boolean; error?: string; action?: ProgrammeAction }> {
+  async redo(projectId: string, userId: string): Promise<{ action?: ProgrammeAction, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       if (isDemoMode) {
@@ -278,7 +278,7 @@ class ProgrammeUndoRedoService {
   /**
    * Clear undo/redo history for a project
    */
-  async clearHistory(projectId: string, userId: string): Promise<{ success: boolean; error?: string }> {
+  async clearHistory(projectId: string, userId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const key = `${projectId}_${userId}`;
       this.commandStacks.delete(key);
@@ -294,7 +294,7 @@ class ProgrammeUndoRedoService {
   /**
    * Apply an action
    */
-  private async applyAction(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyAction(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       switch (action.actionType) {
         case 'task_create':
@@ -334,7 +334,7 @@ class ProgrammeUndoRedoService {
   /**
    * Apply reverse action
    */
-  private async applyReverseAction(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyReverseAction(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       // For reverse actions, we swap before and after states
       const reverseAction: ProgrammeAction = {
@@ -351,7 +351,7 @@ class ProgrammeUndoRedoService {
   }
 
   // Action-specific implementations
-  private async applyTaskCreate(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskCreate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -365,7 +365,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyTaskUpdate(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskUpdate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -380,7 +380,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyTaskDelete(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskDelete(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -395,7 +395,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyBarChange(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyBarChange(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -414,7 +414,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyDependencyLink(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyDependencyLink(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('task_dependencies')
@@ -428,7 +428,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyDependencyUnlink(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyDependencyUnlink(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('task_dependencies')
@@ -443,7 +443,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyMilestoneCreate(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyMilestoneCreate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('milestones')
@@ -457,7 +457,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyMilestoneEdit(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyMilestoneEdit(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('milestones')
@@ -472,7 +472,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyFlagNoteUpdate(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyFlagNoteUpdate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -491,7 +491,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyStructureChange(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyStructureChange(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -510,7 +510,7 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyCalendarOverride(action: ProgrammeAction): Promise<{ success: boolean; error?: string }> {
+  private async applyCalendarOverride(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('calendar_overrides')

@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { Baseline } from './SetBaselineModal';
 
 interface CompareBaselinesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  baselines: Baseline[];
   activeBaselineId?: string;
-  onCompare: (baselineId: string) => void;
-  onClearComparison: () => void;
+  baselines: Baseline[];
   isDemoMode?: boolean;
+  isOpen: boolean;
+  onClearComparison: () => void;
+  onClose: () => void;
+  onCompare: (baselineId: string) => void;
 }
 
 const CompareBaselinesModal: React.FC<CompareBaselinesModalProps> = ({

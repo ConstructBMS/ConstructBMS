@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type IfcButtonType = 'upload' | 'sync' | 'unlink';
 
 interface IfcButtonProps {
-  type: IfcButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: IfcButtonType;
 }
 
 const IfcButton: React.FC<IfcButtonProps> = ({

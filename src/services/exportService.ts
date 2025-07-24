@@ -2,66 +2,66 @@ import { persistentStorage } from './persistentStorage';
 import { demoModeService } from './demoModeService';
 
 export interface ExportOptions {
-  dateRange: {
-    start: Date;
-    end: Date;
-  };
-  zoomLevel: 'days' | 'weeks' | 'months';
   columnsToInclude: string[];
-  showLegend: boolean;
-  showLogoHeader: boolean;
+  dateRange: {
+    end: Date;
+    start: Date;
+  };
   includeBaseline: boolean;
   includeCriticalPath: boolean;
-  pageSize: 'A4' | 'Letter' | 'Legal';
   orientation: 'portrait' | 'landscape';
+  pageSize: 'A4' | 'Letter' | 'Legal';
+  showLegend: boolean;
+  showLogoHeader: boolean;
+  zoomLevel: 'days' | 'weeks' | 'months';
 }
 
 export interface ExportSettings {
-  id: string;
-  projectId: string;
-  userId: string;
-  options: ExportOptions;
-  updatedAt: Date;
   demo?: boolean;
+  id: string;
+  options: ExportOptions;
+  projectId: string;
+  updatedAt: Date;
+  userId: string;
 }
 
 export interface ExportResult {
-  success: boolean;
-  error?: string;
   dataUrl?: string;
+  error?: string;
   fileName?: string;
+  success: boolean;
 }
 
 export interface GanttExportData {
-  projectName: string;
-  exportDate: Date;
-  exportUser: string;
-  tasks: Array<{
-    id: string;
-    name: string;
-    startDate: Date;
-    endDate: Date;
-    status: string;
-    progress: number;
-    type: string;
-    tags: string[];
-  }>;
-  dependencies: Array<{
-    sourceId: string;
-    targetId: string;
-    type: string;
-  }>;
   baseline?: {
     name: string;
     tasks: Array<{
-      taskId: string;
-      baselineStartDate: Date;
       baselineEndDate: Date;
+      baselineStartDate: Date;
+      taskId: string;
     }>;
   };
   criticalPath?: {
     taskIds: string[];
   };
+  dependencies: Array<{
+    sourceId: string;
+    targetId: string;
+    type: string;
+  }>;
+  exportDate: Date;
+  exportUser: string;
+  projectName: string;
+  tasks: Array<{
+    endDate: Date;
+    id: string;
+    name: string;
+    progress: number;
+    startDate: Date;
+    status: string;
+    tags: string[];
+    type: string;
+  }>;
 }
 
 class ExportService {
@@ -109,7 +109,7 @@ class ExportService {
   /**
    * Save export settings
    */
-  async saveExportSettings(projectId: string, options: ExportOptions): Promise<{ success: boolean; error?: string }> {
+  async saveExportSettings(projectId: string, options: ExportOptions): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allSettings = await this.getAllExportSettings();
@@ -464,7 +464,7 @@ class ExportService {
   /**
    * Apply date range filter
    */
-  private applyDateRangeFilter(element: HTMLElement, dateRange: { start: Date; end: Date }): void {
+  private applyDateRangeFilter(element: HTMLElement, dateRange: { end: Date, start: Date; }): void {
     // This would filter tasks based on the date range
     // Implementation depends on the specific DOM structure
     console.log('Applying date range filter:', dateRange);

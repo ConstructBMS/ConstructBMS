@@ -15,17 +15,17 @@ import { demoModeService } from '../../services/demoModeService';
 
 interface CalendarManagerModalProps {
   isOpen: boolean;
+  onCalendarChange?: () => void;
   onClose: () => void;
   projectId: string;
-  onCalendarChange?: () => void;
 }
 
 interface CalendarFormData {
-  name: string;
-  workingDays: string[];
-  dailyHours: { start: string; end: string };
+  dailyHours: { end: string, start: string; };
   holidays: string[];
   isGlobal: boolean;
+  name: string;
+  workingDays: string[];
 }
 
 const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({

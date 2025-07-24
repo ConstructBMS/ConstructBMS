@@ -2,22 +2,22 @@ import { taskService, type Task } from './taskService';
 import { demoModeService } from './demoModeService';
 
 export interface GroupBarInfo {
-  taskId: string;
-  taskName: string;
-  startDate: Date;
-  endDate: Date;
-  duration: number;
   childCount: number;
+  duration: number;
+  endDate: Date;
   groupColor: string | null;
   isDemo: boolean;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
   tooltip: string;
 }
 
 export interface GroupBarStyle {
   backgroundColor: string;
-  opacity: number;
   borderColor?: string;
   borderWidth?: number;
+  opacity: number;
 }
 
 class TaskGroupBarService {
@@ -98,7 +98,7 @@ class TaskGroupBarService {
   /**
    * Generate tooltip text for group bar
    */
-  private generateTooltip(parentTask: Task, children: Task[], groupDuration: { startDate: Date | null; endDate: Date | null; duration: number }): string {
+  private generateTooltip(parentTask: Task, children: Task[], groupDuration: { duration: number, endDate: Date | null; startDate: Date | null; }): string {
     const childCount = children.length;
     const startDate = groupDuration.startDate?.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
     const endDate = groupDuration.endDate?.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
@@ -237,7 +237,7 @@ class TaskGroupBarService {
   /**
    * Validate group bar creation (demo mode restrictions)
    */
-  async validateGroupBarCreation(parentId: string): Promise<{ valid: boolean; reason?: string }> {
+  async validateGroupBarCreation(parentId: string): Promise<{ reason?: string, valid: boolean; }> {
     if (!this.isDemoMode) {
       return { valid: true };
     }

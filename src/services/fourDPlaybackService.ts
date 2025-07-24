@@ -1,27 +1,27 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface FourDPlaybackState {
-  isPlaying: boolean;
   currentDate: Date;
-  speed: number;
   demo?: boolean;
+  isPlaying: boolean;
+  speed: number;
 }
 
 export interface FourDPlaybackConfig {
   autoPlay: boolean;
+  demo?: boolean;
+  highlightActiveTasks: boolean;
   loop: boolean;
   showIFCElements: boolean;
-  highlightActiveTasks: boolean;
-  demo?: boolean;
 }
 
 export interface ActiveTask {
+  endDate: Date;
+  ifcElements: string[];
+  progress: number;
+  startDate: Date;
   taskId: string;
   taskName: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number;
-  ifcElements: string[];
 }
 
 class FourDPlaybackService {

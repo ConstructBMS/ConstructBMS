@@ -1,48 +1,48 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface TaskSummary {
-  taskId: string;
-  taskName: string;
   assignedResources: number;
-  totalQuantity: number;
-  totalCost: number;
-  startDate: Date;
+  demo?: boolean;
   endDate: Date;
   resources: Array<{
+    cost: number;
+    quantity: number;
+    rate: number;
     resourceId: string;
     resourceName: string;
     type: string;
-    quantity: number;
     unit: string;
-    rate: number;
-    cost: number;
   }>;
-  demo?: boolean;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
+  totalCost: number;
+  totalQuantity: number;
 }
 
 export interface ResourceSummary {
+  demo?: boolean;
+  peakUsage: number;
   resourceId: string;
   resourceName: string;
-  type: string;
-  tasksAssigned: number;
-  totalQuantity: number;
-  totalCost: number;
-  peakUsage: number;
   tasks: Array<{
+    cost: number;
+    quantity: number;
+    rate: number;
     taskId: string;
     taskName: string;
-    quantity: number;
     unit: string;
-    rate: number;
-    cost: number;
   }>;
-  demo?: boolean;
+  tasksAssigned: number;
+  totalCost: number;
+  totalQuantity: number;
+  type: string;
 }
 
 export interface AllocationSummaryConfig {
+  demo?: boolean;
   lastGenerated: Date;
   summaryType: 'task' | 'resource';
-  demo?: boolean;
 }
 
 class AllocationSummaryService {

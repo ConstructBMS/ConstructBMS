@@ -6,17 +6,17 @@ import type { Calendar } from './ApplyCalendarDropdown';
 interface CalendarSectionProps {
   calendars: Calendar[];
   currentCalendar?: Calendar;
-  onProjectCalendar: () => void;
-  onManageCalendars: () => void;
+  disabled?: boolean;
+  hasSelectedTasks?: boolean;
+  loading?: {
+    apply?: boolean;
+    manage?: boolean;
+    project?: boolean;
+  };
   onApplyToProject: (calendarId: string) => void;
   onApplyToTasks: (calendarId: string) => void;
-  disabled?: boolean;
-  loading?: {
-    project?: boolean;
-    manage?: boolean;
-    apply?: boolean;
-  };
-  hasSelectedTasks?: boolean;
+  onManageCalendars: () => void;
+  onProjectCalendar: () => void;
 }
 
 const CalendarSection: React.FC<CalendarSectionProps> = ({

@@ -13,10 +13,10 @@ import { timelineZoomService, type TimelineZoomSettings } from '../../services/t
 import { demoModeService } from '../../services/demoModeService';
 
 interface TimelineZoomControlsProps {
-  projectId: string;
-  onZoomChange?: (settings: TimelineZoomSettings) => void;
-  onScrollChange?: (position: { x: number; y: number }) => void;
   className?: string;
+  onScrollChange?: (position: { x: number; y: number }) => void;
+  onZoomChange?: (settings: TimelineZoomSettings) => void;
+  projectId: string;
 }
 
 const TimelineZoomControls: React.FC<TimelineZoomControlsProps> = ({
@@ -29,7 +29,7 @@ const TimelineZoomControls: React.FC<TimelineZoomControlsProps> = ({
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [currentSettings, setCurrentSettings] = useState<TimelineZoomSettings | null>(null);
   const [loading, setLoading] = useState(false);
-  const [availableScales, setAvailableScales] = useState<Array<{ value: 'hour' | 'day' | 'week' | 'month'; label: string; description: string }>>([]);
+  const [availableScales, setAvailableScales] = useState<Array<{ description: string, label: string; value: 'hour' | 'day' | 'week' | 'month'; }>>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const dateInputRef = useRef<HTMLInputElement>(null);

@@ -3,22 +3,22 @@ import { XMarkIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface AstaExportSettings {
-  fileType: 'pp' | 'xml' | 'csv';
   dateFormat: 'dd/mm/yyyy' | 'mm/dd/yyyy' | 'yyyy-mm-dd';
-  includeConstraints: boolean;
+  demo?: boolean;
+  fileType: 'pp' | 'xml' | 'csv';
   includeBaselines: boolean;
+  includeCalendars: boolean;
+  includeConstraints: boolean;
   includeNotes: boolean;
   includeResources: boolean;
-  includeCalendars: boolean;
-  demo?: boolean;
 }
 
 interface ExportAstaModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onExport: (settings: AstaExportSettings) => void;
   projectName?: string;
-  isDemoMode?: boolean;
 }
 
 const ExportAstaModal: React.FC<ExportAstaModalProps> = ({

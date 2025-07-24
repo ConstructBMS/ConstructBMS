@@ -5,19 +5,19 @@ import { taskService, type Task } from '../../../services/taskService';
 import { demoModeService } from '../../../services/demoModeService';
 
 interface StructureTabProps {
-  taskId?: string;
-  projectId: string;
   currentParentId?: string | null;
-  onParentChange?: (parentId: string | null) => void;
   isDemoMode?: boolean;
+  onParentChange?: (parentId: string | null) => void;
+  projectId: string;
+  taskId?: string;
 }
 
 interface TaskOption {
+  disabled?: boolean;
   id: string;
+  level: number;
   name: string;
   type: 'task' | 'milestone' | 'phase' | 'summary';
-  level: number;
-  disabled?: boolean;
 }
 
 const StructureTab: React.FC<StructureTabProps> = ({

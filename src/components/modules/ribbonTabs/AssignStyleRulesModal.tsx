@@ -3,27 +3,27 @@ import { XMarkIcon, SparklesIcon, PlusIcon, TrashIcon, EyeIcon } from '@heroicon
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface StyleRule {
+  demo?: boolean;
+  field: string;
   id: string;
   name: string;
-  field: string;
   operator: 'equals' | 'contains' | 'starts_with' | 'ends_with' | 'greater_than' | 'less_than';
-  value: string;
-  styleId: string;
   priority: number;
   projectId: string;
+  styleId: string;
   userId: string;
-  demo?: boolean;
+  value: string;
 }
 
 interface AssignStyleRulesModalProps {
+  barStyles: Array<{ border: string; fill: string; id: string; name: string; pattern: string }>;
   isOpen: boolean;
-  onClose: () => void;
-  styleRules: StyleRule[];
-  onStyleRulesChange: (rules: StyleRule[]) => void;
-  barStyles: Array<{ id: string; name: string; fill: string; border: string; pattern: string }>;
-  onSave: () => void;
-  projectId: string;
   loading?: boolean;
+  onClose: () => void;
+  onSave: () => void;
+  onStyleRulesChange: (rules: StyleRule[]) => void;
+  projectId: string;
+  styleRules: StyleRule[];
 }
 
 const AssignStyleRulesModal: React.FC<AssignStyleRulesModalProps> = ({

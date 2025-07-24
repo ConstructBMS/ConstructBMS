@@ -2,33 +2,34 @@ import { supabase } from './supabase';
 
 // Flag interfaces
 export interface TaskFlag {
+  color: string;
+  createdAt: Date;
+  createdBy: string;
+  demo?: boolean; // Tailwind class (e.g., 'red-600')
+  icon: string; 
   id: string;
+  // Heroicon name or custom icon
+  note: string | null;
   taskId: string;
   type: 'risk' | 'priority' | 'issue' | 'info' | 'custom';
-  color: string; // Tailwind class (e.g., 'red-600')
-  icon: string; // Heroicon name or custom icon
-  note: string | null;
-  createdAt: Date;
   updatedAt: Date;
-  createdBy: string;
   updatedBy: string;
-  demo?: boolean;
 }
 
 export interface FlagType {
-  value: string;
-  label: string;
   defaultColor: string;
   defaultIcon: string;
   description: string;
+  label: string;
+  value: string;
 }
 
 export interface FlagPreferences {
-  userId: string;
-  projectId: string;
-  showOnlyFlagged: boolean;
-  selectedFlagTypes: string[];
   demo: boolean;
+  projectId: string;
+  selectedFlagTypes: string[];
+  showOnlyFlagged: boolean;
+  userId: string;
 }
 
 // Flag type definitions

@@ -12,12 +12,12 @@ import { flagService, type TaskFlag, type FlagType } from '../../services/flagSe
 import { toastService } from './ToastNotification';
 
 interface FlagEditorModalProps {
+  className?: string;
+  existingFlag?: TaskFlag | null;
   isOpen: boolean;
   onClose: () => void;
-  taskId: string;
-  existingFlag?: TaskFlag | null;
   onSave?: (flag: TaskFlag) => void;
-  className?: string;
+  taskId: string;
 }
 
 const FlagEditorModal: React.FC<FlagEditorModalProps> = ({

@@ -6,8 +6,8 @@ export type CriticalPathColorOption = 'red' | 'orange' | 'purple';
 
 interface CriticalPathColorDropdownProps {
   currentColor: CriticalPathColorOption;
-  onColorChange: (color: CriticalPathColorOption) => void;
   disabled?: boolean;
+  onColorChange: (color: CriticalPathColorOption) => void;
 }
 
 const CriticalPathColorDropdown: React.FC<CriticalPathColorDropdownProps> = ({
@@ -22,10 +22,10 @@ const CriticalPathColorDropdown: React.FC<CriticalPathColorDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const colorOptions: Array<{
-    value: CriticalPathColorOption;
-    label: string;
-    color: string;
     bgColor: string;
+    color: string;
+    label: string;
+    value: CriticalPathColorOption;
   }> = [
     {
       value: 'red',

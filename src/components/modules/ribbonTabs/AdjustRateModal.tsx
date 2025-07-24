@@ -3,22 +3,22 @@ import { XMarkIcon, CurrencyPoundIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface AssignedResource {
-  resourceId: string;
-  name: string;
-  type: 'labour' | 'material' | 'cost';
-  quantity: number;
-  unit: string;
-  rate: number;
   fromDate: Date;
+  name: string;
+  quantity: number;
+  rate: number;
+  resourceId: string;
   toDate: Date;
+  type: 'labour' | 'material' | 'cost';
+  unit: string;
 }
 
 interface AdjustRateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (updates: Record<string, { rate: number; overrideRate?: number }>) => void;
   assignedResources: AssignedResource[];
   disabled?: boolean;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (updates: Record<string, { overrideRate?: number, rate: number; }>) => void;
 }
 
 const AdjustRateModal: React.FC<AdjustRateModalProps> = ({
@@ -29,7 +29,7 @@ const AdjustRateModal: React.FC<AdjustRateModalProps> = ({
   disabled = false
 }) => {
   const { canAccess } = usePermissions();
-  const [resourceUpdates, setResourceUpdates] = useState<Record<string, { rate: number; overrideRate?: number }>>({});
+  const [resourceUpdates, setResourceUpdates] = useState<Record<string, { overrideRate?: number, rate: number; }>>({});
   const [useOverride, setUseOverride] = useState<Record<string, boolean>>({});
 
   const canEdit = canAccess('programme.resource.edit');
@@ -37,7 +37,7 @@ const AdjustRateModal: React.FC<AdjustRateModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      const initialUpdates: Record<string, { rate: number; overrideRate?: number }> = {};
+      const initialUpdates: Record<string, { overrideRate?: number, rate: number; }> = {};
       const initialOverride: Record<string, boolean> = {};
       assignedResources.forEach(resource => {
         initialUpdates[resource.resourceId] = {
@@ -79,7 +79,7 @@ const AdjustRateModal: React.FC<AdjustRateModalProps> = ({
   };
 
   const handleSave = () => {
-    const finalUpdates: Record<string, { rate: number; overrideRate?: number }> = {};
+    const finalUpdates: Record<string, { overrideRate?: number, rate: number; }> = {};
     Object.keys(resourceUpdates).forEach(resourceId => {
       if (useOverride[resourceId]) {
         finalUpdates[resourceId] = {

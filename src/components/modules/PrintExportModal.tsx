@@ -10,26 +10,26 @@ import {
   ExclamationTriangleIcon,
   CheckIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../services/timelinePrintService';
 import { timelineExportService, TimelineExportOptions } from '../services/timelineExportService';
 
 interface PrintExportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  projectId: string;
-  projectName: string;
-  projectIdDisplay: string;
-  tasks: any[];
-  filters: any;
   currentView: any;
+  filters: any;
   isMultiProjectMode?: boolean;
-  selectedProjects?: any[];
-  onPrint: (options: TimelinePrintOptions) => void;
+  isOpen: boolean;
+  isProcessing?: boolean;
+  onClose: () => void;
   onExportPDF: (options: TimelineExportOptions) => void;
   onPreview: (options: TimelinePrintOptions) => void;
-  isProcessing?: boolean;
+  onPrint: (options: TimelinePrintOptions) => void;
+  projectId: string;
+  projectIdDisplay: string;
+  projectName: string;
+  tasks: any[];
+  selectedProjects?: any[];
 }
 
 const PrintExportModal: React.FC<PrintExportModalProps> = ({

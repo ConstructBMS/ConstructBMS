@@ -6,15 +6,15 @@ import CriticalPathLegendIcon from './CriticalPathLegendIcon';
 export type CriticalPathColorOption = 'red' | 'orange' | 'purple';
 
 interface CriticalPathHighlightingSectionProps {
-  showCriticalPath: boolean;
-  onToggleCriticalPath: () => void;
   criticalPathColor: CriticalPathColorOption;
-  onCriticalPathColorChange: (color: CriticalPathColorOption) => void;
   disabled?: boolean;
   loading?: {
-    toggle?: boolean;
     color?: boolean;
+    toggle?: boolean;
   };
+  onCriticalPathColorChange: (color: CriticalPathColorOption) => void;
+  onToggleCriticalPath: () => void;
+  showCriticalPath: boolean;
 }
 
 const CriticalPathHighlightingSection: React.FC<CriticalPathHighlightingSectionProps> = ({

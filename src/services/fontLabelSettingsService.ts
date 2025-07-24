@@ -4,16 +4,16 @@ export type FontStyleOption = 'default' | 'serif' | 'sans' | 'mono';
 export type LabelPositionOption = 'insideLeft' | 'insideRight' | 'above' | 'below' | 'hidden';
 
 export interface FontLabelSettings {
+  demo?: boolean;
   fontStyle: FontStyleOption;
   labelPosition: LabelPositionOption;
   showTaskLabels: boolean;
-  demo?: boolean;
 }
 
 export interface FontLabelConfig {
-  enabled: boolean;
   autoApply: boolean;
   demo?: boolean;
+  enabled: boolean;
 }
 
 // Default ConstructBMS font and label settings
@@ -274,7 +274,7 @@ class FontLabelSettingsService {
   /**
    * Validate font and label settings
    */
-  validateFontLabelSettings(settings: FontLabelSettings): { isValid: boolean; errors: string[] } {
+  validateFontLabelSettings(settings: FontLabelSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate font style

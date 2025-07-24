@@ -3,14 +3,14 @@ import { ChevronDownIcon, FunnelIcon, PlusIcon } from '@heroicons/react/24/outli
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface Filter {
+  createdAt?: string;
+  createdBy?: string;
+  demo?: boolean;
   id: string;
   name: string;
-  type: 'built-in' | 'custom';
   rules: FilterRule[];
-  createdBy?: string;
-  createdAt?: string;
   shared?: boolean;
-  demo?: boolean;
+  type: 'built-in' | 'custom';
 }
 
 export interface FilterRule {
@@ -20,12 +20,12 @@ export interface FilterRule {
 }
 
 interface FilterDropdownProps {
-  filters: Filter[];
   activeFilter: Filter | null;
+  disabled?: boolean;
+  filters: Filter[];
+  loading?: boolean;
   onApplyFilter: (filter: Filter) => void;
   onCreateFilter: () => void;
-  disabled?: boolean;
-  loading?: boolean;
 }
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({

@@ -8,20 +8,20 @@ import {
 } from '@heroicons/react/24/outline';
 import PrintExportModal from './PrintExportModal';
 import TimelinePrintPreviewModal from './TimelinePrintPreviewModal';
-import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../services/timelinePrintService';
-import { timelineExportService, TimelineExportOptions } from '../services/timelineExportService';
-import { demoModeService } from '../services/demoModeService';
-import { usePermissions } from '../hooks/usePermissions';
+import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../../services/timelinePrintService';
+import { timelineExportService, TimelineExportOptions } from '../../services/timelineExportService';
+import { demoModeService } from '../../services/demoModeService';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface PrintExportDemoProps {
-  projectId?: string;
-  projectName?: string;
-  projectIdDisplay?: string;
-  tasks?: any[];
-  filters?: any;
   currentView?: any;
+  filters?: any;
   isMultiProjectMode?: boolean;
+  projectId?: string;
+  projectIdDisplay?: string;
+  projectName?: string;
   selectedProjects?: any[];
+  tasks?: any[];
 }
 
 const PrintExportDemo: React.FC<PrintExportDemoProps> = ({
@@ -54,7 +54,7 @@ const PrintExportDemo: React.FC<PrintExportDemoProps> = ({
       
       // Load sample tasks if none provided
       if (tasks.length === 0) {
-        const { demoDataService } = await import('../services/demoDataService');
+        const { demoDataService } = await import('../../services/demoDataService');
         const demoTasks = await demoDataService.getSampleTasks();
         // Update tasks state if needed
       }

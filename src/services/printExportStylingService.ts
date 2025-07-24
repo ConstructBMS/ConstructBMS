@@ -4,17 +4,18 @@ export type PageLayout = 'A4P' | 'A4L' | 'A3L';
 export type ExportTheme = 'default' | 'monochrome' | 'light' | 'dark' | 'custom';
 
 export interface PrintExportStylingSettings {
-  pageLayout: PageLayout;
-  exportTheme: ExportTheme;
   demo?: boolean;
+  exportTheme: ExportTheme;
+  pageLayout: PageLayout;
 }
 
 export interface PrintExportStylingConfig {
-  enabled: boolean;
   autoPreview: boolean;
   defaultFormat: 'pdf' | 'png' | 'jpg';
-  maxFileSize: number; // in MB
+  // in MB
   demo?: boolean;
+  enabled: boolean; 
+  maxFileSize: number;
 }
 
 // Default ConstructBMS print/export styling settings
@@ -443,7 +444,7 @@ class PrintExportStylingService {
   /**
    * Get page layout dimensions
    */
-  getPageLayoutDimensions(layout: PageLayout): { width: number; height: number; orientation: string } {
+  getPageLayoutDimensions(layout: PageLayout): { height: number; orientation: string, width: number; } {
     const dimensions = {
       A4P: { width: 210, height: 297, orientation: 'Portrait' },
       A4L: { width: 297, height: 210, orientation: 'Landscape' },
@@ -483,7 +484,7 @@ class PrintExportStylingService {
   /**
    * Validate print/export styling settings
    */
-  validatePrintExportStylingSettings(settings: PrintExportStylingSettings): { isValid: boolean; errors: string[] } {
+  validatePrintExportStylingSettings(settings: PrintExportStylingSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate page layout

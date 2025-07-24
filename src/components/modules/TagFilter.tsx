@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FunnelIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { taskTagsService, type ProgrammeTag } from '../../services/taskTagsService';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import TagPill from './TagPill';
 
 interface TagFilterProps {
+  className?: string;
+  onTagFilterChange: (tagIds: string[]) => void;
   projectId: string;
   selectedTagIds: string[];
-  onTagFilterChange: (tagIds: string[]) => void;
-  className?: string;
 }
 
 const TagFilter: React.FC<TagFilterProps> = ({

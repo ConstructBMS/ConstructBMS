@@ -11,27 +11,27 @@ export interface BarStyleCondition {
 export interface BarStyle {
   barColor: string;
   borderColor: string;
-  textColor: string;
   pattern?: 'dashed' | 'solid' | 'none';
+  textColor: string;
 }
 
 export interface BarStyleRule {
+  condition: BarStyleCondition;
+  createdAt: string;
+  createdBy: string;
+  demo: boolean;
   id: string;
+  isDefault: boolean;
   projectId: string;
   ruleName: string;
-  condition: BarStyleCondition;
   style: BarStyle;
-  createdBy: string;
-  isDefault: boolean;
-  demo: boolean;
-  createdAt: string;
   updatedAt: string;
 }
 
 export interface BarStyleConfig {
+  demo: boolean;
   enabled: boolean;
   maxRules: number;
-  demo: boolean;
 }
 
 // Default configuration
@@ -389,7 +389,7 @@ class BarStylesService {
   /**
    * Validate bar style rule
    */
-  validateBarStyleRule(rule: Partial<BarStyleRule>): { isValid: boolean; errors: string[] } {
+  validateBarStyleRule(rule: Partial<BarStyleRule>): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate rule name
@@ -442,7 +442,7 @@ class BarStylesService {
   /**
    * Get available condition fields
    */
-  getAvailableFields(): { value: string; label: string; description: string }[] {
+  getAvailableFields(): { description: string, label: string; value: string; }[] {
     return [
       { value: 'isCritical', label: 'Critical Path', description: 'Tasks on critical path' },
       { value: 'type', label: 'Task Type', description: 'Task type (milestone, summary, etc.)' },
@@ -456,7 +456,7 @@ class BarStylesService {
   /**
    * Get available operators
    */
-  getAvailableOperators(): { value: string; label: string; description: string }[] {
+  getAvailableOperators(): { description: string, label: string; value: string; }[] {
     return [
       { value: '=', label: 'Equals', description: 'Exact match' },
       { value: '!=', label: 'Not Equals', description: 'Does not match' },
@@ -467,7 +467,7 @@ class BarStylesService {
   /**
    * Get pattern options
    */
-  getPatternOptions(): { value: string; label: string; description: string }[] {
+  getPatternOptions(): { description: string, label: string; value: string; }[] {
     return [
       { value: 'solid', label: 'Solid', description: 'Solid border' },
       { value: 'dashed', label: 'Dashed', description: 'Dashed border' },

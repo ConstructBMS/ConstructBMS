@@ -7,17 +7,17 @@ import TimelinePrintOptionsModal from './TimelinePrintOptionsModal';
 import TimelinePrintPreviewModal from './TimelinePrintPreviewModal';
 
 interface TimelinePrintViewProps {
-  projectId: string;
-  projectName: string;
-  projectIdDisplay: string;
-  tasks: any[];
-  filters: any;
-  currentView: any;
-  isMultiProjectMode?: boolean;
-  selectedProjects?: any[];
   className?: string;
-  variant?: 'button' | 'dropdown' | 'inline';
+  currentView: any;
+  filters: any;
+  isMultiProjectMode?: boolean;
   onPrintComplete?: (metadata: any) => void;
+  projectId: string;
+  projectIdDisplay: string;
+  projectName: string;
+  selectedProjects?: any[];
+  tasks: any[];
+  variant?: 'button' | 'dropdown' | 'inline';
 }
 
 const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({

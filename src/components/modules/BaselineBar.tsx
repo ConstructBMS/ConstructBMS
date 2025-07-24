@@ -3,17 +3,17 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { baselineService, type BaselineVariance } from '../../services/baselineService';
 
 interface BaselineBarProps {
-  taskId: string;
-  currentStart: Date;
-  currentEnd: Date;
-  baselineStart: Date;
   baselineEnd: Date;
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-  isDemoMode?: boolean;
+  baselineStart: Date;
   className?: string;
+  currentEnd: Date;
+  currentStart: Date;
+  height: number;
+  isDemoMode?: boolean;
+  left: number;
+  taskId: string;
+  top: number;
+  width: number;
 }
 
 const BaselineBar: React.FC<BaselineBarProps> = ({

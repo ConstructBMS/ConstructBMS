@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type BarLabelButtonType = 'configure' | 'reset';
 
 interface BarLabelButtonProps {
-  type: BarLabelButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: BarLabelButtonType;
 }
 
 const BarLabelButton: React.FC<BarLabelButtonProps> = ({

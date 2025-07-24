@@ -225,4 +225,50 @@ assets/original/
 public/assets/large/
 public/media/
 public/videos/
-public/audio/ 
+public/audio/
+
+# OPTIMIZATION: Exclude large component directories when not actively developing
+# src/components/modules/ribbonTabs/
+# src/components/modules/Timeline/
+# src/components/archived/
+
+# OPTIMIZATION: Exclude large service files when not actively developing
+# src/services/*Service.ts
+# !src/services/index.ts
+
+# OPTIMIZATION: Exclude large script files
+scripts/*.js
+scripts/*.ts
+
+# OPTIMIZATION: Exclude batch files
+*.bat
+*.ps1
+
+# OPTIMIZATION: Exclude large configuration files
+vite.config.*.ts
+tailwind.config.js
+postcss.config.js
+
+# OPTIMIZATION: Exclude large UI component files
+src/components/ui/*.tsx
+src/components/widgets/*.tsx
+
+# OPTIMIZATION: Exclude large context files
+src/contexts/*.tsx
+
+# OPTIMIZATION: Exclude large hook files (but keep essential ones)
+src/hooks/*.ts
+!src/hooks/usePermissions.ts
+
+# OPTIMIZATION: Exclude large utility files
+src/utils/*.ts
+src/utils/*.js
+
+# OPTIMIZATION: Exclude large type files
+src/types/*.ts
+
+# OPTIMIZATION: Exclude large style files
+src/styles/*.css
+
+# OPTIMIZATION: Exclude large demo data files
+src/scripts/*.ts 

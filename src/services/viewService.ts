@@ -2,14 +2,14 @@ import { persistentStorage } from './persistentStorage';
 
 export interface ViewConfig {
   filters: FilterRule[];
-  visibleFields: string[];
-  zoomLevel: 'hour' | 'day' | 'week' | 'month';
-  timelineRange: { start: Date; end: Date };
   floatOptions?: {
-    total: boolean;
     free: boolean;
     highlightNegative: boolean;
+    total: boolean;
   };
+  timelineRange: { end: Date, start: Date; };
+  visibleFields: string[];
+  zoomLevel: 'hour' | 'day' | 'week' | 'month';
 }
 
 export interface FilterRule {
@@ -19,21 +19,21 @@ export interface FilterRule {
 }
 
 export interface View {
-  id: string;
-  name: string;
-  type: 'system' | 'custom';
   config: ViewConfig;
-  createdBy: string;
-  shared: boolean;
-  demo?: boolean;
   createdAt?: string;
+  createdBy: string;
+  demo?: boolean;
+  id: string;
   isDefault?: boolean;
+  name: string;
+  shared: boolean;
+  type: 'system' | 'custom';
 }
 
 export interface ViewResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export class ViewService {
@@ -421,7 +421,7 @@ export class ViewService {
   /**
    * Validate view configuration
    */
-  static validateViewConfig(config: ViewConfig): { isValid: boolean; errors: string[] } {
+  static validateViewConfig(config: ViewConfig): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     if (!config.name || config.name.trim().length === 0) {

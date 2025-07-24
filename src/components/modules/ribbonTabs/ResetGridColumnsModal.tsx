@@ -3,10 +3,10 @@ import { XMarkIcon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/re
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ResetGridColumnsModalProps {
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  disabled?: boolean;
 }
 
 const ResetGridColumnsModal: React.FC<ResetGridColumnsModalProps> = ({

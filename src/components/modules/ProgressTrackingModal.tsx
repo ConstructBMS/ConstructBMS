@@ -3,12 +3,12 @@ import { XMarkIcon, CalculatorIcon, CogIcon } from '@heroicons/react/24/outline'
 import { progressTrackingService, type TaskProgress } from '../../services/progressTrackingService';
 
 interface ProgressTrackingModalProps {
+  currentProgress: number;
   isOpen: boolean;
   onClose: () => void;
+  onProgressUpdate: (taskId: string, progress: number, autoProgress: boolean) => void;
   taskId: string;
   taskName: string;
-  currentProgress: number;
-  onProgressUpdate: (taskId: string, progress: number, autoProgress: boolean) => void;
 }
 
 const ProgressTrackingModal: React.FC<ProgressTrackingModalProps> = ({

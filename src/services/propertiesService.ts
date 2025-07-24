@@ -2,17 +2,17 @@ import { persistentStorage } from './persistentStorage';
 import type { CustomField, FieldTemplate } from '../components/modules/ribbonTabs/FieldTemplateDropdown';
 
 export interface PropertiesResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface FieldValueResult {
+  errors: string[];
+  fieldId: string;
   success: boolean;
   taskId: string;
-  fieldId: string;
   value: any;
-  errors: string[];
 }
 
 export class PropertiesService {
@@ -245,7 +245,7 @@ export class PropertiesService {
    * Batch update field values for multiple tasks
    */
   static async batchUpdateFieldValues(
-    updates: Array<{ taskId: string; fieldId: string; value: any }>,
+    updates: Array<{ fieldId: string; taskId: string; value: any }>,
     projectId: string = 'demo'
   ): Promise<PropertiesResult> {
     try {
@@ -340,11 +340,11 @@ export class PropertiesService {
    * Get properties statistics
    */
   static async getPropertiesStatistics(projectId: string = 'demo'): Promise<{
-    totalCustomFields: number;
-    totalTemplates: number;
-    fieldsByType: Record<string, number>;
     demoFields: number;
     demoTemplates: number;
+    fieldsByType: Record<string, number>;
+    totalCustomFields: number;
+    totalTemplates: number;
   }> {
     try {
       const customFields = await this.getCustomFields(projectId);
@@ -464,9 +464,9 @@ export class PropertiesService {
    */
   static async exportPropertiesData(projectId: string = 'demo'): Promise<{
     customFields: CustomField[];
-    templates: FieldTemplate[];
-    statistics: any;
     exportDate: string;
+    statistics: any;
+    templates: FieldTemplate[];
   }> {
     try {
       const customFields = await this.getCustomFields(projectId);
@@ -505,7 +505,7 @@ export class PropertiesService {
   /**
    * Validate custom field
    */
-  static validateCustomField(field: Partial<CustomField>): { isValid: boolean; errors: string[] } {
+  static validateCustomField(field: Partial<CustomField>): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     if (!field.label || field.label.trim() === '') {
@@ -534,7 +534,7 @@ export class PropertiesService {
   /**
    * Validate field template
    */
-  static validateFieldTemplate(template: Partial<FieldTemplate>): { isValid: boolean; errors: string[] } {
+  static validateFieldTemplate(template: Partial<FieldTemplate>): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     if (!template.name || template.name.trim() === '') {

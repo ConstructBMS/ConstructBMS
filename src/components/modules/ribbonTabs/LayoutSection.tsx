@@ -2,17 +2,17 @@ import React from 'react';
 import LayoutButton from './LayoutButton';
 
 interface LayoutSectionProps {
-  splitView: boolean;
+  disabled?: boolean;
   fullscreen: boolean;
-  onToggleSplit: () => void;
+  loading?: {
+    fullscreen?: boolean;
+    reset?: boolean;
+    split?: boolean;
+  };
   onResetLayout: () => void;
   onToggleFullscreen: () => void;
-  disabled?: boolean;
-  loading?: {
-    split?: boolean;
-    reset?: boolean;
-    fullscreen?: boolean;
-  };
+  onToggleSplit: () => void;
+  splitView: boolean;
 }
 
 const LayoutSection: React.FC<LayoutSectionProps> = ({

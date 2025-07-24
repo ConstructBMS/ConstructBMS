@@ -3,15 +3,15 @@ import SummaryButton from './SummaryButton';
 import ExportSummaryDropdown from './ExportSummaryDropdown';
 
 interface AllocationSummarySectionProps {
-  onViewTaskSummary: () => void;
-  onViewResourceSummary: () => void;
-  onExportSummary: (format: 'csv' | 'xlsx' | 'pdf') => void;
   disabled?: boolean;
   loading?: {
-    task?: boolean;
-    resource?: boolean;
     export?: boolean;
+    resource?: boolean;
+    task?: boolean;
   };
+  onExportSummary: (format: 'csv' | 'xlsx' | 'pdf') => void;
+  onViewResourceSummary: () => void;
+  onViewTaskSummary: () => void;
 }
 
 const AllocationSummarySection: React.FC<AllocationSummarySectionProps> = ({

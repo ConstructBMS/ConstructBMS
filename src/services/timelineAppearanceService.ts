@@ -4,18 +4,18 @@ export type RowHeightOption = 'small' | 'medium' | 'large';
 export type BackgroundColorOption = 'light' | 'dark' | 'system' | 'custom';
 
 export interface TimelineAppearanceSettings {
-  rowHeight: RowHeightOption;
-  showGridLines: boolean;
-  showWeekendShading: boolean;
   backgroundColor: BackgroundColorOption;
   customBackgroundColor?: string;
   demo?: boolean;
+  rowHeight: RowHeightOption;
+  showGridLines: boolean;
+  showWeekendShading: boolean;
 }
 
 export interface TimelineAppearanceConfig {
-  enabled: boolean;
   autoApply: boolean;
   demo?: boolean;
+  enabled: boolean;
 }
 
 // Default ConstructBMS timeline appearance settings
@@ -273,7 +273,7 @@ class TimelineAppearanceService {
   /**
    * Validate timeline appearance settings
    */
-  validateTimelineAppearanceSettings(settings: TimelineAppearanceSettings): { isValid: boolean; errors: string[] } {
+  validateTimelineAppearanceSettings(settings: TimelineAppearanceSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate row height

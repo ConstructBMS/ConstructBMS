@@ -2,9 +2,9 @@ import React from 'react';
 import LinkInspectorButton from './LinkInspectorButton';
 
 interface TaskModelLinkInspectorSectionProps {
-  onInspectLinks: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onInspectLinks: () => void;
 }
 
 const TaskModelLinkInspectorSection: React.FC<TaskModelLinkInspectorSectionProps> = ({

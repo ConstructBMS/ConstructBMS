@@ -3,24 +3,24 @@ import { taskResizeService, type ResizeConstraint } from '../../services/taskRes
 import { toastService } from './ToastNotification';
 
 interface ResizableGanttBarProps {
-  taskId: string;
-  taskName: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number;
-  isCritical?: boolean;
-  isSelected?: boolean;
-  isDemo?: boolean;
-  showProgress?: boolean;
-  height?: number;
-  dayWidth?: number;
-  snapConfig: { enabled: boolean; type: 'day' | 'week' | 'month' };
+  className?: string;
   constraints: ResizeConstraint;
+  dayWidth?: number;
+  endDate: Date;
+  height?: number;
+  isCritical?: boolean;
+  isDemo?: boolean;
+  isSelected?: boolean;
+  onDependencyRecalculate?: () => void;
   onProgressChange?: (taskId: string, newProgress: number) => void;
   onTaskClick?: (taskId: string) => void;
   onTaskResize?: (taskId: string, newStart: Date, newEnd: Date) => void;
-  onDependencyRecalculate?: () => void;
-  className?: string;
+  progress: number;
+  showProgress?: boolean;
+  snapConfig: { enabled: boolean; type: 'day' | 'week' | 'month' };
+  startDate: Date;
+  taskId: string;
+  taskName: string;
 }
 
 const ResizableGanttBar: React.FC<ResizableGanttBarProps> = ({

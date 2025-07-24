@@ -3,27 +3,27 @@ import { XMarkIcon, PaintBrushIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface BarStyle {
-  fillColor: string;
   borderColor: string;
-  height: number;
+  fillColor: string;
   fontSize: number;
+  height: number;
   icon?: string;
 }
 
 interface TaskTypeStyle {
-  standard: BarStyle;
-  summary: BarStyle;
-  milestone: BarStyle;
   critical: BarStyle;
   custom: BarStyle;
+  milestone: BarStyle;
+  standard: BarStyle;
+  summary: BarStyle;
 }
 
 interface EditBarStylesModalProps {
+  currentStyles: TaskTypeStyle;
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (styles: TaskTypeStyle) => void;
-  currentStyles: TaskTypeStyle;
-  disabled?: boolean;
 }
 
 const EditBarStylesModal: React.FC<EditBarStylesModalProps> = ({
@@ -216,7 +216,7 @@ const EditBarStylesModal: React.FC<EditBarStylesModalProps> = ({
     );
   };
 
-  const tabs: Array<{ key: keyof TaskTypeStyle; label: string; icon?: string }> = [
+  const tabs: Array<{ icon?: string, key: keyof TaskTypeStyle; label: string; }> = [
     { key: 'standard', label: 'Standard' },
     { key: 'summary', label: 'Summary' },
     { key: 'milestone', label: 'Milestone' },

@@ -6,9 +6,9 @@ export type TimeScaleOption = 'hourly' | 'daily' | 'weekly' | 'monthly' | 'quart
 
 interface TimeScaleDropdownProps {
   currentScale: TimeScaleOption;
-  onScaleChange: (scale: TimeScaleOption) => void;
   disabled?: boolean;
   loading?: boolean;
+  onScaleChange: (scale: TimeScaleOption) => void;
 }
 
 const TimeScaleDropdown: React.FC<TimeScaleDropdownProps> = ({
@@ -24,9 +24,9 @@ const TimeScaleDropdown: React.FC<TimeScaleDropdownProps> = ({
   const isDisabled = disabled || loading || !canView;
 
   const scaleOptions: Array<{
-    value: TimeScaleOption;
-    label: string;
     description: string;
+    label: string;
+    value: TimeScaleOption;
   }> = [
     {
       value: 'hourly',

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, CogIcon, TagIcon } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
-import { programmeCustomFieldsService, ProgrammeCustomField } from '../services/programmeCustomFieldsService';
+import { usePermissions } from '../../hooks/usePermissions';
+import { demoModeService } from '../../services/demoModeService';
+import { programmeCustomFieldsService, ProgrammeCustomField } from '../../services/programmeCustomFieldsService';
 import CustomFieldsManagerModal from './CustomFieldsManagerModal';
 
 const CustomFieldsDemo: React.FC = () => {

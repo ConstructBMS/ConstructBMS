@@ -3,9 +3,9 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ResetBarStylesButtonProps {
-  onReset: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onReset: () => void;
 }
 
 const ResetBarStylesButton: React.FC<ResetBarStylesButtonProps> = ({

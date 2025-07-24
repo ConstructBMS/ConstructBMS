@@ -3,15 +3,15 @@ import { persistentStorage } from './persistentStorage';
 export type ProjectStatus = 'draft' | 'active' | 'on-hold' | 'completed' | 'archived';
 
 export interface ProjectProperties {
-  title: string;
-  client: string;
   address: string;
-  notes: string;
-  status: ProjectStatus;
-  startDate: string;
+  budget: number;
+  client: string;
   endDate: string;
   manager: string;
-  budget: number;
+  notes: string;
+  startDate: string;
+  status: ProjectStatus;
+  title: string;
 }
 
 export interface ProjectSettings {
@@ -20,20 +20,20 @@ export interface ProjectSettings {
 }
 
 export interface SyncLog {
+  demo?: boolean;
+  details?: string;
   id: string;
   projectId: string;
-  type: 'import' | 'export';
   result: 'success' | 'error' | 'pending';
   timestamp: Date;
+  type: 'import' | 'export';
   userId: string;
-  details?: string;
-  demo?: boolean;
 }
 
 export interface FileTabConfig {
+  demo?: boolean;
   enabled: boolean;
   maxSyncLogs: number;
-  demo?: boolean;
 }
 
 // Default ConstructBMS file tab settings
@@ -423,7 +423,7 @@ class FileTabService {
   /**
    * Validate project properties
    */
-  validateProjectProperties(properties: ProjectProperties): { isValid: boolean; errors: string[] } {
+  validateProjectProperties(properties: ProjectProperties): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate title

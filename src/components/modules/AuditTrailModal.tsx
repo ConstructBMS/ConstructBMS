@@ -23,9 +23,9 @@ interface AuditTrailModalProps {
 
 interface FilterPanelProps {
   filter: AuditLogFilter;
-  onFilterChange: (filter: AuditLogFilter) => void;
-  onClearFilters: () => void;
   isDemoMode: boolean;
+  onClearFilters: () => void;
+  onFilterChange: (filter: AuditLogFilter) => void;
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({ 
@@ -150,8 +150,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 };
 
 interface DiffViewProps {
-  before: any;
   after: any;
+  before: any;
   isDemoMode: boolean;
 }
 

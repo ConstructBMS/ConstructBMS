@@ -8,11 +8,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import { useClipboard } from '../../../contexts/ClipboardContext';
 
 interface ClipboardButtonProps {
-  type: 'cut' | 'copy' | 'paste';
   disabled?: boolean;
+  hasClipboardContent?: boolean;
   onClick: () => void;
   selectedTasksCount?: number;
-  hasClipboardContent?: boolean;
+  type: 'cut' | 'copy' | 'paste';
 }
 
 const ClipboardButton: React.FC<ClipboardButtonProps> = ({

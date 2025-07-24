@@ -2,10 +2,10 @@ import { supabase } from '../services/supabase';
 import { taskConstraintService } from '../services/taskConstraintService';
 
 export interface DemoConstraint {
-  taskId: string;
-  constraintType: 'none' | 'MSO' | 'MFO' | 'SNET' | 'FNLT';
   constraintDate: string;
   constraintReason: string;
+  constraintType: 'none' | 'MSO' | 'MFO' | 'SNET' | 'FNLT';
+  taskId: string;
 }
 
 export const demoConstraints: DemoConstraint[] = [

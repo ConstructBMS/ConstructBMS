@@ -4,17 +4,17 @@ import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface ProjectNotes {
   content: string;
-  lastEdited: string;
-  editor: string;
   demo?: boolean;
+  editor: string;
+  lastEdited: string;
 }
 
 interface ProjectNotesModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
+  notes: ProjectNotes;
   onClose: () => void;
   onSave: (notes: ProjectNotes) => void;
-  notes: ProjectNotes;
-  isDemoMode?: boolean;
 }
 
 const ProjectNotesModal: React.FC<ProjectNotesModalProps> = ({

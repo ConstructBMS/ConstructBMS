@@ -9,11 +9,11 @@ import { zoomService, type ZoomLevel } from '../../services/zoomService';
 import { toastService } from './ToastNotification';
 
 interface ZoomControlsProps {
-  onZoomChange?: (zoomState: any) => void;
-  projectStartDate?: Date;
-  projectEndDate?: Date;
-  containerWidth?: number;
   className?: string;
+  containerWidth?: number;
+  onZoomChange?: (zoomState: any) => void;
+  projectEndDate?: Date;
+  projectStartDate?: Date;
 }
 
 const ZoomControls: React.FC<ZoomControlsProps> = ({

@@ -2,16 +2,16 @@ import React from 'react';
 import ConstraintButton from './ConstraintButton';
 
 interface ConstraintsSectionProps {
-  onSetConstraint: () => void;
-  onClearConstraint: () => void;
-  onConstraintReport: () => void;
   disabled?: boolean;
+  hasSelectedTasks?: boolean;
   loading?: {
-    set?: boolean;
     clear?: boolean;
     report?: boolean;
+    set?: boolean;
   };
-  hasSelectedTasks?: boolean;
+  onClearConstraint: () => void;
+  onConstraintReport: () => void;
+  onSetConstraint: () => void;
 }
 
 const ConstraintsSection: React.FC<ConstraintsSectionProps> = ({

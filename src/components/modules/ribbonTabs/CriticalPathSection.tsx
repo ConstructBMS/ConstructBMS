@@ -9,15 +9,15 @@ import { criticalPathService } from '../../../services/criticalPathService';
 import { demoModeService } from '../../../services/demoModeService';
 
 interface CriticalPathSectionProps {
-  showCriticalPath: boolean;
   criticalOnly: boolean;
-  onToggleCriticalPath: () => void;
-  onToggleCriticalOnly: () => void;
   disabled?: boolean;
   loading?: {
-    toggle?: boolean;
     criticalOnly?: boolean;
+    toggle?: boolean;
   };
+  onToggleCriticalOnly: () => void;
+  onToggleCriticalPath: () => void;
+  showCriticalPath: boolean;
 }
 
 const CriticalPathSection: React.FC<CriticalPathSectionProps> = ({

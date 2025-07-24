@@ -14,14 +14,14 @@ import { type Milestone } from '../../services/milestoneService';
 import { usePermissions } from '../../hooks/usePermissions';
 
 interface MilestoneDisplayProps {
-  milestone: Milestone;
   dayWidth: number;
+  isSelected: boolean;
+  milestone: Milestone;
+  onMilestoneClick: (milestoneId: string) => void;
+  onMilestoneDelete: (milestoneId: string) => void;
+  onMilestoneEdit: (milestoneId: string) => void;
   projectStartDate: Date;
   rowHeight: number;
-  isSelected: boolean;
-  onMilestoneClick: (milestoneId: string) => void;
-  onMilestoneEdit: (milestoneId: string) => void;
-  onMilestoneDelete: (milestoneId: string) => void;
 }
 
 const MilestoneDisplay: React.FC<MilestoneDisplayProps> = ({

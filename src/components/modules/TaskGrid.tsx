@@ -6,42 +6,42 @@ import { taskService } from '../services/taskService';
 import { undoRedoService } from '../services/undoRedoService';
 
 interface Task {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
+  constraintDate?: Date;
+  constraintType?: 'none' | 'MSO' | 'SNET' | 'FNLT' | 'MFO';
+  constraintViolated?: boolean;
+  createdAt: Date;
   duration: number;
+  endDate: Date;
+  id: string;
+  level: number;
+  name: string;
+  parentTaskId?: string;
+  projectId: string;
+  startDate: Date;
   statusId: string;
   tags: string[];
   type: 'task' | 'milestone' | 'phase';
-  parentTaskId?: string;
-  level: number;
-  projectId: string;
-  userId: string;
-  createdAt: Date;
   updatedAt: Date;
-  constraintType?: 'none' | 'MSO' | 'SNET' | 'FNLT' | 'MFO';
-  constraintDate?: Date;
-  constraintViolated?: boolean;
+  userId: string;
 }
 
 interface TaskGridProps {
-  projectId: string;
-  tasks: Task[];
-  onTaskUpdate: (taskId: string, updates: any) => void;
-  onTaskSelect: (taskId: string) => void;
-  selectedTaskId?: string;
-  scrollTop: number;
   onScrollChange: (scrollTop: number) => void;
+  onTaskSelect: (taskId: string) => void;
+  onTaskUpdate: (taskId: string, updates: any) => void;
+  projectId: string;
+  scrollTop: number;
+  selectedTaskId?: string;
+  tasks: Task[];
 }
 
 interface Column {
+  editable: boolean;
   id: string;
   label: string;
-  width: number;
-  editable: boolean;
-  sortable: boolean;
   render: (task: Task, isEditing: boolean, onEdit: (value: any) => void) => React.ReactNode;
+  sortable: boolean;
+  width: number;
 }
 
 const TaskGrid: React.FC<TaskGridProps> = ({
@@ -56,10 +56,10 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedTaskIds, setExpandedTaskIds] = useState<string[]>([]);
-  const [editingCell, setEditingCell] = useState<{ taskId: string; columnId: string } | null>(null);
+  const [editingCell, setEditingCell] = useState<{ columnId: string, taskId: string; } | null>(null);
   const [editValue, setEditValue] = useState<any>('');
-  const [availableStatuses, setAvailableStatuses] = useState<Array<{ id: string; name: string; color: string }>>([]);
-  const [availableTags, setAvailableTags] = useState<Array<{ id: string; name: string; color: string }>>([]);
+  const [availableStatuses, setAvailableStatuses] = useState<Array<{ color: string, id: string; name: string; }>>([]);
+  const [availableTags, setAvailableTags] = useState<Array<{ color: string, id: string; name: string; }>>([]);
   const [taskCount, setTaskCount] = useState(0);
   
   const gridRef = useRef<HTMLDivElement>(null);

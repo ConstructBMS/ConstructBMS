@@ -2,27 +2,27 @@ import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
 
 export interface ProgrammeCustomField {
-  id: string;
-  projectId: string;
-  label: string;
-  type: 'text' | 'number' | 'date' | 'dropdown';
-  options?: string[];
+  createdAt: Date;
   createdBy: string;
+  demo: boolean;
+  id: string;
   isRequired: boolean;
   isVisibleInGrid: boolean;
   isVisibleInModal: boolean;
-  demo: boolean;
-  createdAt: Date;
+  label: string;
+  options?: string[];
+  projectId: string;
+  type: 'text' | 'number' | 'date' | 'dropdown';
   updatedAt: Date;
 }
 
 export interface ProgrammeTaskCustomValue {
+  createdAt: Date;
+  customFieldId: string;
   id: string;
   taskId: string;
-  customFieldId: string;
-  value: string;
-  createdAt: Date;
   updatedAt: Date;
+  value: string;
 }
 
 export interface CustomFieldWithValue extends ProgrammeCustomField {
@@ -96,7 +96,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Create a new custom field
    */
-  async createCustomField(field: Omit<ProgrammeCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ success: boolean; error?: string; field?: ProgrammeCustomField }> {
+  async createCustomField(field: Omit<ProgrammeCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ error?: string; field?: ProgrammeCustomField, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -135,7 +135,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Update a custom field
    */
-  async updateCustomField(fieldId: string, updates: Partial<ProgrammeCustomField>): Promise<{ success: boolean; error?: string; field?: ProgrammeCustomField }> {
+  async updateCustomField(fieldId: string, updates: Partial<ProgrammeCustomField>): Promise<{ error?: string; field?: ProgrammeCustomField, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -168,7 +168,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Delete a custom field
    */
-  async deleteCustomField(fieldId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteCustomField(fieldId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_custom_fields')
@@ -219,7 +219,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Save a custom field value for a task
    */
-  async saveTaskCustomFieldValue(taskId: string, customFieldId: string, value: string): Promise<{ success: boolean; error?: string }> {
+  async saveTaskCustomFieldValue(taskId: string, customFieldId: string, value: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_task_custom_values')
@@ -244,7 +244,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Delete a custom field value for a task
    */
-  async deleteTaskCustomFieldValue(taskId: string, customFieldId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteTaskCustomFieldValue(taskId: string, customFieldId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_task_custom_values')
@@ -280,7 +280,7 @@ class ProgrammeCustomFieldsService {
   /**
    * Validate custom field
    */
-  validateCustomField(field: Partial<ProgrammeCustomField>): { isValid: boolean; errors: string[] } {
+  validateCustomField(field: Partial<ProgrammeCustomField>): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     if (!field.label || field.label.trim().length === 0) {

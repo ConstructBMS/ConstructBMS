@@ -2,16 +2,16 @@ import React from 'react';
 import GroupingButton from './GroupingButton';
 
 interface GroupingCollapseSectionProps {
-  summariesCollapsed: boolean;
-  onExpandSelected: () => void;
-  onCollapseSelected: () => void;
-  onToggleAll: () => void;
   disabled?: boolean;
   loading?: {
-    expand?: boolean;
     collapse?: boolean;
+    expand?: boolean;
     toggle?: boolean;
   };
+  onCollapseSelected: () => void;
+  onExpandSelected: () => void;
+  onToggleAll: () => void;
+  summariesCollapsed: boolean;
 }
 
 const GroupingCollapseSection: React.FC<GroupingCollapseSectionProps> = ({

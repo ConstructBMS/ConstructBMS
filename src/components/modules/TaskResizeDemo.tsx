@@ -67,8 +67,8 @@ const TaskResizeDemo: React.FC = () => {
   const [tasks, setTasks] = useState(sampleTasks);
   const [snapConfig, setSnapConfig] = useState<{
     enabled: boolean;
-    type: 'day' | 'week' | 'month';
     gridWidth: number;
+    type: 'day' | 'week' | 'month';
   }>({
     enabled: true,
     type: 'day',

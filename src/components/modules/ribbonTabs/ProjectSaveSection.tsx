@@ -3,16 +3,16 @@ import { DocumentArrowDownIcon, DocumentDuplicateIcon, ClockIcon } from '@heroic
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ProjectSaveSectionProps {
-  onSaveChanges: () => void;
-  onSaveAsTemplate: () => void;
-  onToggleAutoSave: () => void;
   autoSaveEnabled: boolean;
   disabled?: boolean;
   loading?: {
+    autoSave?: boolean;
     save?: boolean;
     template?: boolean;
-    autoSave?: boolean;
   };
+  onSaveAsTemplate: () => void;
+  onSaveChanges: () => void;
+  onToggleAutoSave: () => void;
 }
 
 const ProjectSaveSection: React.FC<ProjectSaveSectionProps> = ({

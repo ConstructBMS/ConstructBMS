@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { XMarkIcon, ExclamationTriangleIcon, CheckCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export interface ValidationIssue {
-  taskId: string;
-  taskName: string;
-  issue: string;
   fixable: boolean;
+  issue: string;
   severity: 'error' | 'warning' | 'info';
   suggestedFix?: string;
+  taskId: string;
+  taskName: string;
 }
 
 interface ValidationResultsModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
-  onClose: () => void;
   issues: ValidationIssue[];
   onAutoFix: (issueIds: string[]) => void;
-  isDemoMode?: boolean;
+  onClose: () => void;
 }
 
 const ValidationResultsModal: React.FC<ValidationResultsModalProps> = ({

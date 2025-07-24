@@ -7,11 +7,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 export interface ToastMessage {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
-  message: string;
   duration?: number | undefined;
+  id: string;
+  message: string;
+  title: string;
+  type: 'success' | 'error' | 'warning' | 'info';
 }
 
 interface ToastNotificationProps {
@@ -128,8 +128,8 @@ const ToastNotification: React.FC<ToastNotificationProps> = ({ message, onClose 
 
 // Toast container component
 interface ToastContainerProps {
-  toasts: ToastMessage[];
   onClose: (id: string) => void;
+  toasts: ToastMessage[];
 }
 
 export const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose }) => {

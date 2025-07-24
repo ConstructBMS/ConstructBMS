@@ -3,10 +3,10 @@ import { XMarkIcon, CloudArrowUpIcon, DocumentIcon } from '@heroicons/react/24/o
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface UploadIfcModalProps {
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onUpload: (file: File) => void;
-  disabled?: boolean;
 }
 
 const UploadIfcModal: React.FC<UploadIfcModalProps> = ({

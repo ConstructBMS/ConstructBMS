@@ -2,77 +2,77 @@ import { persistentStorage } from './persistentStorage';
 import { demoModeService } from './demoModeService';
 
 export interface RibbonAuditResult {
-  success: boolean;
-  errors: string[];
-  warnings: string[];
   details: {
-    tabs: TabAuditResult[];
-    permissions: PermissionAuditResult[];
-    storage: StorageAuditResult;
     demoMode: DemoModeAuditResult;
     localStorage: LocalStorageAuditResult;
+    permissions: PermissionAuditResult[];
+    storage: StorageAuditResult;
+    tabs: TabAuditResult[];
   };
+  errors: string[];
+  success: boolean;
+  warnings: string[];
 }
 
 export interface TabAuditResult {
-  tabId: string;
-  label: string;
-  visible: boolean;
-  permissionRequired?: string;
-  permissionGranted: boolean;
-  sections: SectionAuditResult[];
   errors: string[];
+  label: string;
+  permissionGranted: boolean;
+  permissionRequired?: string;
+  sections: SectionAuditResult[];
+  tabId: string;
+  visible: boolean;
 }
 
 export interface SectionAuditResult {
-  sectionId: string;
-  label: string;
-  visible: boolean;
-  tools: ToolAuditResult[];
   errors: string[];
+  label: string;
+  sectionId: string;
+  tools: ToolAuditResult[];
+  visible: boolean;
 }
 
 export interface ToolAuditResult {
-  toolId: string;
-  label: string;
-  type: 'button' | 'dropdown' | 'toggle' | 'modal';
-  enabled: boolean;
-  permissionRequired?: string;
-  permissionGranted: boolean;
   demoModeRestricted: boolean;
+  enabled: boolean;
   errors: string[];
+  label: string;
+  permissionGranted: boolean;
+  permissionRequired?: string;
+  toolId: string;
+  type: 'button' | 'dropdown' | 'toggle' | 'modal';
 }
 
 export interface PermissionAuditResult {
-  permission: string;
   granted: boolean;
+  permission: string;
   requiredBy: string[];
 }
 
 export interface StorageAuditResult {
-  supabaseTables: {
-    table: string;
-    accessible: boolean;
-    hasData: boolean;
-    demoDataCount: number;
-  }[];
+  errors: string[];
   localStorageUsage: {
     found: boolean;
     keys: string[];
   };
-  errors: string[];
+  supabaseTables: {
+    accessible: boolean;
+    demoDataCount: number;
+    hasData: boolean;
+    table: string;
+  }[];
 }
 
 export interface DemoModeAuditResult {
   isDemoMode: boolean;
   restrictions: {
-    maxTags: number;
-    maxStatuses: number;
-    maxThemes: number;
-    maxCustomFields: number;
-    importDisabled: boolean;
-    syncDisabled: boolean;
     exportWatermarked: boolean;
+    importDisabled: boolean;
+    maxCustomFields: number;
+    maxStatuses: number;
+    maxTags: number;
+    maxThemes: number;
+    syncDisabled: boolean;
   };
   violations: string[];
 }

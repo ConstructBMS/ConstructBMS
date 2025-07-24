@@ -122,14 +122,14 @@ const PROGRESS_OPTIONS: ProgressOption[] = [
 ];
 
 interface HomeTabWithClipboardProps {
+  activeRibbonTab: string;
   canEdit: boolean;
   onTaskOperation: (operation: TaskOperation) => void;
-  selectedTasks: string[];
-  userRole: string;
-  activeRibbonTab: string;
-  tasks?: TaskData[];
   onTasksUpdate?: (tasks: TaskData[]) => void;
   projectId?: string;
+  selectedTasks: string[];
+  tasks?: TaskData[];
+  userRole: string;
 }
 
 const HomeTabWithClipboard: React.FC<HomeTabWithClipboardProps> = ({

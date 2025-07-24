@@ -5,23 +5,23 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ProjectStatus = 'draft' | 'active' | 'on-hold' | 'completed' | 'archived';
 
 interface ProjectProperties {
-  title: string;
-  client: string;
   address: string;
-  notes: string;
-  status: ProjectStatus;
-  startDate: string;
+  budget: number;
+  client: string;
   endDate: string;
   manager: string;
-  budget: number;
+  notes: string;
+  startDate: string;
+  status: ProjectStatus;
+  title: string;
 }
 
 interface ProjectPropertiesModalProps {
+  initialProperties: ProjectProperties;
   isOpen: boolean;
+  loading?: boolean;
   onClose: () => void;
   onSave: (properties: ProjectProperties) => void;
-  initialProperties: ProjectProperties;
-  loading?: boolean;
 }
 
 const ProjectPropertiesModal: React.FC<ProjectPropertiesModalProps> = ({
@@ -37,9 +37,9 @@ const ProjectPropertiesModal: React.FC<ProjectPropertiesModalProps> = ({
   const canAdmin = canAccess('programme.admin');
 
   const statusOptions: Array<{
-    value: ProjectStatus;
-    label: string;
     description: string;
+    label: string;
+    value: ProjectStatus;
   }> = [
     {
       value: 'draft',

@@ -2,23 +2,24 @@ import { persistentStorage } from './persistentStorage';
 
 export interface GroupingConfig {
   collapsedSummaries: { [taskId: string]: boolean };
-  summariesCollapsed: boolean; // Global toggle state
-  demo?: boolean;
+  // Global toggle state
+  demo?: boolean; 
+  summariesCollapsed: boolean;
 }
 
 export interface GroupingResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface Task {
-  id: string;
-  name: string;
-  isSummary: boolean;
-  parentId?: string;
   children?: string[];
+  id: string;
+  isSummary: boolean;
   isVisible?: boolean;
+  name: string;
+  parentId?: string;
 }
 
 export class GroupingService {
@@ -288,12 +289,12 @@ export class GroupingService {
    * Get task hierarchy with collapse state
    */
   static async getTaskHierarchy(tasks: Task[], projectId: string = 'demo'): Promise<{
+    hierarchy: { [taskId: string]: { children: string[], isCollapsed: boolean; level: number; } };
     tasks: Task[];
-    hierarchy: { [taskId: string]: { level: number; isCollapsed: boolean; children: string[] } };
   }> {
     try {
       const config = await this.getGroupingConfig(projectId);
-      const hierarchy: { [taskId: string]: { level: number; isCollapsed: boolean; children: string[] } } = {};
+      const hierarchy: { [taskId: string]: { children: string[], isCollapsed: boolean; level: number; } } = {};
       
       const buildHierarchy = (task: Task, level: number = 0): void => {
         hierarchy[task.id] = {
@@ -462,7 +463,7 @@ export class GroupingService {
   /**
    * Validate grouping configuration
    */
-  static validateGroupingConfig(config: GroupingConfig): { isValid: boolean; errors: string[] } {
+  static validateGroupingConfig(config: GroupingConfig): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     if (typeof config.summariesCollapsed !== 'boolean') {

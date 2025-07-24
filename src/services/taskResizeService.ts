@@ -2,31 +2,31 @@ import { supabase } from './supabase';
 
 // Task resize interfaces
 export interface ResizeState {
-  isResizing: boolean;
-  taskId: string | null;
-  originalStart: Date | null;
-  originalEnd: Date | null;
-  resizeEdge: 'start' | 'end' | null;
   currentOffset: number;
+  isResizing: boolean;
+  originalEnd: Date | null;
+  originalStart: Date | null;
+  resizeEdge: 'start' | 'end' | null;
   startX: number;
+  taskId: string | null;
 }
 
 export interface ResizeResult {
-  success: boolean;
-  newStart: Date;
-  newEnd: Date;
-  newDuration: number;
-  daysChanged: number;
-  message: string;
-  demoMode?: boolean;
   constraintViolations?: string[] | undefined;
+  daysChanged: number;
+  demoMode?: boolean;
+  message: string;
+  newDuration: number;
+  newEnd: Date;
+  newStart: Date;
+  success: boolean;
 }
 
 export interface ResizeConstraint {
-  minDuration: number;
-  maxDuration: number;
-  enforceDependencies: boolean;
   allowOverlap: boolean;
+  enforceDependencies: boolean;
+  maxDuration: number;
+  minDuration: number;
 }
 
 // Demo mode configuration
@@ -307,7 +307,7 @@ class TaskResizeService {
     newStart: Date,
     newEnd: Date,
     constraints: ResizeConstraint
-  ): Promise<{ valid: boolean; message: string; violations?: string[] }> {
+  ): Promise<{ message: string; valid: boolean; violations?: string[] }> {
     try {
       const violations: string[] = [];
 
@@ -476,12 +476,12 @@ class TaskResizeService {
    * Add action to undo buffer
    */
   private addToUndoBuffer(action: {
-    taskId: string;
-    previousStart: Date;
-    previousEnd: Date;
     action: 'resize';
-    timestamp: Date;
     demoMode?: boolean;
+    previousEnd: Date;
+    previousStart: Date;
+    taskId: string;
+    timestamp: Date;
   }): void {
     // This would integrate with the existing undo buffer from dragRescheduleService
     // For now, we'll use a simple implementation

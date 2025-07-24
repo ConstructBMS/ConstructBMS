@@ -2,16 +2,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { barStylesService, BarStyleRule, BarStyle } from '../services/barStylesService';
 
 interface UseBarStylesProps {
-  projectId: string;
   enabled?: boolean;
+  projectId: string;
 }
 
 interface UseBarStylesReturn {
-  rules: BarStyleRule[];
-  loading: boolean;
-  getBarStyleForTask: (task: any) => BarStyle | null;
-  refreshRules: () => Promise<void>;
   applyStylesToDOM: () => void;
+  getBarStyleForTask: (task: any) => BarStyle | null;
+  loading: boolean;
+  refreshRules: () => Promise<void>;
+  rules: BarStyleRule[];
 }
 
 export const useBarStyles = ({ projectId, enabled = true }: UseBarStylesProps): UseBarStylesReturn => {

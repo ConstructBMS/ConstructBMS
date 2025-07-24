@@ -29,11 +29,11 @@ import { BarLabelService } from '../../../services/barLabelService';
 import { ImportExportService } from '../../../services/importExportService';
 
 interface ViewTabProps {
+  activeRibbonTab: string;
   canEdit: boolean;
   onTaskOperation: (operation: any) => void;
   selectedTasks: string[];
   userRole: string;
-  activeRibbonTab: string;
 }
 
 const ViewTab: React.FC<ViewTabProps> = ({

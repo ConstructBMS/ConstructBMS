@@ -3,16 +3,16 @@ import { persistentStorage } from './persistentStorage';
 export type RowBorderStyle = 'none' | 'bottom' | 'full';
 
 export interface TaskRowStylingSettings {
-  striping: boolean;
-  rowBorder: RowBorderStyle;
-  highlightActive: boolean;
   demo?: boolean;
+  highlightActive: boolean;
+  rowBorder: RowBorderStyle;
+  striping: boolean;
 }
 
 export interface TaskRowStylingConfig {
-  enabled: boolean;
   autoApply: boolean;
   demo?: boolean;
+  enabled: boolean;
 }
 
 // Default ConstructBMS task row styling settings
@@ -397,7 +397,7 @@ class TaskRowStylingService {
   /**
    * Validate task row styling settings
    */
-  validateTaskRowStylingSettings(settings: TaskRowStylingSettings): { isValid: boolean; errors: string[] } {
+  validateTaskRowStylingSettings(settings: TaskRowStylingSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate striping

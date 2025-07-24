@@ -15,15 +15,15 @@ import MilestoneModal from './MilestoneModal';
 import MilestoneDisplay from './MilestoneDisplay';
 
 interface MilestoneManagerProps {
+  className?: string;
+  dayWidth: number;
+  onAddMilestone?: () => void;
+  onDeleteMilestone?: () => void;
+  onEditMilestone?: () => void;
+  onMilestoneChange?: (milestones: Milestone[]) => void;
   projectId: string;
   projectStartDate: Date;
-  dayWidth: number;
   rowHeight: number;
-  onMilestoneChange?: (milestones: Milestone[]) => void;
-  className?: string;
-  onAddMilestone?: () => void;
-  onEditMilestone?: () => void;
-  onDeleteMilestone?: () => void;
   selectedMilestonesCount?: number;
 }
 

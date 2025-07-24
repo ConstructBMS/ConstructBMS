@@ -3,9 +3,9 @@ import { EyeDropperIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface LinkInspectorButtonProps {
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
 }
 
 const LinkInspectorButton: React.FC<LinkInspectorButtonProps> = ({

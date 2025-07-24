@@ -3,29 +3,29 @@ import { undoRedoService, ActionPayload } from '../services/undoRedoService';
 import { demoModeService } from '../services/demoModeService';
 
 interface ActionTrackerProps {
-  projectId: string;
   onActionRecorded?: (action: ActionPayload) => void;
+  projectId: string;
 }
 
 interface TaskUpdateData {
+  description?: string;
+  endDate?: Date;
   name?: string;
   startDate?: Date;
-  endDate?: Date;
   statusId?: string;
   tags?: string[];
-  description?: string;
 }
 
 interface DependencyData {
   predecessorId: string;
+  projectId: string;
   successorId: string;
   type: 'FS' | 'SS' | 'FF' | 'SF';
-  projectId: string;
 }
 
 interface ConstraintData {
-  type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP';
   constraintDate: Date;
+  type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP';
 }
 
 class ActionTracker {

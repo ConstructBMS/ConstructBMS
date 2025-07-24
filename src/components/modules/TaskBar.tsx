@@ -10,77 +10,77 @@ import BaselineBar from './BaselineBar';
 import TaskLockIndicator from './TaskLockIndicator';
 
 export interface Task {
+  createdAt: Date;
+  demo?: boolean;
+  description?: string;
+  endDate: Date;
   id: string;
   name: string;
+  progress?: number;
+  projectId: string;
   startDate: Date;
-  endDate: Date;
   statusId: string;
   tags: string[];
   type: 'task' | 'milestone' | 'phase' | 'summary';
-  description?: string;
-  projectId: string;
-  userId: string;
-  demo?: boolean;
-  createdAt: Date;
   updatedAt: Date;
-  progress?: number; // Added for progress indicator
+  userId: string; // Added for progress indicator
 }
 
 export interface TaskStatus {
-  id: string;
-  name: string;
   color: string;
+  id: string;
   isDefault?: boolean;
+  name: string;
 }
 
 export interface ProjectTag {
+  color: string;
   id: string;
   name: string;
-  color: string;
   scope: 'global' | 'project';
 }
 
 interface TaskBarProps {
-  task: Task;
-  projectId: string;
-  rowHeight: number;
-  dayWidth: number;
-  startDate: Date;
-  onTaskClick: (taskId: string) => void;
-  onTaskUpdate: (taskId: string, updates: Partial<Task>) => void;
-  isSelected?: boolean;
-  isCritical?: boolean;
-  isInSelectedPath?: boolean;
-  showCriticalPath?: boolean;
-  showBaseline?: boolean;
   baselineDelta?: BaselineDelta | null;
   baselineTask?: {
-    baselineId: string;
-    taskId: string;
-    baselineStartDate: Date;
-    baselineEndDate: Date;
     baselineDuration: number;
+    baselineEndDate: Date;
+    baselineId: string;
+    baselineStartDate: Date;
     demo?: boolean;
+    taskId: string;
   } | null;
+  dayWidth: number;
+  isCritical?: boolean;
+  isInSelectedPath?: boolean;
+  isSelected?: boolean;
+  onTaskClick: (taskId: string) => void;
+  onTaskUpdate: (taskId: string, updates: Partial<Task>) => void;
+  projectId: string;
+  rowHeight: number;
+  showBaseline?: boolean;
+  showCriticalPath?: boolean;
+  startDate: Date;
+  task: Task;
 }
 
 interface DragState {
-  isDragging: boolean;
-  startX: number;
-  startDate: Date;
   endDate: Date;
-  originalStartDate: Date;
+  isDragging: boolean;
   originalEndDate: Date;
+  originalStartDate: Date;
+  startDate: Date;
+  startX: number;
 }
 
 interface ResizeState {
-  isResizing: boolean;
-  resizeHandle: 'left' | 'right' | null;
-  startX: number;
-  startDate: Date;
   endDate: Date;
-  originalStartDate: Date;
+  isResizing: boolean;
   originalEndDate: Date;
+  originalStartDate: Date;
+  resizeHandle: 'left' | 'right' | null;
+  startDate: Date;
+  startX: number;
 }
 
 const TaskBar: React.FC<TaskBarProps> = ({

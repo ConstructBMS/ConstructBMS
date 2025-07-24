@@ -3,25 +3,25 @@ import ResourceButton from './ResourceButton';
 import QuickAssignDropdown from './QuickAssignDropdown';
 
 interface QuickAssignResource {
+  defaultQuantity: number;
+  defaultRate: number;
+  defaultUnit: string;
+  frequency: number;
   id: string;
   name: string;
   type: 'labour' | 'material' | 'cost';
-  defaultQuantity: number;
-  defaultUnit: string;
-  defaultRate: number;
-  frequency: number;
 }
 
 interface AssignResourcesSectionProps {
-  onAssignResource: () => void;
-  onUnassignResource: () => void;
-  onQuickAssign: (resource: QuickAssignResource) => void;
   disabled?: boolean;
   loading?: {
     assign?: boolean;
-    unassign?: boolean;
     quickAssign?: boolean;
+    unassign?: boolean;
   };
+  onAssignResource: () => void;
+  onQuickAssign: (resource: QuickAssignResource) => void;
+  onUnassignResource: () => void;
 }
 
 const AssignResourcesSection: React.FC<AssignResourcesSectionProps> = ({

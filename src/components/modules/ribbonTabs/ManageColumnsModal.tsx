@@ -3,22 +3,22 @@ import { XMarkIcon, Bars3Icon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface GridColumn {
+  field: string;
   id: string;
   name: string;
-  field: string;
-  visible: boolean;
   order: number;
-  width?: number;
   type: 'system' | 'custom';
+  visible: boolean;
+  width?: number;
 }
 
 interface ManageColumnsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   columns: GridColumn[];
+  isOpen: boolean;
+  loading?: boolean;
+  onClose: () => void;
   onColumnsChange: (columns: GridColumn[]) => void;
   onSave: () => void;
-  loading?: boolean;
 }
 
 const ManageColumnsModal: React.FC<ManageColumnsModalProps> = ({

@@ -3,9 +3,9 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface PlaybackSpeedDropdownProps {
-  speed: number;
-  onSpeedChange: (speed: number) => void;
   disabled?: boolean;
+  onSpeedChange: (speed: number) => void;
+  speed: number;
 }
 
 const PlaybackSpeedDropdown: React.FC<PlaybackSpeedDropdownProps> = ({

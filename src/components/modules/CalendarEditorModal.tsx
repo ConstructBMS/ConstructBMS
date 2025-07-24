@@ -10,12 +10,12 @@ import { calendarService, type WorkingCalendar } from '../../services/calendarSe
 import { toastService } from './ToastNotification';
 
 interface CalendarEditorModalProps {
+  className?: string;
+  existingCalendar?: WorkingCalendar | null;
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  existingCalendar?: WorkingCalendar | null;
   onSave?: (calendar: WorkingCalendar) => void;
-  className?: string;
+  projectId: string;
 }
 
 const CalendarEditorModal: React.FC<CalendarEditorModalProps> = ({

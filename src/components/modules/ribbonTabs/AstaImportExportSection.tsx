@@ -14,9 +14,9 @@ import AstaExportModal from './AstaExportModal';
 import type { ParsedAstaProgramme, AstaExportSettings } from '../../../services/astaImportExportService';
 
 interface AstaImportExportSectionProps {
+  onTaskOperation?: (operation: any) => void;
   projectId?: string;
   projectName?: string;
-  onTaskOperation?: (operation: any) => void;
 }
 
 const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
@@ -28,8 +28,8 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [importExportHistory, setImportExportHistory] = useState<{
-    imports: any[];
     exports: any[];
+    imports: any[];
   }>({ imports: [], exports: [] });
   const [loading, setLoading] = useState({
     import: false,

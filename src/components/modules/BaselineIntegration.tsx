@@ -18,18 +18,18 @@ import BaselineBar from './BaselineBar';
 import BaselineManagerModal from './BaselineManagerModal';
 
 interface BaselineIntegrationProps {
-  projectId: string;
+  children: React.ReactNode;
   currentTasks: Array<{
-    id: string;
-    name: string;
-    startDate: Date;
     endDate: Date;
-    percentComplete?: number;
+    id: string;
     isMilestone?: boolean;
+    name: string;
     parentId?: string;
+    percentComplete?: number;
+    startDate: Date;
   }>;
   onBaselineChange?: (baseline: Baseline | null) => void;
-  children: React.ReactNode;
+  projectId: string;
 }
 
 const BaselineIntegration: React.FC<BaselineIntegrationProps> = ({

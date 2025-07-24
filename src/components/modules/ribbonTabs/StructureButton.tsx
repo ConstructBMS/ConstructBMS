@@ -7,13 +7,13 @@ import {
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface StructureButtonProps {
-  type: 'indent' | 'outdent' | 'summary';
+  canIndent?: boolean;
+  canMakeSummary?: boolean;
+  canOutdent?: boolean;
   disabled?: boolean;
   onClick: () => void;
   selectedTasksCount?: number;
-  canIndent?: boolean;
-  canOutdent?: boolean;
-  canMakeSummary?: boolean;
+  type: 'indent' | 'outdent' | 'summary';
 }
 
 const StructureButton: React.FC<StructureButtonProps> = ({

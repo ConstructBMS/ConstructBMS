@@ -3,14 +3,14 @@ import { SwatchIcon, Cog6ToothIcon, ChevronDownIcon } from '@heroicons/react/24/
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ThemeConfigSectionProps {
-  onThemePresetChange: (preset: string) => void;
-  onOpenManageTheme: () => void;
   currentThemePreset: string;
   disabled?: boolean;
   loading?: {
-    preset?: boolean;
     manage?: boolean;
+    preset?: boolean;
   };
+  onOpenManageTheme: () => void;
+  onThemePresetChange: (preset: string) => void;
 }
 
 const ThemeConfigSection: React.FC<ThemeConfigSectionProps> = ({

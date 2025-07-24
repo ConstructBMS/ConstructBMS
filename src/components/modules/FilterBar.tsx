@@ -4,15 +4,15 @@ import { demoModeService } from '../services/demoModeService';
 import { timelineFiltersService, TimelineFilters, FilterOption } from '../services/timelineFiltersService';
 
 interface FilterBarProps {
-  filters: TimelineFilters;
   filterOptions: {
-    status: FilterOption[];
-    type: FilterOption[];
-    tags: FilterOption[];
     assignees: FilterOption[];
+    status: FilterOption[];
+    tags: FilterOption[];
+    type: FilterOption[];
   };
-  onFilterRemove: (filterType: keyof TimelineFilters, value: string) => void;
+  filters: TimelineFilters;
   onClearAll: () => void;
+  onFilterRemove: (filterType: keyof TimelineFilters, value: string) => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({

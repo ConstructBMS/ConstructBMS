@@ -2,13 +2,13 @@ import React from 'react';
 import LinkButton from './LinkButton';
 
 interface LinkSectionProps {
-  selectedTasksCount: number;
-  onLink: () => void;
-  onUnlink: () => void;
-  onLag: () => void;
+  canLag?: boolean;
   canLink?: boolean;
   canUnlink?: boolean;
-  canLag?: boolean;
+  onLag: () => void;
+  onLink: () => void;
+  onUnlink: () => void;
+  selectedTasksCount: number;
 }
 
 const LinkSection: React.FC<LinkSectionProps> = ({

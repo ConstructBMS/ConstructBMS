@@ -12,23 +12,23 @@ import { toastService } from './ToastNotification';
 import TimelineExportModal from './TimelineExportModal';
 
 interface TimelineExportControlsProps {
-  projectId: string;
-  projectName: string;
-  ganttElementRef: React.RefObject<HTMLElement>;
+  className?: string;
+  currentDateRange?: {
+    end: Date;
+    start: Date;
+  };
   currentFilters?: {
-    status?: string[];
-    priority?: string[];
-    tags?: string[];
     assignee?: string[];
+    priority?: string[];
+    status?: string[];
+    tags?: string[];
   };
   currentZoomLevel?: 'days' | 'weeks' | 'months' | 'quarters';
-  currentDateRange?: {
-    start: Date;
-    end: Date;
-  };
+  ganttElementRef: React.RefObject<HTMLElement>;
   isMultiProjectMode?: boolean;
+  projectId: string;
+  projectName: string;
   selectedProjects?: string[];
-  className?: string;
 }
 
 const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({

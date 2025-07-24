@@ -1,0 +1,3 @@
+@echo off 
+echo Fixing PowerShell PSReadLine hanging issue... 
+if not exist \" "C:\Users\info\\OneDrive\\Documents\\WindowsPowerShell\ mkdir \C:\Users\info\\OneDrive\\Documents\\WindowsPowerShell\ 

@@ -3,20 +3,20 @@ import GridOptionToggle from './GridOptionToggle';
 import GridOptionButton from './GridOptionButton';
 
 interface GridOptionsSectionProps {
-  pinnedColumn: boolean;
-  wrapText: boolean;
-  stripeRows: boolean;
-  onTogglePin: () => void;
-  onToggleWrapText: () => void;
-  onToggleStripeRows: () => void;
-  onResetColumns: () => void;
   disabled?: boolean;
   loading?: {
     pin?: boolean;
-    wrapText?: boolean;
-    stripeRows?: boolean;
     reset?: boolean;
+    stripeRows?: boolean;
+    wrapText?: boolean;
   };
+  onResetColumns: () => void;
+  onTogglePin: () => void;
+  onToggleStripeRows: () => void;
+  onToggleWrapText: () => void;
+  pinnedColumn: boolean;
+  stripeRows: boolean;
+  wrapText: boolean;
 }
 
 const GridOptionsSection: React.FC<GridOptionsSectionProps> = ({

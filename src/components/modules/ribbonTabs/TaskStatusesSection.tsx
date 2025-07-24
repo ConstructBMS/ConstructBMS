@@ -3,15 +3,15 @@ import { CheckCircleIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TaskStatusesSectionProps {
-  onOpenEditStatusList: () => void;
-  onSetDefaultStatus: (status: string) => void;
+  availableStatuses: Array<{ color: string, id: string; name: string; }>;
   currentDefaultStatus: string;
-  availableStatuses: Array<{ id: string; name: string; color: string }>;
   disabled?: boolean;
   loading?: {
-    edit?: boolean;
     default?: boolean;
+    edit?: boolean;
   };
+  onOpenEditStatusList: () => void;
+  onSetDefaultStatus: (status: string) => void;
 }
 
 const TaskStatusesSection: React.FC<TaskStatusesSectionProps> = ({

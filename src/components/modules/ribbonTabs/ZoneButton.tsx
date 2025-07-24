@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ZoneButtonType = 'add' | 'edit' | 'clear';
 
 interface ZoneButtonProps {
-  type: ZoneButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ZoneButtonType;
 }
 
 const ZoneButton: React.FC<ZoneButtonProps> = ({

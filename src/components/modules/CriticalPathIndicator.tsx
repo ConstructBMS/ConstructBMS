@@ -3,9 +3,9 @@ import { FireIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { CriticalPathResult } from '../services/criticalPathService';
 
 interface CriticalPathIndicatorProps {
+  className?: string;
   criticalPath: CriticalPathResult;
   isDemoMode?: boolean;
-  className?: string;
 }
 
 const CriticalPathIndicator: React.FC<CriticalPathIndicatorProps> = ({

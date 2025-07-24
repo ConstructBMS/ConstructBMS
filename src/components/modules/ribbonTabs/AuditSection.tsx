@@ -11,9 +11,9 @@ import { auditTrailService } from '../../../services/auditTrailService';
 import AuditTrailModal from '../AuditTrailModal';
 
 interface AuditSectionProps {
+  disabled?: boolean;
   projectId: string;
   projectName?: string;
-  disabled?: boolean;
 }
 
 const AuditSection: React.FC<AuditSectionProps> = ({ 

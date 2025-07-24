@@ -3,26 +3,26 @@ import { ChevronDownIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface FieldTemplate {
-  id: string;
-  name: string;
+  demo?: boolean;
   description: string;
   fields: CustomField[];
-  demo?: boolean;
+  id: string;
+  name: string;
 }
 
 export interface CustomField {
   id: string;
   label: string;
-  type: 'string' | 'number' | 'date' | 'boolean' | 'dropdown';
   options?: string[];
+  type: 'string' | 'number' | 'date' | 'boolean' | 'dropdown';
   visible: boolean;
 }
 
 interface FieldTemplateDropdownProps {
-  templates: FieldTemplate[];
-  onApplyTemplate: (template: FieldTemplate) => void;
   disabled?: boolean;
   loading?: boolean;
+  onApplyTemplate: (template: FieldTemplate) => void;
+  templates: FieldTemplate[];
 }
 
 const FieldTemplateDropdown: React.FC<FieldTemplateDropdownProps> = ({

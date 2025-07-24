@@ -5,16 +5,16 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ProjectStatus = 'draft' | 'active' | 'on-hold' | 'completed' | 'archived';
 
 interface ProjectMetadataSectionProps {
-  onOpenProjectProperties: () => void;
-  onChangeProjectStatus: (status: ProjectStatus) => void;
-  onArchiveProject: () => void;
   currentStatus: ProjectStatus;
   disabled?: boolean;
   loading?: {
+    archive?: boolean;
     properties?: boolean;
     status?: boolean;
-    archive?: boolean;
   };
+  onArchiveProject: () => void;
+  onChangeProjectStatus: (status: ProjectStatus) => void;
+  onOpenProjectProperties: () => void;
 }
 
 const ProjectMetadataSection: React.FC<ProjectMetadataSectionProps> = ({
@@ -32,10 +32,10 @@ const ProjectMetadataSection: React.FC<ProjectMetadataSectionProps> = ({
   const isDisabled = disabled || !canAdmin;
 
   const statusOptions: Array<{
-    value: ProjectStatus;
-    label: string;
-    description: string;
     color: string;
+    description: string;
+    label: string;
+    value: ProjectStatus;
   }> = [
     {
       value: 'draft',

@@ -1,25 +1,25 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface LayoutConfig {
-  splitView: boolean;
+  collapsedSections: string[];
+  demo?: boolean;
   fullscreen: boolean;
   paneSizes: {
     taskList: number; // percentage
     timeline: number; // percentage
   };
-  collapsedSections: string[];
   scrollPositions: {
     taskList: { x: number; y: number };
     timeline: { x: number; y: number };
   };
+  splitView: boolean;
   zoomLevel: number;
-  demo?: boolean;
 }
 
 export interface LayoutResult {
-  success: boolean;
   data?: LayoutConfig;
   errors: string[];
+  success: boolean;
 }
 
 export class LayoutService {

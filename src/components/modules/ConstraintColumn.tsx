@@ -9,9 +9,9 @@ import { taskConstraintService } from '../services/taskConstraintService';
 import type { TaskConstraint, ConstraintType } from './TaskConstraintsTab';
 
 interface ConstraintColumnProps {
-  taskId: string;
   className?: string;
   onViolationClick?: (violations: any[]) => void;
+  taskId: string;
 }
 
 const ConstraintColumn: React.FC<ConstraintColumnProps> = ({

@@ -3,19 +3,19 @@ import { timelineZoomService } from '../services/timelineZoomService';
 import { demoModeService } from '../services/demoModeService';
 
 export interface UseScrollZoomOptions {
-  enabled?: boolean;
   debounceMs?: number;
-  onZoomChange?: (settings: any) => void;
+  enabled?: boolean;
   onScrollChange?: (position: { x: number; y: number }) => void;
+  onZoomChange?: (settings: any) => void;
   projectId?: string;
 }
 
 export interface UseScrollZoomReturn {
   containerRef: React.RefObject<HTMLElement>;
-  isScrollZoomEnabled: boolean;
   isDemoMode: boolean;
-  zoomLevel: string;
+  isScrollZoomEnabled: boolean;
   scrollPosition: { x: number; y: number };
+  zoomLevel: string;
 }
 
 export const useScrollZoom = (options: UseScrollZoomOptions = {}): UseScrollZoomReturn => {

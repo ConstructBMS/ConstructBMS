@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type CriticalPathButtonType = 'toggleHighlight' | 'settings' | 'showPathFromSelection';
 
 interface CriticalPathButtonProps {
-  type: CriticalPathButtonType;
-  isActive?: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: CriticalPathButtonType;
 }
 
 const CriticalPathButton: React.FC<CriticalPathButtonProps> = ({

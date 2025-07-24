@@ -3,24 +3,24 @@ import { XMarkIcon, SwatchIcon, PlusIcon, TrashIcon, EyeIcon } from '@heroicons/
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface BarStyle {
+  border: string;
+  demo?: boolean;
+  fill: string;
   id: string;
   name: string;
-  fill: string;
-  border: string;
   pattern: 'solid' | 'dashed' | 'dotted' | 'gradient';
   projectId: string;
   userId: string;
-  demo?: boolean;
 }
 
 interface ManageBarStylesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   barStyles: BarStyle[];
+  isOpen: boolean;
+  loading?: boolean;
   onBarStylesChange: (styles: BarStyle[]) => void;
+  onClose: () => void;
   onSave: () => void;
   projectId: string;
-  loading?: boolean;
 }
 
 const ManageBarStylesModal: React.FC<ManageBarStylesModalProps> = ({

@@ -2,36 +2,36 @@ import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
 
 export interface ProgrammePresence {
-  id: string;
-  userId: string;
-  projectId: string;
-  userName: string;
-  userEmail: string;
-  userAvatar?: string;
-  lastSeen: Date;
-  isOnline: boolean;
-  demo: boolean;
   createdAt: Date;
+  demo: boolean;
+  id: string;
+  isOnline: boolean;
+  lastSeen: Date;
+  projectId: string;
   updatedAt: Date;
+  userAvatar?: string;
+  userEmail: string;
+  userId: string;
+  userName: string;
 }
 
 export interface TaskLock {
+  createdAt: Date;
+  demo: boolean;
+  expiresAt: Date;
   id: string;
-  taskId: string;
-  projectId: string;
+  lockedAt: Date;
   lockedBy: string;
   lockedByUser: string;
-  lockedAt: Date;
-  expiresAt: Date;
-  demo: boolean;
-  createdAt: Date;
+  projectId: string;
+  taskId: string;
 }
 
 export interface CollaborationState {
+  error: string | null;
+  isConnected: boolean;
   presence: ProgrammePresence[];
   taskLocks: TaskLock[];
-  isConnected: boolean;
-  error: string | null;
 }
 
 class ProgrammeCollaborationService {
@@ -232,7 +232,7 @@ class ProgrammeCollaborationService {
   /**
    * Lock a task for editing
    */
-  async lockTask(taskId: string): Promise<{ success: boolean; error?: string; lock?: TaskLock }> {
+  async lockTask(taskId: string): Promise<{ error?: string; lock?: TaskLock, success: boolean; }> {
     try {
       if (!this.currentUserId || !this.currentProjectId) {
         return { success: false, error: 'Not connected to project' };
@@ -298,7 +298,7 @@ class ProgrammeCollaborationService {
   /**
    * Unlock a task
    */
-  async unlockTask(taskId: string): Promise<{ success: boolean; error?: string }> {
+  async unlockTask(taskId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       if (!this.currentUserId || !this.currentProjectId) {
         return { success: false, error: 'Not connected to project' };

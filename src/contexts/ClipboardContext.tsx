@@ -2,35 +2,35 @@ import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 export interface ProgrammeTask {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
+  assignee?: string;
+  description?: string;
   duration: number;
-  progress: number;
-  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  endDate: Date;
+  id: string;
   level: number;
+  name: string;
   parentId?: string;
   predecessors?: string[];
-  successors?: string[];
-  assignee?: string;
   priority?: string;
-  description?: string;
+  progress: number;
+  startDate: Date;
+  status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  successors?: string[];
 }
 
 export interface ClipboardState {
-  type: 'cut' | 'copy' | null;
   tasks: ProgrammeTask[];
+  type: 'cut' | 'copy' | null;
 }
 
 interface ClipboardContextType {
-  clipboard: ClipboardState;
-  cutTasks: (tasks: ProgrammeTask[]) => void;
-  copyTasks: (tasks: ProgrammeTask[]) => void;
-  pasteTasks: () => ProgrammeTask[];
   clearClipboard: () => void;
-  hasClipboardContent: () => boolean;
+  clipboard: ClipboardState;
+  copyTasks: (tasks: ProgrammeTask[]) => void;
+  cutTasks: (tasks: ProgrammeTask[]) => void;
   getClipboardContent: () => ClipboardState;
+  hasClipboardContent: () => boolean;
+  pasteTasks: () => ProgrammeTask[];
 }
 
 const ClipboardContext = createContext<ClipboardContextType | undefined>(undefined);

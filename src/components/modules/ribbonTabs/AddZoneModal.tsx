@@ -3,19 +3,19 @@ import { XMarkIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface TimelineZone {
+  color: string;
+  endDate: string;
   id?: string;
   name: string;
   startDate: string;
-  endDate: string;
-  color: string;
   tag?: string;
 }
 
 interface AddZoneModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAddZone: (zone: TimelineZone) => void;
   disabled?: boolean;
+  isOpen: boolean;
+  onAddZone: (zone: TimelineZone) => void;
+  onClose: () => void;
 }
 
 const AddZoneModal: React.FC<AddZoneModalProps> = ({

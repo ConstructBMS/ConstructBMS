@@ -6,47 +6,47 @@ import ThemeConfigSection from './ThemeConfigSection';
 import CustomFieldsSection from './CustomFieldsSection';
 
 interface AdminTabProps {
-  // Tags & Labels Section
-  onOpenManageTags: () => void;
-  onColorPaletteChange: (color: string) => void;
+  availableStatuses: Array<{ color: string, id: string; name: string; }>;
   currentColorPalette: string;
-  
-  // Task Statuses Section
-  onOpenEditStatusList: () => void;
-  onSetDefaultStatus: (status: string) => void;
   currentDefaultStatus: string;
-  availableStatuses: Array<{ id: string; name: string; color: string }>;
   
-  // Theme Config Section
-  onThemePresetChange: (preset: string) => void;
-  onOpenManageTheme: () => void;
   currentThemePreset: string;
-  
-  // Custom Fields Section
-  onOpenAddField: () => void;
-  onOpenFieldLibrary: () => void;
-  onOpenFieldPosition: () => void;
-  
   // Global state
   disabled?: boolean;
   loading?: {
-    // Tags & Labels
-    manage?: boolean;
-    palette?: boolean;
+    // Custom Fields
+    add?: boolean;
+    default?: boolean;
     
     // Task Statuses
     edit?: boolean;
-    default?: boolean;
+    library?: boolean;
     
-    // Theme Config
-    preset?: boolean;
+    manage?: boolean;
+    // Tags & Labels
     manage?: boolean;
     
-    // Custom Fields
-    add?: boolean;
-    library?: boolean;
+    palette?: boolean;
     position?: boolean;
+    // Theme Config
+    preset?: boolean;
   };
+  onColorPaletteChange: (color: string) => void;
+  
+  // Custom Fields Section
+  onOpenAddField: () => void;
+  // Task Statuses Section
+  onOpenEditStatusList: () => void;
+  onOpenFieldLibrary: () => void;
+  
+  onOpenFieldPosition: () => void;
+  // Tags & Labels Section
+  onOpenManageTags: () => void;
+  onOpenManageTheme: () => void;
+  
+  onSetDefaultStatus: (status: string) => void;
+  // Theme Config Section
+  onThemePresetChange: (preset: string) => void;
 }
 
 const AdminTab: React.FC<AdminTabProps> = ({

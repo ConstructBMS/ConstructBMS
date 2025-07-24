@@ -6,10 +6,10 @@ import {
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface PlaybackButtonProps {
-  isPlaying: boolean;
-  onToggle: () => void;
   disabled?: boolean;
+  isPlaying: boolean;
   loading?: boolean;
+  onToggle: () => void;
 }
 
 const PlaybackButton: React.FC<PlaybackButtonProps> = ({

@@ -10,10 +10,10 @@ import { progressTrackingService, type TaskProgress } from '../../../services/pr
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ProgressTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode: boolean;
   onProgressUpdate?: (taskId: string, progress: number) => void;
+  projectId: string;
+  taskId: string;
 }
 
 const ProgressTab: React.FC<ProgressTabProps> = ({

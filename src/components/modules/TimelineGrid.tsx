@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 import { zoomService } from '../../services/zoomService';
 
 interface TimelineGridProps {
-  startDate: Date;
-  endDate: Date;
+  className?: string;
   containerWidth: number;
+  endDate: Date;
   height?: number;
   showLabels?: boolean;
-  className?: string;
+  startDate: Date;
 }
 
 const TimelineGrid: React.FC<TimelineGridProps> = ({
@@ -27,9 +27,9 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
   const gridData = useMemo(() => {
     const gridLines: Array<{
       date: Date;
-      position: number;
-      label: string;
       isMajor: boolean;
+      label: string;
+      position: number;
     }> = [];
 
     const start = new Date(startDate);

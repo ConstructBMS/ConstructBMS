@@ -8,14 +8,14 @@ import TagFilter from './TagFilter';
 import TaskGridWithTags from './TaskGridWithTags';
 
 interface DemoTask {
+  demo?: boolean;
+  endDate: Date;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
-  status: string;
   progress: number;
+  startDate: Date;
+  status: string;
   tagId?: string | null;
-  demo?: boolean;
 }
 
 const TaskTagsDemo: React.FC = () => {

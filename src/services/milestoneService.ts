@@ -3,40 +3,43 @@ import { demoModeService } from './demoModeService';
 
 // Milestone interfaces
 export interface Milestone {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  projectId: string;
-  status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority?: 'low' | 'medium' | 'high' | 'critical';
-  tag?: string;
-  notes?: string;
-  createdBy?: string;
   createdAt?: Date;
-  updatedBy?: string;
-  updatedAt?: Date;
+  createdBy?: string;
+  // Standard task with isMilestone: true
+  critical: boolean;
+  // For key date tagging
+  demo: boolean;
   demoMode?: boolean;
+  endDate: Date;
+  id: string;
   isCritical?: boolean;
-  isMilestone: boolean; // Standard task with isMilestone: true
-  critical: boolean; // For critical path highlighting
-  tag: string | null; // For key date tagging
-  demo: boolean; // All entries tagged demo: true in demo mode
+  isMilestone: boolean;
+  name: string;
+  notes?: string;
+  updatedBy?: string;
+  projectId: string;
+  startDate: Date;
+  status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+  priority?: 'low' | 'medium' | 'high' | 'critical'; 
+  // For critical path highlighting
+  tag: string | null; 
+  updatedAt?: Date; 
+  tag?: string; // All entries tagged demo: true in demo mode
 }
 
 export interface MilestoneConstraint {
-  enforceDependencies: boolean;
   allowOverlap: boolean;
-  minDate?: Date;
+  enforceDependencies: boolean;
   maxDate?: Date;
+  minDate?: Date;
 }
 
 export interface MilestoneResult {
-  success: boolean;
-  milestone?: Milestone;
-  message: string;
-  demoMode?: boolean;
   constraintViolations?: string[] | undefined;
+  demoMode?: boolean;
+  message: string;
+  milestone?: Milestone;
+  success: boolean;
 }
 
 // Demo mode configuration
@@ -68,10 +71,10 @@ class MilestoneService {
     milestoneDate: Date,
     projectId: string,
     options?: {
-      tag?: string;
+      isCritical?: boolean;
       notes?: string;
       status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-      isCritical?: boolean;
+      tag?: string;
     }
   ): Promise<MilestoneResult> {
     try {
@@ -185,12 +188,12 @@ class MilestoneService {
   async updateMilestone(
     milestoneId: string,
     updates: {
-      name?: string;
+      isCritical?: boolean;
       milestoneDate?: Date;
+      name?: string;
+      notes?: string;
       status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
       tag?: string;
-      notes?: string;
-      isCritical?: boolean;
     }
   ): Promise<MilestoneResult> {
     try {
@@ -399,7 +402,7 @@ class MilestoneService {
     milestoneDate: Date,
     projectId: string,
     excludeMilestoneId?: string
-  ): Promise<{ valid: boolean; message: string; violations?: string[] }> {
+  ): Promise<{ message: string; valid: boolean; violations?: string[] }> {
     try {
       const violations: string[] = [];
 

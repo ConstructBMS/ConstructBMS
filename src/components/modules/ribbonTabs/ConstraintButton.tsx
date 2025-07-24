@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ConstraintButtonType = 'set' | 'clear' | 'report';
 
 interface ConstraintButtonProps {
-  type: ConstraintButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ConstraintButtonType;
 }
 
 const ConstraintButton: React.FC<ConstraintButtonProps> = ({

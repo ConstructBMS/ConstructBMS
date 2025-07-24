@@ -3,26 +3,26 @@ import { persistentStorage } from './persistentStorage';
 export type LabelType = 'none' | 'taskName' | 'taskId' | 'startDate' | 'finishDate' | 'duration' | 'percentComplete' | 'customField1' | 'customField2' | 'customField3';
 
 export interface BarLabelConfig {
-  top: LabelType;
-  center: LabelType;
   bottom: LabelType;
+  center: LabelType;
   demo?: boolean;
+  top: LabelType;
 }
 
 export interface BarLabelPreset {
-  id: string;
-  name: string;
-  description: string;
   config: BarLabelConfig;
-  type: 'system' | 'custom';
   createdBy?: string;
   demo?: boolean;
+  description: string;
+  id: string;
+  name: string;
+  type: 'system' | 'custom';
 }
 
 export interface BarLabelResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export class BarLabelService {
@@ -350,7 +350,7 @@ export class BarLabelService {
   /**
    * Validate bar label configuration
    */
-  static validateBarLabelConfig(config: BarLabelConfig): { isValid: boolean; errors: string[] } {
+  static validateBarLabelConfig(config: BarLabelConfig): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
 
     const validLabelTypes: LabelType[] = [

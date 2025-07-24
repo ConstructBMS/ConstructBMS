@@ -3,23 +3,26 @@ import { demoModeService } from './demoModeService';
 
 // Task Calendar interfaces
 export interface TaskCalendar {
-  id: string;
-  projectId: string;
-  name: string;
-  workingDays: string[]; // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-  dailyHours: { start: string; end: string }; // e.g. { start: '08:00', end: '17:00' }
-  holidays: string[]; // ['2025-08-26', ...]
-  createdBy: string;
-  isGlobal: boolean;
-  demo: boolean;
   createdAt: Date;
+  // ['2025-08-26', ...]
+  createdBy: string;
+  // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+  dailyHours: { end: string, start: string; };
+  demo: boolean; 
+  // e.g. { start: '08:00', end: '17:00' }
+  holidays: string[]; 
+  id: string; 
+  isGlobal: boolean;
+  name: string;
+  projectId: string;
   updatedAt: Date;
+  workingDays: string[];
 }
 
 export interface TaskCalendarAssignment {
-  taskId: string;
   calendarId: string | null;
   projectId: string;
+  taskId: string;
 }
 
 // Demo mode configuration

@@ -4,11 +4,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { View, ViewConfig } from '../../../services/viewService';
 
 interface ViewDropdownProps {
-  views: View[];
   activeView: View | null;
-  onApplyView: (view: View) => void;
   disabled?: boolean;
   loading?: boolean;
+  onApplyView: (view: View) => void;
+  views: View[];
 }
 
 const ViewDropdown: React.FC<ViewDropdownProps> = ({

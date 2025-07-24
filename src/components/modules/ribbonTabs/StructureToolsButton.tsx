@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type StructureToolsButtonType = 'renumber' | 'autoIdSettings' | 'wbsPrefix';
 
 interface StructureToolsButtonProps {
-  type: StructureToolsButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: StructureToolsButtonType;
 }
 
 const StructureToolsButton: React.FC<StructureToolsButtonProps> = ({

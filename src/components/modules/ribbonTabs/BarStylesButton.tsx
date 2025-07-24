@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type BarStylesButtonType = 'edit' | 'reset';
 
 interface BarStylesButtonProps {
-  type: BarStylesButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: BarStylesButtonType;
 }
 
 const BarStylesButton: React.FC<BarStylesButtonProps> = ({

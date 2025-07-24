@@ -3,9 +3,9 @@ import { ChevronDownIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ExportSummaryDropdownProps {
-  onExport: (format: 'csv' | 'xlsx' | 'pdf') => void;
   disabled?: boolean;
   loading?: boolean;
+  onExport: (format: 'csv' | 'xlsx' | 'pdf') => void;
 }
 
 const ExportSummaryDropdown: React.FC<ExportSummaryDropdownProps> = ({

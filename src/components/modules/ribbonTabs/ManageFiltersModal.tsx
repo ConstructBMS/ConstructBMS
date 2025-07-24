@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { Filter, FilterRule } from './FilterDropdown';
 
 interface ManageFiltersModalProps {
+  filters: Filter[];
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  filters: Filter[];
+  onDeleteFilter: (filterId: string) => void;
   onSaveFilter: (filter: Omit<Filter, 'id' | 'createdAt'>) => void;
   onUpdateFilter: (filter: Filter) => void;
-  onDeleteFilter: (filterId: string) => void;
-  isDemoMode?: boolean;
 }
 
 const ManageFiltersModal: React.FC<ManageFiltersModalProps> = ({

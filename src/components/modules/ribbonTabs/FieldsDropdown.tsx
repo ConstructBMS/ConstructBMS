@@ -4,15 +4,15 @@ import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface FieldConfig {
   id: string;
-  label: string;
-  isVisible: boolean;
   isRequired?: boolean;
+  isVisible: boolean;
+  label: string;
 }
 
 interface FieldsDropdownProps {
+  disabled?: boolean;
   fields: FieldConfig[];
   onToggleField: (fieldId: string) => void;
-  disabled?: boolean;
 }
 
 const FieldsDropdown: React.FC<FieldsDropdownProps> = ({

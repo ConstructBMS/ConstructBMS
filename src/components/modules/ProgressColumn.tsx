@@ -3,12 +3,12 @@ import { progressTrackingService, type TaskProgress } from '../../services/progr
 import { usePermissions } from '../../hooks/usePermissions';
 
 interface ProgressColumnProps {
-  taskId: string;
-  progress: number;
+  className?: string;
   isDemo?: boolean;
   isEditable?: boolean;
   onProgressChange?: (taskId: string, newProgress: number) => void;
-  className?: string;
+  progress: number;
+  taskId: string;
 }
 
 const ProgressColumn: React.FC<ProgressColumnProps> = ({

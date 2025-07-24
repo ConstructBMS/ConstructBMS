@@ -4,18 +4,18 @@ import FilterToolsButton from './FilterToolsButton';
 import type { Filter } from './FilterDropdown';
 
 interface FiltersSectionProps {
-  filters: Filter[];
   activeFilter: Filter | null;
-  onApplyFilter: (filter: Filter) => void;
-  onManageFilters: () => void;
-  onClearFilter: () => void;
-  onCreateFilter: () => void;
   disabled?: boolean;
+  filters: Filter[];
   loading?: {
     apply?: boolean;
-    manage?: boolean;
     clear?: boolean;
+    manage?: boolean;
   };
+  onApplyFilter: (filter: Filter) => void;
+  onClearFilter: () => void;
+  onCreateFilter: () => void;
+  onManageFilters: () => void;
 }
 
 const FiltersSection: React.FC<FiltersSectionProps> = ({

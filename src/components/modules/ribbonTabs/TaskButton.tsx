@@ -8,10 +8,10 @@ import {
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TaskButtonProps {
-  type: 'new' | 'delete' | 'edit' | 'properties';
   disabled?: boolean;
   onClick: () => void;
   selectedTasksCount?: number;
+  type: 'new' | 'delete' | 'edit' | 'properties';
 }
 
 const TaskButton: React.FC<TaskButtonProps> = ({

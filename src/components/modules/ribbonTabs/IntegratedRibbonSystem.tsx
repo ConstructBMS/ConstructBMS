@@ -52,54 +52,54 @@ import {
 } from '@heroicons/react/24/outline';
 
 export interface RibbonTab {
+  component?: React.ComponentType<any>;
+  icon: React.ComponentType<any>;
   id: string;
   label: string;
-  icon: React.ComponentType<any>;
-  component?: React.ComponentType<any>;
-  props?: any;
   permission?: string;
+  props?: any;
 }
 
 export interface RibbonState {
   activeTab: string;
-  projectId: string;
-  userId: string;
-  isDemoMode: boolean;
-  
-  // Format tab states
-  criticalPathEnabled: boolean;
-  criticalPathColor: string;
-  milestoneIcon: string;
-  milestoneColor: string;
-  milestoneShowLabel: boolean;
-  zoomLevel: number;
-  timeScale: string;
-  rowStriping: boolean;
-  rowBorder: string;
-  highlightActiveRow: boolean;
-  visibleColumns: string[];
-  columnOrder: string[];
-  showTodayMarker: boolean;
-  gridlineStyle: string;
-  pageLayout: string;
-  exportTheme: string;
-  
   // File tab states
   autoSaveEnabled: boolean;
-  projectStatus: string;
-  lastSyncTime?: string;
-  syncStatus: 'success' | 'error' | 'pending' | 'none';
+  availableStatuses: Array<{ color: string, id: string; name: string; }>;
+  columnOrder: string[];
   
+  criticalPathColor: string;
+  // Format tab states
+  criticalPathEnabled: boolean;
   // Admin tab states
   currentColorPalette: string;
   currentDefaultStatus: string;
-  availableStatuses: Array<{ id: string; name: string; color: string }>;
   currentThemePreset: string;
-  
+  exportTheme: string;
+  gridlineStyle: string;
+  highlightActiveRow: boolean;
+  isDemoMode: boolean;
+  rowStriping: boolean;
   // Loading states
   loading: {
     [key: string]: boolean;
   };
+  rowBorder: string;
+  milestoneIcon: string;
+  timeScale: string;
+  pageLayout: string;
+  projectId: string;
+  
+  zoomLevel: number;
+  projectStatus: string;
+  lastSyncTime?: string;
+  syncStatus: 'success' | 'error' | 'pending' | 'none';
+  
+  showTodayMarker: boolean;
+  milestoneColor: string;
+  userId: string;
+  milestoneShowLabel: boolean;
+  
+  visibleColumns: string[];
 }
 
 const IntegratedRibbonSystem: React.FC = () => {

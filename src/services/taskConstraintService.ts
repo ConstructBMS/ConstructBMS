@@ -3,16 +3,16 @@ import { demoModeService } from './demoModeService';
 import type { TaskConstraint, ConstraintType } from '../components/modules/TaskConstraintsTab';
 
 export interface ConstraintResult {
-  success: boolean;
   constraint?: TaskConstraint;
   error?: string;
+  success: boolean;
 }
 
 export interface ConstraintViolation {
-  taskId: string;
   constraintType: ConstraintType;
   message: string;
   severity: 'warning' | 'error';
+  taskId: string;
 }
 
 class TaskConstraintService {
@@ -294,7 +294,7 @@ class TaskConstraintService {
   /**
    * Enforce constraint logic on task dates
    */
-  async enforceConstraintLogic(taskId: string): Promise<{ success: boolean; updatedDates?: { startDate?: string; endDate?: string } }> {
+  async enforceConstraintLogic(taskId: string): Promise<{ success: boolean; updatedDates?: { endDate?: string, startDate?: string; } }> {
     try {
       const constraint = await this.getTaskConstraint(taskId);
       if (!constraint) return { success: true };

@@ -2,10 +2,10 @@ import React from 'react';
 import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ResetBarLabelsModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  isDemoMode?: boolean;
 }
 
 const ResetBarLabelsModal: React.FC<ResetBarLabelsModalProps> = ({

@@ -6,8 +6,8 @@ export type MilestoneIconType = 'diamond' | 'flag' | 'dot' | 'star';
 
 interface MilestoneIconDropdownProps {
   currentIcon: MilestoneIconType;
-  onIconChange: (icon: MilestoneIconType) => void;
   disabled?: boolean;
+  onIconChange: (icon: MilestoneIconType) => void;
 }
 
 const MilestoneIconDropdown: React.FC<MilestoneIconDropdownProps> = ({
@@ -22,10 +22,10 @@ const MilestoneIconDropdown: React.FC<MilestoneIconDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const iconOptions: Array<{
-    value: MilestoneIconType;
+    className: string;
     label: string;
     symbol: string;
-    className: string;
+    value: MilestoneIconType;
   }> = [
     {
       value: 'diamond',

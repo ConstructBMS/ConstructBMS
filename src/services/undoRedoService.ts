@@ -6,29 +6,29 @@ import { constraintsService } from './constraintsService';
 import { milestoneService } from './milestoneService';
 
 export interface TimelineAction {
-  id: string;
-  type: 'update_task' | 'create_task' | 'delete_task' | 'create_dependency' | 'delete_dependency' | 'update_constraint' | 'create_milestone' | 'update_milestone' | 'update_status' | 'update_tags';
-  taskId?: string;
-  projectId: string;
-  before: any;
   after: any;
-  timestamp: Date;
-  userId: string;
+  before: any;
   demo?: boolean;
+  id: string;
+  projectId: string;
+  taskId?: string;
+  timestamp: Date;
+  type: 'update_task' | 'create_task' | 'delete_task' | 'create_dependency' | 'delete_dependency' | 'update_constraint' | 'create_milestone' | 'update_milestone' | 'update_status' | 'update_tags';
+  userId: string;
 }
 
 export interface UndoRedoState {
-  undoStack: TimelineAction[];
-  redoStack: TimelineAction[];
   maxStackSize: number;
+  redoStack: TimelineAction[];
+  undoStack: TimelineAction[];
 }
 
 export interface ActionPayload {
-  type: TimelineAction['type'];
-  taskId?: string;
-  projectId: string;
-  before: any;
   after: any;
+  before: any;
+  projectId: string;
+  taskId?: string;
+  type: TimelineAction['type'];
 }
 
 class UndoRedoService {
@@ -73,7 +73,7 @@ class UndoRedoService {
   /**
    * Record an action for undo/redo
    */
-  async recordAction(payload: ActionPayload): Promise<{ success: boolean; error?: string }> {
+  async recordAction(payload: ActionPayload): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -120,7 +120,7 @@ class UndoRedoService {
   /**
    * Undo the last action
    */
-  async undo(projectId: string): Promise<{ success: boolean; error?: string; action?: TimelineAction }> {
+  async undo(projectId: string): Promise<{ action?: TimelineAction, error?: string; success: boolean; }> {
     try {
       const state = await this.getProjectState(projectId);
       
@@ -162,7 +162,7 @@ class UndoRedoService {
   /**
    * Redo the last undone action
    */
-  async redo(projectId: string): Promise<{ success: boolean; error?: string; action?: TimelineAction }> {
+  async redo(projectId: string): Promise<{ action?: TimelineAction, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       if (isDemoMode) {
@@ -264,7 +264,7 @@ class UndoRedoService {
   /**
    * Clear undo/redo history for a project
    */
-  async clearHistory(projectId: string): Promise<{ success: boolean; error?: string }> {
+  async clearHistory(projectId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const state = await this.getProjectState(projectId);
       state.undoStack = [];
@@ -282,7 +282,7 @@ class UndoRedoService {
   /**
    * Apply an action
    */
-  private async applyAction(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyAction(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     try {
       switch (action.type) {
         case 'update_task':
@@ -317,7 +317,7 @@ class UndoRedoService {
   /**
    * Apply reverse action
    */
-  private async applyReverseAction(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyReverseAction(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     try {
       // Swap before and after for reverse action
       const reverseAction = {
@@ -336,7 +336,7 @@ class UndoRedoService {
   /**
    * Apply task update action
    */
-  private async applyTaskUpdate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     const result = await taskService.updateTask(action.taskId, action.after);
@@ -346,7 +346,7 @@ class UndoRedoService {
   /**
    * Apply task create action
    */
-  private async applyTaskCreate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     const result = await taskService.createTask(action.after);
     return { success: result.success, error: result.error };
   }
@@ -354,7 +354,7 @@ class UndoRedoService {
   /**
    * Apply task delete action
    */
-  private async applyTaskDelete(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTaskDelete(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     const result = await taskService.deleteTask(action.taskId);
@@ -364,7 +364,7 @@ class UndoRedoService {
   /**
    * Apply dependency create action
    */
-  private async applyDependencyCreate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyDependencyCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     const { predecessorId, successorId, type, projectId } = action.after;
     const result = await dependenciesEngine.linkTasks(predecessorId, successorId, type, projectId);
     return { success: result.success, error: result.error };
@@ -373,7 +373,7 @@ class UndoRedoService {
   /**
    * Apply dependency delete action
    */
-  private async applyDependencyDelete(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyDependencyDelete(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     const result = await dependenciesEngine.unlinkTasks(action.after.dependencyId);
     return { success: result.success, error: result.error };
   }
@@ -381,7 +381,7 @@ class UndoRedoService {
   /**
    * Apply constraint update action
    */
-  private async applyConstraintUpdate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyConstraintUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     if (action.after === null) {
@@ -398,7 +398,7 @@ class UndoRedoService {
   /**
    * Apply milestone create action
    */
-  private async applyMilestoneCreate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyMilestoneCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     const result = await milestoneService.createMilestone(action.after);
     return { success: result.success, error: result.error };
   }
@@ -406,7 +406,7 @@ class UndoRedoService {
   /**
    * Apply milestone update action
    */
-  private async applyMilestoneUpdate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyMilestoneUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     const result = await milestoneService.updateMilestone(action.taskId, action.after);
@@ -416,7 +416,7 @@ class UndoRedoService {
   /**
    * Apply status update action
    */
-  private async applyStatusUpdate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyStatusUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     const result = await taskService.updateTask(action.taskId, { statusId: action.after.statusId });
@@ -426,7 +426,7 @@ class UndoRedoService {
   /**
    * Apply tags update action
    */
-  private async applyTagsUpdate(action: TimelineAction): Promise<{ success: boolean; error?: string }> {
+  private async applyTagsUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
     
     const result = await taskService.updateTask(action.taskId, { tags: action.after.tags });

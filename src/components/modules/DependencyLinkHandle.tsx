@@ -5,10 +5,10 @@ import { demoModeService } from '../services/demoModeService';
 import { dependenciesEngine } from '../services/DependenciesEngine';
 
 interface DependencyLinkHandleProps {
-  taskId: string;
-  projectId: string;
-  position: 'start' | 'end';
   onDependencyCreated?: (dependencyId: string) => void;
+  position: 'start' | 'end';
+  projectId: string;
+  taskId: string;
 }
 
 const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({

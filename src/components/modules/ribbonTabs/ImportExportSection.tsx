@@ -3,21 +3,21 @@ import { ArrowUpTrayIcon, DocumentArrowDownIcon, TableCellsIcon, PhotoIcon, Char
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ImportExportSectionProps {
-  onImportProject: () => void;
-  onExportPDF: () => void;
-  onExportCSV: () => void;
-  onExportImage: () => void;
-  onExportTimeline?: () => void;
-  onPrintTimeline?: () => void;
   disabled?: boolean;
   loading?: {
-    import?: boolean;
-    pdf?: boolean;
     csv?: boolean;
     image?: boolean;
-    timeline?: boolean;
+    import?: boolean;
+    pdf?: boolean;
     print?: boolean;
+    timeline?: boolean;
   };
+  onExportCSV: () => void;
+  onExportImage: () => void;
+  onExportPDF: () => void;
+  onExportTimeline?: () => void;
+  onImportProject: () => void;
+  onPrintTimeline?: () => void;
 }
 
 const ImportExportSection: React.FC<ImportExportSectionProps> = ({

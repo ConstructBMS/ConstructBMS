@@ -2,15 +2,15 @@ import React from 'react';
 import IfcButton from './IfcButton';
 
 interface LinkIfcModelSectionProps {
-  onUploadIfc: () => void;
-  onSyncTasks: () => void;
-  onUnlinkModel: () => void;
   disabled?: boolean;
   loading?: {
-    upload?: boolean;
     sync?: boolean;
     unlink?: boolean;
+    upload?: boolean;
   };
+  onSyncTasks: () => void;
+  onUnlinkModel: () => void;
+  onUploadIfc: () => void;
 }
 
 const LinkIfcModelSection: React.FC<LinkIfcModelSectionProps> = ({

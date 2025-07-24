@@ -89,7 +89,7 @@ const TimelineCalendarDemo: React.FC = () => {
 
   // Generate sample calendar grid
   const generateCalendarGrid = () => {
-    const grid: Array<{ date: Date; isWorking: boolean; isHoliday: boolean; label?: string }> = [];
+    const grid: Array<{ date: Date; isHoliday: boolean; isWorking: boolean; label?: string }> = [];
     const current = new Date(DEMO_DATE_RANGE.start);
     
     while (current <= DEMO_DATE_RANGE.end) {

@@ -3,9 +3,9 @@ import { SwatchIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ManageBarStylesButtonProps {
-  onOpenModal: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onOpenModal: () => void;
 }
 
 const ManageBarStylesButton: React.FC<ManageBarStylesButtonProps> = ({

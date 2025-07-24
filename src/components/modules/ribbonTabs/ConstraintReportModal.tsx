@@ -4,21 +4,21 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { ConstraintType } from './SetConstraintModal';
 
 export interface ConstrainedTask {
-  id: string;
-  name: string;
-  constraintType: ConstraintType;
   constraintDate: string;
-  startDate?: string;
-  finishDate?: string;
-  isInfluenced: boolean;
+  constraintType: ConstraintType;
   demo?: boolean;
+  finishDate?: string;
+  id: string;
+  isInfluenced: boolean;
+  name: string;
+  startDate?: string;
 }
 
 interface ConstraintReportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   constrainedTasks: ConstrainedTask[];
   isDemoMode?: boolean;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 type SortField = 'name' | 'constraintType' | 'constraintDate' | 'startDate' | 'finishDate';

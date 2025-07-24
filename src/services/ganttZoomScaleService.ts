@@ -3,17 +3,17 @@ import { persistentStorage } from './persistentStorage';
 export type TimeScaleOption = 'hourly' | 'daily' | 'weekly' | 'monthly' | 'quarterly';
 
 export interface GanttZoomScaleSettings {
-  zoomLevel: number;
-  timeScale: TimeScaleOption;
   demo?: boolean;
+  timeScale: TimeScaleOption;
+  zoomLevel: number;
 }
 
 export interface GanttZoomScaleConfig {
-  enabled: boolean;
   autoApply: boolean;
+  demo?: boolean;
+  enabled: boolean;
   maxZoomLevel: number;
   minZoomLevel: number;
-  demo?: boolean;
 }
 
 // Default ConstructBMS Gantt zoom and scale settings
@@ -308,7 +308,7 @@ class GanttZoomScaleService {
   /**
    * Validate Gantt zoom and scale settings
    */
-  validateGanttZoomScaleSettings(settings: GanttZoomScaleSettings): { isValid: boolean; errors: string[] } {
+  validateGanttZoomScaleSettings(settings: GanttZoomScaleSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate zoom level

@@ -2,55 +2,57 @@ import { supabase } from './supabase';
 
 // Baseline interfaces
 export interface Baseline {
-  id: string;
-  projectId: string;
-  name: string;
-  createdBy: string;
   createdAt: Date;
-  isActive: boolean;
+  createdBy: string;
   demo?: boolean;
+  id: string;
+  isActive: boolean;
+  name: string;
+  projectId: string;
 }
 
 export interface BaselineTask {
-  id: string;
-  baselineId: string;
-  taskId: string;
-  baselineStart: Date;
   baselineEnd: Date;
-  percentComplete: number;
-  isMilestone: boolean;
-  parentId?: string;
-  name: string;
+  baselineId: string;
+  baselineStart: Date;
   demo?: boolean;
+  id: string;
+  isMilestone: boolean;
+  name: string;
+  parentId?: string;
+  percentComplete: number;
+  taskId: string;
 }
 
 export interface BaselineVariance {
-  taskId: string;
-  baselineStart: Date;
   baselineEnd: Date;
-  currentStart: Date;
+  baselineStart: Date;
   currentEnd: Date;
-  startVariance: number; // days
-  endVariance: number; // days
-  durationVariance: number; // days
+  currentStart: Date;
+  // days
+  durationVariance: number;
+  durationVariancePercent: number; // days
+  endVariance: number; 
+  endVariancePercent: number; 
+  startVariance: number;
+  // days
   startVariancePercent: number;
-  endVariancePercent: number;
-  durationVariancePercent: number;
+  taskId: string;
 }
 
 export interface BaselinePreferences {
-  userId: string;
+  activeBaselineId: string | null;
+  comparisonMode: 'bars' | 'variance' | 'delta';
+  demo: boolean;
   projectId: string;
   showBaselineBars: boolean;
-  comparisonMode: 'bars' | 'variance' | 'delta';
-  activeBaselineId: string | null;
-  demo: boolean;
+  userId: string;
 }
 
 export interface BaselineComparison {
-  onTimeTasks: number;
   delayedTasks: number;
   earlyTasks: number;
+  onTimeTasks: number;
   totalDurationChange: number;
   totalTasks: number;
 }
@@ -163,13 +165,13 @@ class BaselineService {
     projectId: string,
     name: string,
     tasks: Array<{ 
-      id: string; 
-      start: Date; 
       end: Date; 
-      percentComplete?: number;
-      isMilestone?: boolean;
-      parentId?: string;
+      id: string; 
+      isMilestone?: boolean; 
       name: string;
+      parentId?: string;
+      percentComplete?: number;
+      start: Date;
     }>
   ): Promise<Baseline | null> {
     // Check demo mode restrictions
@@ -340,7 +342,7 @@ class BaselineService {
   /**
    * Get active baseline for project
    */
-  async getActiveBaseline(projectId: string): Promise<Baseline | null> {
+  async getActiveBaselineForProject(projectId: string): Promise<Baseline | null> {
     try {
       const { data, error } = await supabase
         .from('programme_baselines')
@@ -374,7 +376,7 @@ class BaselineService {
   /**
    * Set baseline active
    */
-  async setBaselineActive(baselineId: string): Promise<{ success: boolean; error?: string }> {
+  async setBaselineActive(baselineId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const success = await this.setActiveBaseline(baselineId);
       return { success };
@@ -387,19 +389,19 @@ class BaselineService {
   /**
    * Create baseline with enhanced interface
    */
-  async createBaseline(params: {
-    projectId: string;
+  async createBaselineWithParams(params: {
     name?: string;
+    projectId: string;
     tasks: Array<{
-      id: string;
-      startDate: Date;
       endDate: Date;
-      percentComplete?: number;
+      id: string;
       isMilestone?: boolean;
-      parentId?: string;
       name: string;
+      parentId?: string;
+      percentComplete?: number;
+      startDate: Date;
     }>;
-  }): Promise<{ success: boolean; baseline?: Baseline; error?: string }> {
+  }): Promise<{ baseline?: Baseline; error?: string, success: boolean; }> {
     try {
       const baseline = await this.createBaseline(
         params.projectId,
@@ -429,7 +431,7 @@ class BaselineService {
   /**
    * Delete baseline with enhanced interface
    */
-  async deleteBaseline(baselineId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteBaselineWithResponse(baselineId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const success = await this.deleteBaseline(baselineId);
       return { success };
@@ -443,9 +445,9 @@ class BaselineService {
    * Calculate baseline deltas
    */
   async calculateBaselineDeltas(projectId: string, currentTasks: Array<{
+    endDate: Date;
     id: string;
     startDate: Date;
-    endDate: Date;
   }>): Promise<BaselineComparison | null> {
     const activeBaseline = await this.getActiveBaseline(projectId);
     if (!activeBaseline) return null;
@@ -528,7 +530,7 @@ class BaselineService {
   /**
    * Get variance for all tasks in active baseline
    */
-  async getVarianceForActiveBaseline(currentTasks: Array<{ id: string; start: Date; end: Date }>): Promise<BaselineVariance[]> {
+  async getVarianceForActiveBaseline(currentTasks: Array<{ end: Date, id: string; start: Date; }>): Promise<BaselineVariance[]> {
     const activeBaseline = this.getActiveBaseline();
     if (!activeBaseline) return [];
 

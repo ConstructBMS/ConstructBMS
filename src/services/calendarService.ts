@@ -2,15 +2,17 @@ import { supabase } from './supabase';
 
 // Calendar interfaces
 export interface WorkingCalendar {
-  id: string;
-  projectId: string;
-  name: string;
-  workingDays: number[]; // [1,2,3,4,5] = Mon–Fri
-  holidays: string[]; // ['2025-08-26', '2025-12-25']
-  createdBy: string;
   createdAt: Date;
-  updatedAt: Date;
+  // ['2025-08-26', '2025-12-25']
+  createdBy: string;
   demo?: boolean;
+  // [1,2,3,4,5] = Mon–Fri
+  holidays: string[]; 
+  id: string; 
+  name: string;
+  projectId: string;
+  updatedAt: Date;
+  workingDays: number[];
 }
 
 export interface Holiday {
@@ -20,11 +22,11 @@ export interface Holiday {
 }
 
 export interface CalendarPreferences {
-  userId: string;
-  projectId: string;
-  showNonWorkingDays: boolean;
-  selectedCalendarId: string | null;
   demo: boolean;
+  projectId: string;
+  selectedCalendarId: string | null;
+  showNonWorkingDays: boolean;
+  userId: string;
 }
 
 // Default calendar configuration

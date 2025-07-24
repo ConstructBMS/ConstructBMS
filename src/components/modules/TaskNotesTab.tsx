@@ -12,9 +12,9 @@ import { programmeTaskFlagsService, type ProgrammeTaskFlag } from '../../service
 import { demoModeService } from '../../services/demoModeService';
 
 interface TaskNotesTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode: boolean;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskNotesTab: React.FC<TaskNotesTabProps> = ({

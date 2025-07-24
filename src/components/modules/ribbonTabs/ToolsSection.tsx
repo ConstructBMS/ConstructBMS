@@ -3,14 +3,14 @@ import ToolsButton from './ToolsButton';
 import UndoRedoGroup from './UndoRedoGroup';
 
 interface ToolsSectionProps {
-  onReschedule: () => void;
-  onProgressToggle: () => void;
-  onUndo: () => void;
-  onRedo: () => void;
-  isProgressLineVisible?: boolean;
-  canUndo?: boolean;
   canRedo?: boolean;
+  canUndo?: boolean;
+  isProgressLineVisible?: boolean;
   isRescheduling?: boolean;
+  onProgressToggle: () => void;
+  onRedo: () => void;
+  onReschedule: () => void;
+  onUndo: () => void;
   projectId?: string;
 }
 

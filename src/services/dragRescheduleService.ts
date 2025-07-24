@@ -2,36 +2,36 @@ import { supabase } from './supabase';
 
 // Drag reschedule interfaces
 export interface DragState {
-  isDragging: boolean;
-  taskId: string | null;
-  originalStart: Date | null;
-  originalEnd: Date | null;
   currentOffset: number;
+  isDragging: boolean;
+  originalEnd: Date | null;
+  originalStart: Date | null;
   startX: number;
+  taskId: string | null;
 }
 
 export interface UndoAction {
-  taskId: string;
-  previousStart: Date;
-  previousEnd: Date;
   action: 'reschedule';
-  timestamp: Date;
   demoMode?: boolean;
+  previousEnd: Date;
+  previousStart: Date;
+  taskId: string;
+  timestamp: Date;
 }
 
 export interface RescheduleResult {
-  success: boolean;
-  newStart: Date;
-  newEnd: Date;
   daysMoved: number;
-  message: string;
   demoMode?: boolean;
+  message: string;
+  newEnd: Date;
+  newStart: Date;
+  success: boolean;
 }
 
 export interface SnapConfig {
   enabled: boolean;
-  type: 'day' | 'week' | 'month';
-  gridWidth: number; // pixels per grid unit
+  gridWidth: number;
+  type: 'day' | 'week' | 'month'; // pixels per grid unit
 }
 
 // Demo mode configuration
@@ -267,7 +267,7 @@ class DragRescheduleService {
     taskId: string, 
     newStart: Date, 
     newEnd: Date
-  ): Promise<{ valid: boolean; message: string }> {
+  ): Promise<{ message: string, valid: boolean; }> {
     try {
       // Check if new dates are valid
       if (newStart >= newEnd) {
@@ -345,7 +345,7 @@ class DragRescheduleService {
   /**
    * Undo last action
    */
-  async undoLastAction(): Promise<{ success: boolean; message: string }> {
+  async undoLastAction(): Promise<{ message: string, success: boolean; }> {
     if (this.undoBuffer.length === 0) {
       return {
         success: false,

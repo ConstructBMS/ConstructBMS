@@ -6,7 +6,7 @@ import {
   ExclamationTriangleIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../../hooks/usePermissions';
+import { usePermissions } from '../../../hooks/usePermissions';
 import { demoModeService } from '../../../services/demoModeService';
 import { 
   programmeVersioningService, 
@@ -16,9 +16,9 @@ import VersionManagerModal from '../VersionManagerModal';
 import VersionCompareModal from '../VersionCompareModal';
 
 interface VersionControlsProps {
-  projectId: string;
-  currentTasks: Array<{ id: string; [key: string]: any }>;
+  currentTasks: Array<{ [key: string]: any, id: string; }>;
   onVersionChange?: (version: ProgrammeVersion | null) => void;
+  projectId: string;
 }
 
 const VersionControls: React.FC<VersionControlsProps> = ({

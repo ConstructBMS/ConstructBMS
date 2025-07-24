@@ -3,13 +3,13 @@ import { demoModeService } from './demoModeService';
 import { taskService } from './taskService';
 
 export interface TaskConstraint {
+  constraintDate: Date;
+  createdAt: Date;
+  demo?: boolean;
   id: string;
   taskId: string;
   type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP';
-  constraintDate: Date;
   userId: string;
-  createdAt: Date;
-  demo?: boolean;
 }
 
 export interface ConstraintViolation {
@@ -20,11 +20,11 @@ export interface ConstraintViolation {
 
 export interface ConstraintValidation {
   isValid: boolean;
-  violations: ConstraintViolation[];
   suggestedDates?: {
-    startDate?: Date;
     endDate?: Date;
+    startDate?: Date;
   };
+  violations: ConstraintViolation[];
 }
 
 class ConstraintsService {
@@ -37,7 +37,7 @@ class ConstraintsService {
     taskId: string,
     type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP',
     constraintDate: Date
-  ): Promise<{ success: boolean; error?: string; constraint?: TaskConstraint }> {
+  ): Promise<{ constraint?: TaskConstraint, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -87,7 +87,7 @@ class ConstraintsService {
   /**
    * Remove constraint for a task
    */
-  async removeConstraint(taskId: string): Promise<{ success: boolean; error?: string }> {
+  async removeConstraint(taskId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const constraints = await this.getAllConstraints();
       const filteredConstraints = constraints.filter(c => c.taskId !== taskId);
@@ -278,7 +278,7 @@ class ConstraintsService {
     constraint: TaskConstraint,
     currentStartDate: Date,
     currentEndDate: Date
-  ): { startDate?: Date; endDate?: Date } {
+  ): { endDate?: Date, startDate?: Date; } {
     const duration = currentEndDate.getTime() - currentStartDate.getTime();
 
     switch (constraint.type) {

@@ -6,17 +6,17 @@ import GridlineStyleDropdown from './GridlineStyleDropdown';
 export type GridlineStyle = 'none' | 'solid' | 'dotted' | 'dashed';
 
 interface TimelineGridlinesMarkersSectionProps {
-  showTodayMarker: boolean;
-  onToggleTodayMarker: () => void;
-  gridlineStyle: GridlineStyle;
-  onGridlineStyleChange: (style: GridlineStyle) => void;
-  onOpenCustomMarkerModal: () => void;
   disabled?: boolean;
+  gridlineStyle: GridlineStyle;
   loading?: {
-    todayMarker?: boolean;
     customMarker?: boolean;
     gridlines?: boolean;
+    todayMarker?: boolean;
   };
+  onGridlineStyleChange: (style: GridlineStyle) => void;
+  onOpenCustomMarkerModal: () => void;
+  onToggleTodayMarker: () => void;
+  showTodayMarker: boolean;
 }
 
 const TimelineGridlinesMarkersSection: React.FC<TimelineGridlinesMarkersSectionProps> = ({

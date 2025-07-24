@@ -10,15 +10,15 @@ import { structureService, type TaskStructure } from '../../services/structureSe
 import { toastService } from './ToastNotification';
 
 interface StructureControlsProps {
+  className?: string;
+  collapsed: boolean;
+  hasChildren: boolean;
+  level: number;
+  onStructureChange?: () => void;
+  onToggleCollapse?: () => void;
   taskId: string;
   taskName: string;
   taskType: 'task' | 'milestone' | 'phase';
-  level: number;
-  collapsed: boolean;
-  hasChildren: boolean;
-  onToggleCollapse?: () => void;
-  onStructureChange?: () => void;
-  className?: string;
 }
 
 const StructureControls: React.FC<StructureControlsProps> = ({

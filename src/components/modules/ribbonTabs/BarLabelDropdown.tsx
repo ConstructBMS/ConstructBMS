@@ -4,11 +4,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { BarLabelPreset } from '../../../services/barLabelService';
 
 interface BarLabelDropdownProps {
-  presets: BarLabelPreset[];
   activePreset: BarLabelPreset | null;
-  onApplyPreset: (preset: BarLabelPreset) => void;
   disabled?: boolean;
   loading?: boolean;
+  onApplyPreset: (preset: BarLabelPreset) => void;
+  presets: BarLabelPreset[];
 }
 
 const BarLabelDropdown: React.FC<BarLabelDropdownProps> = ({

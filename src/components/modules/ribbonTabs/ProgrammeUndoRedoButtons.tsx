@@ -8,10 +8,10 @@ import { useProgrammeUndoRedo } from '../../../contexts/ProgrammeUndoRedoContext
 import { demoModeService } from '../../../services/demoModeService';
 
 interface ProgrammeUndoRedoButtonsProps {
-  projectId: string;
-  onActionUndone?: (action: any) => void;
-  onActionRedone?: (action: any) => void;
   className?: string;
+  onActionRedone?: (action: any) => void;
+  onActionUndone?: (action: any) => void;
+  projectId: string;
 }
 
 const ProgrammeUndoRedoButtons: React.FC<ProgrammeUndoRedoButtonsProps> = ({

@@ -14,8 +14,8 @@ interface AstaExportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExport: (settings: AstaExportSettings) => void;
-  projectName?: string;
   projectId?: string;
+  projectName?: string;
 }
 
 const AstaExportModal: React.FC<AstaExportModalProps> = ({

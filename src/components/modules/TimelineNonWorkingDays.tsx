@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { taskCalendarService, TaskCalendar } from '../services/taskCalendarService';
 
 interface TimelineNonWorkingDaysProps {
-  projectId: string;
-  startDate: Date;
-  endDate: Date;
   dayWidth: number;
+  endDate: Date;
   height: number;
   onCalendarChange?: () => void;
+  projectId: string;
+  startDate: Date;
 }
 
 interface NonWorkingDay {
-  date: Date;
-  type: 'weekend' | 'holiday';
-  label: string;
   calendarId?: string;
+  date: Date;
+  label: string;
+  type: 'weekend' | 'holiday';
 }
 
 const TimelineNonWorkingDays: React.FC<TimelineNonWorkingDaysProps> = ({

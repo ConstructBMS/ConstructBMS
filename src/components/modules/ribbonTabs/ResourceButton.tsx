@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ResourceButtonType = 'assign' | 'unassign';
 
 interface ResourceButtonProps {
-  type: ResourceButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ResourceButtonType;
 }
 
 const ResourceButton: React.FC<ResourceButtonProps> = ({

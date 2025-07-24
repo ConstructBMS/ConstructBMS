@@ -2,25 +2,25 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { persistentStorage } from '../services/persistentStorage';
 
 export interface UndoRedoAction {
-  id: string;
-  type: string;
-  timestamp: number;
   data: any;
-  description: string;
   demo?: boolean;
+  description: string;
+  id: string;
+  timestamp: number;
+  type: string;
 }
 
 interface UndoRedoContextType {
-  undoStack: UndoRedoAction[];
-  redoStack: UndoRedoAction[];
-  canUndo: boolean;
-  canRedo: boolean;
   addAction: (action: Omit<UndoRedoAction, 'id' | 'timestamp'>) => void;
-  undo: () => void;
-  redo: () => void;
+  canRedo: boolean;
+  canUndo: boolean;
   clearStacks: () => void;
   isRescheduling: boolean;
+  redo: () => void;
+  redoStack: UndoRedoAction[];
   setIsRescheduling: (rescheduling: boolean) => void;
+  undo: () => void;
+  undoStack: UndoRedoAction[];
 }
 
 const UndoRedoContext = createContext<UndoRedoContextType | undefined>(undefined);

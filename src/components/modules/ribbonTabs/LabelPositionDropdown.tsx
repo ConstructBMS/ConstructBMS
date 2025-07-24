@@ -6,8 +6,8 @@ export type LabelPositionOption = 'insideLeft' | 'insideRight' | 'above' | 'belo
 
 interface LabelPositionDropdownProps {
   currentPosition: LabelPositionOption;
-  onPositionChange: (position: LabelPositionOption) => void;
   disabled?: boolean;
+  onPositionChange: (position: LabelPositionOption) => void;
 }
 
 const LabelPositionDropdown: React.FC<LabelPositionDropdownProps> = ({
@@ -22,10 +22,10 @@ const LabelPositionDropdown: React.FC<LabelPositionDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const positionOptions: Array<{
-    value: LabelPositionOption;
-    label: string;
     description: string;
     icon: string;
+    label: string;
+    value: LabelPositionOption;
   }> = [
     {
       value: 'insideLeft',

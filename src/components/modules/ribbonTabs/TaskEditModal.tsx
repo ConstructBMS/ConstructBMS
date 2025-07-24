@@ -9,19 +9,19 @@ interface TaskEditModalProps {
 }
 
 export interface TaskData {
-  id: string;
-  name: string;
-  duration: number;
-  startDate: Date;
-  endDate: Date;
-  notes: string;
-  demo?: boolean;
-  level?: number;
-  parentId?: string;
-  isSummary?: boolean;
   children?: string[];
+  demo?: boolean;
   dependencies?: any[];
+  duration: number;
+  endDate: Date;
+  id: string;
   isCollapsed?: boolean;
+  isSummary?: boolean;
+  level?: number;
+  name: string;
+  notes: string;
+  parentId?: string;
+  startDate: Date;
 }
 
 const TaskEditModal: React.FC<TaskEditModalProps> = ({

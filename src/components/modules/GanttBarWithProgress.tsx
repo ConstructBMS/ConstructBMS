@@ -3,19 +3,19 @@ import { progressTrackingService } from '../../services/progressTrackingService'
 import ProgressBar from './ProgressBar';
 
 interface GanttBarWithProgressProps {
-  taskId: string;
-  taskName: string;
-  startDate: Date;
+  className?: string;
   endDate: Date;
-  progress: number;
-  isCritical?: boolean;
-  isSelected?: boolean;
-  isDemo?: boolean;
-  showProgress?: boolean;
   height?: number;
+  isCritical?: boolean;
+  isDemo?: boolean;
+  isSelected?: boolean;
   onProgressChange?: (taskId: string, newProgress: number) => void;
   onTaskClick?: (taskId: string) => void;
-  className?: string;
+  progress: number;
+  showProgress?: boolean;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
 }
 
 const GanttBarWithProgress: React.FC<GanttBarWithProgressProps> = ({

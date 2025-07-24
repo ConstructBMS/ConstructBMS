@@ -7,13 +7,13 @@ import {
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface LinkButtonProps {
-  type: 'link' | 'unlink' | 'lag';
+  canLag?: boolean;
+  canLink?: boolean;
+  canUnlink?: boolean;
   disabled?: boolean;
   onClick: () => void;
   selectedTasksCount?: number;
-  canLink?: boolean;
-  canUnlink?: boolean;
-  canLag?: boolean;
+  type: 'link' | 'unlink' | 'lag';
 }
 
 const LinkButton: React.FC<LinkButtonProps> = ({

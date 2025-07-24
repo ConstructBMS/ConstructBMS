@@ -3,10 +3,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 
 interface PlaybackSliderProps {
   currentDate: Date;
-  startDate: Date;
+  disabled?: boolean;
   endDate: Date;
   onDateChange: (date: Date) => void;
-  disabled?: boolean;
+  startDate: Date;
 }
 
 const PlaybackSlider: React.FC<PlaybackSliderProps> = ({

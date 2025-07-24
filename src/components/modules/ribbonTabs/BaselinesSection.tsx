@@ -3,21 +3,21 @@ import BaselineRibbonControls from './BaselineRibbonControls';
 import { type Baseline } from '../../../services/baselineService';
 
 interface BaselinesSectionProps {
-  projectId: string;
-  showBaseline: boolean;
-  onShowBaselineChange: (show: boolean) => void;
-  onBaselineSelect: (baseline: Baseline | null) => void;
-  onOpenBaselineManager: () => void;
   currentTasks: Array<{
-    id: string;
-    name: string;
-    startDate: Date;
     endDate: Date;
-    percentComplete?: number;
+    id: string;
     isMilestone?: boolean;
+    name: string;
     parentId?: string;
+    percentComplete?: number;
+    startDate: Date;
   }>;
   disabled?: boolean;
+  onBaselineSelect: (baseline: Baseline | null) => void;
+  onOpenBaselineManager: () => void;
+  onShowBaselineChange: (show: boolean) => void;
+  projectId: string;
+  showBaseline: boolean;
 }
 
 const BaselinesSection: React.FC<BaselinesSectionProps> = ({

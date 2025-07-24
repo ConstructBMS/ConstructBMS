@@ -5,9 +5,9 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ExportFormat = 'excel' | 'json';
 
 interface ExportDropdownProps {
-  onExport: (format: ExportFormat) => void;
   disabled?: boolean;
   loading?: boolean;
+  onExport: (format: ExportFormat) => void;
 }
 
 const ExportDropdown: React.FC<ExportDropdownProps> = ({

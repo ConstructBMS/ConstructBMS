@@ -5,9 +5,9 @@ import { demoModeService } from '../services/demoModeService';
 import { timelineFiltersService, TimelineFilters, FilterOption } from '../services/timelineFiltersService';
 
 interface TimelineFiltersProps {
+  onFiltersChange: (filters: TimelineFilters) => void;
   projectId: string;
   tasks: any[];
-  onFiltersChange: (filters: TimelineFilters) => void;
 }
 
 const TimelineFilters: React.FC<TimelineFiltersProps> = ({
@@ -24,10 +24,10 @@ const TimelineFilters: React.FC<TimelineFiltersProps> = ({
     assignees: []
   });
   const [filterOptions, setFilterOptions] = useState<{
-    status: FilterOption[];
-    type: FilterOption[];
-    tags: FilterOption[];
     assignees: FilterOption[];
+    status: FilterOption[];
+    tags: FilterOption[];
+    type: FilterOption[];
   }>({
     status: [],
     type: [],

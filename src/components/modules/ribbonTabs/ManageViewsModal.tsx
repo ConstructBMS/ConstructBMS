@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { View } from '../../../services/viewService';
 
 interface ManageViewsModalProps {
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  views: View[];
-  onUpdateView: (view: View) => void;
   onDeleteView: (viewId: string) => void;
   onSetDefault: (viewId: string) => void;
-  isDemoMode?: boolean;
+  onUpdateView: (view: View) => void;
+  views: View[];
 }
 
 const ManageViewsModal: React.FC<ManageViewsModalProps> = ({

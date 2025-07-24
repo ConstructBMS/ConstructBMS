@@ -2,16 +2,16 @@ import type { TaskData } from '../components/modules/ribbonTabs/TaskEditModal';
 import type { TaskDependency } from '../components/modules/ribbonTabs/LagTimeModal';
 
 export interface DependencyOperation {
-  type: 'link' | 'unlink' | 'lag';
-  taskIds: string[];
   dependencies: TaskDependency[];
+  taskIds: string[];
+  type: 'link' | 'unlink' | 'lag';
 }
 
 export class TaskDependencyService {
   /**
    * Link tasks in selection order (Finish-to-Start dependencies)
    */
-  static linkTasks(tasks: TaskData[], selectedTaskIds: string[]): { tasks: TaskData[], dependencies: TaskDependency[] } {
+  static linkTasks(tasks: TaskData[], selectedTaskIds: string[]): { dependencies: TaskDependency[], tasks: TaskData[] } {
     const updatedTasks = [...tasks];
     const newDependencies: TaskDependency[] = [];
     
@@ -64,7 +64,7 @@ export class TaskDependencyService {
   /**
    * Unlink tasks (remove dependencies between selected tasks)
    */
-  static unlinkTasks(tasks: TaskData[], selectedTaskIds: string[]): { tasks: TaskData[], removedDependencies: TaskDependency[] } {
+  static unlinkTasks(tasks: TaskData[], selectedTaskIds: string[]): { removedDependencies: TaskDependency[], tasks: TaskData[] } {
     const updatedTasks = [...tasks];
     const removedDependencies: TaskDependency[] = [];
     

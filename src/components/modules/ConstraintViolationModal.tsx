@@ -11,9 +11,9 @@ import type { ConstraintViolation } from '../services/taskConstraintService';
 interface ConstraintViolationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  violations: ConstraintViolation[];
-  taskId: string;
   onResolve?: () => void;
+  taskId: string;
+  violations: ConstraintViolation[];
 }
 
 const ConstraintViolationModal: React.FC<ConstraintViolationModalProps> = ({

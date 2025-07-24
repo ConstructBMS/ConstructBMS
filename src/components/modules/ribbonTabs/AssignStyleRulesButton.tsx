@@ -3,9 +3,9 @@ import { SparklesIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface AssignStyleRulesButtonProps {
-  onOpenModal: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onOpenModal: () => void;
 }
 
 const AssignStyleRulesButton: React.FC<AssignStyleRulesButtonProps> = ({

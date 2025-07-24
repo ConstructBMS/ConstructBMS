@@ -4,10 +4,10 @@ import { demoModeService } from '../../../services/demoModeService';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TestResult {
-  testName: string;
-  passed: boolean;
   details: string;
   errors: string[];
+  passed: boolean;
+  testName: string;
 }
 
 interface IntegrationTestProps {

@@ -4,17 +4,17 @@ import ViewsButton from './ViewsButton';
 import type { View } from '../../../services/viewService';
 
 interface ViewsSectionProps {
-  views: View[];
   activeView: View | null;
-  onApplyView: (view: View) => void;
-  onSaveView: () => void;
-  onManageViews: () => void;
   disabled?: boolean;
   loading?: {
     apply?: boolean;
-    save?: boolean;
     manage?: boolean;
+    save?: boolean;
   };
+  onApplyView: (view: View) => void;
+  onManageViews: () => void;
+  onSaveView: () => void;
+  views: View[];
 }
 
 const ViewsSection: React.FC<ViewsSectionProps> = ({

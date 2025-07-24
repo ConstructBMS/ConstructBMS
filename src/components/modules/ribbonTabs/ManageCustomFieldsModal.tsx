@@ -4,12 +4,12 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { CustomField, FieldTemplate } from './FieldTemplateDropdown';
 
 interface ManageCustomFieldsModalProps {
+  customFields: CustomField[];
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  customFields: CustomField[];
   onSaveFields: (fields: CustomField[]) => void;
   onSaveTemplate: (template: Omit<FieldTemplate, 'id'>) => void;
-  isDemoMode?: boolean;
 }
 
 const ManageCustomFieldsModal: React.FC<ManageCustomFieldsModalProps> = ({
@@ -376,8 +376,8 @@ const ManageCustomFieldsModal: React.FC<ManageCustomFieldsModalProps> = ({
 // Field Editor Component
 interface FieldEditorProps {
   field: CustomField;
-  onSave: (field: CustomField) => void;
   onCancel: () => void;
+  onSave: (field: CustomField) => void;
 }
 
 const FieldEditor: React.FC<FieldEditorProps> = ({ field, onSave, onCancel }) => {

@@ -1,61 +1,62 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface ProjectTag {
+  demo?: boolean;
   id: string;
   projectId: string;
-  tagName: string;
-  tagColor: string;
   scope: 'global' | 'project';
+  tagColor: string;
+  tagName: string;
   userId: string;
-  demo?: boolean;
 }
 
 export interface TaskStatus {
+  color: string;
+  demo?: boolean;
+  icon?: string;
   id: string;
+  isDefault: boolean;
   projectId: string;
   statusName: string;
-  color: string;
-  icon?: string;
-  isDefault: boolean;
   userId: string;
-  demo?: boolean;
 }
 
 export interface ThemePreset {
-  id: string;
-  name: string;
-  description: string;
   colors: {
-    primary: string;
-    secondary: string;
     accent: string;
     background: string;
+    primary: string;
+    secondary: string;
     surface: string;
     text: string;
   };
   demo?: boolean;
+  description: string;
+  id: string;
+  name: string;
 }
 
 export interface CustomField {
-  id: string;
-  projectId: string;
+  defaultValue?: any;
+  demo?: boolean;
   fieldName: string;
   fieldType: 'text' | 'number' | 'date' | 'dropdown' | 'boolean';
-  defaultValue?: any;
-  required: boolean;
+  id: string;
+  options?: string[];
   order: number;
-  options?: string[]; // For dropdown type
+  projectId: string; 
+  required: boolean;
+  // For dropdown type
   userId: string;
-  demo?: boolean;
 }
 
 export interface AdminTabConfig {
-  enabled: boolean;
-  maxTags: number;
-  maxStatuses: number;
-  maxThemes: number;
-  maxCustomFields: number;
   demo?: boolean;
+  enabled: boolean;
+  maxCustomFields: number;
+  maxStatuses: number;
+  maxTags: number;
+  maxThemes: number;
 }
 
 // Default ConstructBMS admin tab settings
@@ -425,7 +426,7 @@ class AdminTabService {
   /**
    * Validate custom field
    */
-  validateCustomField(field: CustomField): { isValid: boolean; errors: string[] } {
+  validateCustomField(field: CustomField): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate field name

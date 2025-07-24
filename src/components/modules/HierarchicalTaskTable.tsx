@@ -13,23 +13,23 @@ import {
   FolderIcon,
   DocumentIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { taskService, type Task } from '../services/taskService';
 import { demoModeService } from '../services/demoModeService';
 
 interface HierarchicalTaskTableProps {
-  projectId: string;
   onTaskSelect?: (taskId: string) => void;
   onTaskUpdate?: (taskId: string, updates: Partial<Task>) => void;
+  projectId: string;
   selectedTaskId?: string;
   userRole: string;
 }
 
 interface HierarchicalTask extends Task {
-  level: number;
   children: HierarchicalTask[];
   isExpanded?: boolean;
   isVisible?: boolean;
+  level: number;
 }
 
 interface EditingCell {

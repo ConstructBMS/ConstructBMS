@@ -7,18 +7,18 @@ export type FontStyleOption = 'default' | 'serif' | 'sans' | 'mono';
 export type LabelPositionOption = 'insideLeft' | 'insideRight' | 'above' | 'below' | 'hidden';
 
 interface FontLabelSettingsSectionProps {
-  fontStyle: FontStyleOption;
-  onFontStyleChange: (font: FontStyleOption) => void;
-  labelPosition: LabelPositionOption;
-  onLabelPositionChange: (position: LabelPositionOption) => void;
-  showTaskLabels: boolean;
-  onTaskLabelsToggle: () => void;
   disabled?: boolean;
+  fontStyle: FontStyleOption;
+  labelPosition: LabelPositionOption;
   loading?: {
     fontStyle?: boolean;
     labelPosition?: boolean;
     taskLabels?: boolean;
   };
+  onFontStyleChange: (font: FontStyleOption) => void;
+  onLabelPositionChange: (position: LabelPositionOption) => void;
+  onTaskLabelsToggle: () => void;
+  showTaskLabels: boolean;
 }
 
 const FontLabelSettingsSection: React.FC<FontLabelSettingsSectionProps> = ({

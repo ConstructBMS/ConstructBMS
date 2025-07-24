@@ -3,30 +3,30 @@ import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface Resource {
+  availability: number;
+  cost: number;
   id: string;
   name: string;
   type: 'labour' | 'material' | 'cost';
-  availability: number;
-  cost: number;
   unit: string;
 }
 
 interface AssignedResource {
-  resourceId: string;
-  type: 'labour' | 'material' | 'cost';
-  quantity: number;
-  unit: string;
-  rate: number;
   fromDate: Date;
+  quantity: number;
+  rate: number;
+  resourceId: string;
   toDate: Date;
+  type: 'labour' | 'material' | 'cost';
+  unit: string;
 }
 
 interface AssignResourceModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAssign: (assignments: AssignedResource[]) => void;
-  selectedTaskId?: string;
   disabled?: boolean;
+  isOpen: boolean;
+  onAssign: (assignments: AssignedResource[]) => void;
+  onClose: () => void;
+  selectedTaskId?: string;
 }
 
 const AssignResourceModal: React.FC<AssignResourceModalProps> = ({

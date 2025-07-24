@@ -3,19 +3,19 @@ import { XMarkIcon, BoltIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface CriticalPathSettings {
+  demo?: boolean;
   floatThreshold: number;
   highlightColor: string;
   includeMilestones: boolean;
   showPredecessors: boolean;
-  demo?: boolean;
 }
 
 interface CriticalPathSettingsModalProps {
+  currentSettings: CriticalPathSettings;
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (settings: CriticalPathSettings) => void;
-  currentSettings: CriticalPathSettings;
-  disabled?: boolean;
 }
 
 const CriticalPathSettingsModal: React.FC<CriticalPathSettingsModalProps> = ({

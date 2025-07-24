@@ -10,11 +10,11 @@ import { baselineService, type Baseline } from '../../services/baselineService';
 import { toastService } from './ToastNotification';
 
 interface BaselineModalProps {
+  currentTasks: Array<{ end: Date, id: string; name: string; start: Date; }>;
   isOpen: boolean;
+  onBaselineChange?: () => void;
   onClose: () => void;
   projectId: string;
-  currentTasks: Array<{ id: string; name: string; start: Date; end: Date }>;
-  onBaselineChange?: () => void;
 }
 
 const BaselineModal: React.FC<BaselineModalProps> = ({

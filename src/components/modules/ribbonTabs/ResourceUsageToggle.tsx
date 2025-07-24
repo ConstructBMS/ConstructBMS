@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ResourceUsageToggleType = 'usageView' | 'groupByType' | 'groupByTask';
 
 interface ResourceUsageToggleProps {
-  type: ResourceUsageToggleType;
-  isActive: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ResourceUsageToggleType;
 }
 
 const ResourceUsageToggle: React.FC<ResourceUsageToggleProps> = ({

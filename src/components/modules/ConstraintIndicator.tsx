@@ -5,10 +5,10 @@ import { demoModeService } from '../services/demoModeService';
 import { constraintsService, TaskConstraint } from '../services/constraintsService';
 
 interface ConstraintIndicatorProps {
-  taskId: string;
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-  size?: 'sm' | 'md' | 'lg';
   showTooltip?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  taskId: string;
 }
 
 const ConstraintIndicator: React.FC<ConstraintIndicatorProps> = ({

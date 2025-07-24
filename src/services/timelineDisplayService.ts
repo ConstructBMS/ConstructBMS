@@ -3,26 +3,26 @@ import { persistentStorage } from './persistentStorage';
 export type ZoomLevel = 'hour' | 'day' | 'week' | 'month';
 
 export interface TimelineConfig {
-  zoomLevel: ZoomLevel;
-  scrollPosition: { x: number; y: number };
-  visibleRange: { start: Date; end: Date };
   demo?: boolean;
+  scrollPosition: { x: number; y: number };
+  visibleRange: { end: Date, start: Date; };
+  zoomLevel: ZoomLevel;
 }
 
 export interface TimelineDisplayResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface Task {
-  id: string;
-  name: string;
-  startDate: string;
-  finishDate: string;
   duration: number;
-  percentComplete: number;
+  finishDate: string;
+  id: string;
   isVisible?: boolean;
+  name: string;
+  percentComplete: number;
+  startDate: string;
 }
 
 export class TimelineDisplayService {
@@ -350,7 +350,7 @@ export class TimelineDisplayService {
    * Update visible date range
    */
   static async updateVisibleRange(
-    visibleRange: { start: Date; end: Date }, 
+    visibleRange: { end: Date, start: Date; }, 
     projectId: string = 'demo'
   ): Promise<TimelineDisplayResult> {
     try {
@@ -374,10 +374,10 @@ export class TimelineDisplayService {
    * Get zoom level information
    */
   static getZoomLevelInfo(zoomLevel: ZoomLevel): {
-    name: string;
-    index: number;
     canZoomIn: boolean;
     canZoomOut: boolean;
+    index: number;
+    name: string;
     pixelWidth: number; // Approximate pixel width per unit
   } {
     const index = this.ZOOM_LEVELS.indexOf(zoomLevel);

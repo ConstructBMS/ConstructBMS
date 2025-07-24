@@ -2,15 +2,15 @@ import React from 'react';
 import ZoneButton from './ZoneButton';
 
 interface CustomTimelineZonesSectionProps {
-  onAddZone: () => void;
-  onEditZones: () => void;
-  onClearAllZones: () => void;
   disabled?: boolean;
   loading?: {
     add?: boolean;
-    edit?: boolean;
     clear?: boolean;
+    edit?: boolean;
   };
+  onAddZone: () => void;
+  onClearAllZones: () => void;
+  onEditZones: () => void;
 }
 
 const CustomTimelineZonesSection: React.FC<CustomTimelineZonesSectionProps> = ({

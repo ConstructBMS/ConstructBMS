@@ -10,14 +10,14 @@ import {
   CheckIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
+import { usePermissions } from '../../hooks/usePermissions';
+import { demoModeService } from '../../services/demoModeService';
 import { 
   programmeVersioningService, 
   ProgrammeVersion,
   VersionComparison,
   TaskDifference
-} from '../services/programmeVersioningService';
+} from '../../services/programmeVersioningService';
 import VersionManagerModal from './VersionManagerModal';
 import VersionCompareModal from './VersionCompareModal';
 
@@ -25,7 +25,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [versions, setVersions] = useState<ProgrammeVersion[]>([]);
-  const [currentTasks, setCurrentTasks] = useState<Array<{ id: string; [key: string]: any }>>([]);
+  const [currentTasks, setCurrentTasks] = useState<Array<{ [key: string]: any, id: string; }>>([]);
   const [showVersionManager, setShowVersionManager] = useState(false);
   const [showVersionCompare, setShowVersionCompare] = useState(false);
   const [loading, setLoading] = useState(false);

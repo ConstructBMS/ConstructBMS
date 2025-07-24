@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type BaselineButtonType = 'set' | 'manage' | 'compare';
 
 interface BaselineButtonProps {
-  type: BaselineButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: BaselineButtonType;
 }
 
 const BaselineButton: React.FC<BaselineButtonProps> = ({

@@ -2,39 +2,39 @@ import { supabase } from './supabaseAuth';
 import { demoModeService } from './demoModeService';
 
 export interface TaskComment {
-  id: string;
-  taskId: string;
   authorId: string;
   authorName: string;
   authorRole: string;
   content: string;
-  parentCommentId?: string | null;
   createdAt: Date;
-  updatedAt: Date;
   demo: boolean;
+  id: string;
+  parentCommentId?: string | null;
+  taskId: string;
+  updatedAt: Date;
 }
 
 export interface TaskHistoryEntry {
-  id: string;
-  taskId: string;
   changedBy: string;
-  fieldChanged: string;
-  previousValue?: string;
-  newValue?: string;
   createdAt: Date;
   demo: boolean;
+  fieldChanged: string;
+  id: string;
+  newValue?: string;
+  previousValue?: string;
+  taskId: string;
 }
 
 export interface CommentResult {
-  success: boolean;
   comment?: TaskComment;
   error?: string;
+  success: boolean;
 }
 
 export interface HistoryResult {
-  success: boolean;
   entries?: TaskHistoryEntry[];
   error?: string;
+  success: boolean;
 }
 
 class TaskCommentsService {
@@ -116,7 +116,7 @@ class TaskCommentsService {
   /**
    * Get comments for a task
    */
-  async getTaskComments(taskId: string): Promise<{ success: boolean; comments?: TaskComment[]; error?: string }> {
+  async getTaskComments(taskId: string): Promise<{ comments?: TaskComment[]; error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -201,7 +201,7 @@ class TaskCommentsService {
   /**
    * Delete a comment
    */
-  async deleteComment(commentId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteComment(commentId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
@@ -231,7 +231,7 @@ class TaskCommentsService {
     fieldChanged: string,
     previousValue?: string,
     newValue?: string
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       

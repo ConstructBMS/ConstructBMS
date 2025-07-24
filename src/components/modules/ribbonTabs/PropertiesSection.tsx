@@ -4,17 +4,17 @@ import FieldTemplateDropdown from './FieldTemplateDropdown';
 import type { FieldTemplate } from './FieldTemplateDropdown';
 
 interface PropertiesSectionProps {
-  onManageFields: () => void;
-  onEditValues: () => void;
-  onApplyTemplate: (template: FieldTemplate) => void;
-  templates: FieldTemplate[];
   disabled?: boolean;
+  hasSelectedTasks?: boolean;
   loading?: {
-    manage?: boolean;
     edit?: boolean;
+    manage?: boolean;
     templates?: boolean;
   };
-  hasSelectedTasks?: boolean;
+  onApplyTemplate: (template: FieldTemplate) => void;
+  onEditValues: () => void;
+  onManageFields: () => void;
+  templates: FieldTemplate[];
 }
 
 const PropertiesSection: React.FC<PropertiesSectionProps> = ({

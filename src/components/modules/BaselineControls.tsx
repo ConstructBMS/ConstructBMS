@@ -5,11 +5,11 @@ import { demoModeService } from '../services/demoModeService';
 import { baselineService, Baseline } from '../services/baselineService';
 
 interface BaselineControlsProps {
-  projectId: string;
-  showBaseline: boolean;
-  onShowBaselineChange: (show: boolean) => void;
   onBaselineSelect: (baseline: Baseline | null) => void;
   onOpenBaselineManager: () => void;
+  onShowBaselineChange: (show: boolean) => void;
+  projectId: string;
+  showBaseline: boolean;
 }
 
 const BaselineControls: React.FC<BaselineControlsProps> = ({

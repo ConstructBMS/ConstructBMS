@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { TagIcon, PlusIcon, XMarkIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { taskTagsService, type ProgrammeTag, type CreateTagData } from '../../services/taskTagsService';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../../services/demoModeService';
 
 interface TagSelectorProps {
-  selectedTagId?: string | null;
-  projectId: string;
-  onTagChange: (tagId: string | null) => void;
-  disabled?: boolean;
   className?: string;
+  disabled?: boolean;
+  onTagChange: (tagId: string | null) => void;
+  projectId: string;
+  selectedTagId?: string | null;
 }
 
 interface CreateTagModalProps {

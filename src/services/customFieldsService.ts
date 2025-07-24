@@ -2,37 +2,37 @@ import { persistentStorage } from './persistentStorage';
 import { demoModeService } from './demoModeService';
 
 export interface ProjectCustomField {
+  createdAt: Date;
+  demo?: boolean;
   id: string;
-  projectId: string;
-  name: string;
-  type: 'text' | 'number' | 'date' | 'dropdown';
-  options?: string[];
   isRequired: boolean;
   isVisible: boolean;
-  userId: string;
-  createdAt: Date;
+  name: string;
+  options?: string[];
+  projectId: string;
+  type: 'text' | 'number' | 'date' | 'dropdown';
   updatedAt: Date;
-  demo?: boolean;
+  userId: string;
 }
 
 export interface TaskCustomField {
+  createdAt: Date;
+  demo?: boolean;
+  fieldId: string;
   id: string;
   taskId: string;
-  fieldId: string;
-  value: string | number | Date | null;
-  userId: string;
-  createdAt: Date;
   updatedAt: Date;
-  demo?: boolean;
+  userId: string;
+  value: string | number | Date | null;
 }
 
 export interface CustomFieldValue {
   fieldId: string;
   fieldName: string;
   fieldType: 'text' | 'number' | 'date' | 'dropdown';
-  value: string | number | Date | null;
   isRequired: boolean;
   options?: string[];
+  value: string | number | Date | null;
 }
 
 class CustomFieldsService {
@@ -80,7 +80,7 @@ class CustomFieldsService {
   /**
    * Create a new custom field definition
    */
-  async createProjectCustomField(field: Omit<ProjectCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ success: boolean; error?: string; field?: ProjectCustomField }> {
+  async createProjectCustomField(field: Omit<ProjectCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ error?: string; field?: ProjectCustomField, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -120,7 +120,7 @@ class CustomFieldsService {
   /**
    * Update a custom field definition
    */
-  async updateProjectCustomField(fieldId: string, updates: Partial<ProjectCustomField>): Promise<{ success: boolean; error?: string }> {
+  async updateProjectCustomField(fieldId: string, updates: Partial<ProjectCustomField>): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -155,7 +155,7 @@ class CustomFieldsService {
   /**
    * Delete a custom field definition
    */
-  async deleteProjectCustomField(fieldId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteProjectCustomField(fieldId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -223,7 +223,7 @@ class CustomFieldsService {
   /**
    * Save a custom field value for a task
    */
-  async saveTaskCustomField(taskId: string, fieldId: string, value: string | number | Date | null): Promise<{ success: boolean; error?: string }> {
+  async saveTaskCustomField(taskId: string, fieldId: string, value: string | number | Date | null): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allTaskFields = await this.getAllTaskCustomFields();
@@ -266,7 +266,7 @@ class CustomFieldsService {
   /**
    * Delete all custom field values for a task
    */
-  async deleteTaskCustomFields(taskId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteTaskCustomFields(taskId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const allTaskFields = await this.getAllTaskCustomFields();
       const filteredFields = allTaskFields.filter(field => field.taskId !== taskId);
@@ -284,7 +284,7 @@ class CustomFieldsService {
   /**
    * Delete all custom field values for a specific field definition
    */
-  async deleteTaskCustomFieldsByFieldId(fieldId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteTaskCustomFieldsByFieldId(fieldId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const allTaskFields = await this.getAllTaskCustomFields();
       const filteredFields = allTaskFields.filter(field => field.fieldId !== fieldId);
@@ -315,7 +315,7 @@ class CustomFieldsService {
   /**
    * Validate custom field value
    */
-  validateCustomFieldValue(field: ProjectCustomField, value: any): { isValid: boolean; error?: string } {
+  validateCustomFieldValue(field: ProjectCustomField, value: any): { error?: string, isValid: boolean; } {
     // Required field validation
     if (field.isRequired && (value === null || value === undefined || value === '')) {
       return { isValid: false, error: `${field.name} is required` };

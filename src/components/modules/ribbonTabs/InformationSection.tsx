@@ -5,15 +5,15 @@ import type { ProjectStatus } from './ProjectStatusDropdown';
 
 interface InformationSectionProps {
   currentStatus: ProjectStatus;
-  onProjectDetails: () => void;
-  onProjectNotes: () => void;
-  onStatusChange: (status: ProjectStatus) => void;
   disabled?: boolean;
   loading?: {
     details?: boolean;
     notes?: boolean;
     status?: boolean;
   };
+  onProjectDetails: () => void;
+  onProjectNotes: () => void;
+  onStatusChange: (status: ProjectStatus) => void;
 }
 
 const InformationSection: React.FC<InformationSectionProps> = ({

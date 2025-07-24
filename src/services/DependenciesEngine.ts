@@ -3,30 +3,31 @@ import { demoModeService } from './demoModeService';
 import { taskService } from './taskService';
 
 export interface TaskDependency {
-  id: string;
-  projectId: string;
-  predecessorId: string;
-  successorId: string;
-  type: 'FS' | 'SS' | 'FF' | 'SF'; // Finish-to-Start, Start-to-Start, Finish-to-Finish, Start-to-Finish
-  userId: string;
   createdAt: Date;
   demo?: boolean;
+  id: string;
+  predecessorId: string;
+  projectId: string; 
+  successorId: string;
+  type: 'FS' | 'SS' | 'FF' | 'SF';
+  // Finish-to-Start, Start-to-Start, Finish-to-Finish, Start-to-Finish
+  userId: string;
 }
 
 export interface DependencyLink {
   id: string;
   predecessorId: string;
-  successorId: string;
-  type: 'FS' | 'SS' | 'FF' | 'SF';
   predecessorName: string;
+  successorId: string;
   successorName: string;
+  type: 'FS' | 'SS' | 'FF' | 'SF';
 }
 
 export interface ArrowCoordinates {
-  startX: number;
-  startY: number;
   endX: number;
   endY: number;
+  startX: number;
+  startY: number;
   type: 'FS' | 'SS' | 'FF' | 'SF';
 }
 
@@ -41,7 +42,7 @@ class DependenciesEngine {
     successorId: string,
     type: 'FS' | 'SS' | 'FF' | 'SF',
     projectId: string
-  ): Promise<{ success: boolean; error?: string; dependency?: TaskDependency }> {
+  ): Promise<{ dependency?: TaskDependency, error?: string; success: boolean; }> {
     try {
       // Validate inputs
       if (predecessorId === successorId) {
@@ -105,7 +106,7 @@ class DependenciesEngine {
   /**
    * Unlink tasks by dependency ID
    */
-  async unlinkTasks(dependencyId: string): Promise<{ success: boolean; error?: string }> {
+  async unlinkTasks(dependencyId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const dependencies = await this.getAllDependencies();
       const dependencyIndex = dependencies.findIndex(d => d.id === dependencyId);

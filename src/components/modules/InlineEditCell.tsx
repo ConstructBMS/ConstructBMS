@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface InlineEditCellProps {
-  value: any;
-  type: 'text' | 'date' | 'select' | 'multiselect' | 'readonly';
-  options?: Array<{ id: string; name: string; color?: string }>;
-  onSave: (value: any) => void;
-  onCancel: () => void;
-  placeholder?: string;
-  disabled?: boolean;
   className?: string;
+  disabled?: boolean;
+  onCancel: () => void;
+  onSave: (value: any) => void;
+  options?: Array<{ color?: string, id: string; name: string; }>;
+  placeholder?: string;
+  type: 'text' | 'date' | 'select' | 'multiselect' | 'readonly';
+  value: any;
 }
 
 const InlineEditCell: React.FC<InlineEditCellProps> = ({

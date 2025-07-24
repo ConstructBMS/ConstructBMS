@@ -4,11 +4,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { BarLabelConfig } from '../../../services/barLabelService';
 
 interface ConfigureBarLabelsModalProps {
+  currentConfig: BarLabelConfig;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (config: BarLabelConfig) => void;
-  currentConfig: BarLabelConfig;
-  isDemoMode?: boolean;
 }
 
 const ConfigureBarLabelsModal: React.FC<ConfigureBarLabelsModalProps> = ({

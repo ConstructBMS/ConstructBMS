@@ -2,11 +2,11 @@ import React from 'react';
 import GroupingButton from './GroupingButton';
 
 interface GroupingSectionProps {
-  onExpandAll: () => void;
-  onCollapseAll: () => void;
-  onToggleSummaryBars: () => void;
-  isSummaryBarsVisible?: boolean;
   hasSummaryTasks?: boolean;
+  isSummaryBarsVisible?: boolean;
+  onCollapseAll: () => void;
+  onExpandAll: () => void;
+  onToggleSummaryBars: () => void;
 }
 
 const GroupingSection: React.FC<GroupingSectionProps> = ({

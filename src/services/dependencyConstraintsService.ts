@@ -2,45 +2,46 @@ import { persistentStorage } from './persistentStorage';
 import { demoModeService } from './demoModeService';
 
 export interface TaskDependency {
+  createdAt: Date;
+  demo?: boolean;
   id: string;
+  lag: number;
+  // in working days (positive = lag, negative = lead)
+  projectId: string; 
   sourceTaskId: string;
   targetTaskId: string;
   type: 'FS' | 'SS' | 'FF' | 'SF';
-  lag: number; // in working days (positive = lag, negative = lead)
-  projectId: string;
-  demo?: boolean;
-  createdAt: Date;
   updatedAt: Date;
 }
 
 export interface ConstraintViolation {
   dependencyId: string;
+  lag: number;
+  severity: 'warning' | 'error';
   sourceTaskId: string;
   targetTaskId: string;
   type: string;
-  lag: number;
   violation: string;
-  severity: 'warning' | 'error';
 }
 
 export interface CreateDependencyData {
+  lag?: number;
+  projectId: string;
   sourceTaskId: string;
   targetTaskId: string;
   type?: 'FS' | 'SS' | 'FF' | 'SF';
-  lag?: number;
-  projectId: string;
 }
 
 export interface UpdateDependencyData {
-  type?: 'FS' | 'SS' | 'FF' | 'SF';
   lag?: number;
+  type?: 'FS' | 'SS' | 'FF' | 'SF';
 }
 
 export interface TaskSchedule {
+  duration: number;
+  endDate: Date;
   id: string;
   startDate: Date;
-  endDate: Date;
-  duration: number;
 }
 
 class DependencyConstraintsService {
@@ -94,7 +95,7 @@ class DependencyConstraintsService {
   /**
    * Create a new dependency
    */
-  async createDependency(data: CreateDependencyData): Promise<{ success: boolean; error?: string; dependency?: TaskDependency }> {
+  async createDependency(data: CreateDependencyData): Promise<{ dependency?: TaskDependency, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allDependencies = await this.getAllDependencies();
@@ -162,7 +163,7 @@ class DependencyConstraintsService {
   /**
    * Update an existing dependency
    */
-  async updateDependency(dependencyId: string, data: UpdateDependencyData): Promise<{ success: boolean; error?: string; dependency?: TaskDependency }> {
+  async updateDependency(dependencyId: string, data: UpdateDependencyData): Promise<{ dependency?: TaskDependency, error?: string; success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allDependencies = await this.getAllDependencies();
@@ -208,7 +209,7 @@ class DependencyConstraintsService {
   /**
    * Delete a dependency
    */
-  async deleteDependency(dependencyId: string): Promise<{ success: boolean; error?: string }> {
+  async deleteDependency(dependencyId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allDependencies = await this.getAllDependencies();

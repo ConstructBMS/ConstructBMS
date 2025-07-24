@@ -3,30 +3,30 @@ import { XMarkIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TaskSummary {
-  taskId: string;
-  taskName: string;
   assignedResources: number;
-  totalQuantity: number;
-  totalCost: number;
-  startDate: Date;
   endDate: Date;
   resources: Array<{
+    cost: number;
+    quantity: number;
+    rate: number;
     resourceId: string;
     resourceName: string;
     type: string;
-    quantity: number;
     unit: string;
-    rate: number;
-    cost: number;
   }>;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
+  totalCost: number;
+  totalQuantity: number;
 }
 
 interface TaskSummaryModalProps {
+  assignedResources: Record<string, any[]>;
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  assignedResources: Record<string, any[]>;
   tasks: any[];
-  disabled?: boolean;
 }
 
 const TaskSummaryModal: React.FC<TaskSummaryModalProps> = ({

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { PlusIcon, FolderIcon, DocumentIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import HierarchicalTaskTable from './HierarchicalTaskTable';
 import TaskModal from './TaskModal';
-import { taskService, type Task } from '../services/taskService';
-import { demoModeService } from '../services/demoModeService';
-import { usePermissions } from '../hooks/usePermissions';
+import { taskService, type Task } from '../../services/taskService';
+import { demoModeService } from '../../services/demoModeService';
+import { usePermissions } from '../../hooks/usePermissions';
 
 const TaskHierarchyDemo: React.FC = () => {
   const { canAccess } = usePermissions();

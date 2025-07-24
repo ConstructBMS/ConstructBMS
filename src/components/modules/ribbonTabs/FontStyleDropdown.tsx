@@ -6,8 +6,8 @@ export type FontStyleOption = 'default' | 'serif' | 'sans' | 'mono';
 
 interface FontStyleDropdownProps {
   currentFont: FontStyleOption;
-  onFontChange: (font: FontStyleOption) => void;
   disabled?: boolean;
+  onFontChange: (font: FontStyleOption) => void;
 }
 
 const FontStyleDropdown: React.FC<FontStyleDropdownProps> = ({
@@ -22,10 +22,10 @@ const FontStyleDropdown: React.FC<FontStyleDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const fontOptions: Array<{
-    value: FontStyleOption;
-    label: string;
     description: string;
     fontClass: string;
+    label: string;
+    value: FontStyleOption;
   }> = [
     {
       value: 'default',

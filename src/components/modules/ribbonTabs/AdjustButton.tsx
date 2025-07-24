@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type AdjustButtonType = 'units' | 'rate' | 'fixedCost';
 
 interface AdjustButtonProps {
-  type: AdjustButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: AdjustButtonType;
 }
 
 const AdjustButton: React.FC<AdjustButtonProps> = ({

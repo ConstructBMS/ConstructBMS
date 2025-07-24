@@ -2,12 +2,12 @@ import React from 'react';
 import TaskFlagIndicator from './TaskFlagIndicator';
 
 interface TimelineTaskFlagProps {
-  taskId: string;
-  projectId: string;
   isDemoMode: boolean;
-  taskBarTop: number;
+  projectId: string;
   taskBarLeft: number;
+  taskBarTop: number;
   taskBarWidth: number;
+  taskId: string;
 }
 
 const TimelineTaskFlag: React.FC<TimelineTaskFlagProps> = ({

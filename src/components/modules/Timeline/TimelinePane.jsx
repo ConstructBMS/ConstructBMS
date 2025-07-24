@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useScrollZoom } from '../../hooks/useScrollZoom';
-import TimelineControls from './TimelineControls';
-import GanttGrid from './GanttGrid';
-import GanttBars from './GanttBars';
+import { useScrollZoom } from '../../../hooks/useScrollZoom';
 
 const TimelinePane = ({ 
   projectId = 'demo-project',
@@ -141,7 +138,7 @@ const TimelinePane = ({
         return newPosition;
       });
     }
-  }, [scrollPosition, syncScrollAcrossComponents]);
+  }, [scrollPosition, syncScrollAcrossComponents, getPixelsPerDay]);
 
   // Handle drag scrolling
   const handleMouseDown = useCallback((e) => {

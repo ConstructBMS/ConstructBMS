@@ -11,8 +11,8 @@ interface TagManagerModalProps {
 }
 
 interface TagFormData {
-  name: string;
   color: string;
+  name: string;
 }
 
 const TagManagerModal: React.FC<TagManagerModalProps> = ({

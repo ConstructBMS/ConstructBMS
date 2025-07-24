@@ -2,40 +2,40 @@ import { supabase } from './supabase';
 
 // Multi-project interfaces
 export interface ProjectInfo {
-  id: string;
-  name: string;
   client: string;
-  startDate: Date;
+  color: string;
+  demo?: boolean;
   endDate: Date;
+  id: string;
+  isVisible: boolean;
+  name: string;
+  startDate: Date;
   status: 'active' | 'completed' | 'on_hold' | 'cancelled';
   totalTasks: number;
-  color: string;
-  isVisible: boolean;
-  demo?: boolean;
 }
 
 export interface MultiProjectTask {
-  id: string;
-  projectId: string;
-  projectName: string;
-  projectColor: string;
-  name: string;
-  start: Date;
-  end: Date;
-  progress: number;
-  status: 'not_started' | 'in_progress' | 'completed' | 'on_hold';
-  priority: 'low' | 'medium' | 'high';
   assignedTo: string;
   demo?: boolean;
+  end: Date;
+  id: string;
+  name: string;
+  priority: 'low' | 'medium' | 'high';
+  progress: number;
+  projectColor: string;
+  projectId: string;
+  projectName: string;
+  start: Date;
+  status: 'not_started' | 'in_progress' | 'completed' | 'on_hold';
 }
 
 export interface MultiProjectPreferences {
-  userId: string;
-  timelineMode: 'single' | 'multi';
-  selectedProjects: string[];
-  groupByProject: boolean;
-  visibleProjects: string[];
   demo: boolean;
+  groupByProject: boolean;
+  selectedProjects: string[];
+  timelineMode: 'single' | 'multi';
+  userId: string;
+  visibleProjects: string[];
 }
 
 // Demo mode configuration

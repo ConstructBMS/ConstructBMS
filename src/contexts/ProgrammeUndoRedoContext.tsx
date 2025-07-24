@@ -4,31 +4,31 @@ import { demoModeService } from '../services/demoModeService';
 import { useAuth } from './AuthContext';
 
 export interface ProgrammeUndoRedoAction {
-  id: string;
-  userId: string;
-  projectId: string;
   actionType: string;
-  timestamp: Date;
-  beforeState: any;
   afterState: any;
-  taskId?: string;
-  description: string;
+  beforeState: any;
   demo?: boolean;
+  description: string;
+  id: string;
+  projectId: string;
+  taskId?: string;
+  timestamp: Date;
+  userId: string;
 }
 
 interface ProgrammeUndoRedoContextType {
-  undoStack: ProgrammeUndoRedoAction[];
-  redoStack: ProgrammeUndoRedoAction[];
-  canUndo: boolean;
+  addAction: (payload: ActionPayload) => Promise<{ error?: string, success: boolean; }>;
   canRedo: boolean;
-  undoCount: number;
-  redoCount: number;
+  canUndo: boolean;
+  clearHistory: () => Promise<{ error?: string, success: boolean; }>;
   isDemoMode: boolean;
-  addAction: (payload: ActionPayload) => Promise<{ success: boolean; error?: string }>;
-  undo: () => Promise<{ success: boolean; error?: string; action?: ProgrammeUndoRedoAction }>;
-  redo: () => Promise<{ success: boolean; error?: string; action?: ProgrammeUndoRedoAction }>;
-  clearHistory: () => Promise<{ success: boolean; error?: string }>;
+  redo: () => Promise<{ action?: ProgrammeUndoRedoAction, error?: string; success: boolean; }>;
+  redoCount: number;
+  redoStack: ProgrammeUndoRedoAction[];
   refreshState: () => Promise<void>;
+  undo: () => Promise<{ action?: ProgrammeUndoRedoAction, error?: string; success: boolean; }>;
+  undoCount: number;
+  undoStack: ProgrammeUndoRedoAction[];
 }
 
 const ProgrammeUndoRedoContext = createContext<ProgrammeUndoRedoContextType | undefined>(undefined);
@@ -110,7 +110,7 @@ export const ProgrammeUndoRedoProvider: React.FC<ProgrammeUndoRedoProviderProps>
   }, [refreshState]);
 
   // Add action to undo stack
-  const addAction = useCallback(async (payload: ActionPayload): Promise<{ success: boolean; error?: string }> => {
+  const addAction = useCallback(async (payload: ActionPayload): Promise<{ error?: string, success: boolean; }> => {
     try {
       const result = await programmeUndoRedoService.recordAction(payload);
       
@@ -127,7 +127,7 @@ export const ProgrammeUndoRedoProvider: React.FC<ProgrammeUndoRedoProviderProps>
   }, [debouncedRefresh]);
 
   // Undo last action
-  const undo = useCallback(async (): Promise<{ success: boolean; error?: string; action?: ProgrammeUndoRedoAction }> => {
+  const undo = useCallback(async (): Promise<{ action?: ProgrammeUndoRedoAction, error?: string; success: boolean; }> => {
     try {
       const result = await programmeUndoRedoService.undo(projectId, userId);
       
@@ -144,7 +144,7 @@ export const ProgrammeUndoRedoProvider: React.FC<ProgrammeUndoRedoProviderProps>
   }, [projectId, userId, refreshState]);
 
   // Redo last undone action
-  const redo = useCallback(async (): Promise<{ success: boolean; error?: string; action?: ProgrammeUndoRedoAction }> => {
+  const redo = useCallback(async (): Promise<{ action?: ProgrammeUndoRedoAction, error?: string; success: boolean; }> => {
     try {
       const result = await programmeUndoRedoService.redo(projectId, userId);
       
@@ -161,7 +161,7 @@ export const ProgrammeUndoRedoProvider: React.FC<ProgrammeUndoRedoProviderProps>
   }, [projectId, userId, refreshState]);
 
   // Clear history
-  const clearHistory = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
+  const clearHistory = useCallback(async (): Promise<{ error?: string, success: boolean; }> => {
     try {
       const result = await programmeUndoRedoService.clearHistory(projectId, userId);
       

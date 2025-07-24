@@ -2,15 +2,15 @@ import type { TaskData } from '../components/modules/ribbonTabs/TaskEditModal';
 import type { TaskDependency } from '../components/modules/ribbonTabs/LagTimeModal';
 
 export interface RescheduleResult {
+  errors: string[];
   success: boolean;
   updatedTasks: TaskData[];
-  errors: string[];
   warnings: string[];
 }
 
 export interface TaskConstraint {
-  type: 'start_no_earlier_than' | 'must_finish_on' | 'start_no_later_than' | 'must_start_on';
   date: Date;
+  type: 'start_no_earlier_than' | 'must_finish_on' | 'start_no_later_than' | 'must_start_on';
 }
 
 export class RescheduleService {
@@ -96,7 +96,7 @@ export class RescheduleService {
   /**
    * Reschedule a single task
    */
-  private static rescheduleTask(task: TaskData, allTasks: TaskData[]): { success: boolean; error?: string } {
+  private static rescheduleTask(task: TaskData, allTasks: TaskData[]): { error?: string, success: boolean; } {
     try {
       // Get predecessor tasks
       const predecessors = this.getPredecessorTasks(task, allTasks);

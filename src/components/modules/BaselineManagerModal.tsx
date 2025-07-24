@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusIcon, TrashIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { baselineService, Baseline, BaselineComparison } from '../services/baselineService';
 
 interface BaselineManagerModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  projectId: string;
   currentTasks: Array<{
+    duration: number;
+    endDate: Date;
     id: string;
     name: string;
     startDate: Date;
-    endDate: Date;
-    duration: number;
   }>;
+  isOpen: boolean;
   onBaselineChange?: (baseline: Baseline | null) => void;
+  onClose: () => void;
+  projectId: string;
 }
 
 interface CreateBaselineFormData {

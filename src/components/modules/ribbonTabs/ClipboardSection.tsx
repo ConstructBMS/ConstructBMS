@@ -4,13 +4,13 @@ import ProgrammeUndoRedoButtons from './ProgrammeUndoRedoButtons';
 import { useClipboard } from '../../../contexts/ClipboardContext';
 
 interface ClipboardSectionProps {
-  selectedTasksCount: number;
-  onCut: () => void;
+  onActionRedone?: (action: any) => void;
+  onActionUndone?: (action: any) => void;
   onCopy: () => void;
+  onCut: () => void;
   onPaste: () => void;
   projectId?: string;
-  onActionUndone?: (action: any) => void;
-  onActionRedone?: (action: any) => void;
+  selectedTasksCount: number;
 }
 
 const ClipboardSection: React.FC<ClipboardSectionProps> = ({

@@ -5,9 +5,9 @@ import { demoModeService } from '../services/demoModeService';
 import { undoRedoService } from '../services/undoRedoService';
 
 interface UndoRedoControlsProps {
-  projectId: string;
-  onActionUndone?: (action: any) => void;
   onActionRedone?: (action: any) => void;
+  onActionUndone?: (action: any) => void;
+  projectId: string;
 }
 
 const UndoRedoControls: React.FC<UndoRedoControlsProps> = ({

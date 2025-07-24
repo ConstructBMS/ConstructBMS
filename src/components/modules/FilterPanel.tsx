@@ -10,11 +10,11 @@ import { filterService, type FilterCriteria, type FilterState } from '../../serv
 import { toastService } from './ToastNotification';
 
 interface FilterPanelProps {
+  className?: string;
   isOpen: boolean;
   onClose: () => void;
   onFilterChange?: ((filterState: FilterState) => void) | undefined;
   tasks?: any[];
-  className?: string;
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({

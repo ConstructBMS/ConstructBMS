@@ -4,16 +4,16 @@ import PlaybackSlider from './PlaybackSlider';
 import PlaybackSpeedDropdown from './PlaybackSpeedDropdown';
 
 interface FourDPlaybackControlsSectionProps {
-  isPlaying: boolean;
   currentDate: Date;
-  startDate: Date;
+  disabled?: boolean;
   endDate: Date;
-  speed: number;
-  onTogglePlayback: () => void;
+  isPlaying: boolean;
+  loading?: boolean;
   onDateChange: (date: Date) => void;
   onSpeedChange: (speed: number) => void;
-  disabled?: boolean;
-  loading?: boolean;
+  onTogglePlayback: () => void;
+  speed: number;
+  startDate: Date;
 }
 
 const FourDPlaybackControlsSection: React.FC<FourDPlaybackControlsSectionProps> = ({

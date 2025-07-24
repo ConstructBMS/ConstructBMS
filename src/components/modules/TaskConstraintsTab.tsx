@@ -18,21 +18,21 @@ export type ConstraintType =
   | 'FNLT'; // Finish No Later Than
 
 export interface TaskConstraint {
-  id?: string;
-  taskId: string;
-  constraintType: ConstraintType;
   constraintDate: string;
   constraintReason?: string;
-  demo?: boolean;
+  constraintType: ConstraintType;
   createdAt?: Date;
+  demo?: boolean;
+  id?: string;
+  taskId: string;
   updatedAt?: Date;
 }
 
 interface TaskConstraintsTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode?: boolean;
   onConstraintChange?: (constraint: TaskConstraint | null) => void;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskConstraintsTab: React.FC<TaskConstraintsTabProps> = ({

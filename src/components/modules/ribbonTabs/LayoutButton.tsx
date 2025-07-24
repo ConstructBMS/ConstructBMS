@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type LayoutButtonType = 'split' | 'reset' | 'fullscreen';
 
 interface LayoutButtonProps {
-  type: LayoutButtonType;
-  isActive?: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: LayoutButtonType;
 }
 
 const LayoutButton: React.FC<LayoutButtonProps> = ({

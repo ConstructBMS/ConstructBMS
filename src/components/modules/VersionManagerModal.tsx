@@ -11,7 +11,7 @@ import {
   EyeIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { 
   programmeVersioningService, 
@@ -20,11 +20,11 @@ import {
 } from '../services/programmeVersioningService';
 
 interface VersionManagerModalProps {
+  currentTasks: Array<{ [key: string]: any, id: string; }>;
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  currentTasks: Array<{ id: string; [key: string]: any }>;
   onVersionChange?: (version: ProgrammeVersion | null) => void;
+  projectId: string;
 }
 
 interface CreateVersionFormData {

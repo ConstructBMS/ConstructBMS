@@ -2,14 +2,14 @@ import React from 'react';
 import ResourceUsageToggle from './ResourceUsageToggle';
 
 interface ResourceUsageViewSectionProps {
-  usageViewActive: boolean;
-  groupByTypeActive: boolean;
-  groupByTaskActive: boolean;
-  onToggleUsageView: () => void;
-  onToggleGroupByType: () => void;
-  onToggleGroupByTask: () => void;
   disabled?: boolean;
+  groupByTaskActive: boolean;
+  groupByTypeActive: boolean;
   loading?: boolean;
+  onToggleGroupByTask: () => void;
+  onToggleGroupByType: () => void;
+  onToggleUsageView: () => void;
+  usageViewActive: boolean;
 }
 
 const ResourceUsageViewSection: React.FC<ResourceUsageViewSectionProps> = ({

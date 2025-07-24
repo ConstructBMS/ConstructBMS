@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { Baseline } from './SetBaselineModal';
 
 interface ManageBaselinesModalProps {
+  baselines: Baseline[];
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  baselines: Baseline[];
   onDelete: (baselineId: string) => void;
   onRename: (baselineId: string, newName: string) => void;
   onView: (baseline: Baseline) => void;
-  isDemoMode?: boolean;
 }
 
 const ManageBaselinesModal: React.FC<ManageBaselinesModalProps> = ({

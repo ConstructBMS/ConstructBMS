@@ -2,10 +2,10 @@ import React from 'react';
 import { PaperClipIcon } from '@heroicons/react/24/outline';
 
 interface ImportedTaskIndicatorProps {
+  demo?: boolean;
+  importedAt?: string;
   isImported: boolean;
   sourceFileName?: string;
-  importedAt?: string;
-  demo?: boolean;
 }
 
 const ImportedTaskIndicator: React.FC<ImportedTaskIndicatorProps> = ({

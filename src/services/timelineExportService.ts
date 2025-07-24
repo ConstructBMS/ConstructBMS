@@ -3,95 +3,95 @@ import { demoModeService } from './demoModeService';
 import { multiProjectService, type ProjectInfo, type MultiProjectTask } from './multiProjectService';
 
 export interface TimelineExportOptions {
-  format: 'pdf' | 'png';
-  orientation: 'portrait' | 'landscape';
-  pageSize: 'A3' | 'A4' | 'A5';
-  includeLogo: boolean;
-  showFiltersAndDate: boolean;
-  includeBaseline: boolean;
-  includeCriticalPath: boolean;
-  includeMilestones: boolean;
-  includeDependencies: boolean;
-  zoomLevel: 'days' | 'weeks' | 'months' | 'quarters';
   dateRange?: {
-    start: Date;
     end: Date;
+    start: Date;
   };
   filters?: {
-    status?: string[];
-    priority?: string[];
-    tags?: string[];
     assignee?: string[];
+    priority?: string[];
+    status?: string[];
+    tags?: string[];
   };
+  format: 'pdf' | 'png';
+  includeBaseline: boolean;
+  includeCriticalPath: boolean;
+  includeDependencies: boolean;
+  includeLogo: boolean;
+  includeMilestones: boolean;
   multiProject?: {
     enabled: boolean;
-    selectedProjects: string[];
     groupByProject: boolean;
+    selectedProjects: string[];
   };
+  orientation: 'portrait' | 'landscape';
+  pageSize: 'A3' | 'A4' | 'A5';
+  showFiltersAndDate: boolean;
+  zoomLevel: 'days' | 'weeks' | 'months' | 'quarters';
 }
 
 export interface TimelineExportData {
-  projectName: string;
-  projectId: string;
+  baseline?: {
+    name: string;
+    tasks: Array<{
+      baselineEndDate: Date;
+      baselineStartDate: Date;
+      taskId: string;
+    }>;
+  };
+  criticalPath?: {
+    taskIds: string[];
+  };
+  dependencies: Array<{
+    sourceId: string;
+    targetId: string;
+    type: string;
+  }>;
   exportDate: Date;
-  exportUser: string;
   exportOptions: TimelineExportOptions;
-  tasks: Array<{
+  exportUser: string;
+  filters: {
+    assignee: string[];
+    priority: string[];
+    status: string[];
+    tags: string[];
+  };
+  milestones: Array<{
+    date: Date;
     id: string;
+    name: string;
+    projectId?: string;
+    type: string;
+  }>;
+  multiProject?: {
+    groupedTasks: { project: ProjectInfo; tasks: any[] }[];
+    projects: ProjectInfo[];
+  };
+  projectId: string;
+  projectName: string;
+  tasks: Array<{
+    assignee: string;
     name: string;
     startDate: Date;
     endDate: Date;
     status: string;
     progress: number;
     priority: string;
-    assignee: string;
+    id: string;
     tags: string[];
     type: string;
     projectId?: string;
     projectName?: string;
     projectColor?: string;
   }>;
-  milestones: Array<{
-    id: string;
-    name: string;
-    date: Date;
-    type: string;
-    projectId?: string;
-  }>;
-  dependencies: Array<{
-    sourceId: string;
-    targetId: string;
-    type: string;
-  }>;
-  baseline?: {
-    name: string;
-    tasks: Array<{
-      taskId: string;
-      baselineStartDate: Date;
-      baselineEndDate: Date;
-    }>;
-  };
-  criticalPath?: {
-    taskIds: string[];
-  };
-  filters: {
-    status: string[];
-    priority: string[];
-    tags: string[];
-    assignee: string[];
-  };
-  multiProject?: {
-    projects: ProjectInfo[];
-    groupedTasks: { project: ProjectInfo; tasks: any[] }[];
-  };
 }
 
 export interface TimelineExportResult {
-  success: boolean;
-  error?: string;
   dataUrl?: string;
+  error?: string;
   fileName?: string;
   fileSize?: number;
+  success: boolean;
 }
 
 // Demo mode configuration
@@ -642,7 +642,7 @@ class TimelineExportService {
   /**
    * Apply date range filter
    */
-  private applyDateRangeFilter(element: HTMLElement, dateRange: { start: Date; end: Date }): void {
+  private applyDateRangeFilter(element: HTMLElement, dateRange: { end: Date, start: Date; }): void {
     // This would filter tasks based on the date range
     // Implementation depends on the specific DOM structure
     console.log('Applying date range filter:', dateRange);
@@ -682,7 +682,7 @@ class TimelineExportService {
   /**
    * Save export settings to Supabase
    */
-  async saveExportSettings(projectId: string, options: TimelineExportOptions): Promise<{ success: boolean; error?: string }> {
+  async saveExportSettings(projectId: string, options: TimelineExportOptions): Promise<{ error?: string, success: boolean; }> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

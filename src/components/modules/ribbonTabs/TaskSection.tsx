@@ -2,11 +2,11 @@ import React from 'react';
 import TaskButton from './TaskButton';
 
 interface TaskSectionProps {
-  selectedTasksCount: number;
-  onNewTask: () => void;
   onDelete: () => void;
   onEdit: () => void;
+  onNewTask: () => void;
   onProperties: () => void;
+  selectedTasksCount: number;
 }
 
 const TaskSection: React.FC<TaskSectionProps> = ({

@@ -2,15 +2,15 @@ import React from 'react';
 import AdjustButton from './AdjustButton';
 
 interface AdjustUnitsRatesSectionProps {
-  onAdjustUnits: () => void;
-  onAdjustRate: () => void;
-  onSetFixedCost: () => void;
   disabled?: boolean;
   loading?: {
-    units?: boolean;
-    rate?: boolean;
     fixedCost?: boolean;
+    rate?: boolean;
+    units?: boolean;
   };
+  onAdjustRate: () => void;
+  onAdjustUnits: () => void;
+  onSetFixedCost: () => void;
 }
 
 const AdjustUnitsRatesSection: React.FC<AdjustUnitsRatesSectionProps> = ({

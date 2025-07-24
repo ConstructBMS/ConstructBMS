@@ -1,41 +1,41 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface IfcFile {
-  id: string;
-  projectId: string;
+  demo?: boolean;
   fileName: string;
   filePath: string;
   fileSize: number;
-  uploadedBy: string;
+  id: string;
+  projectId: string;
   uploadedAt: Date;
-  demo?: boolean;
+  uploadedBy: string;
 }
 
 export interface IfcElement {
+  demo?: boolean;
   id: string;
-  name: string;
-  type: string;
   level: string;
   material?: string;
+  name: string;
   properties?: Record<string, any>;
-  demo?: boolean;
+  type: string;
 }
 
 export interface TaskIfcMapping {
-  id: string;
-  taskId: string;
-  taskName: string;
-  ifcElementId: string;
-  ifcElementName: string;
-  projectId: string;
   autoMatched: boolean;
   createdAt: Date;
   demo?: boolean;
+  id: string;
+  ifcElementId: string;
+  ifcElementName: string;
+  projectId: string;
+  taskId: string;
+  taskName: string;
 }
 
 export interface IfcConfig {
-  currentModelId?: string;
   autoMatchEnabled: boolean;
+  currentModelId?: string;
   demo?: boolean;
 }
 

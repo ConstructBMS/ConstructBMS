@@ -3,21 +3,21 @@ import { taskTagsService, type ProgrammeTag } from '../../services/taskTagsServi
 import TagPill from './TagPill';
 
 interface Task {
+  demo?: boolean;
+  endDate: Date;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
-  status: string;
   progress: number;
+  startDate: Date;
+  status: string;
   tagId?: string | null;
-  demo?: boolean;
 }
 
 interface TaskGridWithTagsProps {
+  className?: string;
+  onTaskClick?: (taskId: string) => void;
   projectId: string;
   tasks: Task[];
-  onTaskClick?: (taskId: string) => void;
-  className?: string;
 }
 
 const TaskGridWithTags: React.FC<TaskGridWithTagsProps> = ({

@@ -7,9 +7,9 @@ import { exportService, ExportOptions } from '../services/exportService';
 interface ExportOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onExport: (format: 'pdf' | 'png', options: ExportOptions) => void;
   projectId: string;
   projectName: string;
-  onExport: (format: 'pdf' | 'png', options: ExportOptions) => void;
 }
 
 const ExportOptionsModal: React.FC<ExportOptionsModalProps> = ({

@@ -3,9 +3,9 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface WeekendShadingToggleProps {
+  disabled?: boolean;
   isEnabled: boolean;
   onToggle: () => void;
-  disabled?: boolean;
 }
 
 const WeekendShadingToggle: React.FC<WeekendShadingToggleProps> = ({

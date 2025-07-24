@@ -4,13 +4,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { Calendar } from './ApplyCalendarDropdown';
 
 interface ManageCalendarsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   calendars: Calendar[];
-  onSave: (calendar: Calendar) => void;
-  onDelete: (calendarId: string) => void;
-  onClone: (calendar: Calendar) => void;
   isDemoMode?: boolean;
+  isOpen: boolean;
+  onClone: (calendar: Calendar) => void;
+  onClose: () => void;
+  onDelete: (calendarId: string) => void;
+  onSave: (calendar: Calendar) => void;
 }
 
 const ManageCalendarsModal: React.FC<ManageCalendarsModalProps> = ({
@@ -279,9 +279,9 @@ const ManageCalendarsModal: React.FC<ManageCalendarsModalProps> = ({
 // Calendar Details Component
 interface CalendarDetailsProps {
   calendar: Calendar;
-  onEdit: () => void;
   canEdit: boolean;
   dayNames: string[];
+  onEdit: () => void;
 }
 
 const CalendarDetails: React.FC<CalendarDetailsProps> = ({
@@ -387,11 +387,11 @@ const CalendarDetails: React.FC<CalendarDetailsProps> = ({
 // Calendar Editor Component
 interface CalendarEditorProps {
   calendar: Calendar;
-  onSave: (calendar: Calendar) => void;
-  onCancel: () => void;
-  isLoading: boolean;
   canEdit: boolean;
   isDemoMode: boolean;
+  isLoading: boolean;
+  onCancel: () => void;
+  onSave: (calendar: Calendar) => void;
 }
 
 const CalendarEditor: React.FC<CalendarEditorProps> = ({

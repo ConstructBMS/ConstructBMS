@@ -7,33 +7,33 @@ import { criticalPathService, CriticalPathResult } from '../services/criticalPat
 import { taskService } from '../services/taskService';
 
 export interface Task {
+  createdAt: Date;
+  demo?: boolean;
+  description?: string;
+  endDate: Date;
   id: string;
   name: string;
+  projectId: string;
   startDate: Date;
-  endDate: Date;
   statusId: string;
   tags: string[];
   type: 'task' | 'milestone' | 'phase' | 'summary';
-  description?: string;
-  projectId: string;
-  userId: string;
-  demo?: boolean;
-  createdAt: Date;
   updatedAt: Date;
+  userId: string;
 }
 
 interface DependencyArrowsProps {
-  projectId: string;
-  tasks: Task[];
+  criticalPath?: CriticalPathResult;
   dayWidth: number;
-  rowHeight: number;
-  startDate: Date;
-  onDependencyUnlink?: (dependencyId: string) => void;
+  enforceConstraints?: boolean;
   onDependencyHover?: (dependency: TaskDependency) => void;
   onDependencyLeave?: () => void;
-  enforceConstraints?: boolean;
+  onDependencyUnlink?: (dependencyId: string) => void;
+  projectId: string;
+  rowHeight: number;
   showCriticalPath?: boolean;
-  criticalPath?: CriticalPathResult;
+  startDate: Date;
+  tasks: Task[];
 }
 
 const DependencyArrows: React.FC<DependencyArrowsProps> = ({
@@ -55,7 +55,7 @@ const DependencyArrows: React.FC<DependencyArrowsProps> = ({
   const [constraintViolations, setConstraintViolations] = useState<ConstraintViolation[]>([]);
   const [arrowCoordinates, setArrowCoordinates] = useState<Array<ArrowCoordinates & { id: string }>>([]);
   const [hoveredArrow, setHoveredArrow] = useState<string | null>(null);
-  const [showContextMenu, setShowContextMenu] = useState<{ x: number; y: number; dependencyId: string } | null>(null);
+  const [showContextMenu, setShowContextMenu] = useState<{ dependencyId: string, x: number; y: number; } | null>(null);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

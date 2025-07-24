@@ -5,21 +5,21 @@ import BarStylesManagerModal from './BarStylesManagerModal';
 import { useBarStyles } from '../../hooks/useBarStyles';
 
 interface GanttWithBarStylesProps {
-  tasks: GanttTask[];
-  links: GanttLink[];
-  projectId: string;
-  userRole: string;
-  startDate: Date;
-  endDate: Date;
-  zoomLevel?: number;
-  showGridlines?: boolean;
-  showTaskLinks?: boolean;
-  showFloat?: boolean;
-  showCriticalPath?: boolean;
   criticalOnly?: boolean;
+  endDate: Date;
+  links: GanttLink[];
   onTaskSelect?: (taskId: string) => void;
   onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void;
+  projectId: string;
   selectedTaskId?: string;
+  showCriticalPath?: boolean;
+  showFloat?: boolean;
+  showGridlines?: boolean;
+  showTaskLinks?: boolean;
+  startDate: Date;
+  tasks: GanttTask[];
+  userRole: string;
+  zoomLevel?: number;
 }
 
 const GanttWithBarStyles: React.FC<GanttWithBarStylesProps> = ({

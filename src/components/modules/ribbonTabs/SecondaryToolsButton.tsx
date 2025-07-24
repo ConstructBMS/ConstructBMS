@@ -9,10 +9,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type SecondaryToolType = 'recalculateSlack' | 'clearConstraints' | 'validateLogic';
 
 interface SecondaryToolsButtonProps {
-  type: SecondaryToolType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: SecondaryToolType;
 }
 
 const SecondaryToolsButton: React.FC<SecondaryToolsButtonProps> = ({

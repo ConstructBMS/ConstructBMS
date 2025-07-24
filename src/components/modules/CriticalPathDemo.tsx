@@ -14,24 +14,24 @@ import { demoModeService } from '../../services/demoModeService';
 import CriticalPathSection from '../ribbonTabs/CriticalPathSection';
 
 interface DemoTask {
-  id: string;
-  name: string;
-  start: Date;
-  end: Date;
-  duration: number;
-  isCritical: boolean;
-  totalFloat: number;
   dependencies: string[];
+  duration: number;
+  end: Date;
+  id: string;
+  isCritical: boolean;
   isMilestone: boolean;
+  name: string;
   progress: number;
+  start: Date;
+  totalFloat: number;
 }
 
 interface DemoDependency {
   id: string;
+  lag: number;
   sourceTaskId: string;
   targetTaskId: string;
   type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
-  lag: number;
 }
 
 const CriticalPathDemo: React.FC = () => {

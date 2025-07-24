@@ -9,9 +9,9 @@ import FilterPanel from './FilterPanel';
 import { toastService } from './ToastNotification';
 
 interface FilterButtonProps {
-  tasks?: any[];
-  onFilterChange?: (filterState: FilterState) => void;
   className?: string;
+  onFilterChange?: (filterState: FilterState) => void;
+  tasks?: any[];
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({

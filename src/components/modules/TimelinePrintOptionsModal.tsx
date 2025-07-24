@@ -13,18 +13,18 @@ import { demoModeService } from '../../services/demoModeService';
 import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../../services/timelinePrintService';
 
 interface TimelinePrintOptionsModalProps {
+  currentView: any;
+  filters: any;
+  isMultiProjectMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  onPrint: (options: TimelinePrintOptions) => void;
   onPreview: (options: TimelinePrintOptions) => void;
+  onPrint: (options: TimelinePrintOptions) => void;
   projectId: string;
-  projectName: string;
   projectIdDisplay: string;
-  tasks: any[];
-  filters: any;
-  currentView: any;
-  isMultiProjectMode?: boolean;
+  projectName: string;
   selectedProjects?: any[];
+  tasks: any[];
 }
 
 const TimelinePrintOptionsModal: React.FC<TimelinePrintOptionsModalProps> = ({

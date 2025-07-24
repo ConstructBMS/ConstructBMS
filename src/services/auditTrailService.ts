@@ -2,40 +2,40 @@ import { supabase } from './supabaseAuth';
 import { demoModeService } from './demoModeService';
 
 export interface AuditLogEntry {
+  actionType: string;
+  after: any | null;
+  before: any | null;
+  createdAt: Date;
+  demo: boolean;
+  description: string;
   id: string;
   projectId: string;
   taskId: string | null;
   userId: string;
-  actionType: string;
-  description: string;
-  before: any | null;
-  after: any | null;
-  createdAt: Date;
-  demo: boolean;
 }
 
 export interface AuditLogFilter {
-  projectId?: string;
-  taskId?: string;
-  userId?: string;
   actionType?: string;
   dateFrom?: Date;
   dateTo?: Date;
+  projectId?: string;
   searchKeyword?: string;
+  taskId?: string;
+  userId?: string;
 }
 
 export interface AuditLogResult {
-  success: boolean;
   error?: string;
   logs?: AuditLogEntry[];
+  success: boolean;
   totalCount?: number;
 }
 
 export interface AuditLogStats {
-  totalActions: number;
   actionsByType: Record<string, number>;
   actionsByUser: Record<string, number>;
   recentActivity: AuditLogEntry[];
+  totalActions: number;
 }
 
 class AuditTrailService {
@@ -52,7 +52,7 @@ class AuditTrailService {
     description: string,
     before: any = null,
     after: any = null
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -203,7 +203,7 @@ class AuditTrailService {
   /**
    * Get audit statistics
    */
-  async getAuditStats(projectId: string): Promise<{ success: boolean; error?: string; stats?: AuditLogStats }> {
+  async getAuditStats(projectId: string): Promise<{ error?: string; stats?: AuditLogStats, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -260,7 +260,7 @@ class AuditTrailService {
   /**
    * Delete an audit log (for demo mode cleanup)
    */
-  private async deleteAuditLog(logId: string): Promise<{ success: boolean; error?: string }> {
+  private async deleteAuditLog(logId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_audit_logs')

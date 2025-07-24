@@ -9,7 +9,7 @@ import {
   CheckIcon,
   ClockIcon
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { 
   programmeVersioningService, 
   ProgrammeVersion,
@@ -20,9 +20,9 @@ import {
 interface VersionCompareModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCompare?: (comparison: VersionComparison) => void;
   projectId: string;
   versions: ProgrammeVersion[];
-  onCompare?: (comparison: VersionComparison) => void;
 }
 
 const VersionCompareModal: React.FC<VersionCompareModalProps> = ({

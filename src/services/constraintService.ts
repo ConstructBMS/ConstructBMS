@@ -3,15 +3,15 @@ import type { ConstraintType, TaskConstraint } from '../components/modules/ribbo
 import type { ConstrainedTask } from '../components/modules/ribbonTabs/ConstraintReportModal';
 
 export interface ConstraintResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export interface ConstraintApplicationResult {
+  errors: string[];
   success: boolean;
   tasksUpdated: number;
-  errors: string[];
 }
 
 export class ConstraintService {
@@ -173,10 +173,10 @@ export class ConstraintService {
    * Get constraint statistics
    */
   static async getConstraintStatistics(projectId: string = 'demo'): Promise<{
-    totalConstraints: number;
     byType: Record<ConstraintType, number>;
-    influencedCount: number;
     demoCount: number;
+    influencedCount: number;
+    totalConstraints: number;
   }> {
     try {
       const constrainedTasks = await this.getAllConstrainedTasks(projectId);
@@ -226,7 +226,7 @@ export class ConstraintService {
   /**
    * Validate constraint data
    */
-  static validateConstraint(constraint: TaskConstraint): { isValid: boolean; errors: string[] } {
+  static validateConstraint(constraint: TaskConstraint): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     if (!constraint.type) {
@@ -423,8 +423,8 @@ export class ConstraintService {
    */
   static async exportConstraintData(projectId: string = 'demo'): Promise<{
     constrainedTasks: ConstrainedTask[];
-    statistics: any;
     exportDate: string;
+    statistics: any;
   }> {
     try {
       const constrainedTasks = await this.getAllConstrainedTasks(projectId);

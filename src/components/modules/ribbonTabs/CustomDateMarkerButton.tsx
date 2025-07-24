@@ -3,9 +3,9 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface CustomDateMarkerButtonProps {
-  onOpenModal: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onOpenModal: () => void;
 }
 
 const CustomDateMarkerButton: React.FC<CustomDateMarkerButtonProps> = ({

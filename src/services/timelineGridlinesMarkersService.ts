@@ -3,26 +3,26 @@ import { persistentStorage } from './persistentStorage';
 export type GridlineStyle = 'none' | 'solid' | 'dotted' | 'dashed';
 
 export interface CustomDateMarker {
-  id: string;
-  date: Date;
-  label: string;
   color: string;
+  date: Date;
+  demo?: boolean;
+  id: string;
+  label: string;
   projectId: string;
   userId: string;
-  demo?: boolean;
 }
 
 export interface TimelineGridlinesMarkersSettings {
-  showTodayMarker: boolean;
-  gridlineStyle: GridlineStyle;
   demo?: boolean;
+  gridlineStyle: GridlineStyle;
+  showTodayMarker: boolean;
 }
 
 export interface TimelineGridlinesMarkersConfig {
-  enabled: boolean;
   autoApply: boolean;
-  maxCustomMarkers: number;
   demo?: boolean;
+  enabled: boolean;
+  maxCustomMarkers: number;
 }
 
 // Default ConstructBMS timeline gridlines and markers settings
@@ -426,7 +426,7 @@ class TimelineGridlinesMarkersService {
   /**
    * Validate timeline gridlines and markers settings
    */
-  validateTimelineGridlinesMarkersSettings(settings: TimelineGridlinesMarkersSettings): { isValid: boolean; errors: string[] } {
+  validateTimelineGridlinesMarkersSettings(settings: TimelineGridlinesMarkersSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate show today marker

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { programmeWorkingCalendarService, type WorkingTime } from '../../services/programmeWorkingCalendarService';
 
 interface NonWorkingDayIndicatorProps {
+  className?: string;
   date: Date;
   projectId: string;
-  className?: string;
   showTooltip?: boolean;
 }
 

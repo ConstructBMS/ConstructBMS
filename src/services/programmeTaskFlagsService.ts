@@ -3,21 +3,21 @@ import { demoModeService } from './demoModeService';
 
 // Programme Task Flags interfaces
 export interface ProgrammeTaskFlag {
-  id: string;
-  taskId: string;
-  flagColor: 'red' | 'yellow' | 'green' | 'blue';
-  note: string;
-  createdBy: string;
   createdAt: Date;
+  createdBy: string;
   demo: boolean;
+  flagColor: 'red' | 'yellow' | 'green' | 'blue';
+  id: string;
+  note: string;
+  taskId: string;
 }
 
 export interface TaskFlagFilter {
-  taskId?: string;
-  flagColor?: 'red' | 'yellow' | 'green' | 'blue';
   createdBy?: string;
   dateFrom?: Date;
   dateTo?: Date;
+  flagColor?: 'red' | 'yellow' | 'green' | 'blue';
+  taskId?: string;
 }
 
 // Demo mode configuration
@@ -115,7 +115,7 @@ class ProgrammeTaskFlagsService {
     projectId: string,
     flagColor: 'red' | 'yellow' | 'green' | 'blue',
     note: string
-  ): Promise<{ success: boolean; error?: string; flag?: ProgrammeTaskFlag }> {
+  ): Promise<{ error?: string; flag?: ProgrammeTaskFlag, success: boolean; }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
@@ -179,7 +179,7 @@ class ProgrammeTaskFlagsService {
   /**
    * Remove a flag from a task
    */
-  async removeFlag(taskId: string): Promise<{ success: boolean; error?: string }> {
+  async removeFlag(taskId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_task_flags')

@@ -8,11 +8,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ConflictButtonType = 'toggle' | 'resolve';
 
 interface ConflictButtonProps {
-  type: ConflictButtonType;
-  isActive?: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ConflictButtonType;
 }
 
 const ConflictButton: React.FC<ConflictButtonProps> = ({

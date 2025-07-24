@@ -2,28 +2,31 @@ import { supabase } from './supabase';
 
 // Zoom level interfaces
 export interface ZoomLevel {
+  gridInterval: number;
   id: string;
-  name: string;
-  widthPerDay: number;
   labelFormat: string;
-  gridInterval: number; // Days between grid lines
-  snapInterval: number; // Days for snap-to-grid
-  minVisibleDays: number;
   maxVisibleDays: number;
+  // Days for snap-to-grid
+  minVisibleDays: number; 
+  name: string; 
+  // Days between grid lines
+  snapInterval: number;
+  widthPerDay: number;
 }
 
 export interface ZoomState {
   currentLevel: ZoomLevel;
-  scale: number; // 1.0 = 100%, 2.0 = 200%, etc.
-  isAnimating: boolean;
+  // 1.0 = 100%, 2.0 = 200%, etc.
+  isAnimating: boolean; 
   lastRedrawTime: number;
+  scale: number;
 }
 
 export interface ZoomPreferences {
   defaultZoomLevel: string;
+  demoMode?: boolean;
   rememberZoom: boolean;
   smoothTransitions: boolean;
-  demoMode?: boolean;
 }
 
 // Zoom level presets

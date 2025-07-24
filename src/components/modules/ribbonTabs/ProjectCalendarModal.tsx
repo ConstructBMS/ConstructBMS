@@ -4,11 +4,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import type { Calendar } from './ApplyCalendarDropdown';
 
 interface ProjectCalendarModalProps {
+  calendar: Calendar;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (calendar: Calendar) => void;
-  calendar: Calendar;
-  isDemoMode?: boolean;
 }
 
 const ProjectCalendarModal: React.FC<ProjectCalendarModalProps> = ({

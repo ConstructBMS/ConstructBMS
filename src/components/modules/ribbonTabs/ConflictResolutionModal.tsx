@@ -3,30 +3,30 @@ import { XMarkIcon, ExclamationTriangleIcon, WrenchScrewdriverIcon } from '@hero
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ResourceConflict {
-  id: string;
-  taskId: string;
-  taskName: string;
-  resourceId: string;
-  resourceName: string;
-  date: Date;
   assignedHours: number;
+  date: Date;
+  id: string;
   maxCapacity: number;
   overallocation: number;
+  resourceId: string;
+  resourceName: string;
+  taskId: string;
+  taskName: string;
   type: 'overallocation' | 'double-booking';
 }
 
 interface ConflictResolution {
   conflictId: string;
-  resolution: 'split' | 'delay' | 'reassign' | 'ignore';
   details?: string;
+  resolution: 'split' | 'delay' | 'reassign' | 'ignore';
 }
 
 interface ConflictResolutionModalProps {
+  conflicts: ResourceConflict[];
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onResolve: (resolutions: ConflictResolution[]) => void;
-  conflicts: ResourceConflict[];
-  disabled?: boolean;
 }
 
 const ConflictResolutionModal: React.FC<ConflictResolutionModalProps> = ({

@@ -9,8 +9,8 @@ import type { TaskLock } from '../../services/programmeCollaborationService';
 
 interface TaskLockConflictModalProps {
   isOpen: boolean;
-  onClose: () => void;
   lockInfo: TaskLock;
+  onClose: () => void;
   taskName: string;
 }
 

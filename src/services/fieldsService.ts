@@ -2,14 +2,14 @@ import { persistentStorage } from './persistentStorage';
 import type { FieldConfig } from '../components/modules/ribbonTabs/FieldsDropdown';
 
 export interface FieldsState {
-  visibleFields: string[];
   fieldOrder: string[];
+  visibleFields: string[];
 }
 
 export interface FieldsResult {
-  success: boolean;
-  fields: FieldConfig[];
   errors: string[];
+  fields: FieldConfig[];
+  success: boolean;
 }
 
 export class FieldsService {
@@ -86,7 +86,7 @@ export class FieldsService {
   static async toggleField(
     fieldId: string, 
     projectId: string = 'default'
-  ): Promise<{ success: boolean; fields: FieldConfig[] }> {
+  ): Promise<{ fields: FieldConfig[], success: boolean; }> {
     try {
       const currentFields = await this.getFieldsConfig(projectId);
       const field = currentFields.find(f => f.id === fieldId);
@@ -134,7 +134,7 @@ export class FieldsService {
   /**
    * Show all fields
    */
-  static async showAllFields(projectId: string = 'default'): Promise<{ success: boolean; fields: FieldConfig[] }> {
+  static async showAllFields(projectId: string = 'default'): Promise<{ fields: FieldConfig[], success: boolean; }> {
     try {
       const currentFields = await this.getFieldsConfig(projectId);
       const updatedFields = currentFields.map(field => ({
@@ -165,7 +165,7 @@ export class FieldsService {
   /**
    * Hide all optional fields
    */
-  static async hideAllFields(projectId: string = 'default'): Promise<{ success: boolean; fields: FieldConfig[] }> {
+  static async hideAllFields(projectId: string = 'default'): Promise<{ fields: FieldConfig[], success: boolean; }> {
     try {
       const currentFields = await this.getFieldsConfig(projectId);
       const updatedFields = currentFields.map(field => ({
@@ -196,7 +196,7 @@ export class FieldsService {
   /**
    * Reset fields to default configuration
    */
-  static async resetFields(projectId: string = 'default'): Promise<{ success: boolean; fields: FieldConfig[] }> {
+  static async resetFields(projectId: string = 'default'): Promise<{ fields: FieldConfig[], success: boolean; }> {
     try {
       const success = await this.saveFieldsConfig(this.DEFAULT_FIELDS, projectId);
       
@@ -276,7 +276,7 @@ export class FieldsService {
   /**
    * Validate field configuration
    */
-  static validateFieldsConfig(fields: FieldConfig[]): { isValid: boolean; errors: string[] } {
+  static validateFieldsConfig(fields: FieldConfig[]): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Check if all required fields are present

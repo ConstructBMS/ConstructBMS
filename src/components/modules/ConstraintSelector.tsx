@@ -5,10 +5,10 @@ import { demoModeService } from '../services/demoModeService';
 import { constraintsService, TaskConstraint } from '../services/constraintsService';
 
 interface ConstraintSelectorProps {
-  taskId: string;
-  projectId: string;
-  onConstraintChange?: (constraint: TaskConstraint | null) => void;
   disabled?: boolean;
+  onConstraintChange?: (constraint: TaskConstraint | null) => void;
+  projectId: string;
+  taskId: string;
 }
 
 const ConstraintSelector: React.FC<ConstraintSelectorProps> = ({

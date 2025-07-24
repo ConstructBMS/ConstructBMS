@@ -6,8 +6,8 @@ export type PageLayout = 'A4P' | 'A4L' | 'A3L';
 
 interface PageLayoutDropdownProps {
   currentLayout: PageLayout;
-  onLayoutChange: (layout: PageLayout) => void;
   disabled?: boolean;
+  onLayoutChange: (layout: PageLayout) => void;
 }
 
 const PageLayoutDropdown: React.FC<PageLayoutDropdownProps> = ({
@@ -22,10 +22,10 @@ const PageLayoutDropdown: React.FC<PageLayoutDropdownProps> = ({
   const isDisabled = disabled || !canExport;
 
   const layoutOptions: Array<{
-    value: PageLayout;
-    label: string;
     description: string;
     dimensions: string;
+    label: string;
+    value: PageLayout;
   }> = [
     {
       value: 'A4P',

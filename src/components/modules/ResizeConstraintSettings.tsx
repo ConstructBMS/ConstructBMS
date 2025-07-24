@@ -3,9 +3,9 @@ import { CogIcon, CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24
 import { type ResizeConstraint } from '../../services/taskResizeService';
 
 interface ResizeConstraintSettingsProps {
+  className?: string;
   constraints: ResizeConstraint;
   onConstraintsChange: (constraints: ResizeConstraint) => void;
-  className?: string;
 }
 
 const ResizeConstraintSettings: React.FC<ResizeConstraintSettingsProps> = ({

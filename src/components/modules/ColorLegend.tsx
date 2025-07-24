@@ -12,8 +12,8 @@ interface ColorLegendProps {
 }
 
 interface LegendItemProps {
-  rule: TaskColorRule;
   isDemoMode: boolean;
+  rule: TaskColorRule;
 }
 
 const LegendItem: React.FC<LegendItemProps> = ({ rule, isDemoMode }) => {

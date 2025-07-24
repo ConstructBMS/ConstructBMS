@@ -5,10 +5,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type GridOptionButtonType = 'resetColumns';
 
 interface GridOptionButtonProps {
-  type: GridOptionButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: GridOptionButtonType;
 }
 
 const GridOptionButton: React.FC<GridOptionButtonProps> = ({

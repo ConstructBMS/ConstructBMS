@@ -2,15 +2,15 @@ import React from 'react';
 import StructureToolsButton from './StructureToolsButton';
 
 interface StructureSectionProps {
-  onRenumberTasks: () => void;
-  onAutoIdSettings: () => void;
-  onSetWbsPrefix: () => void;
   disabled?: boolean;
   loading?: {
-    renumber?: boolean;
     autoIdSettings?: boolean;
+    renumber?: boolean;
     wbsPrefix?: boolean;
   };
+  onAutoIdSettings: () => void;
+  onRenumberTasks: () => void;
+  onSetWbsPrefix: () => void;
 }
 
 const StructureSection: React.FC<StructureSectionProps> = ({

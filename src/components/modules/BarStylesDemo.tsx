@@ -4,17 +4,17 @@ import BarStylesManagerModal from './BarStylesManagerModal';
 import { useBarStyles } from '../../hooks/useBarStyles';
 
 interface DemoTask {
-  id: string;
-  name: string;
-  startDate: Date;
+  assignee: string;
   endDate: Date;
-  progress: number;
+  id: string;
   isCritical: boolean;
-  type: string;
+  name: string;
+  priority: string;
+  progress: number;
+  startDate: Date;
   status: string;
   tagId: string;
-  assignee: string;
-  priority: string;
+  type: string;
 }
 
 const BarStylesDemo: React.FC = () => {

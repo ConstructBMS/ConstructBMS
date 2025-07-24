@@ -3,23 +3,23 @@ import { XMarkIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface AssignedResource {
-  resourceId: string;
-  name: string;
-  type: 'labour' | 'material' | 'cost';
-  quantity: number;
-  unit: string;
-  rate: number;
-  fromDate: Date;
-  toDate: Date;
   fixedCost?: number;
+  fromDate: Date;
+  name: string;
+  quantity: number;
+  rate: number;
+  resourceId: string;
+  toDate: Date;
+  type: 'labour' | 'material' | 'cost';
+  unit: string;
 }
 
 interface SetFixedCostModalProps {
+  assignedResources: AssignedResource[];
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updates: Record<string, { fixedCost: number }>) => void;
-  assignedResources: AssignedResource[];
-  disabled?: boolean;
 }
 
 const SetFixedCostModal: React.FC<SetFixedCostModalProps> = ({

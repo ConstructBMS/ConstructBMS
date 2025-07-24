@@ -5,11 +5,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type AppearanceDropdownType = 'barHeight' | 'rowSpacing' | 'fontSize';
 
 interface AppearanceDropdownProps {
-  type: AppearanceDropdownType;
-  value: string | number;
-  onChange: (value: string | number) => void;
   disabled?: boolean;
   loading?: boolean;
+  onChange: (value: string | number) => void;
+  type: AppearanceDropdownType;
+  value: string | number;
 }
 
 const AppearanceDropdown: React.FC<AppearanceDropdownProps> = ({

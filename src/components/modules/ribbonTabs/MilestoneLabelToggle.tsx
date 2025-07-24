@@ -3,9 +3,9 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface MilestoneLabelToggleProps {
-  showLabels: boolean;
-  onToggleLabels: () => void;
   disabled?: boolean;
+  onToggleLabels: () => void;
+  showLabels: boolean;
 }
 
 const MilestoneLabelToggle: React.FC<MilestoneLabelToggleProps> = ({

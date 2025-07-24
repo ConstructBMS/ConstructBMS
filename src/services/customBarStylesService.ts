@@ -1,40 +1,40 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface BarStyle {
+  border: string;
+  demo?: boolean;
+  fill: string;
   id: string;
   name: string;
-  fill: string;
-  border: string;
   pattern: 'solid' | 'dashed' | 'dotted' | 'gradient';
   projectId: string;
   userId: string;
-  demo?: boolean;
 }
 
 export interface StyleRule {
+  demo?: boolean;
+  field: string;
   id: string;
   name: string;
-  field: string;
   operator: 'equals' | 'contains' | 'starts_with' | 'ends_with' | 'greater_than' | 'less_than';
-  value: string;
-  styleId: string;
   priority: number;
   projectId: string;
+  styleId: string;
   userId: string;
-  demo?: boolean;
+  value: string;
 }
 
 export interface CustomBarStylesSettings {
-  enabled: boolean;
   defaultStyle: string;
   demo?: boolean;
+  enabled: boolean;
 }
 
 export interface CustomBarStylesConfig {
-  enabled: boolean;
-  maxStyles: number;
-  maxRules: number;
   demo?: boolean;
+  enabled: boolean;
+  maxRules: number;
+  maxStyles: number;
 }
 
 // Default ConstructBMS custom bar styles settings
@@ -467,7 +467,7 @@ class CustomBarStylesService {
   /**
    * Validate bar style
    */
-  validateBarStyle(style: BarStyle): { isValid: boolean; errors: string[] } {
+  validateBarStyle(style: BarStyle): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate name
@@ -498,7 +498,7 @@ class CustomBarStylesService {
   /**
    * Validate style rule
    */
-  validateStyleRule(rule: StyleRule): { isValid: boolean; errors: string[] } {
+  validateStyleRule(rule: StyleRule): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate name

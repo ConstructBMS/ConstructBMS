@@ -3,58 +3,61 @@ import { demoModeService } from './demoModeService';
 import { taskCommentsService } from './taskCommentsService';
 
 export interface Task {
+  // null = root level
+  collapsed?: boolean;
+  createdAt: Date;
+  // optional: highlight bar background
+  demo?: boolean;
+  description?: string;
+  endDate: Date;
+  // whether child tasks are hidden
+  groupColor?: string | null;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
-  statusId: string;
-  tags: string[];
-  type: 'task' | 'milestone' | 'phase' | 'summary';
-  description?: string;
+  parentId?: string | null;
   projectId: string;
+  startDate: Date;      
+  statusId: string;           
+  tags: string[];    
   userId: string;
-  parentId?: string | null;      // null = root level
-  collapsed?: boolean;           // whether child tasks are hidden
-  groupColor?: string | null;    // optional: highlight bar background
-  demo?: boolean;
-  createdAt: Date;
+  type: 'task' | 'milestone' | 'phase' | 'summary';
   updatedAt: Date;
 }
 
 export interface TaskCustomField {
-  taskId: string;
-  fieldId: string;
-  value: any;
   demo?: boolean;
+  fieldId: string;
+  taskId: string;
+  value: any;
 }
 
 export interface CreateTaskData {
-  name: string;
-  startDate: Date;
+  collapsed?: boolean;
+  demo?: boolean;
+  description?: string;
   endDate: Date;
+  groupColor?: string | null;
+  name: string;
+  parentId?: string | null;
+  projectId: string;
+  startDate: Date;
   statusId: string;
   tags: string[];
   type: 'task' | 'milestone' | 'phase' | 'summary';
-  description?: string;
-  projectId: string;
-  parentId?: string | null;
-  collapsed?: boolean;
-  groupColor?: string | null;
-  demo?: boolean;
 }
 
 export interface UpdateTaskData {
-  name?: string;
-  startDate?: Date;
+  collapsed?: boolean;
+  demo?: boolean;
+  description?: string;
   endDate?: Date;
+  groupColor?: string | null;
+  name?: string;
+  parentId?: string | null;
+  startDate?: Date;
   statusId?: string;
   tags?: string[];
   type?: 'task' | 'milestone' | 'phase' | 'summary';
-  description?: string;
-  parentId?: string | null;
-  collapsed?: boolean;
-  groupColor?: string | null;
-  demo?: boolean;
 }
 
 class TaskService {
@@ -517,7 +520,7 @@ class TaskService {
   /**
    * Calculate group duration span for parent task
    */
-  async calculateGroupDuration(parentId: string): Promise<{ startDate: Date | null; endDate: Date | null; duration: number }> {
+  async calculateGroupDuration(parentId: string): Promise<{ duration: number, endDate: Date | null; startDate: Date | null; }> {
     try {
       const children = await this.getChildTasks(parentId);
       if (children.length === 0) {
@@ -571,7 +574,7 @@ class TaskService {
   /**
    * Validate task data
    */
-  validateTaskData(taskData: CreateTaskData | UpdateTaskData): { isValid: boolean; errors: string[] } {
+  validateTaskData(taskData: CreateTaskData | UpdateTaskData): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     if ('name' in taskData && (!taskData.name || taskData.name.trim() === '')) {

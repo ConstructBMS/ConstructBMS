@@ -35,6 +35,8 @@ export interface AdvancedGanttTask {
     start?: Date;
   };
   assignee: string;
+  // 0-100 for progress tracking
+  autoProgress?: boolean;
   baseline?: {
     duration: number;
     end: Date;
@@ -53,13 +55,13 @@ export interface AdvancedGanttTask {
   cost: number;
   criticalPath: boolean;
   customFields?: Record<string, any>;
+  // true = auto-calculate from children
+  demoMode?: boolean;
   dependencies?: Array<{
     id: string;
     lag?: number;
     type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   }>;
-  duration: number;
-  earlyFinish: Date;
   earlyStart: Date;
   end: Date;
   expanded: boolean;
@@ -76,27 +78,36 @@ export interface AdvancedGanttTask {
   priority: 'low' | 'medium' | 'high' | 'critical';
   progress: number;
   // Progress tracking fields
-  percentComplete?: number; // 0-100 for progress tracking
-  autoProgress?: boolean; // true = auto-calculate from children
-  demoMode?: boolean; // true if updated in demo mode
-  updatedBy?: string; // User who last updated progress
-  updatedAt?: Date; // When progress was last updated
+  duration: number; // true if updated in demo mode
+  earlyFinish: Date; 
+  level?: number;
+  lateFinish: Date;
+  lateStart: Date;
+  milestoneDate?: Date;
+  name: string;
+  notes?: string;
+  parentId: string | null;
+  pattern?: 'solid' | 'dashed' | 'dotted';
+  percentComplete?: number; 
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  progress: number;
+  // Task resize fields
+  isResizable?: boolean; // When progress was last updated
   // Drag reschedule fields
   isDraggable?: boolean; // true if task can be dragged
   dragConstraints?: {
-    minStart?: Date;
-    maxEnd?: Date;
     locked?: boolean;
+    maxEnd?: Date;
+    minStart?: Date;
   };
-  // Task resize fields
-  isResizable?: boolean; // true if task can be resized
+  // true if task can be resized
   resizeConstraints?: {
-    minDuration?: number;
-    maxDuration?: number;
-    allowStartResize?: boolean;
     allowEndResize?: boolean;
-  };
-  milestoneDate?: Date; // For milestones only
+    allowStartResize?: boolean;
+    maxDuration?: number;
+    minDuration?: number;
+  }; 
+  // For milestones only
   resourceId?: string;
   resources?: Array<{
     cost?: number;
@@ -104,13 +115,16 @@ export interface AdvancedGanttTask {
     name: string;
     type: 'work' | 'material' | 'cost';
     units: number;
-  }>;
+  }>; 
   showActuals?: boolean;
   showBaseline?: boolean;
   start: Date;
   status: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
   totalFloat: number;
   type: 'summary' | 'task' | 'milestone' | 'phase';
+  // User who last updated progress
+  updatedAt?: Date;
+  updatedBy?: string; 
   wbsId: string;
   work: number;
 }

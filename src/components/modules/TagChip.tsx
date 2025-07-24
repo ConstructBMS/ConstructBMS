@@ -3,11 +3,11 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ProjectTag } from '../services/taskTagsService';
 
 interface TagChipProps {
-  tag: ProjectTag;
+  disabled?: boolean;
+  isDemoMode?: boolean;
   onRemove?: (tagId: string) => void;
   showRemoveButton?: boolean;
-  isDemoMode?: boolean;
-  disabled?: boolean;
+  tag: ProjectTag;
 }
 
 const TagChip: React.FC<TagChipProps> = ({

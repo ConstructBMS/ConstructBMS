@@ -3,51 +3,56 @@ import { demoModeService } from './demoModeService';
 
 // Types for working calendars
 export interface ProgrammeCalendar {
-  id: string;
-  projectId: string;
-  name: string;
-  workdays: string[]; // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-  shiftStart: string; // e.g. '08:00'
-  shiftEnd: string; // e.g. '16:00'
-  useGlobalHolidays: boolean;
-  createdBy?: string;
   createdAt: Date;
-  updatedAt: Date;
+  createdBy?: string;
   demo?: boolean;
+  id: string; 
+  name: string; 
+  projectId: string; 
+  // e.g. '08:00'
+  shiftEnd: string;
+  // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+  shiftStart: string;
+  updatedAt: Date;
+  // e.g. '16:00'
+  useGlobalHolidays: boolean;
+  workdays: string[];
 }
 
 export interface CalendarException {
-  id: string;
   calendarId: string;
-  date: string; // YYYY-MM-DD format
-  type: 'non-working' | 'custom-shift';
-  customShiftStart?: string;
-  customShiftEnd?: string;
-  description?: string;
-  createdBy?: string;
   createdAt: Date;
+  createdBy?: string; 
+  customShiftEnd?: string;
+  customShiftStart?: string;
+  date: string;
   demo?: boolean;
+  description?: string;
+  id: string;
+  // YYYY-MM-DD format
+  type: 'non-working' | 'custom-shift';
 }
 
 export interface GlobalHoliday {
-  id: string;
-  name: string;
-  date: string; // YYYY-MM-DD format
+  // YYYY-MM-DD format
   country: string;
-  isActive: boolean;
   createdAt: Date;
+  date: string; 
+  id: string;
+  isActive: boolean;
+  name: string;
   updatedAt: Date;
 }
 
 export interface WorkingTime {
-  start: string;
-  end: string;
-  isWorkingDay: boolean;
-  isHoliday: boolean;
-  isCustomShift: boolean;
-  customShiftStart?: string;
   customShiftEnd?: string;
+  customShiftStart?: string;
   description?: string;
+  end: string;
+  isCustomShift: boolean;
+  isHoliday: boolean;
+  isWorkingDay: boolean;
+  start: string;
 }
 
 // Demo mode configuration
@@ -158,7 +163,7 @@ class ProgrammeWorkingCalendarService {
   /**
    * Save calendar
    */
-  async saveCalendar(calendar: Omit<ProgrammeCalendar, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ success: boolean; calendar?: ProgrammeCalendar; error?: string }> {
+  async saveCalendar(calendar: Omit<ProgrammeCalendar, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ calendar?: ProgrammeCalendar; error?: string, success: boolean; }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
@@ -247,7 +252,7 @@ class ProgrammeWorkingCalendarService {
   /**
    * Add calendar exception
    */
-  async addCalendarException(exception: Omit<CalendarException, 'id' | 'createdAt'>): Promise<{ success: boolean; exception?: CalendarException; error?: string }> {
+  async addCalendarException(exception: Omit<CalendarException, 'id' | 'createdAt'>): Promise<{ error?: string, exception?: CalendarException; success: boolean; }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
@@ -302,7 +307,7 @@ class ProgrammeWorkingCalendarService {
   /**
    * Remove calendar exception
    */
-  async removeCalendarException(exceptionId: string): Promise<{ success: boolean; error?: string }> {
+  async removeCalendarException(exceptionId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const { error } = await supabase
         .from('programme_calendar_exceptions')

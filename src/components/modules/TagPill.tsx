@@ -2,12 +2,12 @@ import React from 'react';
 import { taskTagsService, type ProgrammeTag } from '../../services/taskTagsService';
 
 interface TagPillProps {
-  tag: ProgrammeTag;
-  size?: 'sm' | 'md' | 'lg';
-  showLabel?: boolean;
   className?: string;
-  onClick?: () => void;
   disabled?: boolean;
+  onClick?: () => void;
+  showLabel?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  tag: ProgrammeTag;
 }
 
 const TagPill: React.FC<TagPillProps> = ({

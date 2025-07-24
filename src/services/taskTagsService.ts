@@ -2,27 +2,27 @@ import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
 
 export interface ProgrammeTag {
-  id: string;
-  label: string;
   color: string;
-  createdBy?: string;
-  isGlobal: boolean;
-  projectId?: string;
-  demo?: boolean;
   createdAt: Date;
+  createdBy?: string;
+  demo?: boolean;
+  id: string;
+  isGlobal: boolean;
+  label: string;
+  projectId?: string;
   updatedAt: Date;
 }
 
 export interface CreateTagData {
-  label: string;
   color: string;
-  projectId: string;
   isGlobal?: boolean;
+  label: string;
+  projectId: string;
 }
 
 export interface UpdateTagData {
-  label?: string;
   color?: string;
+  label?: string;
 }
 
 class TaskTagsService {

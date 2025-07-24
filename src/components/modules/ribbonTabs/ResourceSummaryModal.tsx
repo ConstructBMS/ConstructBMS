@@ -3,29 +3,29 @@ import { XMarkIcon, UsersIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ResourceSummary {
+  peakUsage: number;
   resourceId: string;
   resourceName: string;
-  type: string;
-  tasksAssigned: number;
-  totalQuantity: number;
-  totalCost: number;
-  peakUsage: number;
   tasks: Array<{
+    cost: number;
+    quantity: number;
+    rate: number;
     taskId: string;
     taskName: string;
-    quantity: number;
     unit: string;
-    rate: number;
-    cost: number;
   }>;
+  tasksAssigned: number;
+  totalCost: number;
+  totalQuantity: number;
+  type: string;
 }
 
 interface ResourceSummaryModalProps {
+  assignedResources: Record<string, any[]>;
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
-  assignedResources: Record<string, any[]>;
   tasks: any[];
-  disabled?: boolean;
 }
 
 const ResourceSummaryModal: React.FC<ResourceSummaryModalProps> = ({

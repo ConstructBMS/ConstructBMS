@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type SummaryButtonType = 'task' | 'resource';
 
 interface SummaryButtonProps {
-  type: SummaryButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: SummaryButtonType;
 }
 
 const SummaryButton: React.FC<SummaryButtonProps> = ({

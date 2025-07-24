@@ -3,15 +3,15 @@ import { persistentStorage } from './persistentStorage';
 export type CriticalPathColorOption = 'red' | 'orange' | 'purple';
 
 export interface CriticalPathHighlightingSettings {
-  showCriticalPath: boolean;
   criticalPathColor: CriticalPathColorOption;
   demo?: boolean;
+  showCriticalPath: boolean;
 }
 
 export interface CriticalPathHighlightingConfig {
-  enabled: boolean;
   autoApply: boolean;
   demo?: boolean;
+  enabled: boolean;
 }
 
 // Default ConstructBMS critical path highlighting settings
@@ -240,7 +240,7 @@ class CriticalPathHighlightingService {
   /**
    * Validate critical path highlighting settings
    */
-  validateCriticalPathHighlightingSettings(settings: CriticalPathHighlightingSettings): { isValid: boolean; errors: string[] } {
+  validateCriticalPathHighlightingSettings(settings: CriticalPathHighlightingSettings): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate show critical path

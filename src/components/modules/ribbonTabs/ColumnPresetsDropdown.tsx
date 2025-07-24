@@ -5,20 +5,20 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ColumnPresetType = 'default' | 'compact' | 'data-entry' | 'custom';
 
 export interface ColumnPreset {
+  columns: string[];
+  description: string;
   id: string;
   name: string;
   type: ColumnPresetType;
-  description: string;
-  columns: string[];
 }
 
 interface ColumnPresetsDropdownProps {
   currentPreset: string;
-  presets: ColumnPreset[];
-  onPresetChange: (presetId: string) => void;
-  onSavePreset?: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onPresetChange: (presetId: string) => void;
+  onSavePreset?: () => void;
+  presets: ColumnPreset[];
 }
 
 const ColumnPresetsDropdown: React.FC<ColumnPresetsDropdownProps> = ({

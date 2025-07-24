@@ -1,25 +1,25 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface TaskIfcLink {
+  autoMatched: boolean;
+  createdAt: Date;
+  demo?: boolean;
+  endDate: Date;
   id: string;
-  taskId: string;
-  taskName: string;
   ifcElementId: string;
   ifcElementName: string;
   ifcElementType: string;
-  startDate: Date;
-  endDate: Date;
   linkStatus: 'active' | 'broken';
-  autoMatched: boolean;
   projectId: string;
-  createdAt: Date;
-  demo?: boolean;
+  startDate: Date;
+  taskId: string;
+  taskName: string;
 }
 
 export interface TaskModelLinkConfig {
-  maxLinksPerPage: number;
-  enableAutoValidation: boolean;
   demo?: boolean;
+  enableAutoValidation: boolean;
+  maxLinksPerPage: number;
 }
 
 class TaskModelLinkService {
@@ -256,11 +256,11 @@ class TaskModelLinkService {
    * Get link statistics
    */
   async getLinkStatistics(projectId: string): Promise<{
-    total: number;
     active: number;
-    broken: number;
     autoMatched: number;
+    broken: number;
     manualMatched: number;
+    total: number;
   }> {
     try {
       const links = await this.getTaskIfcLinks(projectId);

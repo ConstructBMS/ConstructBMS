@@ -3,21 +3,21 @@ import { XMarkIcon, CalendarIcon, TagIcon, SwatchIcon } from '@heroicons/react/2
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface CustomDateMarker {
-  id: string;
-  date: Date;
-  label: string;
   color: string;
+  date: Date;
+  demo?: boolean;
+  id: string;
+  label: string;
   projectId: string;
   userId: string;
-  demo?: boolean;
 }
 
 interface CustomDateMarkerModalProps {
   isOpen: boolean;
+  loading?: boolean;
   onClose: () => void;
   onSave: (marker: Omit<CustomDateMarker, 'id' | 'userId'>) => void;
   projectId: string;
-  loading?: boolean;
 }
 
 const CustomDateMarkerModal: React.FC<CustomDateMarkerModalProps> = ({

@@ -2,13 +2,13 @@ import { supabase } from './supabase';
 
 // Filter interfaces
 export interface FilterCriteria {
-  id: string;
-  type: 'status' | 'tag' | 'role' | 'phase' | 'custom';
-  field: string;
-  operator: 'equals' | 'contains' | 'in' | 'not_in' | 'is_null' | 'is_not_null';
-  value: any;
-  label: string;
   displayValue: string;
+  field: string;
+  id: string;
+  label: string;
+  operator: 'equals' | 'contains' | 'in' | 'not_in' | 'is_null' | 'is_not_null';
+  type: 'status' | 'tag' | 'role' | 'phase' | 'custom';
+  value: any;
 }
 
 export interface FilterState {
@@ -18,19 +18,19 @@ export interface FilterState {
 }
 
 export interface FilterOptions {
-  statuses: Array<{ value: string; label: string; count: number }>;
-  tags: Array<{ value: string; label: string; count: number }>;
-  roles: Array<{ value: string; label: string; count: number }>;
-  phases: Array<{ value: string; label: string; count: number; level: number }>;
-  customFields: Array<{ field: string; label: string; type: string; options?: string[] }>;
+  customFields: Array<{ field: string; label: string; options?: string[], type: string; }>;
+  phases: Array<{ count: number; label: string; level: number, value: string; }>;
+  roles: Array<{ count: number, label: string; value: string; }>;
+  statuses: Array<{ count: number, label: string; value: string; }>;
+  tags: Array<{ count: number, label: string; value: string; }>;
 }
 
 export interface FilterPreferences {
-  userId: string;
-  projectId: string;
-  filters: FilterCriteria[];
   demo: boolean;
+  filters: FilterCriteria[];
   lastUsed: Date;
+  projectId: string;
+  userId: string;
 }
 
 // Demo mode configuration

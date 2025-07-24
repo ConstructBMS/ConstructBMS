@@ -2,11 +2,11 @@ import React from 'react';
 import ProgrammeUndoRedoButtons from './ProgrammeUndoRedoButtons';
 
 interface UndoRedoGroupProps {
-  onUndo?: () => void;
-  onRedo?: () => void;
-  canUndo?: boolean;
   canRedo?: boolean;
+  canUndo?: boolean;
   disabled?: boolean;
+  onRedo?: () => void;
+  onUndo?: () => void;
   projectId?: string;
 }
 

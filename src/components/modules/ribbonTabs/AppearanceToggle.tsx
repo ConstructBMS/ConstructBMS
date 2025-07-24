@@ -5,11 +5,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type AppearanceToggleType = 'shadeWeekends';
 
 interface AppearanceToggleProps {
-  type: AppearanceToggleType;
-  isActive: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: AppearanceToggleType;
 }
 
 const AppearanceToggle: React.FC<AppearanceToggleProps> = ({

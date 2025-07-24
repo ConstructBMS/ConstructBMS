@@ -3,9 +3,9 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface CriticalPathToggleProps {
+  disabled?: boolean;
   isEnabled: boolean;
   onToggle: () => void;
-  disabled?: boolean;
 }
 
 const CriticalPathToggle: React.FC<CriticalPathToggleProps> = ({

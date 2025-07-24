@@ -6,17 +6,17 @@ import TimeScaleDropdown from './TimeScaleDropdown';
 export type TimeScaleOption = 'hourly' | 'daily' | 'weekly' | 'monthly' | 'quarterly';
 
 interface GanttZoomScaleSectionProps {
-  zoomLevel: number;
+  disabled?: boolean;
+  loading?: {
+    timeScale?: boolean;
+    zoomIn?: boolean;
+    zoomOut?: boolean;
+  };
+  onTimeScaleChange: (scale: TimeScaleOption) => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   timeScale: TimeScaleOption;
-  onTimeScaleChange: (scale: TimeScaleOption) => void;
-  disabled?: boolean;
-  loading?: {
-    zoomIn?: boolean;
-    zoomOut?: boolean;
-    timeScale?: boolean;
-  };
+  zoomLevel: number;
 }
 
 const GanttZoomScaleSection: React.FC<GanttZoomScaleSectionProps> = ({

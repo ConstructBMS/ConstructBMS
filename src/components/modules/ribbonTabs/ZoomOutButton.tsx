@@ -3,9 +3,9 @@ import { MinusIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ZoomOutButtonProps {
-  onZoomOut: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onZoomOut: () => void;
 }
 
 const ZoomOutButton: React.FC<ZoomOutButtonProps> = ({

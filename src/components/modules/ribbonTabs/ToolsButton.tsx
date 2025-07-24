@@ -6,10 +6,10 @@ import {
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ToolsButtonProps {
-  type: 'reschedule' | 'progress';
   disabled?: boolean;
-  onClick: () => void;
   isActive?: boolean;
+  onClick: () => void;
+  type: 'reschedule' | 'progress';
 }
 
 const ToolsButton: React.FC<ToolsButtonProps> = ({

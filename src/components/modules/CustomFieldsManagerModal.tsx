@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusIcon, PencilIcon, TrashIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { programmeCustomFieldsService, ProgrammeCustomField } from '../services/programmeCustomFieldsService';
 
@@ -11,12 +11,12 @@ interface CustomFieldsManagerModalProps {
 }
 
 interface CustomFieldFormData {
-  label: string;
-  type: 'text' | 'number' | 'date' | 'dropdown';
-  options: string[];
   isRequired: boolean;
   isVisibleInGrid: boolean;
   isVisibleInModal: boolean;
+  label: string;
+  options: string[];
+  type: 'text' | 'number' | 'date' | 'dropdown';
 }
 
 const CustomFieldsManagerModal: React.FC<CustomFieldsManagerModalProps> = ({

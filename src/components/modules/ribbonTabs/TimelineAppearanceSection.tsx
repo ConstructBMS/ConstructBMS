@@ -8,22 +8,22 @@ export type RowHeightOption = 'small' | 'medium' | 'large';
 export type BackgroundColorOption = 'light' | 'dark' | 'system' | 'custom';
 
 interface TimelineAppearanceSectionProps {
-  rowHeight: RowHeightOption;
-  onRowHeightChange: (height: RowHeightOption) => void;
-  showGridLines: boolean;
-  onGridLinesToggle: () => void;
-  showWeekendShading: boolean;
-  onWeekendShadingToggle: () => void;
   backgroundColor: BackgroundColorOption;
   customBackgroundColor?: string;
-  onBackgroundColorChange: (color: BackgroundColorOption, customColor?: string) => void;
   disabled?: boolean;
   loading?: {
-    rowHeight?: boolean;
-    gridLines?: boolean;
-    weekendShading?: boolean;
     backgroundColor?: boolean;
+    gridLines?: boolean;
+    rowHeight?: boolean;
+    weekendShading?: boolean;
   };
+  onBackgroundColorChange: (color: BackgroundColorOption, customColor?: string) => void;
+  onGridLinesToggle: () => void;
+  onRowHeightChange: (height: RowHeightOption) => void;
+  onWeekendShadingToggle: () => void;
+  rowHeight: RowHeightOption;
+  showGridLines: boolean;
+  showWeekendShading: boolean;
 }
 
 const TimelineAppearanceSection: React.FC<TimelineAppearanceSectionProps> = ({

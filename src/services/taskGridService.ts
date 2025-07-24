@@ -3,32 +3,32 @@ import { demoModeService } from './demoModeService';
 import { taskService } from './taskService';
 
 export interface TaskGridState {
-  projectId: string;
-  expandedTaskIds: string[];
   columnOrder: string[];
   columnWidths: Record<string, number>;
+  demo?: boolean;
+  expandedTaskIds: string[];
+  projectId: string;
   sortColumn?: string;
   sortDirection?: 'asc' | 'desc';
   userId: string;
-  demo?: boolean;
 }
 
 export interface TaskHierarchy {
-  id: string;
-  name: string;
-  level: number;
-  parentTaskId?: string;
   children: TaskHierarchy[];
   expanded: boolean;
+  id: string;
+  level: number;
+  name: string;
+  parentTaskId?: string;
 }
 
 export interface GridColumn {
+  editable: boolean;
   id: string;
   label: string;
-  width: number;
-  editable: boolean;
   sortable: boolean;
   visible: boolean;
+  width: number;
 }
 
 class TaskGridService {
@@ -91,7 +91,7 @@ class TaskGridService {
   /**
    * Update grid state
    */
-  async updateGridState(projectId: string, updates: Partial<TaskGridState>): Promise<{ success: boolean; error?: string }> {
+  async updateGridState(projectId: string, updates: Partial<TaskGridState>): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       const allStates = await this.getAllGridStates();
@@ -127,7 +127,7 @@ class TaskGridService {
   /**
    * Toggle task expansion
    */
-  async toggleTaskExpansion(projectId: string, taskId: string): Promise<{ success: boolean; error?: string }> {
+  async toggleTaskExpansion(projectId: string, taskId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       const state = await this.getGridState(projectId);
       const isDemoMode = await demoModeService.isDemoMode();
@@ -157,7 +157,7 @@ class TaskGridService {
   /**
    * Expand all tasks
    */
-  async expandAllTasks(projectId: string, taskIds: string[]): Promise<{ success: boolean; error?: string }> {
+  async expandAllTasks(projectId: string, taskIds: string[]): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -178,7 +178,7 @@ class TaskGridService {
   /**
    * Collapse all tasks
    */
-  async collapseAllTasks(projectId: string): Promise<{ success: boolean; error?: string }> {
+  async collapseAllTasks(projectId: string): Promise<{ error?: string, success: boolean; }> {
     try {
       return await this.updateGridState(projectId, { expandedTaskIds: [] });
     } catch (error) {
@@ -261,7 +261,7 @@ class TaskGridService {
   /**
    * Update column order
    */
-  async updateColumnOrder(projectId: string, columnOrder: string[]): Promise<{ success: boolean; error?: string }> {
+  async updateColumnOrder(projectId: string, columnOrder: string[]): Promise<{ error?: string, success: boolean; }> {
     try {
       const isDemoMode = await demoModeService.isDemoMode();
       
@@ -279,7 +279,7 @@ class TaskGridService {
   /**
    * Update column width
    */
-  async updateColumnWidth(projectId: string, columnId: string, width: number): Promise<{ success: boolean; error?: string }> {
+  async updateColumnWidth(projectId: string, columnId: string, width: number): Promise<{ error?: string, success: boolean; }> {
     try {
       const state = await this.getGridState(projectId);
       const newColumnWidths = { ...state.columnWidths, [columnId]: width };
@@ -294,7 +294,7 @@ class TaskGridService {
   /**
    * Update sort settings
    */
-  async updateSortSettings(projectId: string, sortColumn?: string, sortDirection?: 'asc' | 'desc'): Promise<{ success: boolean; error?: string }> {
+  async updateSortSettings(projectId: string, sortColumn?: string, sortDirection?: 'asc' | 'desc'): Promise<{ error?: string, success: boolean; }> {
     try {
       return await this.updateGridState(projectId, { sortColumn, sortDirection });
     } catch (error) {

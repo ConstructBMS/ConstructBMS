@@ -3,9 +3,9 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ToggleTaskLabelsProps {
+  disabled?: boolean;
   isVisible: boolean;
   onToggle: () => void;
-  disabled?: boolean;
 }
 
 const ToggleTaskLabels: React.FC<ToggleTaskLabelsProps> = ({

@@ -3,19 +3,19 @@ import { XMarkIcon, QrCodeIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface WbsPrefixSettings {
-  prefix: string;
-  scope: 'project' | 'selected';
   applyToExisting: boolean;
   demo?: boolean;
+  prefix: string;
+  scope: 'project' | 'selected';
 }
 
 interface SetWbsPrefixModalProps {
+  currentPrefix?: string;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (settings: WbsPrefixSettings) => void;
-  currentPrefix?: string;
   selectedTasksCount?: number;
-  isDemoMode?: boolean;
 }
 
 const SetWbsPrefixModal: React.FC<SetWbsPrefixModalProps> = ({

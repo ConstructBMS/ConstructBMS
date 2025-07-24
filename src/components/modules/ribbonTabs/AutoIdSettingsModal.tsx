@@ -3,20 +3,20 @@ import { XMarkIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface TaskIdSettings {
-  startingNumber: number;
-  numberPadding: number;
-  idFormat: 'prefix' | 'wbs' | 'mixed';
   applyOnNewTask: boolean;
-  prefix?: string;
   demo?: boolean;
+  idFormat: 'prefix' | 'wbs' | 'mixed';
+  numberPadding: number;
+  prefix?: string;
+  startingNumber: number;
 }
 
 interface AutoIdSettingsModalProps {
+  currentSettings?: TaskIdSettings;
+  isDemoMode?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (settings: TaskIdSettings) => void;
-  currentSettings?: TaskIdSettings;
-  isDemoMode?: boolean;
 }
 
 const AutoIdSettingsModal: React.FC<AutoIdSettingsModalProps> = ({

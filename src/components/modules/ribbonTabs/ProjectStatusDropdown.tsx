@@ -5,18 +5,18 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ProjectStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancelled';
 
 export interface ProjectStatusOption {
-  value: ProjectStatus;
-  label: string;
-  color: string;
   bgColor: string;
   borderColor: string;
+  color: string;
+  label: string;
+  value: ProjectStatus;
 }
 
 interface ProjectStatusDropdownProps {
   currentStatus: ProjectStatus;
-  onStatusChange: (status: ProjectStatus) => void;
   disabled?: boolean;
   loading?: boolean;
+  onStatusChange: (status: ProjectStatus) => void;
 }
 
 const ProjectStatusDropdown: React.FC<ProjectStatusDropdownProps> = ({

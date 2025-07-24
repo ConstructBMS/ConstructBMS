@@ -8,12 +8,12 @@ import {
 import { programmeTaskFlagsService, type ProgrammeTaskFlag } from '../../services/programmeTaskFlagsService';
 
 interface TaskFlagIndicatorProps {
-  taskId: string;
-  projectId: string;
+  className?: string;
   isDemoMode: boolean;
+  projectId: string;
   showTooltip?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  className?: string;
+  taskId: string;
 }
 
 const TaskFlagIndicator: React.FC<TaskFlagIndicatorProps> = ({

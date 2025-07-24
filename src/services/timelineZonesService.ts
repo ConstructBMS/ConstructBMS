@@ -1,19 +1,19 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface TimelineZone {
+  color: string;
+  demo?: boolean;
+  endDate: string;
   id: string;
   name: string;
   startDate: string;
-  endDate: string;
-  color: string;
   tag?: string;
-  demo?: boolean;
 }
 
 export interface TimelineZonesConfig {
+  demo?: boolean;
   enabled: boolean;
   maxZones: number;
-  demo?: boolean;
 }
 
 // Default ConstructBMS timeline zones configuration
@@ -254,7 +254,7 @@ class TimelineZonesService {
   /**
    * Validate timeline zone
    */
-  validateTimelineZone(zone: Omit<TimelineZone, 'id'>): { isValid: boolean; errors: string[] } {
+  validateTimelineZone(zone: Omit<TimelineZone, 'id'>): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     // Validate name

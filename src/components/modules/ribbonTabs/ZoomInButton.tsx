@@ -3,9 +3,9 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ZoomInButtonProps {
-  onZoomIn: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onZoomIn: () => void;
 }
 
 const ZoomInButton: React.FC<ZoomInButtonProps> = ({

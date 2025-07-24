@@ -7,8 +7,8 @@ export type BackgroundColorOption = 'light' | 'dark' | 'system' | 'custom';
 interface BackgroundColorPickerProps {
   currentColor: BackgroundColorOption;
   customColor?: string;
-  onColorChange: (color: BackgroundColorOption, customColor?: string) => void;
   disabled?: boolean;
+  onColorChange: (color: BackgroundColorOption, customColor?: string) => void;
 }
 
 const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
@@ -25,11 +25,11 @@ const BackgroundColorPicker: React.FC<BackgroundColorPickerProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const colorOptions: Array<{
-    value: BackgroundColorOption;
-    label: string;
-    description: string;
     color: string;
+    description: string;
+    label: string;
     preview: string;
+    value: BackgroundColorOption;
   }> = [
     {
       value: 'light',

@@ -2,41 +2,41 @@ import { persistentStorage } from './persistentStorage';
 import type { ValidationIssue } from '../components/modules/ribbonTabs/ValidationResultsModal';
 
 export interface Task {
-  id: string;
-  name: string;
-  startDate?: string;
-  endDate?: string;
-  duration?: number;
-  predecessors?: string[];
-  successors?: string[];
-  constraintType?: string;
-  constraintDate?: string;
-  slack?: {
-    total: number;
-    free: number;
-  };
   assignedResource?: string;
+  constraintDate?: string;
+  constraintType?: string;
+  demo?: boolean;
+  duration?: number;
+  endDate?: string;
+  id: string;
   isSummary?: boolean;
   level?: number;
-  demo?: boolean;
+  name: string;
+  predecessors?: string[];
+  startDate?: string;
+  slack?: {
+    free: number;
+    total: number;
+  };
+  successors?: string[];
 }
 
 export interface SlackCalculationResult {
+  errors: string[];
   success: boolean;
   tasks: Task[];
-  errors: string[];
 }
 
 export interface ConstraintClearResult {
+  errors: string[];
   success: boolean;
   tasksCleared: number;
-  errors: string[];
 }
 
 export interface ValidationResult {
-  success: boolean;
-  issues: ValidationIssue[];
   errors: string[];
+  issues: ValidationIssue[];
+  success: boolean;
 }
 
 export class SecondaryToolsService {
@@ -184,7 +184,7 @@ export class SecondaryToolsService {
   static async autoFixIssues(
     issueIds: string[], 
     projectId: string = 'default'
-  ): Promise<{ success: boolean; fixedCount: number; errors: string[] }> {
+  ): Promise<{ errors: string[], fixedCount: number; success: boolean; }> {
     try {
       const tasks = await this.getTasks(projectId);
       const updatedTasks = [...tasks];
@@ -251,7 +251,7 @@ export class SecondaryToolsService {
   /**
    * Calculate slack for a single task
    */
-  private static calculateTaskSlack(task: Task, allTasks: Task[]): { total: number; free: number } {
+  private static calculateTaskSlack(task: Task, allTasks: Task[]): { free: number, total: number; } {
     // Simple slack calculation (in a real implementation, this would be more complex)
     const totalSlack = Math.max(0, (task.duration || 0) * 0.2); // 20% of duration as total slack
     const freeSlack = Math.max(0, totalSlack * 0.5); // 50% of total slack as free slack

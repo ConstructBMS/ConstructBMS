@@ -11,9 +11,9 @@ import { multiProjectService, type ProjectInfo } from '../../services/multiProje
 import { toastService } from './ToastNotification';
 
 interface MultiProjectControlsProps {
+  className?: string;
   onModeChange?: (mode: 'single' | 'multi') => void;
   onProjectChange?: () => void;
-  className?: string;
 }
 
 const MultiProjectControls: React.FC<MultiProjectControlsProps> = ({

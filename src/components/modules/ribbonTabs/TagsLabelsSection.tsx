@@ -3,14 +3,14 @@ import { TagIcon, SwatchIcon, ChevronDownIcon } from '@heroicons/react/24/outlin
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TagsLabelsSectionProps {
-  onOpenManageTags: () => void;
-  onColorPaletteChange: (color: string) => void;
   currentColorPalette: string;
   disabled?: boolean;
   loading?: {
     manage?: boolean;
     palette?: boolean;
   };
+  onColorPaletteChange: (color: string) => void;
+  onOpenManageTags: () => void;
 }
 
 const TagsLabelsSection: React.FC<TagsLabelsSectionProps> = ({

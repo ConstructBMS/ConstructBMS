@@ -2,32 +2,32 @@ import { persistentStorage } from './persistentStorage';
 import { demoDataService } from './demoDataService';
 
 export interface ResourceUsageConfig {
-  visible: boolean;
-  groupBy: 'type' | 'task';
   demo?: boolean;
+  groupBy: 'type' | 'task';
+  visible: boolean;
 }
 
 export interface ResourceUsageData {
+  cost: number;
   date: string;
   labour: number;
   material: number;
-  cost: number;
   total: number;
 }
 
 export interface TaskUsageData {
-  taskId: string;
-  taskName: string;
+  cost: number;
   labour: number;
   material: number;
-  cost: number;
+  taskId: string;
+  taskName: string;
   total: number;
 }
 
 export interface ResourceUsageResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 const DEFAULT_CONFIG: ResourceUsageConfig = {
@@ -110,7 +110,7 @@ class ResourceUsageService {
 
   async getUsageDataByType(assignedResources: Record<string, any[]>): Promise<ResourceUsageData[]> {
     try {
-      const usageByDate: Record<string, { labour: number; material: number; cost: number }> = {};
+      const usageByDate: Record<string, { cost: number, labour: number; material: number; }> = {};
       
       Object.values(assignedResources).flat().forEach((resource: any) => {
         const date = new Date().toISOString().split('T')[0]; // Simplified - use current date
@@ -182,11 +182,11 @@ class ResourceUsageService {
   }
 
   async getUsageSummary(assignedResources: Record<string, any[]>): Promise<{
+    taskCount: number;
+    totalCost: number;
     totalLabour: number;
     totalMaterial: number;
-    totalCost: number;
     totalResources: number;
-    taskCount: number;
   }> {
     try {
       let totalLabour = 0;
@@ -232,9 +232,9 @@ class ResourceUsageService {
   }
 
   async getResourceUtilization(assignedResources: Record<string, any[]>): Promise<{
+    costUtilization: number;
     labourUtilization: number;
     materialUtilization: number;
-    costUtilization: number;
   }> {
     try {
       const summary = await this.getUsageSummary(assignedResources);

@@ -8,10 +8,10 @@ import { demoModeService } from '../services/demoModeService';
 import { usePermissions } from '../hooks/usePermissions';
 
 interface TestResult {
+  details?: string;
+  message: string;
   name: string;
   status: 'pass' | 'fail' | 'pending';
-  message: string;
-  details?: string;
 }
 
 const TaskHierarchyTest: React.FC = () => {

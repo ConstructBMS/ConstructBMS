@@ -5,16 +5,16 @@ import { milestoneService } from '../services/milestoneService';
 import { Milestone } from '../services/milestoneService';
 
 interface MilestoneBarProps {
-  milestone: Milestone;
-  projectId: string;
-  rowHeight: number;
   dayWidth: number;
-  startDate: Date;
-  onMilestoneClick: (milestoneId: string) => void;
-  onMilestoneUpdate: (milestoneId: string, updates: any) => void;
-  isSelected?: boolean;
   isCritical?: boolean;
   isInSelectedPath?: boolean;
+  isSelected?: boolean;
+  milestone: Milestone;
+  onMilestoneClick: (milestoneId: string) => void;
+  onMilestoneUpdate: (milestoneId: string, updates: any) => void;
+  projectId: string;
+  rowHeight: number;
+  startDate: Date;
 }
 
 const MilestoneBar: React.FC<MilestoneBarProps> = ({

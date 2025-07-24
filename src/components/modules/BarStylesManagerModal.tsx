@@ -16,13 +16,13 @@ import { usePermissions } from '../../hooks/usePermissions';
 interface BarStylesManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
   onStylesUpdated?: () => void;
+  projectId: string;
 }
 
 interface RuleFormData {
-  ruleName: string;
   condition: BarStyleCondition;
+  ruleName: string;
   style: BarStyle;
 }
 
@@ -367,13 +367,13 @@ const BarStylesManagerModal: React.FC<BarStylesManagerModalProps> = ({
 
 // Rule Form Component
 interface RuleFormProps {
-  formData: RuleFormData;
-  setFormData: (data: RuleFormData) => void;
-  errors: string[];
-  onSave: () => void;
-  onCancel: () => void;
-  loading: boolean;
   editingRule: BarStyleRule | null;
+  errors: string[];
+  formData: RuleFormData;
+  loading: boolean;
+  onCancel: () => void;
+  onSave: () => void;
+  setFormData: (data: RuleFormData) => void;
 }
 
 const RuleForm: React.FC<RuleFormProps> = ({
@@ -592,10 +592,10 @@ const RuleForm: React.FC<RuleFormProps> = ({
 
 // Rule Preview Component
 interface RulePreviewProps {
-  previewTask: any;
-  updatePreviewTask: (field: string, value: any) => void;
   getPreviewStyle: () => BarStyle;
+  previewTask: any;
   rules: BarStyleRule[];
+  updatePreviewTask: (field: string, value: any) => void;
 }
 
 const RulePreview: React.FC<RulePreviewProps> = ({

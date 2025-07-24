@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, CalendarIcon, ClockIcon, TagIcon, UserIcon, DocumentTextIcon, LinkIcon, TrashIcon, LockClosedIcon, FlagIcon, ChartBarIcon, FolderIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
-import { usePermissions } from '../hooks/usePermissions';
+import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { taskService } from '../services/taskService';
 import { adminTabService } from '../services/adminTabService';
@@ -96,9 +96,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [taskCount, setTaskCount] = useState(0);
   
-  // Milestone state
-  const [milestoneCount, setMilestoneCount] = useState(0);
-  
   // Dependencies state
   const [predecessors, setPredecessors] = useState<DependencyLink[]>([]);
   const [availableTasks, setAvailableTasks] = useState<Array<{ id: string; name: string }>>([]);
@@ -131,8 +128,8 @@ const TaskModal: React.FC<TaskModalProps> = ({
         const count = await taskService.getTaskCount();
         setTaskCount(count);
         
-        const milestoneCount = await milestoneService.getMilestoneCount();
-        setMilestoneCount(milestoneCount);
+        const milestoneCountValue = await milestoneService.getMilestoneCount();
+        setMilestoneCount(milestoneCountValue);
       }
     };
     checkDemoMode();
@@ -939,8 +936,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 </div>
               )}
 
-                )}
-
                 {activeTab === 'dependencies' && mode === 'edit' && taskId && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white">Dependencies</h3>
@@ -1046,6 +1041,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                       )}
                     </div>
                   </div>
+                </>
                 )}
 
                 {activeTab === 'progress' && taskId && (

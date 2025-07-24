@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type ViewsButtonType = 'save' | 'manage';
 
 interface ViewsButtonProps {
-  type: ViewsButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: ViewsButtonType;
 }
 
 const ViewsButton: React.FC<ViewsButtonProps> = ({

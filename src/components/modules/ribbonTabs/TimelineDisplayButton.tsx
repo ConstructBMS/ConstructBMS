@@ -10,10 +10,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type TimelineDisplayButtonType = 'zoomIn' | 'zoomOut' | 'fitToView' | 'scrollToToday';
 
 interface TimelineDisplayButtonProps {
-  type: TimelineDisplayButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: TimelineDisplayButtonType;
 }
 
 const TimelineDisplayButton: React.FC<TimelineDisplayButtonProps> = ({

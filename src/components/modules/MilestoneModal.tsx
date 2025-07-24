@@ -13,10 +13,10 @@ import { usePermissions } from '../../hooks/usePermissions';
 
 interface MilestoneModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  projectId: string;
   milestone?: Milestone;
+  onClose: () => void;
   onMilestoneSaved: (milestone: Milestone) => void;
+  projectId: string;
 }
 
 const MilestoneModal: React.FC<MilestoneModalProps> = ({

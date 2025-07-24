@@ -3,23 +3,23 @@ import { XMarkIcon, TagIcon, PlusIcon, TrashIcon, EyeIcon } from '@heroicons/rea
 import { usePermissions } from '../../../hooks/usePermissions';
 
 export interface ProjectTag {
+  demo?: boolean;
   id: string;
   projectId: string;
-  tagName: string;
-  tagColor: string;
   scope: 'global' | 'project';
+  tagColor: string;
+  tagName: string;
   userId: string;
-  demo?: boolean;
 }
 
 interface ManageTagsModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  tags: ProjectTag[];
-  onTagsChange: (tags: ProjectTag[]) => void;
-  onSave: () => void;
-  projectId: string;
   loading?: boolean;
+  onClose: () => void;
+  onSave: () => void;
+  onTagsChange: (tags: ProjectTag[]) => void;
+  projectId: string;
+  tags: ProjectTag[];
 }
 
 const ManageTagsModal: React.FC<ManageTagsModalProps> = ({

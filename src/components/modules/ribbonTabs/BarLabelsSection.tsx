@@ -4,17 +4,17 @@ import BarLabelDropdown from './BarLabelDropdown';
 import type { BarLabelPreset } from '../../../services/barLabelService';
 
 interface BarLabelsSectionProps {
-  presets: BarLabelPreset[];
   activePreset: BarLabelPreset | null;
-  onConfigureLabels: () => void;
-  onApplyPreset: (preset: BarLabelPreset) => void;
-  onResetLabels: () => void;
   disabled?: boolean;
   loading?: {
     configure?: boolean;
     preset?: boolean;
     reset?: boolean;
   };
+  onApplyPreset: (preset: BarLabelPreset) => void;
+  onConfigureLabels: () => void;
+  onResetLabels: () => void;
+  presets: BarLabelPreset[];
 }
 
 const BarLabelsSection: React.FC<BarLabelsSectionProps> = ({

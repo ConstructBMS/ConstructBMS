@@ -3,22 +3,22 @@ import { XMarkIcon, ScaleIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface AssignedResource {
-  resourceId: string;
-  name: string;
-  type: 'labour' | 'material' | 'cost';
-  quantity: number;
-  unit: string;
-  rate: number;
   fromDate: Date;
+  name: string;
+  quantity: number;
+  rate: number;
+  resourceId: string;
   toDate: Date;
+  type: 'labour' | 'material' | 'cost';
+  unit: string;
 }
 
 interface AdjustUnitsModalProps {
+  assignedResources: AssignedResource[];
+  disabled?: boolean;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updates: Record<string, { quantity: number; unit: string }>) => void;
-  assignedResources: AssignedResource[];
-  disabled?: boolean;
 }
 
 const AdjustUnitsModal: React.FC<AdjustUnitsModalProps> = ({

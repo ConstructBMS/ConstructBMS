@@ -3,19 +3,19 @@ import { ChevronDownIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface QuickAssignResource {
+  defaultQuantity: number;
+  defaultRate: number;
+  defaultUnit: string;
+  frequency: number;
   id: string;
   name: string;
-  type: 'labour' | 'material' | 'cost';
-  defaultQuantity: number;
-  defaultUnit: string;
-  defaultRate: number;
-  frequency: number; // how often used
+  type: 'labour' | 'material' | 'cost'; // how often used
 }
 
 interface QuickAssignDropdownProps {
-  onQuickAssign: (resource: QuickAssignResource) => void;
   disabled?: boolean;
   loading?: boolean;
+  onQuickAssign: (resource: QuickAssignResource) => void;
 }
 
 const QuickAssignDropdown: React.FC<QuickAssignDropdownProps> = ({

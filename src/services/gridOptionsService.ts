@@ -2,24 +2,24 @@ import { persistentStorage } from './persistentStorage';
 import { demoDataService } from './demoDataService';
 
 export interface GridOptions {
-  pinnedColumn: boolean;
-  wrapText: boolean;
-  stripeRows: boolean;
   columnOrder: string[];
-  columnWidths: Record<string, number>;
   columnVisibility: Record<string, boolean>;
+  columnWidths: Record<string, number>;
   demo?: boolean;
+  pinnedColumn: boolean;
+  stripeRows: boolean;
+  wrapText: boolean;
 }
 
 export interface GridOptionsConfig {
-  options: GridOptions;
   demo?: boolean;
+  options: GridOptions;
 }
 
 export interface GridOptionsResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 const DEFAULT_GRID_OPTIONS: GridOptions = {

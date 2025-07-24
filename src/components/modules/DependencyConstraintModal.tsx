@@ -7,16 +7,16 @@ import { dependencyConstraintsService, TaskDependency, ConstraintViolation } fro
 interface DependencyConstraintModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
-  tasks: Array<{ id: string; name: string; startDate: Date; endDate: Date }>;
   onDependenciesChange?: (dependencies: TaskDependency[]) => void;
+  projectId: string;
+  tasks: Array<{ endDate: Date, id: string; name: string; startDate: Date; }>;
 }
 
 interface DependencyFormData {
+  lag: number;
   sourceTaskId: string;
   targetTaskId: string;
   type: 'FS' | 'SS' | 'FF' | 'SF';
-  lag: number;
 }
 
 const DependencyConstraintModal: React.FC<DependencyConstraintModalProps> = ({

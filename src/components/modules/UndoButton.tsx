@@ -4,8 +4,8 @@ import { dragRescheduleService } from '../../services/dragRescheduleService';
 
 interface UndoButtonProps {
   className?: string;
-  onUndo?: (message: string) => void;
   disabled?: boolean;
+  onUndo?: (message: string) => void;
 }
 
 const UndoButton: React.FC<UndoButtonProps> = ({

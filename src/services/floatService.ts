@@ -1,22 +1,22 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface FloatConfig {
-  showTotalFloat: boolean;
-  showFreeFloat: boolean;
-  highlightNegativeFloat: boolean;
   demo?: boolean;
+  highlightNegativeFloat: boolean;
+  showFreeFloat: boolean;
+  showTotalFloat: boolean;
 }
 
 export interface TaskFloat {
-  total: number;
   free: number;
   isNegative: boolean;
+  total: number;
 }
 
 export interface FloatResult {
-  success: boolean;
   data?: any;
   errors: string[];
+  success: boolean;
 }
 
 export class FloatService {
@@ -178,8 +178,8 @@ export class FloatService {
   /**
    * Calculate earliest start and finish times using forward pass
    */
-  private static calculateEarliestTimes(tasks: any[]): Map<string, { start: number; finish: number }> {
-    const earliestTimes = new Map<string, { start: number; finish: number }>();
+  private static calculateEarliestTimes(tasks: any[]): Map<string, { finish: number, start: number; }> {
+    const earliestTimes = new Map<string, { finish: number, start: number; }>();
     
     // Sort tasks by dependencies (topological sort)
     const sortedTasks = this.topologicalSort(tasks);
@@ -213,9 +213,9 @@ export class FloatService {
    */
   private static calculateLatestTimes(
     tasks: any[], 
-    earliestTimes: Map<string, { start: number; finish: number }>
-  ): Map<string, { start: number; finish: number }> {
-    const latestTimes = new Map<string, { start: number; finish: number }>();
+    earliestTimes: Map<string, { finish: number, start: number; }>
+  ): Map<string, { finish: number, start: number; }> {
+    const latestTimes = new Map<string, { finish: number, start: number; }>();
     
     // Find project duration (maximum earliest finish time)
     const projectDuration = Math.max(
@@ -259,7 +259,7 @@ export class FloatService {
   private static calculateFreeFloat(
     task: any, 
     allTasks: any[], 
-    earliestTimes: Map<string, { start: number; finish: number }>
+    earliestTimes: Map<string, { finish: number, start: number; }>
   ): number {
     const taskEarliestFinish = earliestTimes.get(task.id)?.finish || 0;
     
@@ -327,12 +327,12 @@ export class FloatService {
     taskFloat: TaskFloat, 
     config: FloatConfig
   ): {
-    showTotalFloat: boolean;
-    showFreeFloat: boolean;
-    highlightNegative: boolean;
-    totalFloatWidth: number;
     freeFloatWidth: number;
+    highlightNegative: boolean;
+    showFreeFloat: boolean;
+    showTotalFloat: boolean;
     styles: any;
+    totalFloatWidth: number;
   } {
     const showTotalFloat = config.showTotalFloat && taskFloat.total > 0;
     const showFreeFloat = config.showFreeFloat && taskFloat.free > 0;

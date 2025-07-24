@@ -3,8 +3,8 @@ import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react
 import { ConstraintViolation } from '../services/dependencyConstraintsService';
 
 interface ConstraintViolationIndicatorProps {
-  violations: ConstraintViolation[];
   className?: string;
+  violations: ConstraintViolation[];
 }
 
 const ConstraintViolationIndicator: React.FC<ConstraintViolationIndicatorProps> = ({

@@ -6,18 +6,18 @@ import HighlightRowToggle from './HighlightRowToggle';
 export type RowBorderStyle = 'none' | 'bottom' | 'full';
 
 interface TaskRowStylingSectionProps {
-  rowStriping: boolean;
-  onToggleRowStriping: () => void;
-  rowBorder: RowBorderStyle;
-  onRowBorderChange: (border: RowBorderStyle) => void;
-  highlightActiveRow: boolean;
-  onToggleHighlightActiveRow: () => void;
   disabled?: boolean;
+  highlightActiveRow: boolean;
   loading?: {
-    striping?: boolean;
     border?: boolean;
     highlight?: boolean;
+    striping?: boolean;
   };
+  onRowBorderChange: (border: RowBorderStyle) => void;
+  onToggleHighlightActiveRow: () => void;
+  onToggleRowStriping: () => void;
+  rowBorder: RowBorderStyle;
+  rowStriping: boolean;
 }
 
 const TaskRowStylingSection: React.FC<TaskRowStylingSectionProps> = ({

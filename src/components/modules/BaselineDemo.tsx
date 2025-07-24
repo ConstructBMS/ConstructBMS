@@ -80,10 +80,10 @@ const BaselineDemo: React.FC = () => {
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [showBaselineManager, setShowBaselineManager] = useState(false);
   const [variances, setVariances] = useState<Array<{
-    taskId: string;
-    startVariance: number;
-    endVariance: number;
     durationVariance: number;
+    endVariance: number;
+    startVariance: number;
+    taskId: string;
   }>>([]);
 
   const projectId = 'demo-project';

@@ -12,10 +12,10 @@ import type { TaskFlag } from '../../services/flagService';
 import { toastService } from './ToastNotification';
 
 interface TaskFlagProps {
-  taskId: string;
+  className?: string;
   flag: TaskFlag;
   onRemove?: () => void;
-  className?: string;
+  taskId: string;
 }
 
 const TaskFlagComponent: React.FC<TaskFlagProps> = ({

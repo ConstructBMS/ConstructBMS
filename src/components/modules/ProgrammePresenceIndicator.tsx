@@ -9,8 +9,8 @@ import { useProgrammeCollaboration } from '../../contexts/ProgrammeCollaboration
 import type { ProgrammePresence } from '../../services/programmeCollaborationService';
 
 interface ProgrammePresenceIndicatorProps {
-  projectId: string;
   className?: string;
+  projectId: string;
 }
 
 const ProgrammePresenceIndicator: React.FC<ProgrammePresenceIndicatorProps> = ({

@@ -1,9 +1,9 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface ProgressLineState {
-  isVisible: boolean;
-  currentDate: Date;
   color: string;
+  currentDate: Date;
+  isVisible: boolean;
   style: 'solid' | 'dashed' | 'dotted';
   width: number;
 }

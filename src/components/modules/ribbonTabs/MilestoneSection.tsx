@@ -10,13 +10,13 @@ import { usePermissions } from '../../../hooks/usePermissions';
 import { milestoneService } from '../../../services/milestoneService';
 
 interface MilestoneSectionProps {
-  onAddMilestone: () => void;
-  onEditMilestone: () => void;
-  onDeleteMilestone: () => void;
-  selectedMilestonesCount: number;
   isDemoMode?: boolean;
-  milestoneCount?: number;
   maxMilestones?: number;
+  milestoneCount?: number;
+  onAddMilestone: () => void;
+  onDeleteMilestone: () => void;
+  onEditMilestone: () => void;
+  selectedMilestonesCount: number;
 }
 
 const MilestoneSection: React.FC<MilestoneSectionProps> = ({

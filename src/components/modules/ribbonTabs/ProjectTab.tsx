@@ -48,11 +48,11 @@ import { structureService } from '../../../services/structureService';
 import { ImportExportService } from '../../../services/importExportService';
 
 interface ProjectTabProps {
+  activeRibbonTab: string;
   canEdit: boolean;
   onTaskOperation: (operation: any) => void;
   selectedTasks: string[];
   userRole: string;
-  activeRibbonTab: string;
 }
 
 const ProjectTab: React.FC<ProjectTabProps> = ({
@@ -101,8 +101,8 @@ const ProjectTab: React.FC<ProjectTabProps> = ({
   
   // Import/Export state
   const [importExportHistory, setImportExportHistory] = useState<{
-    imports: any[];
     exports: any[];
+    imports: any[];
   }>({ imports: [], exports: [] });
   
   // Modal states

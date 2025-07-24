@@ -2,14 +2,14 @@ import React from 'react';
 import ConflictButton from './ConflictButton';
 
 interface ResourceConflictsSectionProps {
-  onToggleConflicts: () => void;
-  onResolveConflicts: () => void;
   conflictsActive: boolean;
   disabled?: boolean;
   loading?: {
-    toggle?: boolean;
     resolve?: boolean;
+    toggle?: boolean;
   };
+  onResolveConflicts: () => void;
+  onToggleConflicts: () => void;
 }
 
 const ResourceConflictsSection: React.FC<ResourceConflictsSectionProps> = ({

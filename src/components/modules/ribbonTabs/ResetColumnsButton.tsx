@@ -3,9 +3,9 @@ import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ResetColumnsButtonProps {
-  onReset: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onReset: () => void;
 }
 
 const ResetColumnsButton: React.FC<ResetColumnsButtonProps> = ({

@@ -2,14 +2,14 @@ import React from 'react';
 import { progressTrackingService } from '../../services/progressTrackingService';
 
 interface TimelineProgressBarProps {
-  taskId: string;
-  progress: number;
-  isDemo?: boolean;
-  showActualMarkers?: boolean;
-  actualStartDate?: string | null;
   actualFinishDate?: string | null;
+  actualStartDate?: string | null;
   className?: string;
   height?: string;
+  isDemo?: boolean;
+  progress: number;
+  showActualMarkers?: boolean;
+  taskId: string;
 }
 
 const TimelineProgressBar: React.FC<TimelineProgressBarProps> = ({

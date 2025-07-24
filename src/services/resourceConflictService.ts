@@ -1,31 +1,31 @@
 import { persistentStorage } from './persistentStorage';
 
 export interface ResourceConflict {
-  id: string;
-  taskId: string;
-  taskName: string;
-  resourceId: string;
-  resourceName: string;
-  date: Date;
   assignedHours: number;
+  date: Date;
+  demo?: boolean;
+  id: string;
   maxCapacity: number;
   overallocation: number;
+  resourceId: string;
+  resourceName: string;
+  taskId: string;
+  taskName: string;
   type: 'overallocation' | 'double-booking';
-  demo?: boolean;
 }
 
 export interface ConflictResolution {
   conflictId: string;
-  resolution: 'split' | 'delay' | 'reassign' | 'ignore';
-  details?: string;
   demo?: boolean;
+  details?: string;
+  resolution: 'split' | 'delay' | 'reassign' | 'ignore';
 }
 
 export interface ResourceConflictConfig {
-  enabled: boolean;
-  highlightConflicts: boolean;
   autoResolve: boolean;
   demo?: boolean;
+  enabled: boolean;
+  highlightConflicts: boolean;
 }
 
 class ResourceConflictService {

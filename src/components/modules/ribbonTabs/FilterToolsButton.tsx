@@ -8,11 +8,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type FilterToolsButtonType = 'manage' | 'clear';
 
 interface FilterToolsButtonProps {
-  type: FilterToolsButtonType;
-  onClick: () => void;
   disabled?: boolean;
-  loading?: boolean;
   hasActiveFilter?: boolean;
+  loading?: boolean;
+  onClick: () => void;
+  type: FilterToolsButtonType;
 }
 
 const FilterToolsButton: React.FC<FilterToolsButtonProps> = ({

@@ -4,15 +4,15 @@ import AssignStyleRulesButton from './AssignStyleRulesButton';
 import ResetBarStylesButton from './ResetBarStylesButton';
 
 interface CustomBarStylesSectionProps {
-  onOpenManageBarStyles: () => void;
-  onOpenAssignStyleRules: () => void;
-  onResetBarStyles: () => void;
   disabled?: boolean;
   loading?: {
-    manage?: boolean;
     assign?: boolean;
+    manage?: boolean;
     reset?: boolean;
   };
+  onOpenAssignStyleRules: () => void;
+  onOpenManageBarStyles: () => void;
+  onResetBarStyles: () => void;
 }
 
 const CustomBarStylesSection: React.FC<CustomBarStylesSectionProps> = ({

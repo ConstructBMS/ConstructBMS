@@ -8,10 +8,10 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type PropertiesButtonType = 'manage' | 'edit';
 
 interface PropertiesButtonProps {
-  type: PropertiesButtonType;
-  onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: PropertiesButtonType;
 }
 
 const PropertiesButton: React.FC<PropertiesButtonProps> = ({

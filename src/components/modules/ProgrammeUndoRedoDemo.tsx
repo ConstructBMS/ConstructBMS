@@ -13,12 +13,12 @@ import { demoModeService } from '../../services/demoModeService';
 import { usePermissions } from '../../hooks/usePermissions';
 
 interface DemoTask {
+  duration: number;
+  endDate: Date;
   id: string;
   name: string;
-  startDate: Date;
-  endDate: Date;
-  duration: number;
   progress: number;
+  startDate: Date;
   status: 'not-started' | 'in-progress' | 'completed';
 }
 

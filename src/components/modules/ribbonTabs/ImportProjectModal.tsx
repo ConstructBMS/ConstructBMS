@@ -4,16 +4,16 @@ import { usePermissions } from '../../../hooks/usePermissions';
 
 interface ImportProjectModalProps {
   isOpen: boolean;
+  loading?: boolean;
   onClose: () => void;
   onImport: (file: File, options: ImportOptions) => void;
-  loading?: boolean;
 }
 
 interface ImportOptions {
-  overwriteExisting: boolean;
-  importResources: boolean;
   importCalendars: boolean;
   importNotes: boolean;
+  importResources: boolean;
+  overwriteExisting: boolean;
 }
 
 const ImportProjectModal: React.FC<ImportProjectModalProps> = ({

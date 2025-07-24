@@ -13,20 +13,20 @@ import { demoModeService } from '../../services/demoModeService';
 import { baselineService, type Baseline } from '../../services/baselineService';
 
 interface BaselineRibbonControlsProps {
-  projectId: string;
-  showBaseline: boolean;
-  onShowBaselineChange: (show: boolean) => void;
+  currentTasks: Array<{
+    endDate: Date;
+    id: string;
+    isMilestone?: boolean;
+    name: string;
+    parentId?: string;
+    percentComplete?: number;
+    startDate: Date;
+  }>;
   onBaselineSelect: (baseline: Baseline | null) => void;
   onOpenBaselineManager: () => void;
-  currentTasks: Array<{
-    id: string;
-    name: string;
-    startDate: Date;
-    endDate: Date;
-    percentComplete?: number;
-    isMilestone?: boolean;
-    parentId?: string;
-  }>;
+  onShowBaselineChange: (show: boolean) => void;
+  projectId: string;
+  showBaseline: boolean;
 }
 
 const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({

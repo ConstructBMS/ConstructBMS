@@ -6,8 +6,8 @@ export type ExportTheme = 'default' | 'monochrome' | 'light' | 'dark' | 'custom'
 
 interface ExportThemeDropdownProps {
   currentTheme: ExportTheme;
-  onThemeChange: (theme: ExportTheme) => void;
   disabled?: boolean;
+  onThemeChange: (theme: ExportTheme) => void;
 }
 
 const ExportThemeDropdown: React.FC<ExportThemeDropdownProps> = ({
@@ -22,10 +22,10 @@ const ExportThemeDropdown: React.FC<ExportThemeDropdownProps> = ({
   const isDisabled = disabled || !canExport;
 
   const themeOptions: Array<{
-    value: ExportTheme;
-    label: string;
     description: string;
+    label: string;
     preview: string;
+    value: ExportTheme;
   }> = [
     {
       value: 'default',

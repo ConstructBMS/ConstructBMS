@@ -6,8 +6,8 @@ export type RowBorderStyle = 'none' | 'bottom' | 'full';
 
 interface RowBorderDropdownProps {
   currentBorder: RowBorderStyle;
-  onBorderChange: (border: RowBorderStyle) => void;
   disabled?: boolean;
+  onBorderChange: (border: RowBorderStyle) => void;
 }
 
 const RowBorderDropdown: React.FC<RowBorderDropdownProps> = ({
@@ -22,10 +22,10 @@ const RowBorderDropdown: React.FC<RowBorderDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const borderOptions: Array<{
-    value: RowBorderStyle;
-    label: string;
     description: string;
+    label: string;
     preview: string;
+    value: RowBorderStyle;
   }> = [
     {
       value: 'none',

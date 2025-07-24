@@ -2,37 +2,37 @@ import { supabase } from './supabase';
 
 // Structure interfaces
 export interface TaskStructure {
+  collapsed: boolean;
+  createdAt: Date;
+  createdBy: string;
+  demo?: boolean;
   id: string;
   parentId: string | null;
-  type: 'task' | 'milestone' | 'phase';
-  collapsed: boolean;
-  sortOrder: number;
   projectId: string;
-  createdBy: string;
-  updatedBy: string;
-  createdAt: Date;
+  sortOrder: number;
+  type: 'task' | 'milestone' | 'phase';
   updatedAt: Date;
-  demo?: boolean;
+  updatedBy: string;
 }
 
 export interface StructurePreferences {
-  userId: string;
-  projectId: string;
   collapseAll: boolean;
-  showPhases: boolean;
   demo: boolean;
+  projectId: string;
+  showPhases: boolean;
+  userId: string;
 }
 
 export interface PhaseInfo {
-  id: string;
-  name: string;
-  level: number;
-  collapsed: boolean;
   children: string[];
+  collapsed: boolean;
+  duration: number;
+  endDate: Date | null;
+  id: string;
+  level: number;
+  name: string;
   progress: number;
   startDate: Date | null;
-  endDate: Date | null;
-  duration: number;
 }
 
 // Demo mode configuration
@@ -366,7 +366,7 @@ class StructureService {
   /**
    * Calculate aggregated progress for phase
    */
-  calculatePhaseProgress(phaseId: string, tasks: any[]): { progress: number; startDate: Date | null; endDate: Date | null; duration: number } {
+  calculatePhaseProgress(phaseId: string, tasks: any[]): { duration: number, endDate: Date | null; progress: number; startDate: Date | null; } {
     const children = this.getChildren(phaseId);
     const childTasks = children.map(child => tasks.find(t => t.id === child.id)).filter(Boolean);
     

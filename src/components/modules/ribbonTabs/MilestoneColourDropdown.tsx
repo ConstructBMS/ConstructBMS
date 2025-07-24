@@ -6,8 +6,8 @@ export type MilestoneColorOption = 'blue' | 'green' | 'purple' | 'orange' | 'red
 
 interface MilestoneColourDropdownProps {
   currentColor: MilestoneColorOption;
-  onColorChange: (color: MilestoneColorOption) => void;
   disabled?: boolean;
+  onColorChange: (color: MilestoneColorOption) => void;
 }
 
 const MilestoneColourDropdown: React.FC<MilestoneColourDropdownProps> = ({
@@ -22,10 +22,10 @@ const MilestoneColourDropdown: React.FC<MilestoneColourDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const colorOptions: Array<{
-    value: MilestoneColorOption;
-    label: string;
-    color: string;
     bgColor: string;
+    color: string;
+    label: string;
+    value: MilestoneColorOption;
   }> = [
     {
       value: 'blue',

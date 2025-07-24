@@ -13,9 +13,9 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../../services/demoModeService';
 
 interface TaskCommentsTabProps {
-  taskId: string;
-  projectId: string;
   isDemoMode?: boolean;
+  projectId: string;
+  taskId: string;
 }
 
 const TaskCommentsTab: React.FC<TaskCommentsTabProps> = ({

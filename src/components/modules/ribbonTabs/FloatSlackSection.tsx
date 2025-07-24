@@ -2,18 +2,18 @@ import React from 'react';
 import FloatToggle from './FloatToggle';
 
 interface FloatSlackSectionProps {
-  showTotalFloat: boolean;
-  showFreeFloat: boolean;
-  highlightNegativeFloat: boolean;
-  onToggleTotalFloat: () => void;
-  onToggleFreeFloat: () => void;
-  onToggleNegativeFloat: () => void;
   disabled?: boolean;
+  highlightNegativeFloat: boolean;
   loading?: {
-    total?: boolean;
     free?: boolean;
     negative?: boolean;
+    total?: boolean;
   };
+  onToggleFreeFloat: () => void;
+  onToggleNegativeFloat: () => void;
+  onToggleTotalFloat: () => void;
+  showFreeFloat: boolean;
+  showTotalFloat: boolean;
 }
 
 const FloatSlackSection: React.FC<FloatSlackSectionProps> = ({

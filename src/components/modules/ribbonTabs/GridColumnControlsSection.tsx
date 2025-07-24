@@ -6,26 +6,26 @@ import ResetColumnsButton from './ResetColumnsButton';
 export type ColumnPresetType = 'default' | 'compact' | 'data-entry' | 'custom';
 
 export interface ColumnPreset {
+  columns: string[];
+  description: string;
   id: string;
   name: string;
   type: ColumnPresetType;
-  description: string;
-  columns: string[];
 }
 
 interface GridColumnControlsSectionProps {
   currentPreset: string;
-  presets: ColumnPreset[];
-  onPresetChange: (presetId: string) => void;
-  onOpenManageColumns: () => void;
-  onResetColumns: () => void;
-  onSavePreset?: () => void;
   disabled?: boolean;
   loading?: {
     manage?: boolean;
     presets?: boolean;
     reset?: boolean;
   };
+  onOpenManageColumns: () => void;
+  onPresetChange: (presetId: string) => void;
+  onResetColumns: () => void;
+  onSavePreset?: () => void;
+  presets: ColumnPreset[];
 }
 
 const GridColumnControlsSection: React.FC<GridColumnControlsSectionProps> = ({

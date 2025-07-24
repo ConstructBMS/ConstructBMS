@@ -6,8 +6,8 @@ export type RowHeightOption = 'small' | 'medium' | 'large';
 
 interface RowHeightDropdownProps {
   currentHeight: RowHeightOption;
-  onHeightChange: (height: RowHeightOption) => void;
   disabled?: boolean;
+  onHeightChange: (height: RowHeightOption) => void;
 }
 
 const RowHeightDropdown: React.FC<RowHeightDropdownProps> = ({
@@ -22,10 +22,10 @@ const RowHeightDropdown: React.FC<RowHeightDropdownProps> = ({
   const isDisabled = disabled || !canEdit;
 
   const heightOptions: Array<{
-    value: RowHeightOption;
-    label: string;
     description: string;
     height: number;
+    label: string;
+    value: RowHeightOption;
   }> = [
     {
       value: 'small',

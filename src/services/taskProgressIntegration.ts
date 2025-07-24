@@ -3,21 +3,21 @@ import { progressTrackingService } from './progressTrackingService';
 import { demoModeService } from './demoModeService';
 
 export interface TaskWithProgress {
-  id: string;
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  progress: number;
-  percentComplete: number;
-  actualStartDate: string | null;
   actualFinishDate: string | null;
-  progressUpdatedBy: string | null;
-  progressUpdatedAt: Date | null;
-  demo: boolean;
-  status: string;
+  actualStartDate: string | null;
   assignedTo?: string;
+  demo: boolean;
+  endDate: Date;
+  id: string;
   level: number;
+  name: string;
   parentId?: string;
+  percentComplete: number;
+  progress: number;
+  progressUpdatedAt: Date | null;
+  startDate: Date;
+  status: string;
+  progressUpdatedBy: string | null;
 }
 
 class TaskProgressIntegrationService {
@@ -97,10 +97,10 @@ class TaskProgressIntegrationService {
    * Update task progress and sync with main progress field
    */
   async updateTaskProgressWithSync(update: {
-    taskId: string;
-    percentComplete: number;
-    actualStartDate?: string | null;
     actualFinishDate?: string | null;
+    actualStartDate?: string | null;
+    percentComplete: number;
+    taskId: string;
   }): Promise<boolean> {
     try {
       const isDemo = await demoModeService.isDemoMode();
@@ -137,12 +137,12 @@ class TaskProgressIntegrationService {
    * Get progress statistics for a project
    */
   async getProjectProgressStats(projectId: string): Promise<{
-    totalTasks: number;
+    averageProgress: number;
     completedTasks: number;
+    demoTasks: number;
     inProgressTasks: number;
     notStartedTasks: number;
-    averageProgress: number;
-    demoTasks: number;
+    totalTasks: number;
   }> {
     try {
       const tasks = await this.getTasksWithProgress(projectId);

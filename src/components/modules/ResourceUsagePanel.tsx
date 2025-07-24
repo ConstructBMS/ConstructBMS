@@ -2,28 +2,28 @@ import React, { useMemo } from 'react';
 import { ChartBarIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface ResourceUsageData {
+  cost: number;
   date: string;
   labour: number;
   material: number;
-  cost: number;
   total: number;
 }
 
 interface TaskUsageData {
-  taskId: string;
-  taskName: string;
+  cost: number;
   labour: number;
   material: number;
-  cost: number;
+  taskId: string;
+  taskName: string;
   total: number;
 }
 
 interface ResourceUsagePanelProps {
-  isVisible: boolean;
-  groupBy: 'type' | 'task';
   assignedResources: Record<string, any[]>;
-  tasks: any[];
+  groupBy: 'type' | 'task';
+  isVisible: boolean;
   onClose: () => void;
+  tasks: any[];
 }
 
 const ResourceUsagePanel: React.FC<ResourceUsagePanelProps> = ({
@@ -172,7 +172,7 @@ const ResourceUsagePanel: React.FC<ResourceUsagePanelProps> = ({
 
 // Helper functions to calculate usage data
 const calculateUsageByType = (assignedResources: Record<string, any[]>): ResourceUsageData[] => {
-  const usageByDate: Record<string, { labour: number; material: number; cost: number }> = {};
+  const usageByDate: Record<string, { cost: number, labour: number; material: number; }> = {};
   
   Object.values(assignedResources).flat().forEach((resource: any) => {
     const date = new Date().toISOString().split('T')[0]; // Simplified - use current date

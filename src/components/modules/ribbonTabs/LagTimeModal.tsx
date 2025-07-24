@@ -3,19 +3,19 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import type { TaskData } from './TaskEditModal';
 
 export interface TaskDependency {
+  demo?: boolean;
   id: string;
-  type: 'FS' | 'SS' | 'FF' | 'SF';
   lag: string;
   targetId: string;
-  demo?: boolean;
+  type: 'FS' | 'SS' | 'FF' | 'SF';
 }
 
 interface LagTimeModalProps {
+  dependencies: TaskDependency[];
   isOpen: boolean;
   onClose: () => void;
   onSave: (dependency: TaskDependency) => void;
   selectedTasks: TaskData[];
-  dependencies: TaskDependency[];
 }
 
 const LagTimeModal: React.FC<LagTimeModalProps> = ({

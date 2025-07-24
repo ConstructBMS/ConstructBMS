@@ -4,27 +4,27 @@ import { programmeCollaborationService, type ProgrammePresence, type TaskLock, t
 import { usePermissions } from '../hooks/usePermissions';
 
 interface ProgrammeCollaborationContextType {
+  error: string | null;
+  getCurrentUserPresence: () => ProgrammePresence | null;
+  getOtherUsers: () => ProgrammePresence[];
+  getProjectPresence: (projectId: string) => Promise<ProgrammePresence[]>;
+  getProjectTaskLocks: (projectId: string) => Promise<TaskLock[]>;
+
+  getTaskLock: (taskId: string) => Promise<TaskLock | null>;
+  getTaskLockInfo: (taskId: string) => TaskLock | null;
+  // Actions
+  initializeCollaboration: (projectId: string) => Promise<void>;
+  isConnected: boolean;
+  isLoading: boolean;
+  // Utility functions
+  isTaskLocked: (taskId: string) => boolean;
+  leaveCollaboration: () => Promise<void>;
+
+  lockTask: (taskId: string) => Promise<{ success: boolean; error?: string; lock?: TaskLock }>;
   // State
   presence: ProgrammePresence[];
   taskLocks: TaskLock[];
-  isConnected: boolean;
-  error: string | null;
-  isLoading: boolean;
-
-  // Actions
-  initializeCollaboration: (projectId: string) => Promise<void>;
-  leaveCollaboration: () => Promise<void>;
-  lockTask: (taskId: string) => Promise<{ success: boolean; error?: string; lock?: TaskLock }>;
-  unlockTask: (taskId: string) => Promise<{ success: boolean; error?: string }>;
-  getTaskLock: (taskId: string) => Promise<TaskLock | null>;
-  getProjectTaskLocks: (projectId: string) => Promise<TaskLock[]>;
-  getProjectPresence: (projectId: string) => Promise<ProgrammePresence[]>;
-
-  // Utility functions
-  isTaskLocked: (taskId: string) => boolean;
-  getTaskLockInfo: (taskId: string) => TaskLock | null;
-  getOtherUsers: () => ProgrammePresence[];
-  getCurrentUserPresence: () => ProgrammePresence | null;
+  unlockTask: (taskId: string) => Promise<{ error?: string, success: boolean; }>;
 }
 
 const ProgrammeCollaborationContext = createContext<ProgrammeCollaborationContextType | undefined>(undefined);

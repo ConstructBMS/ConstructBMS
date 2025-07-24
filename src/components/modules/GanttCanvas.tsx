@@ -43,22 +43,22 @@ export interface GanttLink {
 }
 
 export interface GanttCanvasProps {
+  criticalOnly: boolean;
   endDate: Date;
   links: GanttLink[];
   onTaskSelect?: (taskId: string) => void;
-  onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void;
-  selectedTaskId?: string | undefined; 
+  onTaskUpdate?: (taskId: string, updates: Partial<GanttTask>) => void; 
+  projectId?: string;
+  selectedTaskId?: string | undefined;
+  showCriticalPath: boolean;
   showFloat: boolean;
   // 1 = day, 7 = week, 30 = month
   showGridlines: boolean;
   showTaskLinks: boolean;
-  showCriticalPath: boolean;
-  criticalOnly: boolean;
-  startDate: Date;
   tasks: GanttTask[];
   userRole: string;
   zoomLevel: number;
-  projectId?: string;
+  startDate: Date;
 }
 
 interface CanvasDimensions {

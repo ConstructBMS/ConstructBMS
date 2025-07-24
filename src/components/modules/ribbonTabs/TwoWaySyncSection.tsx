@@ -3,15 +3,15 @@ import { ArrowPathIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 
 interface TwoWaySyncSectionProps {
+  disabled?: boolean;
+  lastSyncTime?: string;
+  loading?: {
+    log?: boolean;
+    sync?: boolean;
+  };
   onSyncWithAsta: () => void;
   onViewSyncLog: () => void;
-  lastSyncTime?: string;
   syncStatus?: 'success' | 'error' | 'pending' | 'none';
-  disabled?: boolean;
-  loading?: {
-    sync?: boolean;
-    log?: boolean;
-  };
 }
 
 const TwoWaySyncSection: React.FC<TwoWaySyncSectionProps> = ({

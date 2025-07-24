@@ -6,13 +6,13 @@ export type PageLayout = 'A4P' | 'A4L' | 'A3L';
 export type ExportTheme = 'default' | 'monochrome' | 'light' | 'dark' | 'custom';
 
 interface ExportPreviewModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  pageLayout: PageLayout;
   exportTheme: ExportTheme;
-  projectName: string;
-  onExport: (format: 'pdf' | 'png' | 'jpg') => void;
+  isOpen: boolean;
   loading?: boolean;
+  onClose: () => void;
+  onExport: (format: 'pdf' | 'png' | 'jpg') => void;
+  pageLayout: PageLayout;
+  projectName: string;
 }
 
 const ExportPreviewModal: React.FC<ExportPreviewModalProps> = ({

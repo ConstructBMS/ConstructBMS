@@ -9,11 +9,11 @@ import { usePermissions } from '../../../hooks/usePermissions';
 export type FloatToggleType = 'total' | 'free' | 'negative';
 
 interface FloatToggleProps {
-  type: FloatToggleType;
-  isActive: boolean;
-  onClick: () => void;
   disabled?: boolean;
+  isActive: boolean;
   loading?: boolean;
+  onClick: () => void;
+  type: FloatToggleType;
 }
 
 const FloatToggle: React.FC<FloatToggleProps> = ({

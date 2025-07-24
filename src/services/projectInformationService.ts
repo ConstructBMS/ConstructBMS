@@ -4,22 +4,22 @@ import type { ProjectNotes } from '../components/modules/ribbonTabs/ProjectNotes
 import type { ProjectStatus } from '../components/modules/ribbonTabs/ProjectStatusDropdown';
 
 export interface ProjectInformation {
+  demo?: boolean;
   details: ProjectDetails;
   notes: ProjectNotes;
   status: ProjectStatus;
   statusHistory: Array<{
-    status: ProjectStatus;
     changedAt: string;
     changedBy: string;
     demo?: boolean;
+    status: ProjectStatus;
   }>;
-  demo?: boolean;
 }
 
 export interface ProjectInformationResult {
-  success: boolean;
   data?: ProjectInformation;
   errors: string[];
+  success: boolean;
 }
 
 export class ProjectInformationService {
@@ -288,10 +288,10 @@ export class ProjectInformationService {
    * Get status history
    */
   static async getStatusHistory(projectId: string = 'default'): Promise<Array<{
-    status: ProjectStatus;
     changedAt: string;
     changedBy: string;
     demo?: boolean;
+    status: ProjectStatus;
   }>> {
     try {
       const result = await this.getProjectInformation(projectId);
@@ -330,7 +330,7 @@ export class ProjectInformationService {
   /**
    * Validate project details
    */
-  static validateProjectDetails(details: ProjectDetails): { isValid: boolean; errors: string[] } {
+  static validateProjectDetails(details: ProjectDetails): { errors: string[], isValid: boolean; } {
     const errors: string[] = [];
     
     if (!details.name.trim()) {

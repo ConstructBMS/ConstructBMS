@@ -7,17 +7,17 @@ export type PageLayout = 'A4P' | 'A4L' | 'A3L';
 export type ExportTheme = 'default' | 'monochrome' | 'light' | 'dark' | 'custom';
 
 interface PrintExportStylingSectionProps {
-  pageLayout: PageLayout;
-  onPageLayoutChange: (layout: PageLayout) => void;
-  exportTheme: ExportTheme;
-  onExportThemeChange: (theme: ExportTheme) => void;
-  onPreviewExport: () => void;
   disabled?: boolean;
+  exportTheme: ExportTheme;
   loading?: {
     layout?: boolean;
-    theme?: boolean;
     preview?: boolean;
+    theme?: boolean;
   };
+  onExportThemeChange: (theme: ExportTheme) => void;
+  onPageLayoutChange: (layout: PageLayout) => void;
+  onPreviewExport: () => void;
+  pageLayout: PageLayout;
 }
 
 const PrintExportStylingSection: React.FC<PrintExportStylingSectionProps> = ({
