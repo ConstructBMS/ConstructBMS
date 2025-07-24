@@ -2186,7 +2186,7 @@ function generateDemoCompanies(): DemoCompany[] {
   return [
     {
       id: 1,
-      name: 'Archer Construction Group',
+      name: 'ConstructBMS Construction Group',
       industry: 'Construction',
       size: 'enterprise',
       website: 'https://constructbms.co.uk',

@@ -76,7 +76,7 @@ const AddressBookModal: React.FC<AddressBookModalProps> = ({
 
       // Load CRM contacts (from demo data)
       try {
-        const storedClients = localStorage.getItem('archerbms-demo-data');
+        const storedClients = localStorage.getItem('constructbms-demo-data');
         if (storedClients) {
           const clients: Client[] = JSON.parse(storedClients);
           clients.forEach(client => {

@@ -2,10 +2,10 @@
 
 /* ===== CSS VARIABLES ===== */
 :root {
-  /* Color Palette - Archer Neon Green Theme */
+  /* Color Palette - ConstructBMS Neon Green Theme */
   --color-primary: #1a1a1a;
   --color-secondary: #4d5a6c;
-  --color-accent: #00ff41; /* Archer neon green */
+  --color-accent: #00ff41; /* ConstructBMS neon green */
   --color-accent-hover: #00cc33;
   --color-accent-light: #33ff66;
   --color-accent-dark: #009926;

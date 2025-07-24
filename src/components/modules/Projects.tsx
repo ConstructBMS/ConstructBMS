@@ -280,7 +280,7 @@ const Projects: React.FC = () => {
     e.stopPropagation();
     const user = {
       name: userName,
-      email: `${userName.toLowerCase().replace(' ', '.')}@archerbusiness.co.uk`,
+              email: `${userName.toLowerCase().replace(' ', '.')}@constructbms.com`,
       role: 'Project Manager',
       department: 'Project Management',
       avatar: `/avatars/${userName.toLowerCase().replace(' ', '')}.jpg`,

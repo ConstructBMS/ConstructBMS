@@ -66,7 +66,7 @@ const EmailHelpModal: React.FC<EmailHelpModalProps> = ({ isOpen, onClose }) => {
       title: 'Getting Started with Email Client',
       category: 'getting-started',
       content: `
-        <h3>Welcome to Archer Email Client!</h3>
+        <h3>Welcome to ConstructBMS Email Client!</h3>
         <p>This comprehensive email client is designed to help you manage your business communications efficiently. Here's how to get started:</p>
         
         <h4>Key Features:</h4>

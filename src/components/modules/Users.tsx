@@ -15,21 +15,21 @@ const demoUsers = [
     name: 'Tom Harvey',
     role: 'Admin',
     status: 'active',
-    email: 'tom@archer.com',
+    email: 'tom@constructbms.com',
   },
   {
     id: 2,
     name: 'Sarah Johnson',
     role: 'Manager',
     status: 'active',
-    email: 'sarah@archer.com',
+    email: 'sarah@constructbms.com',
   },
   {
     id: 3,
     name: 'Mike Wilson',
     role: 'User',
     status: 'inactive',
-    email: 'mike@archer.com',
+    email: 'mike@constructbms.com',
   },
 ];
 

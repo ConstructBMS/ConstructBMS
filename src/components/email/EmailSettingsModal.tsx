@@ -96,9 +96,9 @@ const EmailSettingsModal: React.FC<EmailSettingsModalProps> = ({
     accounts: [
       {
         id: '1',
-        name: 'john@archer.com',
+        name: 'john@constructbms.com',
         type: 'IMAP',
-        server: 'imap.archer.com',
+                  server: 'imap.constructbms.com',
         port: 993,
         secure: true,
         active: true,

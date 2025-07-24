@@ -76,8 +76,8 @@ interface ConsultantContact extends Contact {
 }
 
 interface Consultant {
-  // How long they've been working with Archer
-  // Total value of projects worked on with Archer
+      // How long they've been working with ConstructBMS
+    // Total value of projects worked on with ConstructBMS
   address: any;
   availability: 'Available' | 'Busy' | 'Unavailable';
   company: string;

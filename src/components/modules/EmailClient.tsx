@@ -715,7 +715,7 @@ const EmailClient: React.FC = () => {
               </div>
               <div>
                 <p className='font-medium text-sm'>John Doe</p>
-                <p className='text-xs text-gray-500'>john@archer.com</p>
+                <p className='text-xs text-gray-500'>john@constructbms.com</p>
               </div>
             </div>
           </div>
