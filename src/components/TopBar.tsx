@@ -58,7 +58,7 @@ const moduleNames: { [key: string]: string } = {
 };
 
 const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
-  const { user, roles, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { unreadCount: emailUnreadCount } = useEmail();
   const { logoSettings } = useLogo();
   const { theme: themeSettings, setTheme: setThemeMode, isDark } = useTheme();
@@ -177,8 +177,14 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   };
 
   const getPrimaryRole = () => {
-    if (!roles || roles.length === 0) return 'User';
-    return roles[0]?.name || 'User';
+    if (!user) return 'User';
+    return user.role === 'super_admin'
+      ? 'Super Admin'
+      : user.role === 'admin'
+        ? 'Administrator'
+        : user.role === 'employee'
+          ? 'Employee'
+          : 'User';
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

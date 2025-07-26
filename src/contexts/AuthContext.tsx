@@ -79,15 +79,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      // Determine role based on email
+      let role: 'super_admin' | 'admin' | 'employee' = 'employee';
+      let name = email.split('@')[0];
+
+      if (email === 'constructbms@gmail.com') {
+        role = 'super_admin';
+        name = 'ConstructBMS Admin';
+      } else if (email.includes('admin')) {
+        role = 'admin';
+      }
+
       const demoUser: User = {
         id: '1',
         email,
-        name: email.split('@')[0],
-        role: email.includes('admin') ? 'admin' : 'employee',
-        permissions: ['*'],
+        name,
+        role,
+        permissions: role === 'super_admin' ? ['*'] : ['read', 'write'],
       };
       localStorage.setItem('authToken', 'demo-token');
       setUser(demoUser);
+      console.log('Login successful:', { email, role, name });
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
