@@ -84,7 +84,7 @@ export interface VersionPreferences {
   autoSnapshotInterval: number;
   demo: boolean;
   // hours
-  maxVersionsPerProject: number; 
+  maxVersionsPerProject: number;
   projectId: string;
   updatedAt: Date;
   userId: string;
@@ -95,7 +95,7 @@ const DEMO_MODE_CONFIG = {
   maxVersionsPerProject: 2,
   maxTasksPerVersion: 10,
   tooltipMessage: 'DEMO LIMIT – Version restore disabled',
-  versionStateTag: 'demo'
+  versionStateTag: 'demo',
 };
 
 class ProgrammeVersioningService {
@@ -106,7 +106,7 @@ class ProgrammeVersioningService {
   }
 
   private checkDemoMode(): boolean {
-    return demoModeService.isInDemoMode();
+    return demoModeService.getDemoModeStatus();
   }
 
   /**
@@ -130,7 +130,7 @@ class ProgrammeVersioningService {
         createdAt: new Date(version.created_at),
         isAutoSnapshot: version.is_auto_snapshot,
         notes: version.notes,
-        demo: version.demo
+        demo: version.demo,
       }));
     } catch (error) {
       console.error('Error loading programme versions:', error);
@@ -144,7 +144,7 @@ class ProgrammeVersioningService {
   async createVersion(
     projectId: string,
     label: string,
-    tasks: Array<{ [key: string]: any, id: string; }>,
+    tasks: Array<{ [key: string]: any; id: string }>,
     notes?: string,
     isAutoSnapshot: boolean = false
   ): Promise<ProgrammeVersion | null> {
@@ -153,7 +153,9 @@ class ProgrammeVersioningService {
       if (this.isDemoMode) {
         const existingVersions = await this.getProjectVersions(projectId);
         if (existingVersions.length >= DEMO_MODE_CONFIG.maxVersionsPerProject) {
-          throw new Error(`DEMO LIMIT: Maximum ${DEMO_MODE_CONFIG.maxVersionsPerProject} versions allowed in demo mode`);
+          throw new Error(
+            `DEMO LIMIT: Maximum ${DEMO_MODE_CONFIG.maxVersionsPerProject} versions allowed in demo mode`
+          );
         }
       }
 
@@ -165,7 +167,7 @@ class ProgrammeVersioningService {
         created_at: now.toISOString(),
         is_auto_snapshot: isAutoSnapshot,
         notes: notes,
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       };
 
       // Create version
@@ -182,7 +184,7 @@ class ProgrammeVersioningService {
         version_id: version.id,
         task_id: task.id,
         snapshot: this.createTaskSnapshot(task),
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       }));
 
       const { error: dataError } = await supabase
@@ -199,7 +201,7 @@ class ProgrammeVersioningService {
         createdAt: new Date(version.created_at),
         isAutoSnapshot: version.is_auto_snapshot,
         notes: version.notes,
-        demo: version.demo
+        demo: version.demo,
       };
     } catch (error) {
       console.error('Error creating programme version:', error);
@@ -225,7 +227,7 @@ class ProgrammeVersioningService {
         taskId: item.task_id,
         snapshot: item.snapshot,
         demo: item.demo,
-        createdAt: new Date(item.created_at)
+        createdAt: new Date(item.created_at),
       }));
     } catch (error) {
       console.error('Error loading version data:', error);
@@ -236,13 +238,16 @@ class ProgrammeVersioningService {
   /**
    * Compare two versions
    */
-  async compareVersions(versionAId: string, versionBId: string): Promise<VersionComparison | null> {
+  async compareVersions(
+    versionAId: string,
+    versionBId: string
+  ): Promise<VersionComparison | null> {
     try {
       const [versionA, versionB, dataA, dataB] = await Promise.all([
         this.getVersion(versionAId),
         this.getVersion(versionBId),
         this.getVersionData(versionAId),
-        this.getVersionData(versionBId)
+        this.getVersionData(versionBId),
       ]);
 
       if (!versionA || !versionB) {
@@ -256,7 +261,7 @@ class ProgrammeVersioningService {
         versionA,
         versionB,
         differences,
-        summary
+        summary,
       };
     } catch (error) {
       console.error('Error comparing versions:', error);
@@ -282,7 +287,7 @@ class ProgrammeVersioningService {
       // Update current tasks with version data
       for (const data of versionData) {
         const taskUpdate = this.snapshotToTaskUpdate(data.snapshot);
-        
+
         const { error } = await supabase
           .from('asta_tasks')
           .update(taskUpdate)
@@ -322,13 +327,16 @@ class ProgrammeVersioningService {
   /**
    * Update version metadata
    */
-  async updateVersion(versionId: string, updates: Partial<Pick<ProgrammeVersion, 'label' | 'notes'>>): Promise<boolean> {
+  async updateVersion(
+    versionId: string,
+    updates: Partial<Pick<ProgrammeVersion, 'label' | 'notes'>>
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('programme_versions')
         .update({
           label: updates.label,
-          notes: updates.notes
+          notes: updates.notes,
         })
         .eq('id', versionId);
 
@@ -343,7 +351,10 @@ class ProgrammeVersioningService {
   /**
    * Get version preferences
    */
-  async getVersionPreferences(userId: string, projectId: string): Promise<VersionPreferences | null> {
+  async getVersionPreferences(
+    userId: string,
+    projectId: string
+  ): Promise<VersionPreferences | null> {
     try {
       const { data, error } = await supabase
         .from('programme_version_preferences')
@@ -363,7 +374,7 @@ class ProgrammeVersioningService {
         autoSnapshotInterval: data.auto_snapshot_interval,
         maxVersionsPerProject: data.max_versions_per_project,
         demo: data.demo,
-        updatedAt: new Date(data.updated_at)
+        updatedAt: new Date(data.updated_at),
       };
     } catch (error) {
       console.error('Error loading version preferences:', error);
@@ -374,7 +385,9 @@ class ProgrammeVersioningService {
   /**
    * Save version preferences
    */
-  async saveVersionPreferences(preferences: Omit<VersionPreferences, 'updatedAt'>): Promise<boolean> {
+  async saveVersionPreferences(
+    preferences: Omit<VersionPreferences, 'updatedAt'>
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('programme_version_preferences')
@@ -385,7 +398,7 @@ class ProgrammeVersioningService {
           auto_snapshot_interval: preferences.autoSnapshotInterval,
           max_versions_per_project: preferences.maxVersionsPerProject,
           demo: preferences.demo,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
 
       if (error) throw error;
@@ -399,7 +412,9 @@ class ProgrammeVersioningService {
   /**
    * Get a single version
    */
-  private async getVersion(versionId: string): Promise<ProgrammeVersion | null> {
+  private async getVersion(
+    versionId: string
+  ): Promise<ProgrammeVersion | null> {
     try {
       const { data, error } = await supabase
         .from('programme_versions')
@@ -419,7 +434,7 @@ class ProgrammeVersioningService {
         createdAt: new Date(data.created_at),
         isAutoSnapshot: data.is_auto_snapshot,
         notes: data.notes,
-        demo: data.demo
+        demo: data.demo,
       };
     } catch (error) {
       console.error('Error loading version:', error);
@@ -439,12 +454,15 @@ class ProgrammeVersioningService {
       dependencies: task.dependencies || [],
       calendarId: task.calendar_id || task.calendarId,
       constraintType: task.constraint_type || task.constraintType,
-      constraintDate: task.constraint_date || task.constraintDate ? new Date(task.constraint_date || task.constraintDate) : undefined,
+      constraintDate:
+        task.constraint_date || task.constraintDate
+          ? new Date(task.constraint_date || task.constraintDate)
+          : undefined,
       customFields: task.custom_fields || task.customFields || {},
       structure: {
         level: task.level || 0,
         parentId: task.parent_task_id || task.parentId,
-        wbsNumber: task.wbs_number || task.wbsNumber
+        wbsNumber: task.wbs_number || task.wbsNumber,
       },
       tagId: task.tag_id || task.tagId,
       status: task.status || 'not-started',
@@ -453,12 +471,19 @@ class ProgrammeVersioningService {
       description: task.description || '',
       notes: task.notes || '',
       isMilestone: task.is_milestone || task.isMilestone || false,
-      actualStartDate: task.actual_start_date || task.actualStartDate ? new Date(task.actual_start_date || task.actualStartDate) : undefined,
-      actualFinishDate: task.actual_finish_date || task.actualFinishDate ? new Date(task.actual_finish_date || task.actualFinishDate) : undefined,
+      actualStartDate:
+        task.actual_start_date || task.actualStartDate
+          ? new Date(task.actual_start_date || task.actualStartDate)
+          : undefined,
+      actualFinishDate:
+        task.actual_finish_date || task.actualFinishDate
+          ? new Date(task.actual_finish_date || task.actualFinishDate)
+          : undefined,
       duration: task.duration || 0,
       work: task.work || 0,
       cost: task.cost || 0,
-      resourceAssignments: task.resource_assignments || task.resourceAssignments || []
+      resourceAssignments:
+        task.resource_assignments || task.resourceAssignments || [],
     };
   }
 
@@ -486,17 +511,22 @@ class ProgrammeVersioningService {
       notes: snapshot.notes,
       is_milestone: snapshot.isMilestone,
       actual_start_date: snapshot.actualStartDate?.toISOString().split('T')[0],
-      actual_finish_date: snapshot.actualFinishDate?.toISOString().split('T')[0],
+      actual_finish_date: snapshot.actualFinishDate
+        ?.toISOString()
+        .split('T')[0],
       duration: snapshot.duration,
       work: snapshot.work,
-      cost: snapshot.cost
+      cost: snapshot.cost,
     };
   }
 
   /**
    * Calculate differences between two versions
    */
-  private calculateDifferences(dataA: ProgrammeVersionData[], dataB: ProgrammeVersionData[]): TaskDifference[] {
+  private calculateDifferences(
+    dataA: ProgrammeVersionData[],
+    dataB: ProgrammeVersionData[]
+  ): TaskDifference[] {
     const differences: TaskDifference[] = [];
     const tasksA = new Map(dataA.map(d => [d.taskId, d]));
     const tasksB = new Map(dataB.map(d => [d.taskId, d]));
@@ -508,7 +538,7 @@ class ProgrammeVersioningService {
           taskId,
           taskName: dataB.snapshot.name,
           type: 'added',
-          changes: []
+          changes: [],
         });
       }
     }
@@ -520,7 +550,7 @@ class ProgrammeVersioningService {
           taskId,
           taskName: dataA.snapshot.name,
           type: 'removed',
-          changes: []
+          changes: [],
         });
       }
     }
@@ -529,20 +559,23 @@ class ProgrammeVersioningService {
     for (const [taskId, dataA] of tasksA) {
       const dataB = tasksB.get(taskId);
       if (dataB) {
-        const changes = this.compareTaskSnapshots(dataA.snapshot, dataB.snapshot);
+        const changes = this.compareTaskSnapshots(
+          dataA.snapshot,
+          dataB.snapshot
+        );
         if (changes.length > 0) {
           differences.push({
             taskId,
             taskName: dataA.snapshot.name,
             type: 'modified',
-            changes
+            changes,
           });
         } else {
           differences.push({
             taskId,
             taskName: dataA.snapshot.name,
             type: 'unchanged',
-            changes: []
+            changes: [],
           });
         }
       }
@@ -554,22 +587,36 @@ class ProgrammeVersioningService {
   /**
    * Compare two task snapshots
    */
-  private compareTaskSnapshots(snapshotA: TaskSnapshot, snapshotB: TaskSnapshot): Array<{ field: string; newValue: any, oldValue: any; }> {
-    const changes: Array<{ field: string; newValue: any, oldValue: any; }> = [];
+  private compareTaskSnapshots(
+    snapshotA: TaskSnapshot,
+    snapshotB: TaskSnapshot
+  ): Array<{ field: string; newValue: any; oldValue: any }> {
+    const changes: Array<{ field: string; newValue: any; oldValue: any }> = [];
     const fields = [
-      'name', 'startDate', 'finishDate', 'percentComplete', 'status', 'priority',
-      'assignedTo', 'description', 'notes', 'isMilestone', 'duration', 'work', 'cost'
+      'name',
+      'startDate',
+      'finishDate',
+      'percentComplete',
+      'status',
+      'priority',
+      'assignedTo',
+      'description',
+      'notes',
+      'isMilestone',
+      'duration',
+      'work',
+      'cost',
     ];
 
     for (const field of fields) {
       const valueA = (snapshotA as any)[field];
       const valueB = (snapshotB as any)[field];
-      
+
       if (valueA !== valueB) {
         changes.push({
           field,
           oldValue: valueA,
-          newValue: valueB
+          newValue: valueB,
         });
       }
     }
@@ -580,12 +627,14 @@ class ProgrammeVersioningService {
   /**
    * Calculate summary of differences
    */
-  private calculateSummary(differences: TaskDifference[]): VersionComparison['summary'] {
+  private calculateSummary(
+    differences: TaskDifference[]
+  ): VersionComparison['summary'] {
     return {
       addedTasks: differences.filter(d => d.type === 'added').length,
       removedTasks: differences.filter(d => d.type === 'removed').length,
       modifiedTasks: differences.filter(d => d.type === 'modified').length,
-      unchangedTasks: differences.filter(d => d.type === 'unchanged').length
+      unchangedTasks: differences.filter(d => d.type === 'unchanged').length,
     };
   }
 
@@ -604,4 +653,4 @@ class ProgrammeVersioningService {
   }
 }
 
-export const programmeVersioningService = new ProgrammeVersioningService(); 
+export const programmeVersioningService = new ProgrammeVersioningService();

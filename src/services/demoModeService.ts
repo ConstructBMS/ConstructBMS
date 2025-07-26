@@ -13,16 +13,17 @@ class DemoModeService {
    */
   private checkDemoMode(): boolean {
     // Check environment variables, user role, or other indicators
-    const envDemoMode = process.env.NODE_ENV === 'development' || 
-                       process.env.REACT_APP_DEMO_MODE === 'true';
-    
+    const envDemoMode =
+      process.env.NODE_ENV === 'development' ||
+      process.env.REACT_APP_DEMO_MODE === 'true';
+
     // Check localStorage for demo mode setting
     const localStorageDemoMode = localStorage.getItem('demo_mode') === 'true';
-    
+
     // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const urlDemoMode = urlParams.get('demo') === 'true';
-    
+
     return envDemoMode || localStorageDemoMode || urlDemoMode;
   }
 
@@ -30,6 +31,13 @@ class DemoModeService {
    * Check if current mode is demo
    */
   async checkDemoModeAsync(): Promise<boolean> {
+    return this.isDemoMode;
+  }
+
+  /**
+   * Check if current mode is demo (alias for checkDemoModeAsync)
+   */
+  async isDemoMode(): Promise<boolean> {
     return this.isDemoMode;
   }
 
@@ -75,8 +83,8 @@ class DemoModeService {
         resourceAllocation: false,
         advancedAnalytics: false,
         customFields: false,
-        integrations: false
-      }
+        integrations: false,
+      },
     };
   }
 
@@ -85,7 +93,10 @@ class DemoModeService {
    */
   isFeatureAvailable(feature: string): boolean {
     const restrictions = this.getDemoRestrictions();
-    return restrictions.features[feature as keyof typeof restrictions.features] || false;
+    return (
+      restrictions.features[feature as keyof typeof restrictions.features] ||
+      false
+    );
   }
 
   /**
@@ -107,4 +118,4 @@ class DemoModeService {
 }
 
 // Export singleton instance
-export const demoModeService = new DemoModeService(); 
+export const demoModeService = new DemoModeService();
