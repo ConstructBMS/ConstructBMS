@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { SystemRoles, Permissions } from '../../types/auth';
 import { DEFAULT_ROLE_TEMPLATES } from '../../services/permissionMatrix';
@@ -952,7 +951,7 @@ const mockAuditLogs = [
     timestamp: '2024-01-15T15:30:07Z',
     action: 'CUSTOM_RULE_CREATED',
     userId: '1',
-    userEmail: 'archerbuildltd@gmail.com',
+    userEmail: 'constructbms@gmail.com',
     userRole: SystemRoles.SUPER_ADMIN,
     targetUserId: null,
     targetUserEmail: null,

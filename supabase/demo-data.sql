@@ -16,7 +16,7 @@ INSERT INTO roles (id, organization_id, name, description, permissions) VALUES
 -- Insert Demo Users (Note: These won't have passwords as Supabase handles auth differently)
 -- You'll need to create these users through Supabase Auth or your application
 INSERT INTO users (id, organization_id, email, first_name, last_name, is_active) VALUES 
-('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'superadmin@archer-demo.com', 'Super', 'Admin', true),
+('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'constructbms@gmail.com', 'ConstructBMS', 'Admin', true),
 ('550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440000', 'admin@archer-demo.com', 'Admin', 'User', true),
 ('550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440000', 'employee@archer-demo.com', 'John', 'Employee', true),
 ('550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440000', 'contractor@archer-demo.com', 'Jane', 'Contractor', true),

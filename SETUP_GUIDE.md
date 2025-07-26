@@ -81,7 +81,7 @@ npm run server
 - **Frontend**: http://localhost:5173
 - **Backend**: http://localhost:3001
 - **Demo Accounts** (if using backend server):
-  - Super Admin: `superadmin@archer.com` / `password`
+  - Super Admin: `constructbms@gmail.com` / `ConstructBMS25`
   - Admin: `admin@archer.com` / `password`
   - Employee: `employee@archer.com` / `password`
 

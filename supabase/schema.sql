@@ -269,7 +269,7 @@ INSERT INTO roles (id, organization_id, name, description, permissions) VALUES
 
 -- Insert demo users (password: 'password')
 INSERT INTO users (id, organization_id, email, password_hash, first_name, last_name) VALUES
-  ('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'superadmin@archer.com', '$2b$10$rQZ8N3YqX2vL1mK9nP7wQeJ6hF8gS4tU2vL1mK9nP7wQeJ6hF8gS4tU2vL', 'Super', 'Admin'),
+  ('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'constructbms@gmail.com', '$2b$10$rQZ8N3YqX2vL1mK9nP7wQeJ6hF8gS4tU2vL1mK9nP7wQeJ6hF8gS4tU2vL', 'ConstructBMS', 'Admin'),
   ('550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440000', 'admin@archer.com', '$2b$10$rQZ8N3YqX2vL1mK9nP7wQeJ6hF8gS4tU2vL1mK9nP7wQeJ6hF8gS4tU2vL', 'Admin', 'User'),
   ('550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440000', 'employee@archer.com', '$2b$10$rQZ8N3YqX2vL1mK9nP7wQeJ6hF8gS4tU2vL1mK9nP7wQeJ6hF8gS4tU2vL', 'Employee', 'User');
 

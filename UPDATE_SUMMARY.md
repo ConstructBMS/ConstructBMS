@@ -11,7 +11,7 @@
 - **SQLite Server (`server/index.cjs`)**:
   - Updated organization name: "Archer Business Solutions" → "Archer Build Ltd"  
   - Updated domain: "archer.com" → "archerbuild.com"
-  - Updated super admin email: "superadmin@archer.com" → "archerbuildltd@gmail.com"
+  - Updated super admin email: "superadmin@archer.com" → "constructbms@gmail.com"
   - Updated super admin name: "Super Admin" → "Archer Admin"
   - Updated password: "password" → "ArcherBuild25"
   - Updated console output to show new credentials
@@ -27,7 +27,7 @@
 ## New Login Credentials
 
 ### Super Admin
-- **Email**: archerbuildltd@gmail.com
+- **Email**: constructbms@gmail.com
 - **Password**: ArcherBuild25
 - **Role**: Super Admin (full system access)
 
@@ -42,11 +42,11 @@
    - Or use `supabase/reset-demo-data.sql` for a fresh start
 
 2. **Link Supabase Auth User**:
-   - Your Supabase Auth user (archerbuildltd@gmail.com) should match the database record
+   - Your Supabase Auth user (constructbms@gmail.com) should match the database record
    - The system will link the Auth user to the database record automatically
 
 3. **Test Login**:
-   - Use archerbuildltd@gmail.com / ArcherBuild25 to login
+   - Use constructbms@gmail.com / ConstructBMS25 to login
    - Verify super admin permissions are working
 
 ## Files Modified

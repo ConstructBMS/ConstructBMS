@@ -75,7 +75,7 @@ NODE_ENV=development
 
 After completing these steps:
 - The console errors should disappear
-- You should be able to login with: `archerbuildltd@gmail.com` / `ArcherBuild25`
+- You should be able to login with: `constructbms@gmail.com` / `ConstructBMS25`
 - Analytics and performance tracking should work properly
 - All Supabase features (auth, database, real-time) should function correctly
 

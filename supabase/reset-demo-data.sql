@@ -36,7 +36,7 @@ INSERT INTO roles (id, organization_id, name, description, permissions) VALUES
 -- Insert Demo Users (Note: These are just database records, not auth users)
 -- The password_hash field is left NULL since Supabase Auth handles authentication
 INSERT INTO users (id, organization_id, email, first_name, last_name, password_hash, is_active) VALUES 
-('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'superadmin@archer-demo.com', 'Super', 'Admin', NULL, true),
+('550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', 'constructbms@gmail.com', 'ConstructBMS', 'Admin', NULL, true),
 ('550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440000', 'admin@archer-demo.com', 'Admin', 'User', NULL, true),
 ('550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440000', 'employee@archer-demo.com', 'John', 'Employee', NULL, true),
 ('550e8400-e29b-41d4-a716-446655440013', '550e8400-e29b-41d4-a716-446655440000', 'contractor@archer-demo.com', 'Jane', 'Contractor', NULL, true),

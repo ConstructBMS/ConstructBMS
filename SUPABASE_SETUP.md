@@ -73,7 +73,7 @@ The schema.sql file includes RLS policies, but verify they're active:
    ```
 
 2. Try logging in with demo credentials:
-   - **Super Admin**: `superadmin@archer.com` / `password`
+   - **Super Admin**: `constructbms@gmail.com` / `ConstructBMS25`
    - **Admin**: `admin@archer.com` / `password`
    - **Employee**: `employee@archer.com` / `password`
 

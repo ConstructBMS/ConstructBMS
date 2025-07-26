@@ -11,7 +11,7 @@ WHERE id = '550e8400-e29b-41d4-a716-446655440000';
 -- Update the super admin user record to match the real Supabase Auth user
 -- Note: You'll need to get the actual UUID from Supabase Auth and replace it here
 UPDATE users 
-SET email = 'archerbuildltd@gmail.com',
+SET email = 'constructbms@gmail.com',
     first_name = 'Archer',
     last_name = 'Admin',
     updated_at = CURRENT_TIMESTAMP
