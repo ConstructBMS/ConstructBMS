@@ -37,7 +37,7 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   onOpenBaselineManager,
   currentTasks
 }) => {
-  const { canAccess } = usePermissions();
+  const { hasPermission } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [baselines, setBaselines] = useState<Baseline[]>([]);
   const [activeBaseline, setActiveBaseline] = useState<Baseline | null>(null);
@@ -45,9 +45,9 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   const [loading, setLoading] = useState(false);
   const [creatingBaseline, setCreatingBaseline] = useState(false);
 
-  const canView = canAccess('programme.baseline.view');
-  const canCreate = canAccess('programme.baseline.create');
-  const canManage = canAccess('programme.baseline.manage');
+  const canView = hasPermission('programme.baseline.view');
+  const canCreate = hasPermission('programme.baseline.create');
+  const canManage = hasPermission('programme.baseline.manage');
 
   // Check demo mode on mount
   useEffect(() => {
