@@ -1,13 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-interface MenuItem {
-  children?: MenuItem[];
-  icon?: string;
-  id: string;
-  label: string;
-  path: string;
-  permissions?: string[];
-}
+import { defaultMenu } from '../config/defaultMenu';
+import type { MenuItem } from '../types/menu';
 
 interface MenuContextType {
   activeModule: string;
@@ -36,48 +29,38 @@ export const MenuProvider: React.FC<MenuProviderProps> = ({ children }) => {
   const [activeModule, setActiveModule] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const menuItems: MenuItem[] = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      path: '/dashboard',
-      icon: 'HomeIcon',
-    },
-    {
-      id: 'projects',
-      label: 'Projects',
-      path: '/projects',
-      icon: 'FolderIcon',
-    },
-    { id: 'tasks', label: 'Tasks', path: '/tasks', icon: 'CheckCircleIcon' },
-    { id: 'crm', label: 'CRM', path: '/crm', icon: 'UsersIcon' },
-    { id: 'chat', label: 'Chat', path: '/chat', icon: 'ChatBubbleIcon' },
-    {
-      id: 'documents',
-      label: 'Documents',
-      path: '/documents',
-      icon: 'DocumentIcon',
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics',
-      path: '/analytics',
-      icon: 'ChartBarIcon',
-    },
-    { id: 'settings', label: 'Settings', path: '/settings', icon: 'CogIcon' },
-  ];
+  // Use the default hierarchical menu structure
+  const menuItems: MenuItem[] = defaultMenu;
 
-  // Default modules configuration
-  const modules: Record<string, { active: boolean; type: string }> = {
-    dashboard: { active: true, type: 'core' },
-    projects: { active: true, type: 'core' },
-    tasks: { active: true, type: 'core' },
-    crm: { active: true, type: 'additional' },
-    chat: { active: true, type: 'additional' },
-    documents: { active: true, type: 'additional' },
-    analytics: { active: true, type: 'additional' },
-    settings: { active: true, type: 'core' },
+  // Build modules map from the hierarchical menu structure
+  const buildModulesMap = (
+    items: MenuItem[]
+  ): Record<string, { active: boolean; type: string }> => {
+    const modulesMap: Record<string, { active: boolean; type: string }> = {};
+
+    const processItems = (items: MenuItem[]) => {
+      items.forEach(item => {
+        // Determine if it's core or additional based on the item
+        const isCore = ['dashboard', 'projects', 'tasks', 'settings'].includes(
+          item.id
+        );
+        modulesMap[item.id] = {
+          active: true,
+          type: isCore ? 'core' : 'additional',
+        };
+
+        // Process children recursively
+        if (item.children && item.children.length > 0) {
+          processItems(item.children);
+        }
+      });
+    };
+
+    processItems(items);
+    return modulesMap;
   };
+
+  const modules = buildModulesMap(menuItems);
 
   const value: MenuContextType = {
     menuItems,

@@ -235,63 +235,21 @@ const Sidebar: React.FC<SidebarProps> = ({
     return true;
   };
 
-  const coreMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    // Exclude settings and support from core menu
-    if (item.id === 'settings' || item.id === 'support') return false;
+  // For hierarchical menu, we don't need to categorize - just use the menu as is
+  const visibleMenu = (menu || []).filter(item =>
+    isVisible(item)
+  ) as MenuItem[];
 
-    // Check if item has moduleKey and it's a core module
-    if (item.moduleKey && modulesMap[item.moduleKey]) {
-      const module = modulesMap[item.moduleKey];
-      return module && module.type === 'core';
-    }
-
-    // Check if item.id exists in modules and it's a core module
-    if (modulesMap[item.id]) {
-      return modulesMap[item.id]?.type === 'core';
-    }
-
-    // Include items that don't have a moduleKey (like dashboard, projects, etc.)
-    return (
-      !item.moduleKey ||
-      (item.moduleKey &&
-        modulesMap[item.moduleKey] &&
-        modulesMap[item.moduleKey]?.type === 'core')
-    );
-  }) as MenuItem[];
-
-  const additionalMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    // Exclude settings and support from additional menu
-    if (item.id === 'settings' || item.id === 'support') return false;
-
-    // Check if item has moduleKey and it's an additional module
-    if (item.moduleKey && modulesMap[item.moduleKey]) {
-      return modulesMap[item.moduleKey]?.type === 'additional';
-    }
-
-    // Check if item.id exists in modules and it's an additional module
-    if (modulesMap[item.id]) {
-      return modulesMap[item.id]?.type === 'additional';
-    }
-
-    return false;
-  }) as MenuItem[];
-
-  // Separate Settings and Support for the bottom section
-  const bottomMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    return item.id === 'settings' || item.id === 'support';
-  }) as MenuItem[];
-
-  // Debug logging for categorized menus
-  console.log('Categorized Menus:', {
-    coreMenu: coreMenu,
-    additionalMenu: additionalMenu,
-    bottomMenu: bottomMenu,
-    coreMenuLength: coreMenu.length,
-    additionalMenuLength: additionalMenu.length,
-    bottomMenuLength: bottomMenu.length,
+  // Debug logging for hierarchical menu
+  console.log('Hierarchical Menu:', {
+    visibleMenu: visibleMenu,
+    visibleMenuLength: visibleMenu.length,
+    menuStructure: visibleMenu.map(item => ({
+      id: item.id,
+      label: item.label,
+      type: item.type,
+      children: item.children?.length || 0,
+    })),
   });
 
   // Helper: is this the active parent?
@@ -479,32 +437,9 @@ const Sidebar: React.FC<SidebarProps> = ({
           </>
         )}
       </div>
-      {!collapsed && (
-        <div className='px-4 pt-4 pb-2 text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wide'>
-          CORE MODULES
-        </div>
-      )}
       <nav className='flex-1 overflow-y-auto pb-4'>
-        {renderMenu(coreMenu)}
-        {additionalMenu.length > 0 && (
-          <>
-            {!collapsed && (
-              <>
-                <div className='my-4 border-t border-gray-200 dark:border-gray-700 opacity-80' />
-                <div className='px-4 pt-2 pb-2 text-xs font-bold text-gray-500 dark:text-gray-400 tracking-wide'>
-                  ADDITIONAL MODULES
-                </div>
-              </>
-            )}
-            {renderMenu(additionalMenu)}
-          </>
-        )}
+        {renderMenu(visibleMenu)}
       </nav>
-      {bottomMenu.length > 0 && (
-        <div className='mt-auto border-t border-gray-200 dark:border-gray-700'>
-          {renderMenu(bottomMenu)}
-        </div>
-      )}
     </aside>
   );
 };
