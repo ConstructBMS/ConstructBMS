@@ -61,7 +61,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   const { user, roles, logout } = useAuth();
   const { unreadCount: emailUnreadCount } = useEmail();
   const { logoSettings } = useLogo();
-  const { themeSettings, setThemeMode } = useTheme();
+  const { theme: themeSettings, setTheme: setThemeMode, isDark } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
@@ -70,7 +70,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
   const [isBadgeUpdating, setIsBadgeUpdating] = useState(false);
 
   // Check if user has set a custom main logo
-  const hasCustomMainLogo = logoSettings?.mainLogo?.type === 'image' && logoSettings?.mainLogo?.imageUrl && logoSettings.mainLogo.imageUrl !== null;
+  const hasCustomMainLogo =
+    logoSettings?.mainLogo?.type === 'image' &&
+    logoSettings?.mainLogo?.imageUrl &&
+    logoSettings.mainLogo.imageUrl !== null;
 
   // Track unread count changes for animation
   useEffect(() => {
@@ -134,7 +137,11 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
 
   const handleThemeToggle = () => {
     // Only toggle between light and dark, regardless of current mode
-    if (themeSettings.mode === 'light' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'light')) {
+    if (
+      !themeSettings ||
+      themeSettings === 'light' ||
+      (themeSettings === 'auto' && !isDark)
+    ) {
       setThemeMode('dark');
     } else {
       setThemeMode('light');
@@ -143,13 +150,15 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
 
   const getThemeIcon = () => {
     // Show the opposite of current effective mode
-    const isCurrentlyDark = themeSettings.mode === 'dark' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'dark');
+    const isCurrentlyDark =
+      themeSettings === 'dark' || (themeSettings === 'auto' && isDark);
     return isCurrentlyDark ? Sun : Moon;
   };
 
   const getThemeTooltip = () => {
     // Show what clicking will change to
-    const isCurrentlyDark = themeSettings.mode === 'dark' || (themeSettings.mode === 'auto' && themeSettings.effectiveMode === 'dark');
+    const isCurrentlyDark =
+      themeSettings === 'dark' || (themeSettings === 'auto' && isDark);
     return isCurrentlyDark ? 'Switch to light mode' : 'Switch to dark mode';
   };
 
@@ -157,7 +166,10 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
 
   const getUserInitials = () => {
     if (!user) return 'U';
-    return `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() || 'U';
+    return (
+      `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() ||
+      'U'
+    );
   };
 
   const getUserAvatar = () => {

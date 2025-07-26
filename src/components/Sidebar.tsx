@@ -85,7 +85,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'bars-3-bottom-left': <Bars3BottomLeftIcon className='h-8 w-8' />,
   key: <KeyIcon className='h-8 w-8' />,
   'hard-hat': <WrenchScrewdriverIcon className='h-8 w-8' />,
-  'builder': <WrenchScrewdriverIcon className='h-8 w-8' />,
+  builder: <WrenchScrewdriverIcon className='h-8 w-8' />,
 };
 
 const renderIcon = (
@@ -117,18 +117,24 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeModule,
   onModuleChange,
 }) => {
-  const { menu, modules } = useMenu();
+  const { menuItems: menu, modules } = useMenu();
   const { logoSettings } = useLogo();
   const [expanded, setExpanded] = useState<{ [id: string]: boolean }>({});
   const modulesMap = modules as Record<
     string,
-    { active: boolean, type: string; }
+    { active: boolean; type: string }
   >;
 
   // Check if user has set a custom sidebar logo
-  const hasCustomSidebarLogo = logoSettings?.sidebarLogo?.type === 'image' && logoSettings?.sidebarLogo?.imageUrl && logoSettings.sidebarLogo.imageUrl !== null;
+  const hasCustomSidebarLogo =
+    logoSettings?.sidebarLogo?.type === 'image' &&
+    logoSettings?.sidebarLogo?.imageUrl &&
+    logoSettings.sidebarLogo.imageUrl !== null;
   // Check if user has set a custom main logo
-  const hasCustomMainLogo = logoSettings?.mainLogo?.type === 'image' && logoSettings?.mainLogo?.imageUrl && logoSettings.mainLogo.imageUrl !== null;
+  const hasCustomMainLogo =
+    logoSettings?.mainLogo?.type === 'image' &&
+    logoSettings?.mainLogo?.imageUrl &&
+    logoSettings.mainLogo.imageUrl !== null;
 
   // Find parent of active module
   const findParent = (items: MenuItem[], module: string): string | null => {
@@ -213,7 +219,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return true;
   };
 
-  const coreMenu = menu.filter(item => {
+  const coreMenu = (menu || []).filter(item => {
     if (!isVisible(item)) return false;
     // Exclude settings and support from core menu
     if (item.id === 'settings' || item.id === 'support') return false;
@@ -222,10 +228,15 @@ const Sidebar: React.FC<SidebarProps> = ({
       return module && module.type === 'core';
     }
     // Include items that don't have a moduleKey (like dashboard, projects, etc.)
-    return !item.moduleKey || (item.moduleKey && modulesMap[item.moduleKey] && modulesMap[item.moduleKey]?.type === 'core');
+    return (
+      !item.moduleKey ||
+      (item.moduleKey &&
+        modulesMap[item.moduleKey] &&
+        modulesMap[item.moduleKey]?.type === 'core')
+    );
   }) as MenuItem[];
 
-  const additionalMenu = menu.filter(item => {
+  const additionalMenu = (menu || []).filter(item => {
     if (!isVisible(item)) return false;
     // Exclude settings and support from additional menu
     if (item.id === 'settings' || item.id === 'support') return false;
@@ -236,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   }) as MenuItem[];
 
   // Separate Settings and Support for the bottom section
-  const bottomMenu = menu.filter(item => {
+  const bottomMenu = (menu || []).filter(item => {
     if (!isVisible(item)) return false;
     return item.id === 'settings' || item.id === 'support';
   }) as MenuItem[];
@@ -350,20 +361,20 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className='flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700'>
         {collapsed ? (
           <div className='flex items-center justify-center w-full'>
-              <span
-                title='Toggle Sidebar'
-                className='sidebar-icon flex items-center justify-center cursor-pointer'
-                onClick={onToggle}
-              >
+            <span
+              title='Toggle Sidebar'
+              className='sidebar-icon flex items-center justify-center cursor-pointer'
+              onClick={onToggle}
+            >
               {hasCustomSidebarLogo ? (
                 <img
                   src={logoSettings?.sidebarLogo?.imageUrl || ''}
                   alt='Sidebar Logo'
                   className='h-7 w-7 object-contain'
                 />
-            ) : (
+              ) : (
                 /* Blue circle with navy 'C' for ConstructBMS - only show the circle when collapsed */
-              <span
+                <span
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -378,8 +389,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                   }}
                 >
                   C
-              </span>
-            )}
+                </span>
+              )}
             </span>
           </div>
         ) : (
@@ -407,11 +418,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                       fontWeight: 'bold',
                       fontSize: '1.25rem',
                       marginRight: '0.5rem',
-                      boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
                     }}
                   >
                     C
-                </span>
+                  </span>
                   {/* Only show text if no custom logos are set */}
                   {!(hasCustomSidebarLogo || hasCustomMainLogo) && (
                     <span>ConstructBMS</span>
