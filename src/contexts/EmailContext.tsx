@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface EmailContextType {
+  emails: any[];
+  setEmails: (emails: any[]) => void;
   setUnreadCount: (count: number) => void;
   unreadCount: number;
 }
@@ -21,10 +23,18 @@ interface EmailProviderProps {
 
 export const EmailProvider: React.FC<EmailProviderProps> = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
+  const [emails, setEmails] = useState([]);
+
+  const value: EmailContextType = {
+    unreadCount,
+    setUnreadCount,
+    emails,
+    setEmails
+  };
 
   return (
-    <EmailContext.Provider value={{ unreadCount, setUnreadCount }}>
+    <EmailContext.Provider value={value}>
       {children}
     </EmailContext.Provider>
   );
-};
+}; 

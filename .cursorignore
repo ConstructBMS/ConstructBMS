@@ -1,12 +1,14 @@
+# Essential ignores only - keeping all development files accessible
+
+# Dependencies
+node_modules/
+
 # Build artifacts
 dist/
 build/
 .next/
 .nuxt/
 .output/
-
-# Dependencies
-node_modules/
 
 # Environment files
 .env
@@ -22,17 +24,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory
-coverage/
-*.lcov
-.nyc_output/
-
 # Cache directories
 .cache/
 .parcel-cache/
@@ -41,13 +32,6 @@ coverage/
 .rts2_cache_cjs/
 .rts2_cache_es/
 .rts2_cache_umd/
-
-# Editor directories and files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
 
 # OS generated files
 .DS_Store
@@ -58,37 +42,6 @@ coverage/
 ehthumbs.db
 Thumbs.db
 desktop.ini
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Test files
-*.test.js
-*.test.ts
-*.test.tsx
-__tests__/
-test/
-tests/
-
-# Documentation
-docs/
-*.md
-README.md
-
-# Process Documents (large files)
-Process Documents/
-
-# Large SQL files (keep only essential)
-*.sql
-!chat-database-setup.sql
-
-# Server logs
-server/logs/
-
-# Git
-.git/
 
 # Large binary files
 *.pdf
@@ -126,55 +79,10 @@ server/logs/
 lighthouse-report.json
 bundle-analyzer-report.html
 
-# TypeScript declaration files (generated)
-*.d.ts
-!src/types/*.d.ts
-
 # Generated files
 public/sw.js
 public/workbox-*.js
 public/workbox-*.js.map
-
-# Lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# Large vendor libraries
-node_modules/lodash/
-node_modules/moment/
-node_modules/date-fns/
-node_modules/chart.js/
-node_modules/d3/
-
-# Development tools
-.husky/
-.lint-staged/
-.prettierrc*
-.eslintrc*
-
-# CI/CD files
-.github/
-.gitlab-ci.yml
-.travis.yml
-.circleci/
-
-# Docker files
-Dockerfile*
-docker-compose*.yml
-
-# Backup files
-*.bak
-*.backup
-*~
-
-# Large data files
-*.csv
-*.json
-!package.json
-!tsconfig*.json
-!tailwind.config.js
-!postcss.config.js
 
 # Generated source maps
 *.map
@@ -186,7 +94,7 @@ temp/
 .temp/
 .temporary/
 
-# Large directories (if not actively developing)
+# Legacy/deprecated directories only
 src/legacy/
 src/old/
 src/deprecated/
@@ -195,80 +103,4 @@ server/old/
 server/deprecated/
 scripts/legacy/
 scripts/old/
-scripts/deprecated/
-config/legacy/
-config/old/
-config/deprecated/
-utils/legacy/
-utils/old/
-utils/deprecated/
-services/legacy/
-services/old/
-services/deprecated/
-components/legacy/
-components/old/
-components/deprecated/
-contexts/legacy/
-contexts/old/
-contexts/deprecated/
-hooks/legacy/
-hooks/old/
-hooks/deprecated/
-types/legacy/
-types/old/
-types/deprecated/
-
-# Large asset directories
-assets/raw/
-assets/unprocessed/
-assets/original/
-public/assets/large/
-public/media/
-public/videos/
-public/audio/
-
-# OPTIMIZATION: Exclude large component directories when not actively developing
-# src/components/modules/ribbonTabs/
-# src/components/modules/Timeline/
-# src/components/archived/
-
-# OPTIMIZATION: Exclude large service files when not actively developing
-# src/services/*Service.ts
-# !src/services/index.ts
-
-# OPTIMIZATION: Exclude large script files
-scripts/*.js
-scripts/*.ts
-
-# OPTIMIZATION: Exclude batch files
-*.bat
-*.ps1
-
-# OPTIMIZATION: Exclude large configuration files
-vite.config.*.ts
-tailwind.config.js
-postcss.config.js
-
-# OPTIMIZATION: Exclude large UI component files
-src/components/ui/*.tsx
-src/components/widgets/*.tsx
-
-# OPTIMIZATION: Exclude large context files
-src/contexts/*.tsx
-
-# OPTIMIZATION: Exclude large hook files (but keep essential ones)
-src/hooks/*.ts
-!src/hooks/usePermissions.ts
-
-# OPTIMIZATION: Exclude large utility files
-src/utils/*.ts
-src/utils/*.js
-
-# OPTIMIZATION: Exclude large type files
-src/types/*.ts
-
-# OPTIMIZATION: Exclude large style files
-src/styles/*.css
-
-# OPTIMIZATION: Exclude large demo data files
-src/scripts/*.ts 
+scripts/deprecated/ 

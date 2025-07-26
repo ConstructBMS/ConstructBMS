@@ -62,44 +62,47 @@ export interface AdvancedGanttTask {
     lag?: number;
     type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
   }>;
+  // true if task can be dragged
+  dragConstraints?: {
+    locked?: boolean;
+    maxEnd?: Date;
+    minStart?: Date;
+  };
+  // Progress tracking fields
+  duration: number;
+  // true if updated in demo mode
+  earlyFinish: Date;
   earlyStart: Date;
   end: Date;
   expanded: boolean;
   freeFloat: number;
   id: string;
   isCritical: boolean;
+  // When progress was last updated
+// Drag reschedule fields
+  isDraggable?: boolean;
+  // Task resize fields
+  isResizable?: boolean;
+  lateFinish: Date;
   lateFinish: Date;
   lateStart: Date;
-  level?: number;
-  name: string;
-  notes?: string;
-  parentId: string | null;
-  pattern?: 'solid' | 'dashed' | 'dotted';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  progress: number;
-  // Progress tracking fields
-  duration: number; // true if updated in demo mode
-  earlyFinish: Date; 
-  level?: number;
-  lateFinish: Date;
   lateStart: Date;
+  level?: number; 
+  level?: number; 
   milestoneDate?: Date;
   name: string;
+  name: string;
+  notes?: string;
   notes?: string;
   parentId: string | null;
+  parentId: string | null;
   pattern?: 'solid' | 'dashed' | 'dotted';
-  percentComplete?: number; 
+  pattern?: 'solid' | 'dashed' | 'dotted'; 
+  percentComplete?: number;
   priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: 'low' | 'medium' | 'high' | 'critical'; 
+  progress: number; 
   progress: number;
-  // Task resize fields
-  isResizable?: boolean; // When progress was last updated
-  // Drag reschedule fields
-  isDraggable?: boolean; // true if task can be dragged
-  dragConstraints?: {
-    locked?: boolean;
-    maxEnd?: Date;
-    minStart?: Date;
-  };
   // true if task can be resized
   resizeConstraints?: {
     allowEndResize?: boolean;

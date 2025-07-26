@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusIcon, PencilIcon, TrashIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
-import { programmeCustomFieldsService, ProgrammeCustomField } from '../services/programmeCustomFieldsService';
+import { demoModeService } from '../../services/demoModeService';
+import { programmeCustomFieldsService, ProgrammeCustomField } from '../../services/programmeCustomFieldsService';
 
 interface CustomFieldsManagerModalProps {
   isOpen: boolean;

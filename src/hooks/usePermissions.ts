@@ -3,15 +3,15 @@ import { AuthContext } from '../contexts/AuthContext';
 
 export interface Permissions {
   canCreate: boolean;
-  canRead: boolean;
-  canUpdate: boolean;
   canDelete: boolean;
-  canManageUsers: boolean;
-  canManageProjects: boolean;
   canExport: boolean;
   canImport: boolean;
-  canViewAnalytics: boolean;
+  canManageProjects: boolean;
   canManageSettings: boolean;
+  canManageUsers: boolean;
+  canRead: boolean;
+  canUpdate: boolean;
+  canViewAnalytics: boolean;
 }
 
 export type Permission = string;

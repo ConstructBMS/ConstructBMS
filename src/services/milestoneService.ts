@@ -16,15 +16,15 @@ export interface Milestone {
   isMilestone: boolean;
   name: string;
   notes?: string;
-  updatedBy?: string;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
   projectId: string;
   startDate: Date;
   status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  priority?: 'low' | 'medium' | 'high' | 'critical'; 
+  tag?: string; 
   // For critical path highlighting
   tag: string | null; 
   updatedAt?: Date; 
-  tag?: string; // All entries tagged demo: true in demo mode
+  updatedBy?: string; // All entries tagged demo: true in demo mode
 }
 
 export interface MilestoneConstraint {

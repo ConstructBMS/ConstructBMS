@@ -55,10 +55,10 @@ export interface GanttCanvasProps {
   // 1 = day, 7 = week, 30 = month
   showGridlines: boolean;
   showTaskLinks: boolean;
+  startDate: Date;
   tasks: GanttTask[];
   userRole: string;
   zoomLevel: number;
-  startDate: Date;
 }
 
 interface CanvasDimensions {

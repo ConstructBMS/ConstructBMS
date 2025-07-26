@@ -1,34 +1,13 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-} from 'react';
-import type { ReactNode } from 'react';
-import { persistentStorage } from '../services/persistentStorage';
-import type { LogoSettings } from '../services/persistentStorage';
-import { useAuth } from './AuthContext';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface LogoContextType {
-  canEditLogos: boolean;
-  logoSettings: LogoSettings;
-  resetLogos: () => void;
-  updateMainLogo: (settings: Partial<LogoSettings['mainLogo']>) => void;
-  updateSidebarLogo: (settings: Partial<LogoSettings['sidebarLogo']>) => void;
+  brandColor: string;
+  companyName: string;
+  logoUrl: string;
+  setBrandColor: (color: string) => void;
+  setCompanyName: (name: string) => void;
+  setLogoUrl: (url: string) => void;
 }
-
-const defaultLogoSettings: LogoSettings = {
-  mainLogo: {
-    type: 'text',
-    text: '',
-    imageUrl: null,
-  },
-  sidebarLogo: {
-    type: 'icon',
-    icon: 'hard-hat',
-    imageUrl: null,
-  },
-};
 
 const LogoContext = createContext<LogoContextType | undefined>(undefined);
 
@@ -45,102 +24,22 @@ interface LogoProviderProps {
 }
 
 export const LogoProvider: React.FC<LogoProviderProps> = ({ children }) => {
-  const { user, checkRole } = useAuth();
-  const [logoSettings, setLogoSettings] =
-    useState<LogoSettings>(defaultLogoSettings);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Check if user can edit logos (super admin only)
-  const canEditLogos = checkRole('super_admin');
-
-  useEffect(() => {
-    const loadLogoSettings = async () => {
-      try {
-        const settings = await persistentStorage.getLogoSettings();
-        if (settings) {
-          setLogoSettings(settings);
-        }
-      } catch (error) {
-        console.error('Error loading logo settings:', error);
-        // Fall back to default settings
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadLogoSettings();
-  }, []);
-
-  const updateMainLogo = async (
-    settings: Partial<LogoSettings['mainLogo']>
-  ) => {
-    if (!canEditLogos) {
-      console.warn('Only super admin can edit logos');
-      return;
-    }
-
-    const updatedSettings = {
-      ...logoSettings,
-      mainLogo: { ...logoSettings.mainLogo, ...settings },
-    };
-
-    setLogoSettings(updatedSettings);
-
-    try {
-      await persistentStorage.setLogoSettings(updatedSettings);
-    } catch (error) {
-      console.error('Error saving logo settings:', error);
-      // Revert on error
-      setLogoSettings(logoSettings);
-    }
-  };
-
-  const updateSidebarLogo = async (
-    settings: Partial<LogoSettings['sidebarLogo']>
-  ) => {
-    if (!canEditLogos) {
-      console.warn('Only super admin can edit logos');
-      return;
-    }
-
-    const updatedSettings = {
-      ...logoSettings,
-      sidebarLogo: { ...logoSettings.sidebarLogo, ...settings },
-    };
-
-    setLogoSettings(updatedSettings);
-
-    try {
-      await persistentStorage.setLogoSettings(updatedSettings);
-    } catch (error) {
-      console.error('Error saving logo settings:', error);
-      // Revert on error
-      setLogoSettings(logoSettings);
-    }
-  };
-
-  const resetLogos = async () => {
-    if (!canEditLogos) {
-      console.warn('Only super admin can reset logos');
-      return;
-    }
-
-    setLogoSettings(defaultLogoSettings);
-
-    try {
-      await persistentStorage.setLogoSettings(defaultLogoSettings);
-    } catch (error) {
-      console.error('Error resetting logo settings:', error);
-    }
-  };
+  const [logoUrl, setLogoUrl] = useState('/icons/logo.svg');
+  const [companyName, setCompanyName] = useState('ConstructBMS');
+  const [brandColor, setBrandColor] = useState('#3B82F6');
 
   const value: LogoContextType = {
-    logoSettings,
-    updateMainLogo,
-    updateSidebarLogo,
-    resetLogos,
-    canEditLogos,
+    logoUrl,
+    setLogoUrl,
+    companyName,
+    setCompanyName,
+    brandColor,
+    setBrandColor
   };
 
-  return <LogoContext.Provider value={value}>{children}</LogoContext.Provider>;
-};
+  return (
+    <LogoContext.Provider value={value}>
+      {children}
+    </LogoContext.Provider>
+  );
+}; 

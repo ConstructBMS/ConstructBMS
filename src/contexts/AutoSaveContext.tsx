@@ -1,83 +1,17 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { AutoSaveState, AutoSaveConfig } from '../services/autoSaveService';
-import { autoSaveService } from '../services/autoSaveService';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AutoSaveContextType {
-  clearDirty: () => void;
-  configureTable: (tableName: string, config: any) => void;
-  forceSave: () => Promise<boolean>;
-  markDirty: (tableName: string, recordId: string, data: any) => void;
-  setConfig: (config: Partial<AutoSaveConfig>) => void;
-  state: AutoSaveState;
+  hasUnsavedChanges: boolean;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  setHasUnsavedChanges: (hasChanges: boolean) => void;
+  setIsSaving: (saving: boolean) => void;
+  setLastSaved: (date: Date | null) => void;
 }
 
 const AutoSaveContext = createContext<AutoSaveContextType | undefined>(undefined);
 
-interface AutoSaveProviderProps {
-  children: React.ReactNode;
-  initialConfig?: Partial<AutoSaveConfig>;
-}
-
-export const AutoSaveProvider: React.FC<AutoSaveProviderProps> = ({ 
-  children, 
-  initialConfig 
-}) => {
-  const [state, setState] = useState<AutoSaveState>(autoSaveService.getState());
-
-  useEffect(() => {
-    // Set initial configuration
-    if (initialConfig) {
-      autoSaveService.setConfig(initialConfig);
-    }
-
-    // Subscribe to auto-save state changes
-    const unsubscribe = autoSaveService.subscribe((newState) => {
-      setState(newState);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      unsubscribe();
-    };
-  }, [initialConfig]);
-
-  const markDirty = (tableName: string, recordId: string, data: any) => {
-    autoSaveService.markDirty(tableName, recordId, data);
-  };
-
-  const forceSave = async (): Promise<boolean> => {
-    return await autoSaveService.forceSave();
-  };
-
-  const clearDirty = () => {
-    autoSaveService.clearDirty();
-  };
-
-  const setConfig = (config: Partial<AutoSaveConfig>) => {
-    autoSaveService.setConfig(config);
-  };
-
-  const configureTable = (tableName: string, config: any) => {
-    autoSaveService.configureTable(tableName, config);
-  };
-
-  const value: AutoSaveContextType = {
-    state,
-    markDirty,
-    forceSave,
-    clearDirty,
-    setConfig,
-    configureTable
-  };
-
-  return (
-    <AutoSaveContext.Provider value={value}>
-      {children}
-    </AutoSaveContext.Provider>
-  );
-};
-
-export const useAutoSave = (): AutoSaveContextType => {
+export const useAutoSave = () => {
   const context = useContext(AutoSaveContext);
   if (context === undefined) {
     throw new Error('useAutoSave must be used within an AutoSaveProvider');
@@ -85,38 +19,35 @@ export const useAutoSave = (): AutoSaveContextType => {
   return context;
 };
 
-// Hook for individual field auto-save
-export const useAutoSaveField = (tableName: string, recordId: string) => {
-  const { markDirty } = useAutoSave();
-
-  const handleFieldChange = (fieldName: string, value: any) => {
-    markDirty(tableName, recordId, { [fieldName]: value });
-  };
-
-  const handleBlur = (fieldName: string, value: any) => {
-    markDirty(tableName, recordId, { [fieldName]: value });
-  };
-
-  return {
-    handleFieldChange,
-    handleBlur
-  };
+export const useAutoSaveField = () => {
+  const context = useContext(AutoSaveContext);
+  if (context === undefined) {
+    throw new Error('useAutoSaveField must be used within an AutoSaveProvider');
+  }
+  return context;
 };
 
-// Hook for form auto-save
-export const useAutoSaveForm = (tableName: string, recordId: string) => {
-  const { markDirty, forceSave } = useAutoSave();
+interface AutoSaveProviderProps {
+  children: ReactNode;
+}
 
-  const handleFormChange = (formData: any) => {
-    markDirty(tableName, recordId, formData);
+export const AutoSaveProvider: React.FC<AutoSaveProviderProps> = ({ children }) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const value: AutoSaveContextType = {
+    isSaving,
+    setIsSaving,
+    lastSaved,
+    setLastSaved,
+    hasUnsavedChanges,
+    setHasUnsavedChanges
   };
 
-  const handleFormSubmit = async () => {
-    return await forceSave();
-  };
-
-  return {
-    handleFormChange,
-    handleFormSubmit
-  };
+  return (
+    <AutoSaveContext.Provider value={value}>
+      {children}
+    </AutoSaveContext.Provider>
+  );
 }; 

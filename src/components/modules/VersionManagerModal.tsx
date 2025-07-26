@@ -12,12 +12,12 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
+import { demoModeService } from '../../services/demoModeService';
 import { 
   programmeVersioningService, 
   ProgrammeVersion,
   VersionPreferences 
-} from '../services/programmeVersioningService';
+} from '../../services/programmeVersioningService';
 
 interface VersionManagerModalProps {
   currentTasks: Array<{ [key: string]: any, id: string; }>;

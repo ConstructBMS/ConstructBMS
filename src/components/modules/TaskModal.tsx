@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, CalendarIcon, ClockIcon, TagIcon, UserIcon, DocumentTextIcon, LinkIcon, TrashIcon, LockClosedIcon, FlagIcon, ChartBarIcon, FolderIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
-import { taskService } from '../services/taskService';
-import { adminTabService } from '../services/adminTabService';
-import { programmeCustomFieldsService } from '../services/programmeCustomFieldsService';
-import { dependenciesEngine, DependencyLink } from '../services/DependenciesEngine';
-import { milestoneService } from '../services/milestoneService';
+import { demoModeService } from '../../services/demoModeService';
+import { taskService } from '../../services/taskService';
+import { adminTabService } from '../../services/adminTabService';
+import { programmeCustomFieldsService } from '../../services/programmeCustomFieldsService';
+import { dependenciesEngine } from '../../services/DependenciesEngine';
+import type { DependencyLink } from '../../services/DependenciesEngine';
+import { milestoneService } from '../../services/milestoneService';
 import { useProgrammeCollaboration } from '../../contexts/ProgrammeCollaborationContext';
 import CustomFieldsSection from './CustomFieldsSection';
 import TagSelector from './TagSelector';
@@ -17,6 +18,7 @@ import StructureTab from './ribbonTabs/StructureTab';
 import TaskConstraintsTab from './TaskConstraintsTab';
 import TaskCommentsTab from './TaskCommentsTab';
 import TaskHistoryTab from './TaskHistoryTab';
+import TaskScheduleTab from './TaskScheduleTab';
 
 export interface Task {
   id: string;
@@ -78,7 +80,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     statusId: '',
-    tagId: null as string | null,
+    tags: [] as string[],
     type: 'task' as 'task' | 'milestone' | 'phase' | 'summary',
     description: '',
     customFields: {} as Record<string, any>,
@@ -394,7 +396,10 @@ const TaskModal: React.FC<TaskModalProps> = ({
       tags: [],
       type: 'task',
       description: '',
-      customFields: {}
+      customFields: {},
+      parentId: null,
+      collapsed: false,
+      groupColor: null
     });
     setErrors({});
     setPredecessors([]);
@@ -511,7 +516,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
               <p className="mt-2 text-gray-600 dark:text-gray-400">Loading...</p>
             </div>
           ) : (
-            <>
+            <div>
               {/* Tab Navigation */}
               <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
                 <nav className="-mb-px flex space-x-8">
@@ -652,7 +657,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
               {/* Tab Content */}
               <div className="space-y-6">
                 {activeTab === 'general' && (
-                  <>
+                  <div className="space-y-6">
                     {/* Basic Information */}
                     <div className="space-y-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h3>
@@ -1041,7 +1046,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
                       )}
                     </div>
                   </div>
-                </>
                 )}
 
                 {activeTab === 'progress' && taskId && (
@@ -1083,14 +1087,14 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 {activeTab === 'tags' && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-white">Task Tags</h3>
-                    <TagSelector
-                      selectedTagId={formData.tagId}
-                      projectId={projectId}
-                      onTagChange={(tagId) => {
-                        setFormData(prev => ({ ...prev, tagId }));
-                      }}
-                      disabled={!canEdit}
-                    />
+                                         <TagSelector
+                       availableTags={availableTags}
+                       selectedTags={formData.tags}
+                       onTagsChange={handleTagsChange}
+                       isDemoMode={isDemoMode}
+                       maxTags={1}
+                       canEdit={canEdit}
+                     />
                   </div>
                 )}
 
@@ -1153,7 +1157,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
 

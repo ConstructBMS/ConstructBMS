@@ -18,8 +18,8 @@ interface DraggableGanttBarProps {
   showProgress?: boolean;
   snapConfig: SnapConfig;
   startDate: Date;
-  taskName: string;
   taskId: string;
+  taskName: string;
 }
 
 const DraggableGanttBar: React.FC<DraggableGanttBarProps> = ({

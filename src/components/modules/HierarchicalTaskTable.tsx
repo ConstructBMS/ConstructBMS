@@ -14,8 +14,8 @@ import {
   DocumentIcon
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { taskService, type Task } from '../services/taskService';
-import { demoModeService } from '../services/demoModeService';
+import { taskService, type Task } from '../../services/taskService';
+import { demoModeService } from '../../services/demoModeService';
 
 interface HierarchicalTaskTableProps {
   onTaskSelect?: (taskId: string) => void;

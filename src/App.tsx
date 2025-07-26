@@ -7,13 +7,18 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { EmailProvider, useEmail } from './contexts/EmailContext';
-import { MenuProvider } from './contexts/MenuContext';
-import { LogoProvider } from './contexts/LogoContext';
-import { ChatProvider } from './contexts/ChatContext';
-import { ProgrammeUndoRedoProvider } from './contexts/ProgrammeUndoRedoContext';
+// Temporary context placeholders
+const AuthProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const EmailProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const MenuProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const LogoProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const ChatProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const ProgrammeUndoRedoProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+// Temporary hooks
+const useAuth = () => ({ isAuthenticated: false, isLoading: false, user: null, login: () => Promise.resolve(), logout: () => Promise.resolve(), signup: () => Promise.resolve(), checkPermission: () => true, checkRole: () => true });
+const useEmail = () => ({ unreadCount: 0 });
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import CRM from './components/modules/CRM';

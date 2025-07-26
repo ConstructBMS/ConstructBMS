@@ -20,8 +20,8 @@ interface TimelinePrintPreviewModalProps {
   options: TimelinePrintOptions;
   projectId: string;
   projectIdDisplay: string;
-  tasks: any[];
   projectName: string;
+  tasks: any[];
 }
 
 const TimelinePrintPreviewModal: React.FC<TimelinePrintPreviewModalProps> = ({

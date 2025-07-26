@@ -71,18 +71,18 @@ export interface TimelineExportData {
   projectName: string;
   tasks: Array<{
     assignee: string;
-    name: string;
-    startDate: Date;
     endDate: Date;
-    status: string;
-    progress: number;
-    priority: string;
     id: string;
-    tags: string[];
-    type: string;
+    name: string;
+    priority: string;
+    progress: number;
+    projectColor?: string;
     projectId?: string;
     projectName?: string;
-    projectColor?: string;
+    startDate: Date;
+    status: string;
+    tags: string[];
+    type: string;
   }>;
 }
 

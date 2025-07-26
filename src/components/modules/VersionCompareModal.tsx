@@ -15,7 +15,7 @@ import {
   ProgrammeVersion,
   VersionComparison,
   TaskDifference
-} from '../services/programmeVersioningService';
+} from '../../services/programmeVersioningService';
 
 interface VersionCompareModalProps {
   isOpen: boolean;

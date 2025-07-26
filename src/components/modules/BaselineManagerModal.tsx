@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusIcon, TrashIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
-import { baselineService, Baseline, BaselineComparison } from '../services/baselineService';
+import { demoModeService } from '../../services/demoModeService';
+import { baselineService, Baseline, BaselineComparison } from '../../services/baselineService';
 
 interface BaselineManagerModalProps {
   currentTasks: Array<{

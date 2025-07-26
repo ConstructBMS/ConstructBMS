@@ -52,28 +52,28 @@ interface FileTabProps {
   onExportPDFCustom: () => void;
   onExportTimeline?: () => void;
   
-  // 2-Way Sync Section
-  onSyncWithAsta: () => void;
+  // Import & Export Section
+  onImportProject: () => void;
   // Project Metadata Section
   onOpenProjectProperties: () => void;
-  // Project Save Section
-  onSaveChanges: () => void;
-  syncStatus?: 'success' | 'error' | 'pending' | 'none';
-  
-  onSaveAsTemplate: () => void;
-  projectName?: string;
-  onTaskOperation?: (operation: any) => void;
-  
-  onViewSyncLog: () => void;
+  onPrintTimeline?: () => void;
   // Print & Export Section
   onPrintView: () => void;
-  onPrintTimeline?: () => void;
+  
+  onSaveAsTemplate: () => void;
+  // Project Save Section
+  onSaveChanges: () => void;
+  // 2-Way Sync Section
+  onSyncWithAsta: () => void;
+  
+  onTaskOperation?: (operation: any) => void;
+  onToggleAutoSave: () => void;
+  onViewSyncLog: () => void;
   // Asta Import/Export Section
   projectId?: string;
   
-  onToggleAutoSave: () => void;
-  // Import & Export Section
-  onImportProject: () => void;
+  projectName?: string;
+  syncStatus?: 'success' | 'error' | 'pending' | 'none';
 }
 
 const FileTab: React.FC<FileTabProps> = ({

@@ -37,23 +37,23 @@ export interface TaskSnapshot {
   isMilestone: boolean;
   name: string;
   notes?: string;
-  structure: {
-    level: number;
-    parentId?: string;
-    wbsNumber?: string;
-  };
-  priority: string;
-  startDate: Date;
-  status: string;
-  tagId?: string;
-  work: number;
   percentComplete: number;
+  priority: string;
   resourceAssignments: Array<{
     cost: number;
     resourceId: string;
     units: number;
     work: number;
   }>;
+  startDate: Date;
+  status: string;
+  structure: {
+    level: number;
+    parentId?: string;
+    wbsNumber?: string;
+  };
+  tagId?: string;
+  work: number;
 }
 
 export interface VersionComparison {

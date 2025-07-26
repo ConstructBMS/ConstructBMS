@@ -15,9 +15,9 @@ export interface TaskWithProgress {
   percentComplete: number;
   progress: number;
   progressUpdatedAt: Date | null;
+  progressUpdatedBy: string | null;
   startDate: Date;
   status: string;
-  progressUpdatedBy: string | null;
 }
 
 class TaskProgressIntegrationService {

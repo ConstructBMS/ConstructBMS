@@ -19,9 +19,9 @@ export interface Task {
   startDate: Date;      
   statusId: string;           
   tags: string[];    
-  userId: string;
   type: 'task' | 'milestone' | 'phase' | 'summary';
   updatedAt: Date;
+  userId: string;
 }
 
 export interface TaskCustomField {

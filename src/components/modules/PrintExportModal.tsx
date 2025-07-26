@@ -11,9 +11,9 @@ import {
   CheckIcon
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../services/demoModeService';
-import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../services/timelinePrintService';
-import { timelineExportService, TimelineExportOptions } from '../services/timelineExportService';
+import { demoModeService } from '../../services/demoModeService';
+import { timelinePrintService, TimelinePrintOptions, TimelinePrintData } from '../../services/timelinePrintService';
+import { timelineExportService, TimelineExportOptions } from '../../services/timelineExportService';
 
 interface PrintExportModalProps {
   currentView: any;
@@ -28,8 +28,8 @@ interface PrintExportModalProps {
   projectId: string;
   projectIdDisplay: string;
   projectName: string;
-  tasks: any[];
   selectedProjects?: any[];
+  tasks: any[];
 }
 
 const PrintExportModal: React.FC<PrintExportModalProps> = ({

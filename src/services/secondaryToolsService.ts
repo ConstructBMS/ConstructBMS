@@ -13,11 +13,11 @@ export interface Task {
   level?: number;
   name: string;
   predecessors?: string[];
-  startDate?: string;
   slack?: {
     free: number;
     total: number;
   };
+  startDate?: string;
   successors?: string[];
 }
 

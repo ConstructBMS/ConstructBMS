@@ -78,28 +78,28 @@ export interface RibbonState {
   gridlineStyle: string;
   highlightActiveRow: boolean;
   isDemoMode: boolean;
-  rowStriping: boolean;
+  lastSyncTime?: string;
   // Loading states
   loading: {
     [key: string]: boolean;
   };
-  rowBorder: string;
+  milestoneColor: string;
   milestoneIcon: string;
-  timeScale: string;
+  milestoneShowLabel: boolean;
   pageLayout: string;
   projectId: string;
   
-  zoomLevel: number;
   projectStatus: string;
-  lastSyncTime?: string;
-  syncStatus: 'success' | 'error' | 'pending' | 'none';
-  
+  rowBorder: string;
+  rowStriping: boolean;
   showTodayMarker: boolean;
-  milestoneColor: string;
-  userId: string;
-  milestoneShowLabel: boolean;
   
+  syncStatus: 'success' | 'error' | 'pending' | 'none';
+  timeScale: string;
+  userId: string;
   visibleColumns: string[];
+  
+  zoomLevel: number;
 }
 
 const IntegratedRibbonSystem: React.FC = () => {
