@@ -132,40 +132,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     menuLength: menu?.length || 0,
   });
 
-  // Categorize menu items
-  const coreMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    // Exclude settings and support from core menu
-    if (item.id === 'settings' || item.id === 'support') return false;
-    if (item.moduleKey && modulesMap[item.moduleKey]) {
-      const module = modulesMap[item.moduleKey];
-      return module && module.type === 'core';
-    }
-    // Include items that don't have a moduleKey (like dashboard, projects, etc.)
-    return (
-      !item.moduleKey ||
-      (item.moduleKey &&
-        modulesMap[item.moduleKey] &&
-        modulesMap[item.moduleKey]?.type === 'core')
-    );
-  }) as MenuItem[];
-
-  const additionalMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    // Exclude settings and support from additional menu
-    if (item.id === 'settings' || item.id === 'support') return false;
-    if (item.moduleKey && modulesMap[item.moduleKey]) {
-      return modulesMap[item.moduleKey]?.type === 'additional';
-    }
-    return false;
-  }) as MenuItem[];
-
-  // Separate Settings and Support for the bottom section
-  const bottomMenu = (menu || []).filter(item => {
-    if (!isVisible(item)) return false;
-    return item.id === 'settings' || item.id === 'support';
-  }) as MenuItem[];
-
   // Check if user has set a custom sidebar logo
   const hasCustomSidebarLogo =
     logoSettings?.sidebarLogo?.type === 'image' &&
@@ -250,13 +216,22 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const isVisible = (item: MenuItem) => {
-    if (!item.visible) return false;
+    // Check if item has a visible property and it's false
+    if (item.visible === false) return false;
+
+    // Check if item has a moduleKey and if that module is inactive
     if (
       item.moduleKey &&
       modulesMap[item.moduleKey] &&
       !modulesMap[item.moduleKey]?.active
     )
       return false;
+
+    // For items without moduleKey, check if they exist in modules and are active
+    if (modulesMap[item.id] && !modulesMap[item.id]?.active) {
+      return false;
+    }
+
     return true;
   };
 
@@ -264,10 +239,18 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!isVisible(item)) return false;
     // Exclude settings and support from core menu
     if (item.id === 'settings' || item.id === 'support') return false;
+
+    // Check if item has moduleKey and it's a core module
     if (item.moduleKey && modulesMap[item.moduleKey]) {
       const module = modulesMap[item.moduleKey];
       return module && module.type === 'core';
     }
+
+    // Check if item.id exists in modules and it's a core module
+    if (modulesMap[item.id]) {
+      return modulesMap[item.id]?.type === 'core';
+    }
+
     // Include items that don't have a moduleKey (like dashboard, projects, etc.)
     return (
       !item.moduleKey ||
@@ -281,9 +264,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!isVisible(item)) return false;
     // Exclude settings and support from additional menu
     if (item.id === 'settings' || item.id === 'support') return false;
+
+    // Check if item has moduleKey and it's an additional module
     if (item.moduleKey && modulesMap[item.moduleKey]) {
       return modulesMap[item.moduleKey]?.type === 'additional';
     }
+
+    // Check if item.id exists in modules and it's an additional module
+    if (modulesMap[item.id]) {
+      return modulesMap[item.id]?.type === 'additional';
+    }
+
     return false;
   }) as MenuItem[];
 
