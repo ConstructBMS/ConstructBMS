@@ -43,7 +43,7 @@ const BaselineIntegration: React.FC<BaselineIntegrationProps> = ({
   onBaselineChange,
   children,
 }) => {
-  const { canAccess } = usePermissions();
+  const { hasPermission } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [showBaseline, setShowBaseline] = useState(false);
   const [activeBaseline, setActiveBaseline] = useState<Baseline | null>(null);
@@ -52,9 +52,9 @@ const BaselineIntegration: React.FC<BaselineIntegrationProps> = ({
   const [showBaselineManager, setShowBaselineManager] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const canView = canAccess('programme.baseline.view');
-  const canCreate = canAccess('programme.baseline.create');
-  const canManage = canAccess('programme.baseline.manage');
+  const canView = hasPermission('programme.baseline.view');
+  const canCreate = hasPermission('programme.baseline.create');
+  const canManage = hasPermission('programme.baseline.manage');
 
   // Check demo mode on mount
   useEffect(() => {
