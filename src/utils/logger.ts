@@ -1,12 +1,16 @@
 /**
  * Enterprise Logging System
  * Centralized logging with different levels and structured output
- * 
+ *
  * @deprecated Use the new loggingService from '../services/loggingService' instead
  */
 
 import { env, isDevelopment, isProduction } from '../config/environment';
-import { loggingService, LogLevel as NewLogLevel } from '../services/loggingService';
+import {
+  loggingService,
+  LogLevel as NewLogLevel,
+} from '../services/loggingService';
+import { persistentStorage } from '../services/persistentStorage';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -79,11 +83,11 @@ class Logger {
     };
   }
 
-  private getCurrentUserId(): string | undefined {
+  private async getCurrentUserId(): Promise<string | undefined> {
     // This would be implemented based on your auth context
     try {
-      const user = localStorage.getItem('user');
-      return user ? JSON.parse(user).id : undefined;
+      const user = await persistentStorage.getSetting('user', 'auth');
+      return user ? user.id : undefined;
     } catch {
       return undefined;
     }
@@ -158,9 +162,10 @@ class Logger {
     }
   }
 
-  private storeLog(logEntry: LogEntry): void {
+  private async storeLog(logEntry: LogEntry): Promise<void> {
     try {
-      const logs = JSON.parse(localStorage.getItem('app_logs') || '[]');
+      const logs =
+        (await persistentStorage.getSetting('app_logs', 'logs')) || [];
       logs.push(logEntry);
 
       // Keep only last 1000 logs
@@ -168,7 +173,7 @@ class Logger {
         logs.splice(0, logs.length - 1000);
       }
 
-      localStorage.setItem('app_logs', JSON.stringify(logs));
+      await persistentStorage.setSetting('app_logs', logs, 'logs');
     } catch (error) {
       console.error('Failed to store log:', error);
     }
@@ -218,17 +223,21 @@ class Logger {
   }
 
   // Get stored logs for debugging
-  getStoredLogs(): LogEntry[] {
+  async getStoredLogs(): Promise<LogEntry[]> {
     try {
-      return JSON.parse(localStorage.getItem('app_logs') || '[]');
+      return (await persistentStorage.getSetting('app_logs', 'logs')) || [];
     } catch {
       return [];
     }
   }
 
   // Clear stored logs
-  clearStoredLogs(): void {
-    localStorage.removeItem('app_logs');
+  async clearStoredLogs(): Promise<void> {
+    try {
+      await persistentStorage.setSetting('app_logs', [], 'logs');
+    } catch (error) {
+      console.error('Failed to clear stored logs:', error);
+    }
   }
 }
 
@@ -271,4 +280,7 @@ export const withPerformanceLogging = <T extends any[], R>(
 };
 
 // Re-export new logging service for easy migration
-export { loggingService, logger as newLogger } from '../services/loggingService';
+export {
+  loggingService,
+  logger as newLogger,
+} from '../services/loggingService';

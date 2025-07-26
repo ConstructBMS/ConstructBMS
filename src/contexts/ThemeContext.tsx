@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useEffect,
 } from 'react';
+import { persistentStorage } from '../services/persistentStorage';
 
 export type ThemeId = 'light' | 'dark' | 'auto';
 
@@ -29,21 +30,48 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  // Initialize theme from localStorage or default to 'light'
-  const [theme, setTheme] = useState<ThemeId>(() => {
-    const savedTheme = localStorage.getItem('theme') as ThemeId;
-    return savedTheme || 'light';
-  });
+  // Initialize theme from persistent storage or default to 'light'
+  const [theme, setTheme] = useState<ThemeId>('light');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const isDark =
     theme === 'dark' ||
     (theme === 'auto' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  // Save theme to localStorage when it changes
+  // Load theme from persistent storage on mount
   useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await persistentStorage.getSetting('theme', 'ui');
+        if (savedTheme) {
+          setTheme(savedTheme as ThemeId);
+        }
+      } catch (error) {
+        console.warn(
+          'Failed to load theme from persistent storage, using default:',
+          error
+        );
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  // Save theme to persistent storage when it changes
+  useEffect(() => {
+    if (isInitialized) {
+      const saveTheme = async () => {
+        try {
+          await persistentStorage.setSetting('theme', theme, 'ui');
+        } catch (error) {
+          console.error('Failed to save theme to persistent storage:', error);
+        }
+      };
+      saveTheme();
+    }
+  }, [theme, isInitialized]);
 
   // Add/remove 'dark' class on <body> when theme changes
   useEffect(() => {

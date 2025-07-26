@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
+import { persistentStorage } from '../services/persistentStorage';
 
 interface User {
   email: string;
@@ -52,7 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuth = async () => {
       try {
         console.log('AuthProvider: Checking auth...');
-        const token = localStorage.getItem('authToken');
+        const token = await persistentStorage.getSetting('authToken', 'auth');
         if (token) {
           const demoUser: User = {
             id: '1',
@@ -97,7 +98,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role,
         permissions: role === 'super_admin' ? ['*'] : ['read', 'write'],
       };
-      localStorage.setItem('authToken', 'demo-token');
+      await persistentStorage.setSetting('authToken', 'demo-token', 'auth');
       setUser(demoUser);
       console.log('Login successful:', { email, role, name });
     } catch (error) {
@@ -108,8 +109,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('authToken');
+  const logout = async () => {
+    try {
+      await persistentStorage.setSetting('authToken', null, 'auth');
+    } catch (error) {
+      console.error('Failed to clear auth token:', error);
+    }
     setUser(null);
   };
 
@@ -123,7 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role: 'employee',
         permissions: ['read'],
       };
-      localStorage.setItem('authToken', 'demo-token');
+      await persistentStorage.setSetting('authToken', 'demo-token', 'auth');
       setUser(newUser);
     } catch (error) {
       console.error('Registration failed:', error);

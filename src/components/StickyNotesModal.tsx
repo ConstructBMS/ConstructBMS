@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { persistentStorage } from '../services/persistentStorage';
 import {
   X,
   Plus,
@@ -16,8 +17,7 @@ interface StickyNote {
   content: string;
   createdAt: string;
   id: string;
-  position: { x: number; y: number 
-};
+  position: { x: number; y: number };
   title: string;
   updatedAt: string;
 }
@@ -334,24 +334,37 @@ const StickyNotesModal: React.FC<StickyNotesModalProps> = ({
   );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load notes from localStorage on component mount
+  // Load notes from persistent storage on component mount
   useEffect(() => {
-    const savedNotes = localStorage.getItem('constructbms_sticky_notes');
-    if (savedNotes) {
+    const loadNotes = async () => {
       try {
-        const parsedNotes = JSON.parse(savedNotes);
-        setNotes(parsedNotes);
+        const savedNotes = await persistentStorage.getSetting(
+          'sticky_notes',
+          'notes'
+        );
+        if (savedNotes) {
+          setNotes(savedNotes);
+        }
       } catch (error) {
         console.error('Error loading sticky notes:', error);
+      } finally {
+        setIsInitialLoadComplete(true);
       }
-    }
-    setIsInitialLoadComplete(true);
+    };
+    loadNotes();
   }, []);
 
-  // Save notes to localStorage whenever notes change
+  // Save notes to persistent storage whenever notes change
   useEffect(() => {
     if (isInitialLoadComplete) {
-      localStorage.setItem('constructbms_sticky_notes', JSON.stringify(notes));
+      const saveNotes = async () => {
+        try {
+          await persistentStorage.setSetting('sticky_notes', notes, 'notes');
+        } catch (error) {
+          console.error('Error saving sticky notes:', error);
+        }
+      };
+      saveNotes();
     }
   }, [notes, isInitialLoadComplete]);
 
