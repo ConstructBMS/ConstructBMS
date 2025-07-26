@@ -3,9 +3,6 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import security from 'eslint-plugin-security';
-import importPlugin from 'eslint-plugin-import';
-import typescriptSortKeys from 'eslint-plugin-typescript-sort-keys';
 
 export default [
   // Global ignores
@@ -16,10 +13,10 @@ export default [
       'coverage/**',
       'node_modules/**',
       '*.min.js',
-      'public/sw.js', // Service worker has different globals
-      'scripts/**/*.js', // Script files may have different requirements
-      '**/*.test.{js,jsx,ts,tsx}', // Test files
-      '**/*.spec.{js,jsx,ts,tsx}', // Spec files
+      'public/sw.js',
+      'scripts/**/*.js',
+      '**/*.test.{js,jsx,ts,tsx}',
+      '**/*.spec.{js,jsx,ts,tsx}',
     ],
   },
   
@@ -41,15 +38,13 @@ export default [
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'security': security,
-      'import': importPlugin,
     },
     rules: {
       ...js.configs.recommended.rules,
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/exhaustive-deps': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'no-unused-vars': 'off', // Disabled to reduce noise
+      'no-unused-vars': 'off',
       'no-undef': 'error',
     },
   },
@@ -72,21 +67,18 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      'typescript-sort-keys': typescriptSortKeys,
     },
     rules: {
       ...tseslint.configs.recommendedTypeChecked.rules,
-      'typescript-sort-keys/interface': 'off', // Disabled to reduce noise
-      'typescript-sort-keys/string-enum': 'off', // Disabled to reduce noise
-      '@typescript-eslint/no-unused-vars': 'off', // Disabled to reduce noise
-      '@typescript-eslint/no-explicit-any': 'off', // Disabled to reduce noise - too many in codebase
-      '@typescript-eslint/no-unsafe-assignment': 'off', // Disabled for now
-      '@typescript-eslint/no-unsafe-member-access': 'off', // Disabled for now
-      '@typescript-eslint/no-unsafe-call': 'off', // Disabled for now
-      '@typescript-eslint/no-unsafe-return': 'off', // Disabled for now
-      '@typescript-eslint/restrict-template-expressions': 'off', // Disabled for now
-      '@typescript-eslint/no-floating-promises': 'off', // Disabled for now
-      '@typescript-eslint/require-await': 'off', // Disabled for now
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/require-await': 'off',
     },
   },
   

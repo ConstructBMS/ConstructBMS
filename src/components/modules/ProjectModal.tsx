@@ -38,7 +38,6 @@ import AdvancedGanttTab from './AdvancedGanttTab';
 import BIMIntegrationTab from './BIMIntegrationTab';
 import TaskDetailModal from './TaskDetailModal';
 
-
 import { documentService } from '../../services/documentService';
 import type { Document } from '../../services/documentService';
 
@@ -74,7 +73,6 @@ const convertDemoTaskToTask = (demoTask: DemoTask): Task => ({
 });
 
 // Type definition for component Task
-// eslint-disable-next-line typescript-sort-keys/interface
 interface Task {
   actualHours?: number;
   assignee?: string;
@@ -316,7 +314,9 @@ const ProjectDashboardTab: React.FC<{
             <span className='text-2xl font-bold'>
               {formatCurrency(metrics.spent)}
             </span>
-            <span className='text-constructbms-blue font-medium'>Budget Used</span>
+            <span className='text-constructbms-blue font-medium'>
+              Budget Used
+            </span>
             <div className='w-full bg-constructbms-dark-1/10 rounded-full h-2 mt-2'>
               <div
                 className='bg-constructbms-dark-1 h-2 rounded-full transition-all duration-1000'
@@ -328,7 +328,9 @@ const ProjectDashboardTab: React.FC<{
           </div>
           <div className='flex-1 flex flex-col items-center md:items-start'>
             <span className='text-2xl font-bold'>{metrics.tasks}</span>
-            <span className='text-constructbms-blue font-medium'>Active Tasks</span>
+            <span className='text-constructbms-blue font-medium'>
+              Active Tasks
+            </span>
             <div className='w-full bg-constructbms-dark-1/10 rounded-full h-2 mt-2'>
               <div
                 className='bg-constructbms-dark-1 h-2 rounded-full transition-all duration-1000'
@@ -340,7 +342,9 @@ const ProjectDashboardTab: React.FC<{
           </div>
           <div className='flex-1 flex flex-col items-center md:items-start'>
             <span className='text-2xl font-bold'>{metrics.team}</span>
-            <span className='text-constructbms-blue font-medium'>Team Members</span>
+            <span className='text-constructbms-blue font-medium'>
+              Team Members
+            </span>
           </div>
         </div>
       </div>
@@ -368,36 +372,38 @@ const ProjectDashboardTab: React.FC<{
             </h3>
             <div className='space-y-4'>
               {recentActivity.length === 0 && (
-                <div className='text-gray-500 dark:text-gray-400'>No recent activity.</div>
+                <div className='text-gray-500 dark:text-gray-400'>
+                  No recent activity.
+                </div>
               )}
               {recentActivity.map((item, idx) => (
                 <div
                   key={idx}
                   className='flex items-center space-x-4 p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
                 >
-                                      <div className='w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center'>
-                                          {/* Icon based on type */}
-                      {item.type === 'task' ? (
-                        <svg
-                          className='w-5 h-5 text-constructbms-blue'
-                          fill='none'
-                          stroke='currentColor'
-                          viewBox='0 0 24 24'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth={2}
-                            d='M5 13l4 4L19 7'
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className='w-5 h-5 text-constructbms-blue'
-                          fill='none'
-                          stroke='currentColor'
-                          viewBox='0 0 24 24'
-                        >
+                  <div className='w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center'>
+                    {/* Icon based on type */}
+                    {item.type === 'task' ? (
+                      <svg
+                        className='w-5 h-5 text-constructbms-blue'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className='w-5 h-5 text-constructbms-blue'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
                         <path
                           strokeLinecap='round'
                           strokeLinejoin='round'
@@ -463,7 +469,7 @@ const ProjectDashboardTab: React.FC<{
                   Add Task
                 </div>
               </button>
-              <button 
+              <button
                 className='w-full bg-constructbms-blue/20 text-white border border-constructbms-blue/30 px-4 py-3 rounded-lg hover:bg-constructbms-blue/30 transition-all duration-200 transform hover:scale-105 shadow-md'
                 title='Schedule Meeting'
               >
@@ -484,7 +490,7 @@ const ProjectDashboardTab: React.FC<{
                   Schedule Meeting
                 </div>
               </button>
-              <button 
+              <button
                 className='w-full bg-constructbms-blue/20 text-white border border-constructbms-blue/30 px-4 py-3 rounded-lg hover:bg-constructbms-blue/30 transition-all duration-200 transform hover:scale-105 shadow-md'
                 title='Create Document'
               >
@@ -613,31 +619,33 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    <div
+      className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'
       onClick={handleBackdropClick}
     >
-      <div className="bg-white rounded-xl w-full max-w-7xl mx-4 h-[95vh] overflow-hidden border border-gray-100 shadow-2xl">
+      <div className='bg-white rounded-xl w-full max-w-7xl mx-4 h-[95vh] overflow-hidden border border-gray-100 shadow-2xl'>
         {/* Simple Header */}
-        <div className="bg-white p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className='bg-white p-6 border-b border-gray-200'>
+          <div className='flex items-center justify-between'>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{project.name}</h2>
-              <p className="text-gray-600">{project.client}</p>
+              <h2 className='text-2xl font-bold text-gray-900'>
+                {project.name}
+              </h2>
+              <p className='text-gray-600'>{project.client}</p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
             >
-              <XMarkIcon className="h-6 w-6 text-gray-600" />
+              <XMarkIcon className='h-6 w-6 text-gray-600' />
             </button>
           </div>
         </div>
 
         {/* Simple Tab Navigation */}
-        <div className="bg-gray-50 border-b border-gray-200">
-          <div className="flex overflow-x-auto">
-            {TABS.map((tab) => (
+        <div className='bg-gray-50 border-b border-gray-200'>
+          <div className='flex overflow-x-auto'>
+            {TABS.map(tab => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
@@ -655,31 +663,35 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto h-[calc(95vh-120px)]">
+        <div className='overflow-y-auto h-[calc(95vh-120px)]'>
           {activeTab === 'dashboard' && (
-            <div className="p-6">
+            <div className='p-6'>
               <ProjectDashboardTab project={project} />
             </div>
           )}
           {activeTab === 'gantt' && (
-            <div className="p-4">
+            <div className='p-4'>
               <AdvancedGanttTab project={project} />
             </div>
           )}
           {activeTab === 'bim' && (
-            <div className="p-6">
+            <div className='p-6'>
               <BIMIntegrationTab project={project} />
             </div>
           )}
           {/* For other tabs, show a simple placeholder */}
-          {activeTab !== 'dashboard' && activeTab !== 'gantt' && activeTab !== 'bim' && (
-            <div className="p-8">
-              <div className="text-center text-gray-500">
-                <h3 className="text-lg font-medium mb-2">{TABS.find(t => t.key === activeTab)?.label}</h3>
-                <p>This tab is under development.</p>
+          {activeTab !== 'dashboard' &&
+            activeTab !== 'gantt' &&
+            activeTab !== 'bim' && (
+              <div className='p-8'>
+                <div className='text-center text-gray-500'>
+                  <h3 className='text-lg font-medium mb-2'>
+                    {TABS.find(t => t.key === activeTab)?.label}
+                  </h3>
+                  <p>This tab is under development.</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </div>

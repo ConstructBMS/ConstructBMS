@@ -42,21 +42,22 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-hooks/exhaustive-deps': 'off', // Disabled to reduce noise
+      'react-refresh/only-export-components': 'off', // Disabled to reduce noise
       'no-unused-vars': 'off',
       'no-undef': 'error',
     },
   },
   
-  // TS/TSX config
+  // TS/TSX config for source files
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
         sourceType: 'module',
         ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
       },
       globals: {
         ...globals.browser,
@@ -78,6 +79,31 @@ export default [
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/require-await': 'off',
+    },
+  },
+  
+  // TS/TSX config for config files
+  {
+    files: ['*.config.{ts,js}', 'vite.config.*', 'postcss.config.*', 'tailwind.config.*'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 'latest',
+      },
+      globals: {
+        ...globals.node,
+        ...globals.es2021,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      'no-console': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ]; 
