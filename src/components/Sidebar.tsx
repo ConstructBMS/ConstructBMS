@@ -125,6 +125,47 @@ const Sidebar: React.FC<SidebarProps> = ({
     { active: boolean; type: string }
   >;
 
+  // Debug logging
+  console.log('Sidebar Debug:', {
+    menuItems: menu,
+    modules: modulesMap,
+    menuLength: menu?.length || 0,
+  });
+
+  // Categorize menu items
+  const coreMenu = (menu || []).filter(item => {
+    if (!isVisible(item)) return false;
+    // Exclude settings and support from core menu
+    if (item.id === 'settings' || item.id === 'support') return false;
+    if (item.moduleKey && modulesMap[item.moduleKey]) {
+      const module = modulesMap[item.moduleKey];
+      return module && module.type === 'core';
+    }
+    // Include items that don't have a moduleKey (like dashboard, projects, etc.)
+    return (
+      !item.moduleKey ||
+      (item.moduleKey &&
+        modulesMap[item.moduleKey] &&
+        modulesMap[item.moduleKey]?.type === 'core')
+    );
+  }) as MenuItem[];
+
+  const additionalMenu = (menu || []).filter(item => {
+    if (!isVisible(item)) return false;
+    // Exclude settings and support from additional menu
+    if (item.id === 'settings' || item.id === 'support') return false;
+    if (item.moduleKey && modulesMap[item.moduleKey]) {
+      return modulesMap[item.moduleKey]?.type === 'additional';
+    }
+    return false;
+  }) as MenuItem[];
+
+  // Separate Settings and Support for the bottom section
+  const bottomMenu = (menu || []).filter(item => {
+    if (!isVisible(item)) return false;
+    return item.id === 'settings' || item.id === 'support';
+  }) as MenuItem[];
+
   // Check if user has set a custom sidebar logo
   const hasCustomSidebarLogo =
     logoSettings?.sidebarLogo?.type === 'image' &&
@@ -251,6 +292,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!isVisible(item)) return false;
     return item.id === 'settings' || item.id === 'support';
   }) as MenuItem[];
+
+  // Debug logging for categorized menus
+  console.log('Categorized Menus:', {
+    coreMenu: coreMenu,
+    additionalMenu: additionalMenu,
+    bottomMenu: bottomMenu,
+    coreMenuLength: coreMenu.length,
+    additionalMenuLength: additionalMenu.length,
+    bottomMenuLength: bottomMenu.length,
+  });
 
   // Helper: is this the active parent?
   const activeParentId = findParent(menu as MenuItem[], activeModule);
