@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
+import {
   DocumentTextIcon,
   ClockIcon,
   ChartBarIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { demoModeService } from '../../../services/demoModeService';
@@ -16,10 +16,10 @@ interface AuditSectionProps {
   projectName?: string;
 }
 
-const AuditSection: React.FC<AuditSectionProps> = ({ 
-  projectId, 
-  projectName, 
-  disabled = false 
+const AuditSection: React.FC<AuditSectionProps> = ({
+  projectId,
+  projectName,
+  disabled = false,
 }) => {
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -28,9 +28,9 @@ const AuditSection: React.FC<AuditSectionProps> = ({
   const handleViewAuditTrail = async () => {
     try {
       // Check demo mode
-      const demoMode = await demoModeService.isDemoMode();
+      const demoMode = await demoModeService.getDemoMode();
       setIsDemoMode(demoMode);
-      
+
       // Open audit modal
       setIsAuditModalOpen(true);
     } catch (error) {
@@ -47,24 +47,24 @@ const AuditSection: React.FC<AuditSectionProps> = ({
 
   return (
     <>
-      <div className="ribbon-group">
-        <div className="ribbon-group-title text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+      <div className='ribbon-group'>
+        <div className='ribbon-group-title text-xs font-medium text-gray-600 dark:text-gray-400 mb-2'>
           Audit Trail
         </div>
-        <div className="flex space-x-1">
+        <div className='flex space-x-1'>
           {/* View Audit Trail Button */}
           <button
             onClick={handleViewAuditTrail}
             disabled={disabled || !canViewFullAudit}
             className={`ribbon-button ${!canViewFullAudit ? 'opacity-50 cursor-not-allowed' : ''}`}
             title={
-              !canViewFullAudit 
+              !canViewFullAudit
                 ? 'Requires programme.audit.view-all permission'
                 : 'View full project audit trail with filters and statistics'
             }
           >
-            <DocumentTextIcon className="w-5 h-5" />
-            <span className="text-xs">View Audit Trail</span>
+            <DocumentTextIcon className='w-5 h-5' />
+            <span className='text-xs'>View Audit Trail</span>
           </button>
 
           {/* Quick History Button */}
@@ -76,13 +76,13 @@ const AuditSection: React.FC<AuditSectionProps> = ({
             disabled={disabled || !canViewTaskHistory}
             className={`ribbon-button ${!canViewTaskHistory ? 'opacity-50 cursor-not-allowed' : ''}`}
             title={
-              !canViewTaskHistory 
+              !canViewTaskHistory
                 ? 'Requires programme.audit.view-task permission'
                 : 'Quick view of recent project changes'
             }
           >
-            <ClockIcon className="w-5 h-5" />
-            <span className="text-xs">Quick History</span>
+            <ClockIcon className='w-5 h-5' />
+            <span className='text-xs'>Quick History</span>
           </button>
 
           {/* Audit Statistics Button */}
@@ -94,27 +94,32 @@ const AuditSection: React.FC<AuditSectionProps> = ({
             disabled={disabled || !canViewFullAudit}
             className={`ribbon-button ${!canViewFullAudit ? 'opacity-50 cursor-not-allowed' : ''}`}
             title={
-              !canViewFullAudit 
+              !canViewFullAudit
                 ? 'Requires programme.audit.view-all permission'
                 : 'View audit statistics and analytics'
             }
           >
-            <ChartBarIcon className="w-5 h-5" />
-            <span className="text-xs">Statistics</span>
+            <ChartBarIcon className='w-5 h-5' />
+            <span className='text-xs'>Statistics</span>
           </button>
         </div>
 
         {/* Demo Mode Indicator */}
         {isDemoMode && (
-          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
-            <div className="flex items-center gap-1 text-yellow-800">
-              <ExclamationTriangleIcon className="w-3 h-3" />
+          <div className='mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs'>
+            <div className='flex items-center gap-1 text-yellow-800'>
+              <ExclamationTriangleIcon className='w-3 h-3' />
               <span>Demo Mode: Limited audit history</span>
             </div>
-            <div className="mt-1 text-yellow-700">
-              {auditTrailService.getDemoModeRestrictions().slice(0, 2).map((restriction, index) => (
-                <div key={index} className="text-xs">• {restriction}</div>
-              ))}
+            <div className='mt-1 text-yellow-700'>
+              {auditTrailService
+                .getDemoModeRestrictions()
+                .slice(0, 2)
+                .map((restriction, index) => (
+                  <div key={index} className='text-xs'>
+                    • {restriction}
+                  </div>
+                ))}
             </div>
           </div>
         )}
@@ -131,4 +136,4 @@ const AuditSection: React.FC<AuditSectionProps> = ({
   );
 };
 
-export default AuditSection; 
+export default AuditSection;

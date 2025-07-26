@@ -33,15 +33,15 @@ class TaskBarColorService {
   private readonly defaultColors = {
     task: 'bg-slate-400',
     milestone: 'bg-fuchsia-500',
-    phase: 'bg-gray-700'
+    phase: 'bg-gray-700',
   };
 
   private readonly statusColors: Record<string, string> = {
     'not-started': 'bg-gray-400',
     'in-progress': 'bg-blue-500',
-    'completed': 'bg-green-500',
+    completed: 'bg-green-500',
     'on-hold': 'bg-yellow-500',
-    'cancelled': 'bg-red-500'
+    cancelled: 'bg-red-500',
   };
 
   /**
@@ -62,9 +62,9 @@ class TaskBarColorService {
           color: task.customColor,
           label: 'Custom Color',
           description: 'User-defined custom color',
-          priority: 1
+          priority: 1,
         },
-        source: 'custom'
+        source: 'custom',
       };
     }
 
@@ -81,9 +81,9 @@ class TaskBarColorService {
               color: tag.color,
               label: `${tag.name} (Tag)`,
               description: `Color from tag: ${tag.name}`,
-              priority: 2
+              priority: 2,
             },
-            source: 'tag'
+            source: 'tag',
           };
         }
       }
@@ -101,15 +101,17 @@ class TaskBarColorService {
             color: status.color,
             label: status.name,
             description: `Color from status: ${status.name}`,
-            priority: 3
+            priority: 3,
           },
-          source: 'status'
+          source: 'status',
         };
       }
     }
 
     // Priority 4: Default type color
-    const defaultColor = this.defaultColors[task.type as keyof typeof this.defaultColors] || this.defaultColors.task;
+    const defaultColor =
+      this.defaultColors[task.type as keyof typeof this.defaultColors] ||
+      this.defaultColors.task;
     return {
       color: defaultColor,
       rule: {
@@ -118,9 +120,9 @@ class TaskBarColorService {
         color: defaultColor,
         label: `${task.type} (Default)`,
         description: `Default color for ${task.type} type`,
-        priority: 4
+        priority: 4,
       },
-      source: 'default'
+      source: 'default',
     };
   }
 
@@ -132,17 +134,17 @@ class TaskBarColorService {
     if (taskColor.startsWith('bg-')) {
       const colorName = taskColor.replace('bg-', '');
       const colorParts = colorName.split('-');
-      
+
       if (colorParts.length === 2) {
         const [color, shade] = colorParts;
         const shadeNum = parseInt(shade);
-        
+
         // Make it lighter by reducing shade number
         const lighterShade = Math.max(100, shadeNum - 200);
         return `bg-${color}-${lighterShade}`;
       }
     }
-    
+
     // Fallback to a light gray
     return 'bg-gray-200';
   }
@@ -164,7 +166,7 @@ class TaskBarColorService {
         color,
         label: `${type.charAt(0).toUpperCase() + type.slice(1)} (Default)`,
         description: `Default color for ${type} type`,
-        priority: 4
+        priority: 4,
       });
     });
 
@@ -177,7 +179,7 @@ class TaskBarColorService {
           color: status.color,
           label: status.name,
           description: `Color from status: ${status.name}`,
-          priority: 3
+          priority: 3,
         });
       }
     });
@@ -191,7 +193,7 @@ class TaskBarColorService {
           color: tag.color,
           label: `${tag.name} (Tag)`,
           description: `Color from tag: ${tag.name}`,
-          priority: 2
+          priority: 2,
         });
       }
     });
@@ -203,7 +205,7 @@ class TaskBarColorService {
       color: '#6366f1', // Example custom color
       label: 'Custom Color',
       description: 'User-defined custom color (highest priority)',
-      priority: 1
+      priority: 1,
     });
 
     // Sort by priority
@@ -213,7 +215,7 @@ class TaskBarColorService {
   /**
    * Validate custom color
    */
-  validateCustomColor(color: string): { error?: string, isValid: boolean; } {
+  validateCustomColor(color: string): { error?: string; isValid: boolean } {
     // Check if it's a valid hex color
     if (color.startsWith('#')) {
       const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
@@ -226,11 +228,30 @@ class TaskBarColorService {
     // Check if it's a valid Tailwind class
     if (color.startsWith('bg-')) {
       const tailwindColors = [
-        'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber',
-        'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue',
-        'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'
+        'slate',
+        'gray',
+        'zinc',
+        'neutral',
+        'stone',
+        'red',
+        'orange',
+        'amber',
+        'yellow',
+        'lime',
+        'green',
+        'emerald',
+        'teal',
+        'cyan',
+        'sky',
+        'blue',
+        'indigo',
+        'violet',
+        'purple',
+        'fuchsia',
+        'pink',
+        'rose',
       ];
-      
+
       const colorName = color.replace('bg-', '').split('-')[0];
       if (!tailwindColors.includes(colorName)) {
         return { isValid: false, error: 'Invalid Tailwind color name' };
@@ -238,7 +259,10 @@ class TaskBarColorService {
       return { isValid: true };
     }
 
-    return { isValid: false, error: 'Color must be hex (#RRGGBB) or Tailwind class (bg-color-shade)' };
+    return {
+      isValid: false,
+      error: 'Color must be hex (#RRGGBB) or Tailwind class (bg-color-shade)',
+    };
   }
 
   /**
@@ -260,28 +284,36 @@ class TaskBarColorService {
       'Maximum 1 tag with color per task',
       'Custom colors not allowed',
       'All colors from demo tags/statuses only',
-      'Legend shows "DEMO MODE" label'
+      'Legend shows "DEMO MODE" label',
     ];
   }
 
   /**
    * Check if task has valid color configuration for demo mode
    */
-  async validateTaskColorForDemoMode(task: any): Promise<{ error?: string, isValid: boolean; }> {
-    const isDemoMode = await demoModeService.isDemoMode();
-    
+  async validateTaskColorForDemoMode(
+    task: any
+  ): Promise<{ error?: string; isValid: boolean }> {
+    const isDemoMode = await demoModeService.getDemoMode();
+
     if (!isDemoMode) {
       return { isValid: true };
     }
 
     // Check for custom color (not allowed in demo)
     if (task.customColor) {
-      return { isValid: false, error: 'Custom colors not allowed in demo mode' };
+      return {
+        isValid: false,
+        error: 'Custom colors not allowed in demo mode',
+      };
     }
 
     // Check for multiple colored tags (max 1 in demo)
     if (task.tags && Array.isArray(task.tags) && task.tags.length > 1) {
-      return { isValid: false, error: 'Maximum 1 tag with color allowed in demo mode' };
+      return {
+        isValid: false,
+        error: 'Maximum 1 tag with color allowed in demo mode',
+      };
     }
 
     return { isValid: true };
@@ -295,11 +327,11 @@ class TaskBarColorService {
       const colorName = color.replace('bg-', '').split('-')[0];
       return colorName.charAt(0).toUpperCase() + colorName.slice(1);
     }
-    
+
     if (color.startsWith('#')) {
       return 'Custom Color';
     }
-    
+
     return color;
   }
 
@@ -315,18 +347,22 @@ class TaskBarColorService {
       }
       return color.replace('bg-', '');
     }
-    
+
     if (color.startsWith('#')) {
       return 'Custom hex color';
     }
-    
+
     return 'Unknown color format';
   }
 
   /**
    * Get all available Tailwind colors
    */
-  getAvailableTailwindColors(): Array<{ class: string; name: string; shades: string[] }> {
+  getAvailableTailwindColors(): Array<{
+    class: string;
+    name: string;
+    shades: string[];
+  }> {
     return [
       { name: 'Slate', class: 'slate', shades: ['400', '500', '600', '700'] },
       { name: 'Gray', class: 'gray', shades: ['400', '500', '600', '700'] },
@@ -337,11 +373,15 @@ class TaskBarColorService {
       { name: 'Blue', class: 'blue', shades: ['400', '500', '600', '700'] },
       { name: 'Purple', class: 'purple', shades: ['400', '500', '600', '700'] },
       { name: 'Pink', class: 'pink', shades: ['400', '500', '600', '700'] },
-      { name: 'Fuchsia', class: 'fuchsia', shades: ['400', '500', '600', '700'] },
+      {
+        name: 'Fuchsia',
+        class: 'fuchsia',
+        shades: ['400', '500', '600', '700'],
+      },
       { name: 'Indigo', class: 'indigo', shades: ['400', '500', '600', '700'] },
-      { name: 'Teal', class: 'teal', shades: ['400', '500', '600', '700'] }
+      { name: 'Teal', class: 'teal', shades: ['400', '500', '600', '700'] },
     ];
   }
 }
 
-export const taskBarColorService = new TaskBarColorService(); 
+export const taskBarColorService = new TaskBarColorService();

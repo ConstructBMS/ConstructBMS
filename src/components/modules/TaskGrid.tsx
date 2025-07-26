@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronRightIcon, ChevronDownIcon, CalendarIcon, ClockIcon, TagIcon, CheckCircleIcon, ExclamationTriangleIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import {
+  ChevronRightIcon,
+  ChevronDownIcon,
+  CalendarIcon,
+  ClockIcon,
+  TagIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  LockClosedIcon,
+} from '@heroicons/react/24/outline';
 import { usePermissions } from '../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
 import { taskService } from '../services/taskService';
@@ -39,7 +48,11 @@ interface Column {
   editable: boolean;
   id: string;
   label: string;
-  render: (task: Task, isEditing: boolean, onEdit: (value: any) => void) => React.ReactNode;
+  render: (
+    task: Task,
+    isEditing: boolean,
+    onEdit: (value: any) => void
+  ) => React.ReactNode;
   sortable: boolean;
   width: number;
 }
@@ -51,17 +64,24 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   onTaskSelect,
   selectedTaskId,
   scrollTop,
-  onScrollChange
+  onScrollChange,
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedTaskIds, setExpandedTaskIds] = useState<string[]>([]);
-  const [editingCell, setEditingCell] = useState<{ columnId: string, taskId: string; } | null>(null);
+  const [editingCell, setEditingCell] = useState<{
+    columnId: string;
+    taskId: string;
+  } | null>(null);
   const [editValue, setEditValue] = useState<any>('');
-  const [availableStatuses, setAvailableStatuses] = useState<Array<{ color: string, id: string; name: string; }>>([]);
-  const [availableTags, setAvailableTags] = useState<Array<{ color: string, id: string; name: string; }>>([]);
+  const [availableStatuses, setAvailableStatuses] = useState<
+    Array<{ color: string; id: string; name: string }>
+  >([]);
+  const [availableTags, setAvailableTags] = useState<
+    Array<{ color: string; id: string; name: string }>
+  >([]);
   const [taskCount, setTaskCount] = useState(0);
-  
+
   const gridRef = useRef<HTMLDivElement>(null);
   const canView = canAccess('programme.task.view');
   const canEdit = canAccess('programme.task.edit');
@@ -69,7 +89,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -82,9 +102,9 @@ const TaskGrid: React.FC<TaskGridProps> = ({
         const [statuses, tags, count] = await Promise.all([
           taskService.getAvailableStatuses(),
           taskService.getAvailableTags(),
-          taskService.getTaskCount(projectId)
+          taskService.getTaskCount(projectId),
         ]);
-        
+
         setAvailableStatuses(statuses);
         setAvailableTags(tags);
         setTaskCount(count);
@@ -92,7 +112,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({
         console.error('Error loading grid options:', error);
       }
     };
-    
+
     loadOptions();
   }, [projectId]);
 
@@ -104,10 +124,13 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   }, [scrollTop]);
 
   // Handle scroll
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    onScrollChange(scrollTop);
-  }, [onScrollChange]);
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const scrollTop = e.currentTarget.scrollTop;
+      onScrollChange(scrollTop);
+    },
+    [onScrollChange]
+  );
 
   // Toggle task expansion
   const toggleTaskExpansion = (taskId: string) => {
@@ -115,9 +138,9 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       // Demo mode: only allow 1 level expansion
       return;
     }
-    
-    setExpandedTaskIds(prev => 
-      prev.includes(taskId) 
+
+    setExpandedTaskIds(prev =>
+      prev.includes(taskId)
         ? prev.filter(id => id !== taskId)
         : [...prev, taskId]
     );
@@ -125,10 +148,16 @@ const TaskGrid: React.FC<TaskGridProps> = ({
 
   // Start inline editing
   const startEditing = (taskId: string, columnId: string, value: any) => {
-    if (!canEdit || (isDemoMode && (columnId === 'type' || columnId === 'startDate' || columnId === 'endDate'))) {
+    if (
+      !canEdit ||
+      (isDemoMode &&
+        (columnId === 'type' ||
+          columnId === 'startDate' ||
+          columnId === 'endDate'))
+    ) {
       return;
     }
-    
+
     setEditingCell({ taskId, columnId });
     setEditValue(value);
   };
@@ -136,14 +165,14 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   // Save inline edit
   const saveEdit = async () => {
     if (!editingCell) return;
-    
+
     try {
       const { taskId, columnId } = editingCell;
       const task = tasks.find(t => t.id === taskId);
       if (!task) return;
-      
+
       const updates: any = {};
-      
+
       switch (columnId) {
         case 'name':
           updates.name = editValue;
@@ -161,18 +190,18 @@ const TaskGrid: React.FC<TaskGridProps> = ({
           updates.tags = editValue;
           break;
       }
-      
+
       // Record action for undo/redo
       const before = { [columnId]: task[columnId as keyof Task] };
       const after = updates;
-      
+
       if (window.actionTracker) {
         await window.actionTracker.trackTaskUpdate(taskId, before, after);
       }
-      
+
       // Update task
       const result = await taskService.updateTask(taskId, updates);
-      
+
       if (result.success) {
         onTaskUpdate(taskId, updates);
       } else {
@@ -203,14 +232,18 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   };
 
   // Build hierarchical task list
-  const buildTaskTree = (taskList: Task[], parentId?: string, level = 0): Task[] => {
+  const buildTaskTree = (
+    taskList: Task[],
+    parentId?: string,
+    level = 0
+  ): Task[] => {
     const result: Task[] = [];
-    
+
     for (const task of taskList) {
       if (task.parentTaskId === parentId) {
         const taskWithLevel = { ...task, level };
         result.push(taskWithLevel);
-        
+
         // Add children if expanded
         if (expandedTaskIds.includes(task.id)) {
           const children = buildTaskTree(taskList, task.id, level + 1);
@@ -218,7 +251,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({
         }
       }
     }
-    
+
     return result;
   };
 
@@ -239,46 +272,46 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: true,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {/* Expand/collapse arrow */}
           {task.type === 'phase' && (
             <button
               onClick={() => toggleTaskExpansion(task.id)}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              className='p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded'
               disabled={isDemoMode && expandedTaskIds.length >= 1}
             >
               {expandedTaskIds.includes(task.id) ? (
-                <ChevronDownIcon className="w-4 h-4" />
+                <ChevronDownIcon className='w-4 h-4' />
               ) : (
-                <ChevronRightIcon className="w-4 h-4" />
+                <ChevronRightIcon className='w-4 h-4' />
               )}
             </button>
           )}
-          
+
           {/* Indent for hierarchy */}
           <div style={{ marginLeft: `${task.level * 20}px` }} />
-          
+
           {/* Task name */}
           {isEditing ? (
             <input
-              type="text"
+              type='text'
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={e => setEditValue(e.target.value)}
               onBlur={saveEdit}
               onKeyDown={handleKeyPress}
-              className="flex-1 px-2 py-1 border border-blue-500 rounded text-sm"
+              className='flex-1 px-2 py-1 border border-blue-500 rounded text-sm'
               autoFocus
             />
           ) : (
-            <span 
-              className="flex-1 cursor-pointer hover:text-blue-600"
+            <span
+              className='flex-1 cursor-pointer hover:text-blue-600'
               onClick={() => startEditing(task.id, 'name', task.name)}
             >
               {task.name}
             </span>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'startDate',
@@ -287,28 +320,34 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: true,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-1">
-          <CalendarIcon className="w-4 h-4 text-gray-400" />
+        <div className='flex items-center space-x-1'>
+          <CalendarIcon className='w-4 h-4 text-gray-400' />
           {isEditing ? (
             <input
-              type="date"
+              type='date'
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={e => setEditValue(e.target.value)}
               onBlur={saveEdit}
               onKeyDown={handleKeyPress}
-              className="px-2 py-1 border border-blue-500 rounded text-sm"
+              className='px-2 py-1 border border-blue-500 rounded text-sm'
               autoFocus
             />
           ) : (
-            <span 
-              className="cursor-pointer hover:text-blue-600"
-              onClick={() => startEditing(task.id, 'startDate', task.startDate.toISOString().split('T')[0])}
+            <span
+              className='cursor-pointer hover:text-blue-600'
+              onClick={() =>
+                startEditing(
+                  task.id,
+                  'startDate',
+                  task.startDate.toISOString().split('T')[0]
+                )
+              }
             >
               {task.startDate.toLocaleDateString()}
             </span>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'endDate',
@@ -317,28 +356,34 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: true,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-1">
-          <CalendarIcon className="w-4 h-4 text-gray-400" />
+        <div className='flex items-center space-x-1'>
+          <CalendarIcon className='w-4 h-4 text-gray-400' />
           {isEditing ? (
             <input
-              type="date"
+              type='date'
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={e => setEditValue(e.target.value)}
               onBlur={saveEdit}
               onKeyDown={handleKeyPress}
-              className="px-2 py-1 border border-blue-500 rounded text-sm"
+              className='px-2 py-1 border border-blue-500 rounded text-sm'
               autoFocus
             />
           ) : (
-            <span 
-              className="cursor-pointer hover:text-blue-600"
-              onClick={() => startEditing(task.id, 'endDate', task.endDate.toISOString().split('T')[0])}
+            <span
+              className='cursor-pointer hover:text-blue-600'
+              onClick={() =>
+                startEditing(
+                  task.id,
+                  'endDate',
+                  task.endDate.toISOString().split('T')[0]
+                )
+              }
             >
               {task.endDate.toLocaleDateString()}
             </span>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'duration',
@@ -347,11 +392,13 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: false,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-1">
-          <ClockIcon className="w-4 h-4 text-gray-400" />
-          <span>{task.duration} day{task.duration !== 1 ? 's' : ''}</span>
+        <div className='flex items-center space-x-1'>
+          <ClockIcon className='w-4 h-4 text-gray-400' />
+          <span>
+            {task.duration} day{task.duration !== 1 ? 's' : ''}
+          </span>
         </div>
-      )
+      ),
     },
     {
       id: 'statusId',
@@ -361,14 +408,14 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       sortable: true,
       render: (task, isEditing, onEdit) => {
         const status = availableStatuses.find(s => s.id === task.statusId);
-        
+
         return isEditing ? (
           <select
             value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
+            onChange={e => setEditValue(e.target.value)}
             onBlur={saveEdit}
             onKeyDown={handleKeyPress}
-            className="px-2 py-1 border border-blue-500 rounded text-sm"
+            className='px-2 py-1 border border-blue-500 rounded text-sm'
             autoFocus
           >
             {availableStatuses.map(status => (
@@ -378,18 +425,18 @@ const TaskGrid: React.FC<TaskGridProps> = ({
             ))}
           </select>
         ) : (
-          <div 
-            className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded"
+          <div
+            className='flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded'
             onClick={() => startEditing(task.id, 'statusId', task.statusId)}
           >
-            <div 
-              className="w-3 h-3 rounded-full"
+            <div
+              className='w-3 h-3 rounded-full'
               style={{ backgroundColor: status?.color || '#gray' }}
             />
             <span>{status?.name || 'Unknown'}</span>
           </div>
         );
-      }
+      },
     },
     {
       id: 'tags',
@@ -398,36 +445,36 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: true,
       sortable: false,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-1">
-          <TagIcon className="w-4 h-4 text-gray-400" />
+        <div className='flex items-center space-x-1'>
+          <TagIcon className='w-4 h-4 text-gray-400' />
           {isEditing ? (
-            <div className="flex flex-wrap gap-1">
+            <div className='flex flex-wrap gap-1'>
               {availableTags.map(tag => (
-                <label key={tag.id} className="flex items-center space-x-1">
+                <label key={tag.id} className='flex items-center space-x-1'>
                   <input
-                    type="checkbox"
+                    type='checkbox'
                     checked={editValue.includes(tag.id)}
-                    onChange={(e) => {
+                    onChange={e => {
                       const newValue = e.target.checked
                         ? [...editValue, tag.id]
                         : editValue.filter((id: string) => id !== tag.id);
                       setEditValue(newValue);
                     }}
-                    className="rounded"
+                    className='rounded'
                   />
-                  <span className="text-xs">{tag.name}</span>
+                  <span className='text-xs'>{tag.name}</span>
                 </label>
               ))}
               <button
                 onClick={saveEdit}
-                className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                className='px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600'
               >
                 Save
               </button>
             </div>
           ) : (
-            <div 
-              className="flex flex-wrap gap-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded"
+            <div
+              className='flex flex-wrap gap-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded'
               onClick={() => startEditing(task.id, 'tags', task.tags)}
             >
               {task.tags.length > 0 ? (
@@ -436,10 +483,10 @@ const TaskGrid: React.FC<TaskGridProps> = ({
                   return tag ? (
                     <span
                       key={tagId}
-                      className="px-2 py-1 rounded text-xs"
-                      style={{ 
+                      className='px-2 py-1 rounded text-xs'
+                      style={{
                         backgroundColor: tag.color,
-                        color: 'white'
+                        color: 'white',
                       }}
                     >
                       {tag.name}
@@ -447,12 +494,12 @@ const TaskGrid: React.FC<TaskGridProps> = ({
                   ) : null;
                 })
               ) : (
-                <span className="text-gray-400 text-xs">No tags</span>
+                <span className='text-gray-400 text-xs'>No tags</span>
               )}
             </div>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'constraintType',
@@ -466,22 +513,24 @@ const TaskGrid: React.FC<TaskGridProps> = ({
           MSO: 'Must Start On',
           MFO: 'Must Finish On',
           SNET: 'Start No Earlier Than',
-          FNLT: 'Finish No Later Than'
+          FNLT: 'Finish No Later Than',
         };
-        
+
         return (
-          <div className="flex items-center space-x-2">
+          <div className='flex items-center space-x-2'>
             {task.constraintType && task.constraintType !== 'none' ? (
               <>
-                <LockClosedIcon className="w-4 h-4 text-gray-400" />
-                <span className="text-xs">{constraintLabels[task.constraintType]}</span>
+                <LockClosedIcon className='w-4 h-4 text-gray-400' />
+                <span className='text-xs'>
+                  {constraintLabels[task.constraintType]}
+                </span>
               </>
             ) : (
-              <span className="text-gray-400 text-xs">No constraint</span>
+              <span className='text-gray-400 text-xs'>No constraint</span>
             )}
           </div>
         );
-      }
+      },
     },
     {
       id: 'constraintDate',
@@ -490,17 +539,19 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: false,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-1">
+        <div className='flex items-center space-x-1'>
           {task.constraintDate ? (
             <>
-              <CalendarIcon className="w-4 h-4 text-gray-400" />
-              <span className="text-xs">{task.constraintDate.toLocaleDateString()}</span>
+              <CalendarIcon className='w-4 h-4 text-gray-400' />
+              <span className='text-xs'>
+                {task.constraintDate.toLocaleDateString()}
+              </span>
             </>
           ) : (
-            <span className="text-gray-400 text-xs">-</span>
+            <span className='text-gray-400 text-xs'>-</span>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'constraintViolation',
@@ -509,20 +560,20 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: false,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           {task.constraintViolated ? (
-            <div className="flex items-center space-x-1 text-red-600">
-              <ExclamationTriangleIcon className="w-4 h-4" />
-              <span className="text-xs">❗</span>
+            <div className='flex items-center space-x-1 text-red-600'>
+              <ExclamationTriangleIcon className='w-4 h-4' />
+              <span className='text-xs'>❗</span>
             </div>
           ) : (
-            <div className="flex items-center space-x-1 text-green-600">
-              <CheckCircleIcon className="w-4 h-4" />
-              <span className="text-xs">✔️</span>
+            <div className='flex items-center space-x-1 text-green-600'>
+              <CheckCircleIcon className='w-4 h-4' />
+              <span className='text-xs'>✔️</span>
             </div>
           )}
         </div>
-      )
+      ),
     },
     {
       id: 'type',
@@ -531,38 +582,38 @@ const TaskGrid: React.FC<TaskGridProps> = ({
       editable: false,
       sortable: true,
       render: (task, isEditing, onEdit) => (
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {task.type === 'milestone' ? (
-            <CheckCircleIcon className="w-5 h-5 text-purple-500" />
+            <CheckCircleIcon className='w-5 h-5 text-purple-500' />
           ) : task.type === 'phase' ? (
-            <ExclamationTriangleIcon className="w-5 h-5 text-blue-500" />
+            <ExclamationTriangleIcon className='w-5 h-5 text-blue-500' />
           ) : (
-            <div className="w-5 h-5 bg-gray-300 rounded" />
+            <div className='w-5 h-5 bg-gray-300 rounded' />
           )}
-          <span className="capitalize">{task.type}</span>
+          <span className='capitalize'>{task.type}</span>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const taskTree = buildTaskTree(getFilteredTasks());
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <div className='flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700'>
       {/* Demo Banner */}
       {isDemoMode && (
-        <div className="px-4 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-sm font-medium border-b border-yellow-200 dark:border-yellow-700">
+        <div className='px-4 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-sm font-medium border-b border-yellow-200 dark:border-yellow-700'>
           DEMO MODE - Max 10 tasks, limited editing
         </div>
       )}
-      
+
       {/* Column Headers */}
-      <div className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex">
+      <div className='sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700'>
+        <div className='flex'>
           {columns.map(column => (
             <div
               key={column.id}
-              className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700"
+              className='px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700'
               style={{ width: column.width }}
             >
               {column.label}
@@ -570,14 +621,14 @@ const TaskGrid: React.FC<TaskGridProps> = ({
           ))}
         </div>
       </div>
-      
+
       {/* Task Grid */}
       <div
         ref={gridRef}
-        className="flex-1 overflow-auto"
+        className='flex-1 overflow-auto'
         onScroll={handleScroll}
       >
-        <div className="min-w-full">
+        <div className='min-w-full'>
           {taskTree.map(task => (
             <div
               key={task.id}
@@ -591,21 +642,22 @@ const TaskGrid: React.FC<TaskGridProps> = ({
               {columns.map(column => (
                 <div
                   key={column.id}
-                  className="px-3 py-2 text-sm text-gray-900 dark:text-gray-100 border-r border-gray-100 dark:border-gray-700"
+                  className='px-3 py-2 text-sm text-gray-900 dark:text-gray-100 border-r border-gray-100 dark:border-gray-700'
                   style={{ width: column.width }}
                 >
                   {column.render(
                     task,
-                    editingCell?.taskId === task.id && editingCell?.columnId === column.id,
-                    (value) => setEditValue(value)
+                    editingCell?.taskId === task.id &&
+                      editingCell?.columnId === column.id,
+                    value => setEditValue(value)
                   )}
                 </div>
               ))}
             </div>
           ))}
-          
+
           {taskTree.length === 0 && (
-            <div className="flex items-center justify-center h-32 text-gray-500 dark:text-gray-400">
+            <div className='flex items-center justify-center h-32 text-gray-500 dark:text-gray-400'>
               {isDemoMode ? 'No demo tasks available' : 'No tasks found'}
             </div>
           )}
@@ -615,4 +667,4 @@ const TaskGrid: React.FC<TaskGridProps> = ({
   );
 };
 
-export default TaskGrid; 
+export default TaskGrid;

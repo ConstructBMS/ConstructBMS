@@ -41,13 +41,17 @@ class TaskBarInteractionService {
     newStartDate: Date,
     newEndDate: Date,
     constraints?: DragConstraints
-  ): Promise<{ adjustedDates?: { endDate: Date, startDate: Date; }, errors: string[]; isValid: boolean; }> {
+  ): Promise<{
+    adjustedDates?: { endDate: Date; startDate: Date };
+    errors: string[];
+    isValid: boolean;
+  }> {
     const errors: string[] = [];
     let adjustedStartDate = new Date(newStartDate);
     let adjustedEndDate = new Date(newEndDate);
 
     // Check demo mode restrictions
-    const isDemoMode = await demoModeService.isDemoMode();
+    const isDemoMode = await demoModeService.getDemoMode();
     if (isDemoMode) {
       const taskCount = await taskService.getTaskCount('current-project'); // This should be passed as parameter
       if (taskCount >= 3) {
@@ -57,7 +61,9 @@ class TaskBarInteractionService {
 
       // Demo mode drag constraints
       const maxDragRange = 5; // 5 days max
-      const duration = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24));
+      const duration = Math.ceil(
+        (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (duration > maxDragRange) {
         errors.push(`Drag limited to ${maxDragRange} days in demo mode`);
         return { isValid: false, errors };
@@ -72,7 +78,10 @@ class TaskBarInteractionService {
 
     // Apply constraints
     if (constraints) {
-      if (constraints.minStartDate && adjustedStartDate < constraints.minStartDate) {
+      if (
+        constraints.minStartDate &&
+        adjustedStartDate < constraints.minStartDate
+      ) {
         adjustedStartDate = new Date(constraints.minStartDate);
       }
 
@@ -81,26 +90,41 @@ class TaskBarInteractionService {
       }
 
       if (constraints.maxDuration) {
-        const duration = Math.ceil((adjustedEndDate.getTime() - adjustedStartDate.getTime()) / (1000 * 60 * 60 * 24));
+        const duration = Math.ceil(
+          (adjustedEndDate.getTime() - adjustedStartDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
         if (duration > constraints.maxDuration) {
-          adjustedEndDate = new Date(adjustedStartDate.getTime() + constraints.maxDuration * 24 * 60 * 60 * 1000);
+          adjustedEndDate = new Date(
+            adjustedStartDate.getTime() +
+              constraints.maxDuration * 24 * 60 * 60 * 1000
+          );
         }
       }
 
       // Snap to grid
       if (constraints.snapToGrid && constraints.gridSize) {
-        adjustedStartDate = this.snapToGrid(adjustedStartDate, constraints.gridSize);
-        adjustedEndDate = this.snapToGrid(adjustedEndDate, constraints.gridSize);
+        adjustedStartDate = this.snapToGrid(
+          adjustedStartDate,
+          constraints.gridSize
+        );
+        adjustedEndDate = this.snapToGrid(
+          adjustedEndDate,
+          constraints.gridSize
+        );
       }
     }
 
-    const hasAdjustments = adjustedStartDate.getTime() !== newStartDate.getTime() || 
-                          adjustedEndDate.getTime() !== newEndDate.getTime();
+    const hasAdjustments =
+      adjustedStartDate.getTime() !== newStartDate.getTime() ||
+      adjustedEndDate.getTime() !== newEndDate.getTime();
 
     return {
       isValid: errors.length === 0,
       errors,
-      adjustedDates: hasAdjustments ? { startDate: adjustedStartDate, endDate: adjustedEndDate } : undefined
+      adjustedDates: hasAdjustments
+        ? { startDate: adjustedStartDate, endDate: adjustedEndDate }
+        : undefined,
     };
   }
 
@@ -113,13 +137,17 @@ class TaskBarInteractionService {
     newEndDate: Date,
     resizeHandle: 'left' | 'right',
     constraints?: ResizeConstraints
-  ): Promise<{ adjustedDates?: { endDate: Date, startDate: Date; }, errors: string[]; isValid: boolean; }> {
+  ): Promise<{
+    adjustedDates?: { endDate: Date; startDate: Date };
+    errors: string[];
+    isValid: boolean;
+  }> {
     const errors: string[] = [];
     let adjustedStartDate = new Date(newStartDate);
     let adjustedEndDate = new Date(newEndDate);
 
     // Check demo mode restrictions
-    const isDemoMode = await demoModeService.isDemoMode();
+    const isDemoMode = await demoModeService.getDemoMode();
     if (isDemoMode) {
       const taskCount = await taskService.getTaskCount('current-project'); // This should be passed as parameter
       if (taskCount >= 3) {
@@ -129,7 +157,9 @@ class TaskBarInteractionService {
 
       // Demo mode resize constraints
       const maxDuration = 10; // 10 days max
-      const duration = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24));
+      const duration = Math.ceil(
+        (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (duration > maxDuration) {
         errors.push(`Resize limited to ${maxDuration} days in demo mode`);
         return { isValid: false, errors };
@@ -145,23 +175,41 @@ class TaskBarInteractionService {
     // Apply constraints
     if (constraints) {
       if (constraints.minDuration) {
-        const duration = Math.ceil((adjustedEndDate.getTime() - adjustedStartDate.getTime()) / (1000 * 60 * 60 * 24));
+        const duration = Math.ceil(
+          (adjustedEndDate.getTime() - adjustedStartDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
         if (duration < constraints.minDuration) {
           if (resizeHandle === 'left') {
-            adjustedStartDate = new Date(adjustedEndDate.getTime() - constraints.minDuration * 24 * 60 * 60 * 1000);
+            adjustedStartDate = new Date(
+              adjustedEndDate.getTime() -
+                constraints.minDuration * 24 * 60 * 60 * 1000
+            );
           } else {
-            adjustedEndDate = new Date(adjustedStartDate.getTime() + constraints.minDuration * 24 * 60 * 60 * 1000);
+            adjustedEndDate = new Date(
+              adjustedStartDate.getTime() +
+                constraints.minDuration * 24 * 60 * 60 * 1000
+            );
           }
         }
       }
 
       if (constraints.maxDuration) {
-        const duration = Math.ceil((adjustedEndDate.getTime() - adjustedStartDate.getTime()) / (1000 * 60 * 60 * 24));
+        const duration = Math.ceil(
+          (adjustedEndDate.getTime() - adjustedStartDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
         if (duration > constraints.maxDuration) {
           if (resizeHandle === 'left') {
-            adjustedStartDate = new Date(adjustedEndDate.getTime() - constraints.maxDuration * 24 * 60 * 60 * 1000);
+            adjustedStartDate = new Date(
+              adjustedEndDate.getTime() -
+                constraints.maxDuration * 24 * 60 * 60 * 1000
+            );
           } else {
-            adjustedEndDate = new Date(adjustedStartDate.getTime() + constraints.maxDuration * 24 * 60 * 60 * 1000);
+            adjustedEndDate = new Date(
+              adjustedStartDate.getTime() +
+                constraints.maxDuration * 24 * 60 * 60 * 1000
+            );
           }
         }
       }
@@ -175,13 +223,16 @@ class TaskBarInteractionService {
       }
     }
 
-    const hasAdjustments = adjustedStartDate.getTime() !== newStartDate.getTime() || 
-                          adjustedEndDate.getTime() !== newEndDate.getTime();
+    const hasAdjustments =
+      adjustedStartDate.getTime() !== newStartDate.getTime() ||
+      adjustedEndDate.getTime() !== newEndDate.getTime();
 
     return {
       isValid: errors.length === 0,
       errors,
-      adjustedDates: hasAdjustments ? { startDate: adjustedStartDate, endDate: adjustedEndDate } : undefined
+      adjustedDates: hasAdjustments
+        ? { startDate: adjustedStartDate, endDate: adjustedEndDate }
+        : undefined,
     };
   }
 
@@ -195,22 +246,29 @@ class TaskBarInteractionService {
     originalStartDate: Date,
     originalEndDate: Date,
     projectId: string
-  ): Promise<{ error?: string, success: boolean; }> {
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       // Validate the drag operation
-      const validation = await this.validateDrag(taskId, newStartDate, newEndDate);
-      
+      const validation = await this.validateDrag(
+        taskId,
+        newStartDate,
+        newEndDate
+      );
+
       if (!validation.isValid) {
         return { success: false, error: validation.errors.join(', ') };
       }
 
-      const datesToUse = validation.adjustedDates || { startDate: newStartDate, endDate: newEndDate };
+      const datesToUse = validation.adjustedDates || {
+        startDate: newStartDate,
+        endDate: newEndDate,
+      };
 
       // Update the task
       await taskService.updateTask(taskId, {
         startDate: datesToUse.startDate,
         endDate: datesToUse.endDate,
-        demo: await demoModeService.isDemoMode()
+        demo: await demoModeService.getDemoMode(),
       });
 
       // Log the interaction
@@ -223,7 +281,7 @@ class TaskBarInteractionService {
         originalEndDate,
         timestamp: new Date(),
         userId: 'current-user', // This should come from auth context
-        demo: await demoModeService.isDemoMode()
+        demo: await demoModeService.getDemoMode(),
       });
 
       return { success: true };
@@ -244,22 +302,30 @@ class TaskBarInteractionService {
     originalEndDate: Date,
     resizeHandle: 'left' | 'right',
     projectId: string
-  ): Promise<{ error?: string, success: boolean; }> {
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       // Validate the resize operation
-      const validation = await this.validateResize(taskId, newStartDate, newEndDate, resizeHandle);
-      
+      const validation = await this.validateResize(
+        taskId,
+        newStartDate,
+        newEndDate,
+        resizeHandle
+      );
+
       if (!validation.isValid) {
         return { success: false, error: validation.errors.join(', ') };
       }
 
-      const datesToUse = validation.adjustedDates || { startDate: newStartDate, endDate: newEndDate };
+      const datesToUse = validation.adjustedDates || {
+        startDate: newStartDate,
+        endDate: newEndDate,
+      };
 
       // Update the task
       await taskService.updateTask(taskId, {
         startDate: datesToUse.startDate,
         endDate: datesToUse.endDate,
-        demo: await demoModeService.isDemoMode()
+        demo: await demoModeService.getDemoMode(),
       });
 
       // Log the interaction
@@ -272,7 +338,7 @@ class TaskBarInteractionService {
         originalEndDate,
         timestamp: new Date(),
         userId: 'current-user', // This should come from auth context
-        demo: await demoModeService.isDemoMode()
+        demo: await demoModeService.getDemoMode(),
       });
 
       return { success: true };
@@ -289,12 +355,12 @@ class TaskBarInteractionService {
     try {
       const interactions = await this.getAllInteractions();
       interactions.push(interaction);
-      
+
       // Keep only last 1000 interactions
       if (interactions.length > 1000) {
         interactions.splice(0, interactions.length - 1000);
       }
-      
+
       await persistentStorage.set(this.interactionsKey, interactions);
     } catch (error) {
       console.error('Error logging interaction:', error);
@@ -317,7 +383,9 @@ class TaskBarInteractionService {
   /**
    * Get interaction history for a project
    */
-  async getProjectInteractions(projectId: string): Promise<TaskBarInteraction[]> {
+  async getProjectInteractions(
+    projectId: string
+  ): Promise<TaskBarInteraction[]> {
     try {
       const interactions = await this.getAllInteractions();
       // Note: This would need projectId in the interaction data
@@ -341,7 +409,11 @@ class TaskBarInteractionService {
   /**
    * Calculate drag distance in days
    */
-  calculateDragDistance(startX: number, currentX: number, dayWidth: number): number {
+  calculateDragDistance(
+    startX: number,
+    currentX: number,
+    dayWidth: number
+  ): number {
     const deltaX = currentX - startX;
     return Math.round(deltaX / dayWidth);
   }
@@ -349,7 +421,11 @@ class TaskBarInteractionService {
   /**
    * Calculate resize distance in days
    */
-  calculateResizeDistance(startX: number, currentX: number, dayWidth: number): number {
+  calculateResizeDistance(
+    startX: number,
+    currentX: number,
+    dayWidth: number
+  ): number {
     const deltaX = currentX - startX;
     return Math.round(deltaX / dayWidth);
   }
@@ -357,32 +433,38 @@ class TaskBarInteractionService {
   /**
    * Get default constraints for demo mode
    */
-  getDemoModeConstraints(): { drag: DragConstraints; resize: ResizeConstraints } {
+  getDemoModeConstraints(): {
+    drag: DragConstraints;
+    resize: ResizeConstraints;
+  } {
     return {
       drag: {
         maxDuration: 5,
         snapToGrid: true,
-        gridSize: 1
+        gridSize: 1,
       },
       resize: {
         minDuration: 1,
-        maxDuration: 10
-      }
+        maxDuration: 10,
+      },
     };
   }
 
   /**
    * Get default constraints for live mode
    */
-  getLiveModeConstraints(): { drag: DragConstraints; resize: ResizeConstraints } {
+  getLiveModeConstraints(): {
+    drag: DragConstraints;
+    resize: ResizeConstraints;
+  } {
     return {
       drag: {
         snapToGrid: true,
-        gridSize: 1
+        gridSize: 1,
       },
       resize: {
-        minDuration: 1
-      }
+        minDuration: 1,
+      },
     };
   }
 
@@ -417,7 +499,7 @@ class TaskBarInteractionService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearInteractionHistory();
         console.log('Demo task bar interaction data reset');
@@ -429,4 +511,4 @@ class TaskBarInteractionService {
   }
 }
 
-export const taskBarInteractionService = new TaskBarInteractionService(); 
+export const taskBarInteractionService = new TaskBarInteractionService();

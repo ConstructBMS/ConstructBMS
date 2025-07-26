@@ -1,6 +1,9 @@
 import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
-import type { TaskConstraint, ConstraintType } from '../components/modules/TaskConstraintsTab';
+import type {
+  TaskConstraint,
+  ConstraintType,
+} from '../components/modules/TaskConstraintsTab';
 
 export interface ConstraintResult {
   constraint?: TaskConstraint;
@@ -19,24 +22,30 @@ class TaskConstraintService {
   /**
    * Save or update a task constraint
    */
-  async saveTaskConstraint(constraint: TaskConstraint): Promise<ConstraintResult> {
+  async saveTaskConstraint(
+    constraint: TaskConstraint
+  ): Promise<ConstraintResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Check demo mode restrictions
       if (isDemoMode) {
         if (constraint.constraintType !== 'SNET') {
-          return { 
-            success: false, 
-            error: 'DEMO LIMIT - Only "Start No Earlier Than" constraint allowed in demo mode' 
+          return {
+            success: false,
+            error:
+              'DEMO LIMIT - Only "Start No Earlier Than" constraint allowed in demo mode',
           };
         }
 
-        const constraintCount = await this.getConstraintCount(constraint.taskId.split('_')[0]); // Extract project ID
+        const constraintCount = await this.getConstraintCount(
+          constraint.taskId.split('_')[0]
+        ); // Extract project ID
         if (constraintCount >= 2) {
-          return { 
-            success: false, 
-            error: 'DEMO LIMIT - Maximum 2 tasks with constraints allowed in demo mode' 
+          return {
+            success: false,
+            error:
+              'DEMO LIMIT - Maximum 2 tasks with constraints allowed in demo mode',
           };
         }
       }
@@ -48,7 +57,7 @@ class TaskConstraintService {
         constraint_date: constraint.constraintDate,
         constraint_reason: constraint.constraintReason || null,
         demo: isDemoMode,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Check if constraint already exists
@@ -90,7 +99,7 @@ class TaskConstraintService {
         constraintDate: constraint.constraintDate,
         constraintReason: constraint.constraintReason,
         demo: isDemoMode,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       console.log('Constraint saved:', savedConstraint);
@@ -126,7 +135,7 @@ class TaskConstraintService {
         constraintType: data.constraint_type as ConstraintType,
         constraintDate: data.constraint_date,
         constraintReason: data.constraint_reason,
-        demo: data.demo || false
+        demo: data.demo || false,
       };
     } catch (error) {
       console.error('Error getting task constraint:', error);
@@ -145,7 +154,7 @@ class TaskConstraintService {
           constraint_type: null,
           constraint_date: null,
           constraint_reason: null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', taskId);
 
@@ -186,7 +195,7 @@ class TaskConstraintService {
           constraintType: task.constraint_type as ConstraintType,
           constraintDate: task.constraint_date,
           constraintReason: task.constraint_reason,
-          demo: task.demo || false
+          demo: task.demo || false,
         }));
     } catch (error) {
       console.error('Error getting project constraints:', error);
@@ -220,7 +229,9 @@ class TaskConstraintService {
   /**
    * Check for constraint violations
    */
-  async checkConstraintViolations(taskId: string): Promise<ConstraintViolation[]> {
+  async checkConstraintViolations(
+    taskId: string
+  ): Promise<ConstraintViolation[]> {
     try {
       const constraint = await this.getTaskConstraint(taskId);
       if (!constraint) return [];
@@ -245,7 +256,7 @@ class TaskConstraintService {
               taskId,
               constraintType: 'MSO',
               message: `Task must start on ${constraintDate.toLocaleDateString()}`,
-              severity: 'error'
+              severity: 'error',
             });
           }
           break;
@@ -256,7 +267,7 @@ class TaskConstraintService {
               taskId,
               constraintType: 'MFO',
               message: `Task must finish on ${constraintDate.toLocaleDateString()}`,
-              severity: 'error'
+              severity: 'error',
             });
           }
           break;
@@ -267,7 +278,7 @@ class TaskConstraintService {
               taskId,
               constraintType: 'SNET',
               message: `Task cannot start before ${constraintDate.toLocaleDateString()}`,
-              severity: 'error'
+              severity: 'error',
             });
           }
           break;
@@ -278,7 +289,7 @@ class TaskConstraintService {
               taskId,
               constraintType: 'FNLT',
               message: `Task cannot finish after ${constraintDate.toLocaleDateString()}`,
-              severity: 'error'
+              severity: 'error',
             });
           }
           break;
@@ -294,7 +305,12 @@ class TaskConstraintService {
   /**
    * Enforce constraint logic on task dates
    */
-  async enforceConstraintLogic(taskId: string): Promise<{ success: boolean; updatedDates?: { endDate?: string, startDate?: string; } }> {
+  async enforceConstraintLogic(
+    taskId: string
+  ): Promise<{
+    success: boolean;
+    updatedDates?: { endDate?: string; startDate?: string };
+  }> {
     try {
       const constraint = await this.getTaskConstraint(taskId);
       if (!constraint) return { success: true };
@@ -317,7 +333,9 @@ class TaskConstraintService {
         case 'MSO':
           if (startDate.getTime() !== constraintDate.getTime()) {
             startDate = new Date(constraintDate);
-            endDate = new Date(constraintDate.getTime() + (duration - 1) * 24 * 60 * 60 * 1000);
+            endDate = new Date(
+              constraintDate.getTime() + (duration - 1) * 24 * 60 * 60 * 1000
+            );
             needsUpdate = true;
           }
           break;
@@ -325,7 +343,9 @@ class TaskConstraintService {
         case 'MFO':
           if (endDate.getTime() !== constraintDate.getTime()) {
             endDate = new Date(constraintDate);
-            startDate = new Date(constraintDate.getTime() - (duration - 1) * 24 * 60 * 60 * 1000);
+            startDate = new Date(
+              constraintDate.getTime() - (duration - 1) * 24 * 60 * 60 * 1000
+            );
             needsUpdate = true;
           }
           break;
@@ -333,17 +353,19 @@ class TaskConstraintService {
         case 'SNET':
           if (startDate < constraintDate) {
             startDate = new Date(constraintDate);
-            endDate = new Date(constraintDate.getTime() + (duration - 1) * 24 * 60 * 60 * 1000);
+            endDate = new Date(
+              constraintDate.getTime() + (duration - 1) * 24 * 60 * 60 * 1000
+            );
             needsUpdate = true;
           }
           break;
 
-
-
         case 'FNLT':
           if (endDate > constraintDate) {
             endDate = new Date(constraintDate);
-            startDate = new Date(constraintDate.getTime() - (duration - 1) * 24 * 60 * 60 * 1000);
+            startDate = new Date(
+              constraintDate.getTime() - (duration - 1) * 24 * 60 * 60 * 1000
+            );
             needsUpdate = true;
           }
           break;
@@ -355,7 +377,7 @@ class TaskConstraintService {
           .update({
             start_date: startDate.toISOString().split('T')[0],
             end_date: endDate.toISOString().split('T')[0],
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', taskId);
 
@@ -368,8 +390,8 @@ class TaskConstraintService {
           success: true,
           updatedDates: {
             startDate: startDate.toISOString().split('T')[0],
-            endDate: endDate.toISOString().split('T')[0]
-          }
+            endDate: endDate.toISOString().split('T')[0],
+          },
         };
       }
 
@@ -389,7 +411,7 @@ class TaskConstraintService {
       MSO: 'Must Start On',
       MFO: 'Must Finish On',
       SNET: 'Start No Earlier Than',
-      FNLT: 'Finish No Later Than'
+      FNLT: 'Finish No Later Than',
     };
     return labels[type] || type;
   }
@@ -403,10 +425,10 @@ class TaskConstraintService {
       MSO: 'Task must start on the specified date',
       MFO: 'Task must finish on the specified date',
       SNET: 'Task cannot start before the specified date',
-      FNLT: 'Task cannot finish after the specified date'
+      FNLT: 'Task cannot finish after the specified date',
     };
     return descriptions[type] || '';
   }
 }
 
-export const taskConstraintService = new TaskConstraintService(); 
+export const taskConstraintService = new TaskConstraintService();

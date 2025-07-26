@@ -41,16 +41,24 @@ class TaskGridService {
    */
   async getGridState(projectId: string): Promise<TaskGridState> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allStates = await this.getAllGridStates();
-      
+
       let projectState = allStates.find(s => s.projectId === projectId);
-      
+
       if (!projectState) {
         projectState = {
           projectId,
           expandedTaskIds: [],
-          columnOrder: ['name', 'startDate', 'endDate', 'duration', 'statusId', 'tags', 'type'],
+          columnOrder: [
+            'name',
+            'startDate',
+            'endDate',
+            'duration',
+            'statusId',
+            'tags',
+            'type',
+          ],
           columnWidths: {
             name: 200,
             startDate: 120,
@@ -58,22 +66,30 @@ class TaskGridService {
             duration: 100,
             statusId: 120,
             tags: 150,
-            type: 100
+            type: 100,
           },
           userId: 'current-user',
-          demo: isDemoMode
+          demo: isDemoMode,
         };
         allStates.push(projectState);
         await persistentStorage.set(this.gridStateKey, allStates);
       }
-      
+
       return projectState;
     } catch (error) {
       console.error('Error getting grid state:', error);
       return {
         projectId,
         expandedTaskIds: [],
-        columnOrder: ['name', 'startDate', 'endDate', 'duration', 'statusId', 'tags', 'type'],
+        columnOrder: [
+          'name',
+          'startDate',
+          'endDate',
+          'duration',
+          'statusId',
+          'tags',
+          'type',
+        ],
         columnWidths: {
           name: 200,
           startDate: 120,
@@ -81,9 +97,9 @@ class TaskGridService {
           duration: 100,
           statusId: 120,
           tags: 150,
-          type: 100
+          type: 100,
         },
-        userId: 'current-user'
+        userId: 'current-user',
       };
     }
   }
@@ -91,30 +107,39 @@ class TaskGridService {
   /**
    * Update grid state
    */
-  async updateGridState(projectId: string, updates: Partial<TaskGridState>): Promise<{ error?: string, success: boolean; }> {
+  async updateGridState(
+    projectId: string,
+    updates: Partial<TaskGridState>
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allStates = await this.getAllGridStates();
-      
+
       let projectState = allStates.find(s => s.projectId === projectId);
-      
+
       if (!projectState) {
         projectState = await this.getGridState(projectId);
         allStates.push(projectState);
       }
-      
+
       // Apply updates
       Object.assign(projectState, updates);
       projectState.demo = isDemoMode;
-      
+
       // Demo mode restrictions
       if (isDemoMode) {
         // Limit expanded levels
-        if (projectState.expandedTaskIds && projectState.expandedTaskIds.length > this.maxDemoExpandedLevels) {
-          projectState.expandedTaskIds = projectState.expandedTaskIds.slice(0, this.maxDemoExpandedLevels);
+        if (
+          projectState.expandedTaskIds &&
+          projectState.expandedTaskIds.length > this.maxDemoExpandedLevels
+        ) {
+          projectState.expandedTaskIds = projectState.expandedTaskIds.slice(
+            0,
+            this.maxDemoExpandedLevels
+          );
         }
       }
-      
+
       await persistentStorage.set(this.gridStateKey, allStates);
       console.log('Grid state updated:', updates);
       return { success: true };
@@ -127,27 +152,38 @@ class TaskGridService {
   /**
    * Toggle task expansion
    */
-  async toggleTaskExpansion(projectId: string, taskId: string): Promise<{ error?: string, success: boolean; }> {
+  async toggleTaskExpansion(
+    projectId: string,
+    taskId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const state = await this.getGridState(projectId);
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let newExpandedTaskIds: string[];
-      
+
       if (state.expandedTaskIds.includes(taskId)) {
         // Collapse task and all its children
         newExpandedTaskIds = state.expandedTaskIds.filter(id => id !== taskId);
       } else {
         // Expand task
         newExpandedTaskIds = [...state.expandedTaskIds, taskId];
-        
+
         // Demo mode: limit expansion levels
-        if (isDemoMode && newExpandedTaskIds.length > this.maxDemoExpandedLevels) {
-          newExpandedTaskIds = newExpandedTaskIds.slice(0, this.maxDemoExpandedLevels);
+        if (
+          isDemoMode &&
+          newExpandedTaskIds.length > this.maxDemoExpandedLevels
+        ) {
+          newExpandedTaskIds = newExpandedTaskIds.slice(
+            0,
+            this.maxDemoExpandedLevels
+          );
         }
       }
-      
-      return await this.updateGridState(projectId, { expandedTaskIds: newExpandedTaskIds });
+
+      return await this.updateGridState(projectId, {
+        expandedTaskIds: newExpandedTaskIds,
+      });
     } catch (error) {
       console.error('Error toggling task expansion:', error);
       return { success: false, error: 'Failed to toggle task expansion' };
@@ -157,17 +193,20 @@ class TaskGridService {
   /**
    * Expand all tasks
    */
-  async expandAllTasks(projectId: string, taskIds: string[]): Promise<{ error?: string, success: boolean; }> {
+  async expandAllTasks(
+    projectId: string,
+    taskIds: string[]
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let expandedTaskIds = taskIds;
-      
+
       // Demo mode: limit expansion
       if (isDemoMode) {
         expandedTaskIds = taskIds.slice(0, this.maxDemoExpandedLevels);
       }
-      
+
       return await this.updateGridState(projectId, { expandedTaskIds });
     } catch (error) {
       console.error('Error expanding all tasks:', error);
@@ -178,7 +217,9 @@ class TaskGridService {
   /**
    * Collapse all tasks
    */
-  async collapseAllTasks(projectId: string): Promise<{ error?: string, success: boolean; }> {
+  async collapseAllTasks(
+    projectId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       return await this.updateGridState(projectId, { expandedTaskIds: [] });
     } catch (error) {
@@ -193,7 +234,7 @@ class TaskGridService {
   buildTaskHierarchy(tasks: any[]): TaskHierarchy[] {
     const taskMap = new Map<string, TaskHierarchy>();
     const rootTasks: TaskHierarchy[] = [];
-    
+
     // Create task nodes
     tasks.forEach(task => {
       taskMap.set(task.id, {
@@ -202,14 +243,14 @@ class TaskGridService {
         level: 0,
         parentTaskId: task.parentTaskId,
         children: [],
-        expanded: false
+        expanded: false,
       });
     });
-    
+
     // Build hierarchy
     tasks.forEach(task => {
       const taskNode = taskMap.get(task.id)!;
-      
+
       if (task.parentTaskId && taskMap.has(task.parentTaskId)) {
         const parentNode = taskMap.get(task.parentTaskId)!;
         parentNode.children.push(taskNode);
@@ -218,7 +259,7 @@ class TaskGridService {
         rootTasks.push(taskNode);
       }
     });
-    
+
     return rootTasks;
   }
 
@@ -227,21 +268,21 @@ class TaskGridService {
    */
   flattenTaskHierarchy(tasks: any[], expandedTaskIds: string[]): any[] {
     const result: any[] = [];
-    
+
     const addTask = (task: any, level: number) => {
       const taskWithLevel = { ...task, level };
       result.push(taskWithLevel);
-      
+
       // Add children if expanded
       if (expandedTaskIds.includes(task.id)) {
         const children = tasks.filter(t => t.parentTaskId === task.id);
         children.forEach(child => addTask(child, level + 1));
       }
     };
-    
+
     const rootTasks = tasks.filter(t => !t.parentTaskId);
     rootTasks.forEach(task => addTask(task, 0));
-    
+
     return result;
   }
 
@@ -249,26 +290,32 @@ class TaskGridService {
    * Get filtered tasks for demo mode
    */
   async getFilteredTasks(tasks: any[]): Promise<any[]> {
-    const isDemoMode = await demoModeService.isDemoMode();
-    
+    const isDemoMode = await demoModeService.getDemoMode();
+
     if (isDemoMode) {
       return tasks.slice(0, this.maxDemoTasks);
     }
-    
+
     return tasks;
   }
 
   /**
    * Update column order
    */
-  async updateColumnOrder(projectId: string, columnOrder: string[]): Promise<{ error?: string, success: boolean; }> {
+  async updateColumnOrder(
+    projectId: string,
+    columnOrder: string[]
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       if (isDemoMode) {
-        return { success: false, error: 'Column reordering not available in demo mode' };
+        return {
+          success: false,
+          error: 'Column reordering not available in demo mode',
+        };
       }
-      
+
       return await this.updateGridState(projectId, { columnOrder });
     } catch (error) {
       console.error('Error updating column order:', error);
@@ -279,12 +326,18 @@ class TaskGridService {
   /**
    * Update column width
    */
-  async updateColumnWidth(projectId: string, columnId: string, width: number): Promise<{ error?: string, success: boolean; }> {
+  async updateColumnWidth(
+    projectId: string,
+    columnId: string,
+    width: number
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const state = await this.getGridState(projectId);
       const newColumnWidths = { ...state.columnWidths, [columnId]: width };
-      
-      return await this.updateGridState(projectId, { columnWidths: newColumnWidths });
+
+      return await this.updateGridState(projectId, {
+        columnWidths: newColumnWidths,
+      });
     } catch (error) {
       console.error('Error updating column width:', error);
       return { success: false, error: 'Failed to update column width' };
@@ -294,9 +347,16 @@ class TaskGridService {
   /**
    * Update sort settings
    */
-  async updateSortSettings(projectId: string, sortColumn?: string, sortDirection?: 'asc' | 'desc'): Promise<{ error?: string, success: boolean; }> {
+  async updateSortSettings(
+    projectId: string,
+    sortColumn?: string,
+    sortDirection?: 'asc' | 'desc'
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      return await this.updateGridState(projectId, { sortColumn, sortDirection });
+      return await this.updateGridState(projectId, {
+        sortColumn,
+        sortDirection,
+      });
     } catch (error) {
       console.error('Error updating sort settings:', error);
       return { success: false, error: 'Failed to update sort settings' };
@@ -314,7 +374,7 @@ class TaskGridService {
         width: 200,
         editable: true,
         sortable: true,
-        visible: true
+        visible: true,
       },
       {
         id: 'startDate',
@@ -322,7 +382,7 @@ class TaskGridService {
         width: 120,
         editable: true,
         sortable: true,
-        visible: true
+        visible: true,
       },
       {
         id: 'endDate',
@@ -330,7 +390,7 @@ class TaskGridService {
         width: 120,
         editable: true,
         sortable: true,
-        visible: true
+        visible: true,
       },
       {
         id: 'duration',
@@ -338,7 +398,7 @@ class TaskGridService {
         width: 100,
         editable: false,
         sortable: true,
-        visible: true
+        visible: true,
       },
       {
         id: 'statusId',
@@ -346,7 +406,7 @@ class TaskGridService {
         width: 120,
         editable: true,
         sortable: true,
-        visible: true
+        visible: true,
       },
       {
         id: 'tags',
@@ -354,7 +414,7 @@ class TaskGridService {
         width: 150,
         editable: true,
         sortable: false,
-        visible: true
+        visible: true,
       },
       {
         id: 'type',
@@ -362,19 +422,23 @@ class TaskGridService {
         width: 100,
         editable: false,
         sortable: true,
-        visible: true
-      }
+        visible: true,
+      },
     ];
   }
 
   /**
    * Sort tasks by column
    */
-  sortTasks(tasks: any[], sortColumn: string, sortDirection: 'asc' | 'desc'): any[] {
+  sortTasks(
+    tasks: any[],
+    sortColumn: string,
+    sortDirection: 'asc' | 'desc'
+  ): any[] {
     return [...tasks].sort((a, b) => {
       let aValue = a[sortColumn];
       let bValue = b[sortColumn];
-      
+
       // Handle different data types
       if (sortColumn === 'startDate' || sortColumn === 'endDate') {
         aValue = new Date(aValue).getTime();
@@ -386,7 +450,7 @@ class TaskGridService {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
-      
+
       if (aValue < bValue) {
         return sortDirection === 'asc' ? -1 : 1;
       }
@@ -428,7 +492,7 @@ class TaskGridService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllGridData();
         console.log('Demo grid data reset');
@@ -440,4 +504,4 @@ class TaskGridService {
   }
 }
 
-export const taskGridService = new TaskGridService(); 
+export const taskGridService = new TaskGridService();

@@ -84,7 +84,7 @@ class ProgrammeWorkingCalendarService {
     try {
       // Check if demoModeService is available and has the isDemoMode method
       if (demoModeService && typeof demoModeService.isDemoMode === 'function') {
-        this.isDemoMode = await demoModeService.isDemoMode();
+        this.isDemoMode = await demoModeService.getDemoMode();
       } else {
         // Fallback: check demo mode manually
         this.isDemoMode = this.checkDemoModeManually();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   DocumentDuplicateIcon,
   ArrowPathIcon,
   EyeIcon,
@@ -8,15 +8,15 @@ import {
   PencilIcon,
   ExclamationTriangleIcon,
   CheckIcon,
-  ClockIcon
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../../services/demoModeService';
-import { 
-  programmeVersioningService, 
+import {
+  programmeVersioningService,
   ProgrammeVersion,
   VersionComparison,
-  TaskDifference
+  TaskDifference,
 } from '../../services/programmeVersioningService';
 import VersionManagerModal from './VersionManagerModal';
 import VersionCompareModal from './VersionCompareModal';
@@ -25,12 +25,16 @@ const ProgrammeVersioningDemo: React.FC = () => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [versions, setVersions] = useState<ProgrammeVersion[]>([]);
-  const [currentTasks, setCurrentTasks] = useState<Array<{ [key: string]: any, id: string; }>>([]);
+  const [currentTasks, setCurrentTasks] = useState<
+    Array<{ [key: string]: any; id: string }>
+  >([]);
   const [showVersionManager, setShowVersionManager] = useState(false);
   const [showVersionCompare, setShowVersionCompare] = useState(false);
   const [loading, setLoading] = useState(false);
   const [creatingSnapshot, setCreatingSnapshot] = useState(false);
-  const [activeVersion, setActiveVersion] = useState<ProgrammeVersion | null>(null);
+  const [activeVersion, setActiveVersion] = useState<ProgrammeVersion | null>(
+    null
+  );
 
   const canView = canAccess('programme.version.view');
   const canCreate = canAccess('programme.version.create');
@@ -40,7 +44,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -55,7 +59,8 @@ const ProgrammeVersioningDemo: React.FC = () => {
   const loadVersions = async () => {
     try {
       setLoading(true);
-      const projectVersions = await programmeVersioningService.getProjectVersions('demo-project');
+      const projectVersions =
+        await programmeVersioningService.getProjectVersions('demo-project');
       setVersions(projectVersions);
     } catch (error) {
       console.error('Error loading versions:', error);
@@ -82,7 +87,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
         work: 120,
         cost: 15000,
         level: 0,
-        wbs_number: '1.0'
+        wbs_number: '1.0',
       },
       {
         id: 'task-2',
@@ -100,7 +105,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
         work: 200,
         cost: 25000,
         level: 0,
-        wbs_number: '2.0'
+        wbs_number: '2.0',
       },
       {
         id: 'task-3',
@@ -118,7 +123,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
         work: 800,
         cost: 100000,
         level: 0,
-        wbs_number: '3.0'
+        wbs_number: '3.0',
       },
       {
         id: 'task-4',
@@ -136,7 +141,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
         work: 150,
         cost: 20000,
         level: 0,
-        wbs_number: '4.0'
+        wbs_number: '4.0',
       },
       {
         id: 'task-5',
@@ -154,8 +159,8 @@ const ProgrammeVersioningDemo: React.FC = () => {
         work: 8,
         cost: 1000,
         level: 0,
-        wbs_number: '5.0'
-      }
+        wbs_number: '5.0',
+      },
     ];
 
     setCurrentTasks(sampleTasks);
@@ -190,13 +195,20 @@ const ProgrammeVersioningDemo: React.FC = () => {
   };
 
   const handleRestoreVersion = async (versionId: string) => {
-    if (!confirm('Are you sure you want to restore this version? This will replace all current task data.')) {
+    if (
+      !confirm(
+        'Are you sure you want to restore this version? This will replace all current task data.'
+      )
+    ) {
       return;
     }
 
     try {
       setLoading(true);
-      const result = await programmeVersioningService.restoreVersion(versionId, 'demo-project');
+      const result = await programmeVersioningService.restoreVersion(
+        versionId,
+        'demo-project'
+      );
       if (result) {
         const version = versions.find(v => v.id === versionId);
         setActiveVersion(version || null);
@@ -220,19 +232,19 @@ const ProgrammeVersioningDemo: React.FC = () => {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
   if (!canView) {
     return (
-      <div className="p-6">
-        <div className="text-center py-8">
-          <ExclamationTriangleIcon className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      <div className='p-6'>
+        <div className='text-center py-8'>
+          <ExclamationTriangleIcon className='w-12 h-12 mx-auto mb-4 text-yellow-500' />
+          <h2 className='text-xl font-semibold text-gray-900 dark:text-white mb-2'>
             Access Denied
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className='text-gray-600 dark:text-gray-400'>
             You don't have permission to view programme versions.
           </p>
         </div>
@@ -243,28 +255,30 @@ const ProgrammeVersioningDemo: React.FC = () => {
   const demoConfig = getDemoModeConfig();
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className='p-6 max-w-7xl mx-auto'>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className='mb-8'>
+        <h1 className='text-3xl font-bold text-gray-900 dark:text-white mb-2'>
           Programme Versioning Demo
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Experience full version control for programme management with snapshots, comparisons, and restore capabilities.
+        <p className='text-gray-600 dark:text-gray-400'>
+          Experience full version control for programme management with
+          snapshots, comparisons, and restore capabilities.
         </p>
       </div>
 
       {/* Demo Mode Warning */}
       {isDemoMode && (
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-          <div className="flex items-center">
-            <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" />
+        <div className='mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg'>
+          <div className='flex items-center'>
+            <ExclamationTriangleIcon className='w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2' />
             <div>
-              <span className="text-yellow-800 dark:text-yellow-200 text-sm font-medium">
+              <span className='text-yellow-800 dark:text-yellow-200 text-sm font-medium'>
                 Demo Mode Active
               </span>
-              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
-                Maximum {demoConfig.maxVersionsPerProject} versions allowed. Version restore is disabled.
+              <p className='text-yellow-700 dark:text-yellow-300 text-sm mt-1'>
+                Maximum {demoConfig.maxVersionsPerProject} versions allowed.
+                Version restore is disabled.
               </p>
             </div>
           </div>
@@ -272,12 +286,18 @@ const ProgrammeVersioningDemo: React.FC = () => {
       )}
 
       {/* Action Buttons */}
-      <div className="mb-8 flex flex-wrap gap-4">
+      <div className='mb-8 flex flex-wrap gap-4'>
         <button
           onClick={handleCreateSnapshot}
-          disabled={!canCreate || creatingSnapshot || (isDemoMode && versions.length >= demoConfig.maxVersionsPerProject)}
+          disabled={
+            !canCreate ||
+            creatingSnapshot ||
+            (isDemoMode && versions.length >= demoConfig.maxVersionsPerProject)
+          }
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            !canCreate || creatingSnapshot || (isDemoMode && versions.length >= demoConfig.maxVersionsPerProject)
+            !canCreate ||
+            creatingSnapshot ||
+            (isDemoMode && versions.length >= demoConfig.maxVersionsPerProject)
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-blue-600 text-white hover:bg-blue-700'
           }`}
@@ -288,9 +308,9 @@ const ProgrammeVersioningDemo: React.FC = () => {
           }
         >
           {creatingSnapshot ? (
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white'></div>
           ) : (
-            <DocumentDuplicateIcon className="w-4 h-4" />
+            <DocumentDuplicateIcon className='w-4 h-4' />
           )}
           Save Snapshot
         </button>
@@ -303,9 +323,9 @@ const ProgrammeVersioningDemo: React.FC = () => {
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-green-600 text-white hover:bg-green-700'
           }`}
-          title="Compare two versions"
+          title='Compare two versions'
         >
-          <EyeIcon className="w-4 h-4" />
+          <EyeIcon className='w-4 h-4' />
           Compare Versions
         </button>
 
@@ -317,39 +337,50 @@ const ProgrammeVersioningDemo: React.FC = () => {
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-gray-600 text-white hover:bg-gray-700'
           }`}
-          title="Manage versions"
+          title='Manage versions'
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className='w-4 h-4' />
           Version Manager
         </button>
       </div>
 
       {/* Current Tasks Overview */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      <div className='mb-8'>
+        <h2 className='text-xl font-semibold text-gray-900 dark:text-white mb-4'>
           Current Programme State
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {currentTasks.map((task) => (
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          {currentTasks.map(task => (
             <div
               key={task.id}
-              className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className='p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
             >
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="font-medium text-gray-900 dark:text-white">
+              <div className='flex items-start justify-between mb-2'>
+                <h3 className='font-medium text-gray-900 dark:text-white'>
                   {task.name}
                 </h3>
                 {task.is_milestone && (
-                  <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200 text-xs rounded-full">
+                  <span className='px-2 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200 text-xs rounded-full'>
                     Milestone
                   </span>
                 )}
               </div>
-              <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                <div>Status: <span className="font-medium">{task.status}</span></div>
-                <div>Progress: <span className="font-medium">{task.percent_complete}%</span></div>
-                <div>Duration: <span className="font-medium">{task.duration} days</span></div>
-                <div>Assigned: <span className="font-medium">{task.assigned_to}</span></div>
+              <div className='space-y-1 text-sm text-gray-600 dark:text-gray-400'>
+                <div>
+                  Status: <span className='font-medium'>{task.status}</span>
+                </div>
+                <div>
+                  Progress:{' '}
+                  <span className='font-medium'>{task.percent_complete}%</span>
+                </div>
+                <div>
+                  Duration:{' '}
+                  <span className='font-medium'>{task.duration} days</span>
+                </div>
+                <div>
+                  Assigned:{' '}
+                  <span className='font-medium'>{task.assigned_to}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -357,68 +388,73 @@ const ProgrammeVersioningDemo: React.FC = () => {
       </div>
 
       {/* Versions List */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+      <div className='mb-8'>
+        <div className='flex items-center justify-between mb-4'>
+          <h2 className='text-xl font-semibold text-gray-900 dark:text-white'>
             Saved Versions ({versions.length})
           </h2>
           {isDemoMode && (
-            <div className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
-              <ExclamationTriangleIcon className="w-4 h-4" />
-              <span>{versions.length}/{demoConfig.maxVersionsPerProject} versions used</span>
+            <div className='flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400'>
+              <ExclamationTriangleIcon className='w-4 h-4' />
+              <span>
+                {versions.length}/{demoConfig.maxVersionsPerProject} versions
+                used
+              </span>
             </div>
           )}
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className='flex items-center justify-center py-8'>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
           </div>
         ) : versions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <DocumentDuplicateIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <div className='text-center py-8 text-gray-500 dark:text-gray-400'>
+            <DocumentDuplicateIcon className='w-12 h-12 mx-auto mb-4 opacity-50' />
             <p>No versions saved yet</p>
-            <p className="text-sm">Create your first version snapshot to get started</p>
+            <p className='text-sm'>
+              Create your first version snapshot to get started
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {versions.map((version) => (
+          <div className='space-y-3'>
+            {versions.map(version => (
               <div
                 key={version.id}
-                className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className='border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors'
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium text-gray-900 dark:text-white">
+                <div className='flex items-start justify-between'>
+                  <div className='flex-1'>
+                    <div className='flex items-center gap-2 mb-1'>
+                      <h3 className='font-medium text-gray-900 dark:text-white'>
                         {version.label}
                       </h3>
                       {version.isAutoSnapshot && (
-                        <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 text-xs rounded-full">
+                        <span className='px-2 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 text-xs rounded-full'>
                           Auto
                         </span>
                       )}
                       {version.demo && (
-                        <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 text-xs rounded-full">
+                        <span className='px-2 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 text-xs rounded-full'>
                           Demo
                         </span>
                       )}
                     </div>
                     {version.notes && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      <p className='text-sm text-gray-600 dark:text-gray-400 mb-2'>
                         {version.notes}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <ClockIcon className="w-3 h-3" />
+                    <div className='flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400'>
+                      <span className='flex items-center gap-1'>
+                        <ClockIcon className='w-3 h-3' />
                         {formatDate(version.createdAt)}
                       </span>
                       <span>by {version.createdBy}</span>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
+
+                  <div className='flex items-center gap-2'>
                     <button
                       onClick={() => handleRestoreVersion(version.id)}
                       disabled={!canRestore || isDemoMode}
@@ -427,9 +463,13 @@ const ProgrammeVersioningDemo: React.FC = () => {
                           ? 'text-gray-300 cursor-not-allowed'
                           : 'text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300'
                       }`}
-                      title={isDemoMode ? demoConfig.tooltipMessage : 'Restore version'}
+                      title={
+                        isDemoMode
+                          ? demoConfig.tooltipMessage
+                          : 'Restore version'
+                      }
                     >
-                      <ArrowPathIcon className="w-4 h-4" />
+                      <ArrowPathIcon className='w-4 h-4' />
                     </button>
                   </div>
                 </div>
@@ -443,7 +483,7 @@ const ProgrammeVersioningDemo: React.FC = () => {
       <VersionManagerModal
         isOpen={showVersionManager}
         onClose={() => setShowVersionManager(false)}
-        projectId="demo-project"
+        projectId='demo-project'
         currentTasks={currentTasks}
         onVersionChange={handleVersionChange}
       />
@@ -452,11 +492,11 @@ const ProgrammeVersioningDemo: React.FC = () => {
       <VersionCompareModal
         isOpen={showVersionCompare}
         onClose={() => setShowVersionCompare(false)}
-        projectId="demo-project"
+        projectId='demo-project'
         versions={versions}
       />
     </div>
   );
 };
 
-export default ProgrammeVersioningDemo; 
+export default ProgrammeVersioningDemo;

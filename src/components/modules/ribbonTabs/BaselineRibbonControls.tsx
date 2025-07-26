@@ -55,7 +55,7 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();

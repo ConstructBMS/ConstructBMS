@@ -32,14 +32,18 @@ export interface TaskDependency {
   lag: number;
   sourceTaskId: string;
   targetTaskId: string;
-  type: 'finish-to-start' | 'start-to-start' | 'finish-to-finish' | 'start-to-finish';
+  type:
+    | 'finish-to-start'
+    | 'start-to-start'
+    | 'finish-to-finish'
+    | 'start-to-finish';
 }
 
 // Demo mode configuration
 const DEMO_MODE_CONFIG = {
   maxCriticalTasks: 5,
   watermark: 'DEMO LIMIT - Not full critical path shown',
-  demo: true
+  demo: true,
 };
 
 class CriticalPathService {
@@ -55,31 +59,31 @@ class CriticalPathService {
     dependencies: TaskDependency[]
   ): Promise<CriticalPathResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Build dependency graph
       const graph = this.buildDependencyGraph(tasks, dependencies);
-      
+
       // Calculate early start/finish times (forward pass)
       const earlyTimes = this.calculateEarlyTimes(graph, tasks);
-      
+
       // Calculate late start/finish times (backward pass)
       const lateTimes = this.calculateLateTimes(graph, tasks, earlyTimes);
-      
+
       // Calculate total float and identify critical tasks
       const criticalPathTasks: Record<string, CriticalPathTask> = {};
       const criticalTasks: string[] = [];
       const criticalDependencies: string[] = [];
-      
+
       tasks.forEach(task => {
         const earlyStart = earlyTimes[task.id]?.earlyStart || 0;
         const earlyFinish = earlyTimes[task.id]?.earlyFinish || 0;
         const lateStart = lateTimes[task.id]?.lateStart || 0;
         const lateFinish = lateTimes[task.id]?.lateFinish || 0;
-        
+
         const totalFloat = lateStart - earlyStart;
         const isCritical = totalFloat === 0;
-        
+
         criticalPathTasks[task.id] = {
           id: task.id,
           earlyStart,
@@ -87,19 +91,19 @@ class CriticalPathService {
           lateStart,
           lateFinish,
           totalFloat,
-          isCritical
+          isCritical,
         };
-        
+
         if (isCritical) {
           criticalTasks.push(task.id);
         }
       });
-      
+
       // Identify critical dependencies
       dependencies.forEach(dependency => {
         const sourceTask = criticalPathTasks[dependency.sourceTaskId];
         const targetTask = criticalPathTasks[dependency.targetTaskId];
-        
+
         if (sourceTask?.isCritical && targetTask?.isCritical) {
           // Check if this dependency is on the critical path
           const isCriticalDependency = this.isCriticalDependency(
@@ -108,42 +112,53 @@ class CriticalPathService {
             targetTask,
             earlyTimes
           );
-          
+
           if (isCriticalDependency) {
             criticalDependencies.push(dependency.id);
           }
         }
       });
-      
+
       // Demo mode restrictions
       if (isDemoMode) {
         // Limit to max 5 critical tasks in demo mode
-        const limitedCriticalTasks = criticalTasks.slice(0, DEMO_MODE_CONFIG.maxCriticalTasks);
-        const limitedCriticalDependencies = criticalDependencies.slice(0, DEMO_MODE_CONFIG.maxCriticalTasks - 1);
-        
+        const limitedCriticalTasks = criticalTasks.slice(
+          0,
+          DEMO_MODE_CONFIG.maxCriticalTasks
+        );
+        const limitedCriticalDependencies = criticalDependencies.slice(
+          0,
+          DEMO_MODE_CONFIG.maxCriticalTasks - 1
+        );
+
         // Update isCritical flags for demo mode
         Object.keys(criticalPathTasks).forEach(taskId => {
-          criticalPathTasks[taskId].isCritical = limitedCriticalTasks.includes(taskId);
+          criticalPathTasks[taskId].isCritical =
+            limitedCriticalTasks.includes(taskId);
         });
-        
+
         return {
           criticalTasks: limitedCriticalTasks,
           criticalDependencies: limitedCriticalDependencies,
-          projectDuration: Math.max(...Object.values(criticalPathTasks).map(t => t.earlyFinish)),
-          tasks: criticalPathTasks
+          projectDuration: Math.max(
+            ...Object.values(criticalPathTasks).map(t => t.earlyFinish)
+          ),
+          tasks: criticalPathTasks,
         };
       }
-      
+
       const result: CriticalPathResult = {
         criticalTasks,
         criticalDependencies,
-        projectDuration: Math.max(...Object.values(criticalPathTasks).map(t => t.earlyFinish)),
-        tasks: criticalPathTasks
+        projectDuration: Math.max(
+          ...Object.values(criticalPathTasks).map(t => t.earlyFinish)
+        ),
+        tasks: criticalPathTasks,
       };
-      
+
       // Cache the result
       await this.cacheCriticalPath(projectId, result);
-      
+
       return result;
     } catch (error) {
       console.error('Error calculating critical path:', error);
@@ -161,15 +176,15 @@ class CriticalPathService {
     totalFloat: number
   ): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       const { error } = await supabase
         .from('asta_tasks')
         .update({
           is_critical: isCritical,
           total_float: totalFloat,
           demo: isDemoMode,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', taskId)
         .eq('project_id', projectId);
@@ -178,7 +193,10 @@ class CriticalPathService {
         throw error;
       }
 
-      console.log(`Updated critical path data for task ${taskId}:`, { isCritical, totalFloat });
+      console.log(`Updated critical path data for task ${taskId}:`, {
+        isCritical,
+        totalFloat,
+      });
     } catch (error) {
       console.error('Error updating task critical path data:', error);
       throw error;
@@ -203,15 +221,17 @@ class CriticalPathService {
         throw error;
       }
 
-      return data?.critical_path_settings || {
-        showCriticalPath: false,
-        criticalOnly: false
-      };
+      return (
+        data?.critical_path_settings || {
+          showCriticalPath: false,
+          criticalOnly: false,
+        }
+      );
     } catch (error) {
       console.error('Error getting critical path settings:', error);
       return {
         showCriticalPath: false,
-        criticalOnly: false
+        criticalOnly: false,
       };
     }
   }
@@ -227,21 +247,19 @@ class CriticalPathService {
     }
   ): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
       if (isDemoMode) {
         settings.criticalOnly = false; // Disable critical only view in demo
       }
 
-      const { error } = await supabase
-        .from('programme_settings')
-        .upsert({
-          project_id: projectId,
-          critical_path_settings: settings,
-          demo: isDemoMode,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('programme_settings').upsert({
+        project_id: projectId,
+        critical_path_settings: settings,
+        demo: isDemoMode,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw error;
@@ -264,31 +282,40 @@ class CriticalPathService {
   /**
    * Build dependency graph from tasks and dependencies
    */
-  private buildDependencyGraph(tasks: TaskSchedule[], dependencies: TaskDependency[]): Map<string, string[]> {
+  private buildDependencyGraph(
+    tasks: TaskSchedule[],
+    dependencies: TaskDependency[]
+  ): Map<string, string[]> {
     const graph = new Map<string, string[]>();
-    
+
     // Initialize graph with all tasks
     tasks.forEach(task => {
       graph.set(task.id, []);
     });
-    
+
     // Add dependencies
     dependencies.forEach(dependency => {
       const successors = graph.get(dependency.sourceTaskId) || [];
       successors.push(dependency.targetTaskId);
       graph.set(dependency.sourceTaskId, successors);
     });
-    
+
     return graph;
   }
 
   /**
    * Calculate early start and finish times (forward pass)
    */
-  private calculateEarlyTimes(graph: Map<string, string[]>, tasks: TaskSchedule[]): Record<string, { earlyFinish: number, earlyStart: number; }> {
-    const earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }> = {};
+  private calculateEarlyTimes(
+    graph: Map<string, string[]>,
+    tasks: TaskSchedule[]
+  ): Record<string, { earlyFinish: number; earlyStart: number }> {
+    const earlyTimes: Record<
+      string,
+      { earlyFinish: number; earlyStart: number }
+    > = {};
     const visited = new Set<string>();
-    
+
     // Find tasks with no predecessors (start tasks)
     const startTasks = tasks.filter(task => {
       const predecessors = Array.from(graph.entries())
@@ -296,51 +323,55 @@ class CriticalPathService {
         .map(([id]) => id);
       return predecessors.length === 0;
     });
-    
+
     // Process start tasks
     startTasks.forEach(task => {
       earlyTimes[task.id] = {
         earlyStart: 0,
-        earlyFinish: task.duration
+        earlyFinish: task.duration,
       };
       visited.add(task.id);
     });
-    
+
     // Process remaining tasks in topological order
     const queue = [...startTasks];
-    
+
     while (queue.length > 0) {
       const currentTask = queue.shift()!;
-      
+
       const successors = graph.get(currentTask.id) || [];
-      
+
       successors.forEach(successorId => {
         const successor = tasks.find(t => t.id === successorId);
         if (!successor) return;
-        
+
         // Check if all predecessors of successor have been processed
         const predecessors = Array.from(graph.entries())
           .filter(([_, successors]) => successors.includes(successorId))
           .map(([id]) => id);
-        
-        const allPredecessorsProcessed = predecessors.every(predId => visited.has(predId));
-        
+
+        const allPredecessorsProcessed = predecessors.every(predId =>
+          visited.has(predId)
+        );
+
         if (allPredecessorsProcessed && !visited.has(successorId)) {
           // Calculate early start as max of all predecessor early finish times
-          const predecessorEarlyFinishes = predecessors.map(predId => earlyTimes[predId]?.earlyFinish || 0);
+          const predecessorEarlyFinishes = predecessors.map(
+            predId => earlyTimes[predId]?.earlyFinish || 0
+          );
           const earlyStart = Math.max(...predecessorEarlyFinishes);
-          
+
           earlyTimes[successorId] = {
             earlyStart,
-            earlyFinish: earlyStart + successor.duration
+            earlyFinish: earlyStart + successor.duration,
           };
-          
+
           visited.add(successorId);
           queue.push(successor);
         }
       });
     }
-    
+
     return earlyTimes;
   }
 
@@ -350,64 +381,71 @@ class CriticalPathService {
   private calculateLateTimes(
     graph: Map<string, string[]>,
     tasks: TaskSchedule[],
-    earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }>
-  ): Record<string, { lateFinish: number, lateStart: number; }> {
-    const lateTimes: Record<string, { lateFinish: number, lateStart: number; }> = {};
+    earlyTimes: Record<string, { earlyFinish: number; earlyStart: number }>
+  ): Record<string, { lateFinish: number; lateStart: number }> {
+    const lateTimes: Record<string, { lateFinish: number; lateStart: number }> =
+      {};
     const visited = new Set<string>();
-    
+
     // Find project duration
-    const projectDuration = Math.max(...Object.values(earlyTimes).map(t => t.earlyFinish));
-    
+    const projectDuration = Math.max(
+      ...Object.values(earlyTimes).map(t => t.earlyFinish)
+    );
+
     // Find tasks with no successors (end tasks)
     const endTasks = tasks.filter(task => {
       const successors = graph.get(task.id) || [];
       return successors.length === 0;
     });
-    
+
     // Process end tasks
     endTasks.forEach(task => {
       lateTimes[task.id] = {
         lateFinish: projectDuration,
-        lateStart: projectDuration - task.duration
+        lateStart: projectDuration - task.duration,
       };
       visited.add(task.id);
     });
-    
+
     // Process remaining tasks in reverse topological order
     const queue = [...endTasks];
-    
+
     while (queue.length > 0) {
       const currentTask = queue.shift()!;
-      
+
       // Find predecessors of current task
       const predecessors = Array.from(graph.entries())
         .filter(([_, successors]) => successors.includes(currentTask.id))
         .map(([id]) => id);
-      
+
       predecessors.forEach(predecessorId => {
         const predecessor = tasks.find(t => t.id === predecessorId);
         if (!predecessor) return;
-        
+
         // Check if all successors of predecessor have been processed
         const successors = graph.get(predecessorId) || [];
-        const allSuccessorsProcessed = successors.every(succId => visited.has(succId));
-        
+        const allSuccessorsProcessed = successors.every(succId =>
+          visited.has(succId)
+        );
+
         if (allSuccessorsProcessed && !visited.has(predecessorId)) {
           // Calculate late finish as min of all successor late start times
-          const successorLateStarts = successors.map(succId => lateTimes[succId]?.lateStart || projectDuration);
+          const successorLateStarts = successors.map(
+            succId => lateTimes[succId]?.lateStart || projectDuration
+          );
           const lateFinish = Math.min(...successorLateStarts);
-          
+
           lateTimes[predecessorId] = {
             lateFinish,
-            lateStart: lateFinish - predecessor.duration
+            lateStart: lateFinish - predecessor.duration,
           };
-          
+
           visited.add(predecessorId);
           queue.push(predecessor);
         }
       });
     }
-    
+
     return lateTimes;
   }
 
@@ -418,32 +456,35 @@ class CriticalPathService {
     dependency: TaskDependency,
     sourceTask: CriticalPathTask,
     targetTask: CriticalPathTask,
-    earlyTimes: Record<string, { earlyFinish: number, earlyStart: number; }>
+    earlyTimes: Record<string, { earlyFinish: number; earlyStart: number }>
   ): boolean {
     // A dependency is critical if:
     // 1. Both tasks are critical
     // 2. The target task's early start equals the source task's early finish + lag
-    const sourceEarlyFinish = earlyTimes[dependency.sourceTaskId]?.earlyFinish || 0;
-    const targetEarlyStart = earlyTimes[dependency.targetTaskId]?.earlyStart || 0;
+    const sourceEarlyFinish =
+      earlyTimes[dependency.sourceTaskId]?.earlyFinish || 0;
+    const targetEarlyStart =
+      earlyTimes[dependency.targetTaskId]?.earlyStart || 0;
     const lagDays = dependency.lag || 0;
-    
+
     return Math.abs(targetEarlyStart - (sourceEarlyFinish + lagDays)) < 0.01; // Small tolerance for floating point
   }
 
   /**
    * Cache critical path result
    */
-  private async cacheCriticalPath(projectId: string, result: CriticalPathResult): Promise<void> {
+  private async cacheCriticalPath(
+    projectId: string,
+    result: CriticalPathResult
+  ): Promise<void> {
     try {
-      const { error } = await supabase
-        .from('programme_cache')
-        .upsert({
-          project_id: projectId,
-          cache_key: this.cacheKey,
-          cache_data: result,
-          expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('programme_cache').upsert({
+        project_id: projectId,
+        cache_key: this.cacheKey,
+        cache_data: result,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         console.warn('Failed to cache critical path result:', error);
@@ -456,7 +497,9 @@ class CriticalPathService {
   /**
    * Get cached critical path result
    */
-  async getCachedCriticalPath(projectId: string): Promise<CriticalPathResult | null> {
+  async getCachedCriticalPath(
+    projectId: string
+  ): Promise<CriticalPathResult | null> {
     try {
       const { data, error } = await supabase
         .from('programme_cache')
@@ -501,4 +544,4 @@ class CriticalPathService {
   }
 }
 
-export const criticalPathService = new CriticalPathService(); 
+export const criticalPathService = new CriticalPathService();

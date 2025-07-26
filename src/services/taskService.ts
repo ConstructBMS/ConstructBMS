@@ -16,9 +16,9 @@ export interface Task {
   name: string;
   parentId?: string | null;
   projectId: string;
-  startDate: Date;      
-  statusId: string;           
-  tags: string[];    
+  startDate: Date;
+  statusId: string;
+  tags: string[];
   type: 'task' | 'milestone' | 'phase' | 'summary';
   updatedAt: Date;
   userId: string;
@@ -71,17 +71,17 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const task = tasks.find(t => t.id === taskId);
-      
+
       if (task) {
         return {
           ...task,
           startDate: new Date(task.startDate),
           endDate: new Date(task.endDate),
           createdAt: new Date(task.createdAt),
-          updatedAt: new Date(task.updatedAt)
+          updatedAt: new Date(task.updatedAt),
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error getting task:', error);
@@ -96,13 +96,13 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const projectTasks = tasks.filter(task => task.projectId === projectId);
-      
+
       return projectTasks.map(task => ({
         ...task,
         startDate: new Date(task.startDate),
         endDate: new Date(task.endDate),
         createdAt: new Date(task.createdAt),
-        updatedAt: new Date(task.updatedAt)
+        updatedAt: new Date(task.updatedAt),
       }));
     } catch (error) {
       console.error('Error getting project tasks:', error);
@@ -128,8 +128,8 @@ class TaskService {
    */
   async createTask(taskData: CreateTaskData): Promise<Task> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Check demo mode restrictions
       if (isDemoMode) {
         const taskCount = await this.getTaskCount(taskData.projectId);
@@ -137,20 +137,20 @@ class TaskService {
           throw new Error('Maximum 3 tasks allowed in demo mode');
         }
       }
-      
+
       const newTask: Task = {
         id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ...taskData,
         userId: 'current-user', // This would come from auth context
         demo: isDemoMode,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
-      
+
       const tasks = await this.getAllTasks();
       tasks.push(newTask);
       await persistentStorage.setSetting(this.tasksKey, tasks, 'tasks');
-      
+
       console.log('Task created:', newTask.id);
       return newTask;
     } catch (error) {
@@ -166,34 +166,34 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const taskIndex = tasks.findIndex(t => t.id === taskId);
-      
+
       if (taskIndex === -1) {
         throw new Error('Task not found');
       }
-      
-      const isDemoMode = await demoModeService.isDemoMode();
+
+      const isDemoMode = await demoModeService.getDemoMode();
       const originalTask = tasks[taskIndex];
-      
+
       const updatedTask: Task = {
         ...originalTask,
         ...taskData,
         demo: isDemoMode,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
-      
+
       tasks[taskIndex] = updatedTask;
       await persistentStorage.setSetting(this.tasksKey, tasks, 'tasks');
-      
+
       // Log changes to history
       await this.logTaskChanges(taskId, originalTask, updatedTask);
-      
+
       console.log('Task updated:', taskId);
       return {
         ...updatedTask,
         startDate: new Date(updatedTask.startDate),
         endDate: new Date(updatedTask.endDate),
         createdAt: new Date(updatedTask.createdAt),
-        updatedAt: new Date(updatedTask.updatedAt)
+        updatedAt: new Date(updatedTask.updatedAt),
       };
     } catch (error) {
       console.error('Error updating task:', error);
@@ -208,16 +208,16 @@ class TaskService {
     try {
       const tasks = await this.getAllTasks();
       const filteredTasks = tasks.filter(t => t.id !== taskId);
-      
+
       if (filteredTasks.length === tasks.length) {
         throw new Error('Task not found');
       }
-      
+
       await persistentStorage.setSetting(this.tasksKey, filteredTasks, 'tasks');
-      
+
       // Also delete custom fields for this task
       await this.deleteTaskCustomFields(taskId);
-      
+
       console.log('Task deleted:', taskId);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -244,17 +244,29 @@ class TaskService {
   async saveTaskCustomField(customField: TaskCustomField): Promise<void> {
     try {
       const allCustomFields = await this.getAllTaskCustomFields();
-      
+
       // Remove existing value for this task/field combination
       const filteredFields = allCustomFields.filter(
-        field => !(field.taskId === customField.taskId && field.fieldId === customField.fieldId)
+        field =>
+          !(
+            field.taskId === customField.taskId &&
+            field.fieldId === customField.fieldId
+          )
       );
-      
+
       // Add new value
       filteredFields.push(customField);
-      
-      await persistentStorage.setSetting(this.taskCustomFieldsKey, filteredFields, 'task_custom_fields');
-      console.log('Task custom field saved:', customField.taskId, customField.fieldId);
+
+      await persistentStorage.setSetting(
+        this.taskCustomFieldsKey,
+        filteredFields,
+        'task_custom_fields'
+      );
+      console.log(
+        'Task custom field saved:',
+        customField.taskId,
+        customField.fieldId
+      );
     } catch (error) {
       console.error('Error saving task custom field:', error);
       throw error;
@@ -267,7 +279,9 @@ class TaskService {
   async deleteTaskCustomFields(taskId: string): Promise<void> {
     try {
       const allCustomFields = await this.getAllTaskCustomFields();
-      const filteredFields = allCustomFields.filter(field => field.taskId !== taskId);
+      const filteredFields = allCustomFields.filter(
+        field => field.taskId !== taskId
+      );
       await persistentStorage.set(this.taskCustomFieldsKey, filteredFields);
       console.log('Task custom fields deleted for task:', taskId);
     } catch (error) {
@@ -308,7 +322,7 @@ class TaskService {
   async getTasksByTags(projectId: string, tagIds: string[]): Promise<Task[]> {
     try {
       const tasks = await this.getProjectTasks(projectId);
-      return tasks.filter(task => 
+      return tasks.filter(task =>
         tagIds.some(tagId => task.tags.includes(tagId))
       );
     } catch (error) {
@@ -320,11 +334,15 @@ class TaskService {
   /**
    * Get tasks in date range
    */
-  async getTasksInDateRange(projectId: string, startDate: Date, endDate: Date): Promise<Task[]> {
+  async getTasksInDateRange(
+    projectId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Task[]> {
     try {
       const tasks = await this.getProjectTasks(projectId);
-      return tasks.filter(task => 
-        task.startDate >= startDate && task.endDate <= endDate
+      return tasks.filter(
+        task => task.startDate >= startDate && task.endDate <= endDate
       );
     } catch (error) {
       console.error('Error getting tasks in date range:', error);
@@ -339,8 +357,8 @@ class TaskService {
     try {
       const tasks = await this.getProjectTasks(projectId);
       const now = new Date();
-      return tasks.filter(task => 
-        task.endDate < now && task.statusId !== 'completed'
+      return tasks.filter(
+        task => task.endDate < now && task.statusId !== 'completed'
       );
     } catch (error) {
       console.error('Error getting overdue tasks:', error);
@@ -356,9 +374,9 @@ class TaskService {
       const tasks = await this.getProjectTasks(projectId);
       const now = new Date();
       const futureDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-      
-      return tasks.filter(task => 
-        task.startDate >= now && task.startDate <= futureDate
+
+      return tasks.filter(
+        task => task.startDate >= now && task.startDate <= futureDate
       );
     } catch (error) {
       console.error('Error getting upcoming tasks:', error);
@@ -403,13 +421,13 @@ class TaskService {
     try {
       const descendants: Task[] = [];
       const children = await this.getChildTasks(parentId);
-      
+
       for (const child of children) {
         descendants.push(child);
         const grandChildren = await this.getDescendantTasks(child.id);
         descendants.push(...grandChildren);
       }
-      
+
       return descendants;
     } catch (error) {
       console.error('Error getting descendant tasks:', error);
@@ -425,7 +443,7 @@ class TaskService {
       const tasks = await this.getAllTasks();
       const task = tasks.find(t => t.id === taskId);
       if (!task || !task.parentId) return null;
-      
+
       return tasks.find(t => t.id === task.parentId) || null;
     } catch (error) {
       console.error('Error getting parent task:', error);
@@ -440,14 +458,14 @@ class TaskService {
     try {
       let level = 0;
       let currentId = taskId;
-      
+
       while (true) {
         const parent = await this.getParentTask(currentId);
         if (!parent) break;
         level++;
         currentId = parent.id;
       }
-      
+
       return level;
     } catch (error) {
       console.error('Error getting task level:', error);
@@ -461,15 +479,15 @@ class TaskService {
   async isTaskVisible(taskId: string): Promise<boolean> {
     try {
       let currentId = taskId;
-      
+
       while (true) {
         const parent = await this.getParentTask(currentId);
         if (!parent) break;
-        
+
         if (parent.collapsed) return false;
         currentId = parent.id;
       }
-      
+
       return true;
     } catch (error) {
       console.error('Error checking task visibility:', error);
@@ -484,13 +502,13 @@ class TaskService {
     try {
       const allTasks = await this.getProjectTasks(projectId);
       const visible: Task[] = [];
-      
+
       for (const task of allTasks) {
         if (await this.isTaskVisible(task.id)) {
           visible.push(task);
         }
       }
-      
+
       return visible;
     } catch (error) {
       console.error('Error getting visible tasks:', error);
@@ -507,7 +525,7 @@ class TaskService {
       if (!task) return false;
 
       const result = await this.updateTask(taskId, {
-        collapsed: !task.collapsed
+        collapsed: !task.collapsed,
       });
 
       return result.success;
@@ -520,7 +538,13 @@ class TaskService {
   /**
    * Calculate group duration span for parent task
    */
-  async calculateGroupDuration(parentId: string): Promise<{ duration: number, endDate: Date | null; startDate: Date | null; }> {
+  async calculateGroupDuration(
+    parentId: string
+  ): Promise<{
+    duration: number;
+    endDate: Date | null;
+    startDate: Date | null;
+  }> {
     try {
       const children = await this.getChildTasks(parentId);
       if (children.length === 0) {
@@ -530,12 +554,19 @@ class TaskService {
       const startDates = children.map(task => task.startDate).filter(Boolean);
       const endDates = children.map(task => task.endDate).filter(Boolean);
 
-      const startDate = startDates.length > 0 ? new Date(Math.min(...startDates.map(d => d.getTime()))) : null;
-      const endDate = endDates.length > 0 ? new Date(Math.max(...endDates.map(d => d.getTime()))) : null;
+      const startDate =
+        startDates.length > 0
+          ? new Date(Math.min(...startDates.map(d => d.getTime())))
+          : null;
+      const endDate =
+        endDates.length > 0
+          ? new Date(Math.max(...endDates.map(d => d.getTime())))
+          : null;
 
-      const duration = startDate && endDate 
-        ? this.calculateTaskDuration(startDate, endDate)
-        : 0;
+      const duration =
+        startDate && endDate
+          ? this.calculateTaskDuration(startDate, endDate)
+          : 0;
 
       return { startDate, endDate, duration };
     } catch (error) {
@@ -550,9 +581,11 @@ class TaskService {
   async buildHierarchy(projectId: string): Promise<Task[]> {
     try {
       const tasks = await this.getProjectTasks(projectId);
-      const taskMap = new Map(tasks.map(task => [task.id, { ...task, children: [] }]));
+      const taskMap = new Map(
+        tasks.map(task => [task.id, { ...task, children: [] }])
+      );
       const rootTasks: Task[] = [];
-      
+
       for (const task of tasks) {
         if (task.parentId) {
           const parent = taskMap.get(task.parentId);
@@ -563,7 +596,7 @@ class TaskService {
           rootTasks.push(taskMap.get(task.id)!);
         }
       }
-      
+
       return rootTasks;
     } catch (error) {
       console.error('Error building hierarchy:', error);
@@ -574,13 +607,16 @@ class TaskService {
   /**
    * Validate task data
    */
-  validateTaskData(taskData: CreateTaskData | UpdateTaskData): { errors: string[], isValid: boolean; } {
+  validateTaskData(taskData: CreateTaskData | UpdateTaskData): {
+    errors: string[];
+    isValid: boolean;
+  } {
     const errors: string[] = [];
-    
+
     if ('name' in taskData && (!taskData.name || taskData.name.trim() === '')) {
       errors.push('Task name is required');
     }
-    
+
     if ('startDate' in taskData && taskData.startDate) {
       if ('endDate' in taskData && taskData.endDate) {
         if (taskData.startDate > taskData.endDate) {
@@ -588,14 +624,17 @@ class TaskService {
         }
       }
     }
-    
-    if ('statusId' in taskData && (!taskData.statusId || taskData.statusId.trim() === '')) {
+
+    if (
+      'statusId' in taskData &&
+      (!taskData.statusId || taskData.statusId.trim() === '')
+    ) {
       errors.push('Status is required');
     }
-    
+
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -617,7 +656,9 @@ class TaskService {
    */
   private async getAllTaskCustomFields(): Promise<TaskCustomField[]> {
     try {
-      const customFields = await persistentStorage.get(this.taskCustomFieldsKey);
+      const customFields = await persistentStorage.get(
+        this.taskCustomFieldsKey
+      );
       return customFields || [];
     } catch (error) {
       console.error('Error getting all task custom fields:', error);
@@ -644,7 +685,7 @@ class TaskService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllTaskData();
         console.log('Demo task data reset');
@@ -658,7 +699,11 @@ class TaskService {
   /**
    * Log task changes to history
    */
-  private async logTaskChanges(taskId: string, originalTask: Task, updatedTask: Task): Promise<void> {
+  private async logTaskChanges(
+    taskId: string,
+    originalTask: Task,
+    updatedTask: Task
+  ): Promise<void> {
     try {
       const fieldsToTrack = [
         'name',
@@ -669,7 +714,7 @@ class TaskService {
         'type',
         'parentId',
         'collapsed',
-        'groupColor'
+        'groupColor',
       ];
 
       for (const field of fieldsToTrack) {
@@ -682,8 +727,12 @@ class TaskService {
 
           // Format dates for display
           if (field === 'startDate' || field === 'endDate') {
-            previousValue = originalValue ? new Date(originalValue).toISOString().split('T')[0] : null;
-            newValue = updatedValue ? new Date(updatedValue).toISOString().split('T')[0] : null;
+            previousValue = originalValue
+              ? new Date(originalValue).toISOString().split('T')[0]
+              : null;
+            newValue = updatedValue
+              ? new Date(updatedValue).toISOString().split('T')[0]
+              : null;
           }
 
           // Format arrays for display

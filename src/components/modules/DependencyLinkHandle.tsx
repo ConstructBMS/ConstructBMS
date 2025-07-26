@@ -15,12 +15,15 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
   taskId,
   projectId,
   position,
-  onDependencyCreated
+  onDependencyCreated,
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragPreview, setDragPreview] = useState<{ x: number; y: number } | null>(null);
+  const [dragPreview, setDragPreview] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [dependencyCount, setDependencyCount] = useState(0);
 
   const handleRef = useRef<HTMLDivElement>(null);
@@ -30,9 +33,9 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
-      
+
       if (isDemo) {
         const count = await dependenciesEngine.getDependencyCount(projectId);
         setDependencyCount(count);
@@ -45,18 +48,23 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
   const handleDragStart = (e: React.DragEvent) => {
     if (!canEdit || (isDemoMode && dependencyCount >= 3)) return;
 
-    e.dataTransfer.setData('text/plain', JSON.stringify({
-      taskId,
-      position,
-      type: 'dependency-link'
-    }));
+    e.dataTransfer.setData(
+      'text/plain',
+      JSON.stringify({
+        taskId,
+        position,
+        type: 'dependency-link',
+      })
+    );
 
     setIsDragging(true);
     setDragPreview({ x: e.clientX, y: e.clientY });
 
     // Add drag preview
     const dragImage = new Image();
-    dragImage.src = 'data:image/svg+xml;base64,' + btoa(`
+    dragImage.src =
+      'data:image/svg+xml;base64,' +
+      btoa(`
       <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg">
         <circle cx="10" cy="10" r="8" fill="${isDemoMode ? '#fbbf24' : '#3b82f6'}" stroke="white" stroke-width="2"/>
         <path d="M6 10 L14 10 M10 6 L10 14" stroke="white" stroke-width="2"/>
@@ -80,16 +88,16 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
   // Handle drop
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
-    
+
     if (!canEdit || (isDemoMode && dependencyCount >= 3)) return;
 
     try {
       const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-      
+
       if (data.type === 'dependency-link' && data.taskId !== taskId) {
         // Determine dependency type based on positions
         let dependencyType: 'FS' | 'SS' | 'FF' | 'SF' = 'FS';
-        
+
         if (data.position === 'end' && position === 'start') {
           dependencyType = 'FS'; // Finish-to-Start
         } else if (data.position === 'start' && position === 'start') {
@@ -159,11 +167,12 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
         className={`
           absolute w-4 h-4 rounded-full cursor-grab active:cursor-grabbing
           transition-all duration-200 z-20
-          ${isDisabled 
-            ? 'bg-gray-300 cursor-not-allowed opacity-50' 
-            : isDemoMode 
-              ? 'bg-yellow-400 hover:bg-yellow-500' 
-              : 'bg-blue-500 hover:bg-blue-600'
+          ${
+            isDisabled
+              ? 'bg-gray-300 cursor-not-allowed opacity-50'
+              : isDemoMode
+                ? 'bg-yellow-400 hover:bg-yellow-500'
+                : 'bg-blue-500 hover:bg-blue-600'
           }
           ${isDragging ? 'scale-110' : 'hover:scale-110'}
         `}
@@ -171,7 +180,7 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
           left: position === 'start' ? '-8px' : 'auto',
           right: position === 'end' ? '-8px' : 'auto',
           top: '50%',
-          transform: 'translateY(-50%)'
+          transform: 'translateY(-50%)',
         }}
         title={
           isDisabled
@@ -179,29 +188,33 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
             : `Drag to link ${position === 'start' ? 'start' : 'end'} of this task to another task${isDemoMode ? ' (Demo Mode - FS only)' : ''}`
         }
       >
-        <LinkIcon 
+        <LinkIcon
           className={`w-3 h-3 mx-auto mt-0.5 ${
             isDisabled ? 'text-gray-500' : 'text-white'
-          }`} 
+          }`}
         />
       </div>
 
       {/* Drag Preview */}
       {isDragging && dragPreview && (
         <div
-          className="fixed pointer-events-none z-50"
+          className='fixed pointer-events-none z-50'
           style={{
             left: dragPreview.x - 10,
-            top: dragPreview.y - 10
+            top: dragPreview.y - 10,
           }}
         >
-          <div className={`
+          <div
+            className={`
             w-5 h-5 rounded-full border-2 border-dashed
             ${isDemoMode ? 'border-yellow-400 bg-yellow-100' : 'border-blue-400 bg-blue-100'}
-          `}>
-            <LinkIcon className={`w-3 h-3 mx-auto mt-0.5 ${
-              isDemoMode ? 'text-yellow-600' : 'text-blue-600'
-            }`} />
+          `}
+          >
+            <LinkIcon
+              className={`w-3 h-3 mx-auto mt-0.5 ${
+                isDemoMode ? 'text-yellow-600' : 'text-blue-600'
+              }`}
+            />
           </div>
         </div>
       )}
@@ -209,4 +222,4 @@ const DependencyLinkHandle: React.FC<DependencyLinkHandleProps> = ({
   );
 };
 
-export default DependencyLinkHandle; 
+export default DependencyLinkHandle;

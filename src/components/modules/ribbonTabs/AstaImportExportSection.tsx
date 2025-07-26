@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { 
-  ArrowUpTrayIcon, 
+import {
+  ArrowUpTrayIcon,
   ArrowDownTrayIcon,
   DocumentTextIcon,
   ClockIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { demoModeService } from '../../../services/demoModeService';
 import { astaImportExportService } from '../../../services/astaImportExportService';
 import AstaImportModal from './AstaImportModal';
 import AstaExportModal from './AstaExportModal';
-import type { ParsedAstaProgramme, AstaExportSettings } from '../../../services/astaImportExportService';
+import type {
+  ParsedAstaProgramme,
+  AstaExportSettings,
+} from '../../../services/astaImportExportService';
 
 interface AstaImportExportSectionProps {
   onTaskOperation?: (operation: any) => void;
@@ -22,7 +25,7 @@ interface AstaImportExportSectionProps {
 const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   projectId = 'demo',
   projectName = 'Project',
-  onTaskOperation
+  onTaskOperation,
 }) => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -33,7 +36,7 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   }>({ imports: [], exports: [] });
   const [loading, setLoading] = useState({
     import: false,
-    export: false
+    export: false,
   });
   const { canAccess } = usePermissions();
 
@@ -43,7 +46,7 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   // Check demo mode on mount
   React.useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -52,7 +55,8 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
 
   const loadImportExportHistory = async () => {
     try {
-      const history = await astaImportExportService.getImportExportHistory(projectId);
+      const history =
+        await astaImportExportService.getImportExportHistory(projectId);
       setImportExportHistory(history);
     } catch (error) {
       console.error('Failed to load import/export history:', error);
@@ -66,22 +70,25 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   const handleImportAstaData = async (parsedData: ParsedAstaProgramme) => {
     setLoading(prev => ({ ...prev, import: true }));
     try {
-      const result = await astaImportExportService.importAstaData(parsedData, projectId);
-      
+      const result = await astaImportExportService.importAstaData(
+        parsedData,
+        projectId
+      );
+
       if (result.success && result.data) {
         console.log('Asta data imported:', result.data.tasksImported, 'tasks');
-        
+
         // Refresh import/export history
         await loadImportExportHistory();
-        
+
         // Dispatch operation
         if (onTaskOperation) {
-          onTaskOperation({ 
-            type: 'add', 
-            data: { 
-              action: 'import_asta_data', 
-              tasksImported: result.data.tasksImported 
-            } 
+          onTaskOperation({
+            type: 'add',
+            data: {
+              action: 'import_asta_data',
+              tasksImported: result.data.tasksImported,
+            },
           });
         }
       } else {
@@ -101,22 +108,25 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   const handleExportAstaData = async (settings: AstaExportSettings) => {
     setLoading(prev => ({ ...prev, export: true }));
     try {
-      const result = await astaImportExportService.exportToAsta(settings, projectId);
-      
+      const result = await astaImportExportService.exportToAsta(
+        settings,
+        projectId
+      );
+
       if (result.success) {
         console.log('Programme exported to Asta:', result.fileName);
-        
+
         // Refresh import/export history
         await loadImportExportHistory();
-        
+
         // Dispatch operation
         if (onTaskOperation) {
-          onTaskOperation({ 
-            type: 'add', 
-            data: { 
-              action: 'export_asta_data', 
-              fileName: result.fileName 
-            } 
+          onTaskOperation({
+            type: 'add',
+            data: {
+              action: 'export_asta_data',
+              fileName: result.fileName,
+            },
           });
         }
       } else {
@@ -132,22 +142,22 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   const getLastImportInfo = () => {
     const lastImport = importExportHistory.imports[0];
     if (!lastImport) return null;
-    
+
     return {
       date: new Date(lastImport.timestamp).toLocaleDateString(),
       taskCount: lastImport.taskCount,
-      projectName: lastImport.projectName
+      projectName: lastImport.projectName,
     };
   };
 
   const getLastExportInfo = () => {
     const lastExport = importExportHistory.exports[0];
     if (!lastExport) return null;
-    
+
     return {
       date: new Date(lastExport.timestamp).toLocaleDateString(),
       fileName: lastExport.fileName,
-      format: lastExport.format
+      format: lastExport.format,
     };
   };
 
@@ -156,34 +166,39 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
 
   return (
     <>
-      <section className="ribbon-section w-80">
-        <div className="ribbon-section-header">
-          <DocumentTextIcon className="w-4 h-4" />
-          <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+      <section className='ribbon-section w-80'>
+        <div className='ribbon-section-header'>
+          <DocumentTextIcon className='w-4 h-4' />
+          <h3 className='text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide'>
             Asta Import/Export
           </h3>
         </div>
-        
-        <div className="ribbon-buttons space-y-2">
+
+        <div className='ribbon-buttons space-y-2'>
           {/* Import Button */}
           <button
             onClick={handleImportAsta}
             disabled={!canImport || isDemoMode}
             className={`
               flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded transition-colors
-              ${canImport && !isDemoMode
-                ? 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/40'
-                : 'bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500'
+              ${
+                canImport && !isDemoMode
+                  ? 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/40'
+                  : 'bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500'
               }
             `}
-            title={isDemoMode ? "Demo mode – Asta sync unavailable" : "Import from Asta PowerProject"}
+            title={
+              isDemoMode
+                ? 'Demo mode – Asta sync unavailable'
+                : 'Import from Asta PowerProject'
+            }
           >
-            <div className="flex items-center space-x-2">
-              <ArrowUpTrayIcon className="w-4 h-4" />
+            <div className='flex items-center space-x-2'>
+              <ArrowUpTrayIcon className='w-4 h-4' />
               <span>Import from Asta</span>
             </div>
             {loading.import && (
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
+              <div className='animate-spin rounded-full h-3 w-3 border-b-2 border-current'></div>
             )}
           </button>
 
@@ -193,29 +208,30 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
             disabled={!canExport}
             className={`
               flex items-center justify-between w-full px-3 py-2 text-sm font-medium rounded transition-colors
-              ${canExport
-                ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300 dark:hover:bg-green-900/40'
-                : 'bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500'
+              ${
+                canExport
+                  ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300 dark:hover:bg-green-900/40'
+                  : 'bg-gray-50 border border-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500'
               }
             `}
-            title="Export to Asta PowerProject"
+            title='Export to Asta PowerProject'
           >
-            <div className="flex items-center space-x-2">
-              <ArrowDownTrayIcon className="w-4 h-4" />
+            <div className='flex items-center space-x-2'>
+              <ArrowDownTrayIcon className='w-4 h-4' />
               <span>Export to Asta</span>
             </div>
             {loading.export && (
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
+              <div className='animate-spin rounded-full h-3 w-3 border-b-2 border-current'></div>
             )}
           </button>
         </div>
 
         {/* Demo Mode Notice */}
         {isDemoMode && (
-          <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs">
-            <div className="flex items-center space-x-1">
-              <InformationCircleIcon className="w-3 h-3 text-yellow-500" />
-              <span className="text-yellow-700 dark:text-yellow-300">
+          <div className='mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs'>
+            <div className='flex items-center space-x-1'>
+              <InformationCircleIcon className='w-3 h-3 text-yellow-500' />
+              <span className='text-yellow-700 dark:text-yellow-300'>
                 Demo mode – Asta sync unavailable
               </span>
             </div>
@@ -224,20 +240,21 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
 
         {/* Last Activity */}
         {(lastImport || lastExport) && (
-          <div className="mt-3 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
-            <div className="space-y-1">
+          <div className='mt-3 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs'>
+            <div className='space-y-1'>
               {lastImport && (
-                <div className="flex items-center space-x-1">
-                  <ClockIcon className="w-3 h-3 text-gray-400" />
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Last import: {lastImport.taskCount} tasks from {lastImport.projectName} ({lastImport.date})
+                <div className='flex items-center space-x-1'>
+                  <ClockIcon className='w-3 h-3 text-gray-400' />
+                  <span className='text-gray-600 dark:text-gray-400'>
+                    Last import: {lastImport.taskCount} tasks from{' '}
+                    {lastImport.projectName} ({lastImport.date})
                   </span>
                 </div>
               )}
               {lastExport && (
-                <div className="flex items-center space-x-1">
-                  <ClockIcon className="w-3 h-3 text-gray-400" />
-                  <span className="text-gray-600 dark:text-gray-400">
+                <div className='flex items-center space-x-1'>
+                  <ClockIcon className='w-3 h-3 text-gray-400' />
+                  <span className='text-gray-600 dark:text-gray-400'>
                     Last export: {lastExport.fileName} ({lastExport.date})
                   </span>
                 </div>
@@ -267,4 +284,4 @@ const AstaImportExportSection: React.FC<AstaImportExportSectionProps> = ({
   );
 };
 
-export default AstaImportExportSection; 
+export default AstaImportExportSection;

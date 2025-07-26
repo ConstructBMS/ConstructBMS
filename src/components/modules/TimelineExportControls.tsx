@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DocumentArrowDownIcon, 
-  PhotoIcon, 
+import {
+  DocumentArrowDownIcon,
+  PhotoIcon,
   Cog6ToothIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../hooks/usePermissions';
 import { demoModeService } from '../services/demoModeService';
-import { timelineExportService, type TimelineExportOptions } from '../services/timelineExportService';
+import {
+  timelineExportService,
+  type TimelineExportOptions,
+} from '../services/timelineExportService';
 import { toastService } from './ToastNotification';
 import TimelineExportModal from './TimelineExportModal';
 
@@ -40,7 +43,7 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
   currentDateRange,
   isMultiProjectMode = false,
   selectedProjects = [],
-  className = ''
+  className = '',
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -53,7 +56,7 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -84,34 +87,56 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
         zoomLevel: currentZoomLevel,
         dateRange: currentDateRange,
         filters: currentFilters,
-        multiProject: isMultiProjectMode ? {
-          enabled: true,
-          selectedProjects,
-          groupByProject: true
-        } : undefined
+        multiProject: isMultiProjectMode
+          ? {
+              enabled: true,
+              selectedProjects,
+              groupByProject: true,
+            }
+          : undefined,
       };
 
       // Check demo mode restrictions
       if (!timelineExportService.canExportInDemoMode(options)) {
-        toastService.warning('Demo Mode', 'Export not allowed with current options in demo mode');
+        toastService.warning(
+          'Demo Mode',
+          'Export not allowed with current options in demo mode'
+        );
         return;
       }
 
       // Get export data
-      const exportData = await timelineExportService.getTimelineExportData(projectId, options);
+      const exportData = await timelineExportService.getTimelineExportData(
+        projectId,
+        options
+      );
 
       // Perform export
       let result;
       if (format === 'pdf') {
-        result = await timelineExportService.exportAsPDF(ganttElementRef.current, options, exportData);
+        result = await timelineExportService.exportAsPDF(
+          ganttElementRef.current,
+          options,
+          exportData
+        );
       } else {
-        result = await timelineExportService.exportAsPNG(ganttElementRef.current, options, exportData);
+        result = await timelineExportService.exportAsPNG(
+          ganttElementRef.current,
+          options,
+          exportData
+        );
       }
 
       if (result.success) {
-        toastService.success('Success', `${format.toUpperCase()} export completed successfully`);
+        toastService.success(
+          'Success',
+          `${format.toUpperCase()} export completed successfully`
+        );
       } else {
-        toastService.error('Error', result.error || `Failed to export as ${format.toUpperCase()}`);
+        toastService.error(
+          'Error',
+          result.error || `Failed to export as ${format.toUpperCase()}`
+        );
       }
     } catch (error) {
       console.error('Error during timeline export:', error);
@@ -132,7 +157,10 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
   };
 
   // Handle export from modal
-  const handleExportFromModal = async (format: 'pdf' | 'png', options: TimelineExportOptions) => {
+  const handleExportFromModal = async (
+    format: 'pdf' | 'png',
+    options: TimelineExportOptions
+  ) => {
     if (!ganttElementRef.current) {
       toastService.error('Error', 'Timeline element not found');
       return;
@@ -143,21 +171,38 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
       setExportFormat(format);
 
       // Get export data
-      const exportData = await timelineExportService.getTimelineExportData(projectId, options);
+      const exportData = await timelineExportService.getTimelineExportData(
+        projectId,
+        options
+      );
 
       // Perform export
       let result;
       if (format === 'pdf') {
-        result = await timelineExportService.exportAsPDF(ganttElementRef.current, options, exportData);
+        result = await timelineExportService.exportAsPDF(
+          ganttElementRef.current,
+          options,
+          exportData
+        );
       } else {
-        result = await timelineExportService.exportAsPNG(ganttElementRef.current, options, exportData);
+        result = await timelineExportService.exportAsPNG(
+          ganttElementRef.current,
+          options,
+          exportData
+        );
       }
 
       if (result.success) {
-        toastService.success('Success', `${format.toUpperCase()} export completed successfully`);
+        toastService.success(
+          'Success',
+          `${format.toUpperCase()} export completed successfully`
+        );
         setShowOptionsModal(false);
       } else {
-        toastService.error('Error', result.error || `Failed to export as ${format.toUpperCase()}`);
+        toastService.error(
+          'Error',
+          result.error || `Failed to export as ${format.toUpperCase()}`
+        );
       }
     } catch (error) {
       console.error('Error during timeline export:', error);
@@ -183,20 +228,25 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
           disabled={isExporting || isDemoMode}
           className={`
             flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-200
-            ${isDemoMode
-              ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'
+            ${
+              isDemoMode
+                ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'
             }
           `}
-          title={isDemoMode ? 'PNG export disabled in demo mode' : 'Quick export as PNG'}
+          title={
+            isDemoMode
+              ? 'PNG export disabled in demo mode'
+              : 'Quick export as PNG'
+          }
         >
-          <PhotoIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Export PNG</span>
+          <PhotoIcon className='w-4 h-4' />
+          <span className='text-sm font-medium'>Export PNG</span>
           {isDemoMode && (
-            <ExclamationTriangleIcon className="w-3 h-3 text-orange-500" />
+            <ExclamationTriangleIcon className='w-3 h-3 text-orange-500' />
           )}
           {isExporting && exportFormat === 'png' && (
-            <div className="w-3 h-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className='w-3 h-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin'></div>
           )}
         </button>
 
@@ -204,13 +254,13 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
         <button
           onClick={() => handleQuickExport('pdf')}
           disabled={isExporting}
-          className="flex items-center space-x-2 px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200"
-          title="Quick export as PDF"
+          className='flex items-center space-x-2 px-3 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200'
+          title='Quick export as PDF'
         >
-          <DocumentArrowDownIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Export PDF</span>
+          <DocumentArrowDownIcon className='w-4 h-4' />
+          <span className='text-sm font-medium'>Export PDF</span>
           {isExporting && exportFormat === 'pdf' && (
-            <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className='w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
           )}
         </button>
 
@@ -218,17 +268,17 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
         <button
           onClick={handleOpenOptions}
           disabled={isExporting}
-          className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
-          title="Configure export options"
+          className='flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200'
+          title='Configure export options'
         >
-          <Cog6ToothIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Options</span>
+          <Cog6ToothIcon className='w-4 h-4' />
+          <span className='text-sm font-medium'>Options</span>
         </button>
 
         {/* Demo Mode Indicator */}
         {isDemoMode && (
-          <div className="flex items-center px-2 py-1 bg-orange-100 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-300">
-            <ExclamationTriangleIcon className="w-3 h-3 mr-1" />
+          <div className='flex items-center px-2 py-1 bg-orange-100 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-300'>
+            <ExclamationTriangleIcon className='w-3 h-3 mr-1' />
             Demo Mode
           </div>
         )}
@@ -254,4 +304,4 @@ const TimelineExportControls: React.FC<TimelineExportControlsProps> = ({
   );
 };
 
-export default TimelineExportControls; 
+export default TimelineExportControls;

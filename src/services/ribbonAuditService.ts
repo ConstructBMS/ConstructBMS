@@ -94,7 +94,7 @@ class RibbonAuditService {
     'style_rules',
     'export_settings',
     'sync_logs',
-    'project_properties'
+    'project_properties',
   ];
 
   private readonly ribbonTabs = [
@@ -105,32 +105,88 @@ class RibbonAuditService {
     { id: 'allocation', label: 'Allocation' },
     { id: '4d', label: '4D' },
     { id: 'format', label: 'Format', permission: 'programme.format.view' },
-    { id: 'admin', label: 'Admin', permission: 'programme.admin.manage' }
+    { id: 'admin', label: 'Admin', permission: 'programme.admin.manage' },
   ];
 
   private readonly formatSections = [
-    { id: 'critical-path', label: 'Critical Path Highlighting', permission: 'programme.format.view' },
-    { id: 'milestone-styling', label: 'Milestone Styling', permission: 'programme.format.edit' },
-    { id: 'gantt-zoom-scale', label: 'Gantt Zoom & Scale', permission: 'programme.format.view' },
-    { id: 'task-row-styling', label: 'Task Row Styling', permission: 'programme.format.edit' },
-    { id: 'grid-column-controls', label: 'Grid Column Controls', permission: 'programme.format.edit' },
-    { id: 'timeline-gridlines-markers', label: 'Timeline Gridlines & Markers', permission: 'programme.format.edit' },
-    { id: 'print-export-styling', label: 'Print/Export Styling', permission: 'programme.export.view' },
-    { id: 'custom-bar-styles', label: 'Custom Bar Styles', permission: 'programme.format.edit' }
+    {
+      id: 'critical-path',
+      label: 'Critical Path Highlighting',
+      permission: 'programme.format.view',
+    },
+    {
+      id: 'milestone-styling',
+      label: 'Milestone Styling',
+      permission: 'programme.format.edit',
+    },
+    {
+      id: 'gantt-zoom-scale',
+      label: 'Gantt Zoom & Scale',
+      permission: 'programme.format.view',
+    },
+    {
+      id: 'task-row-styling',
+      label: 'Task Row Styling',
+      permission: 'programme.format.edit',
+    },
+    {
+      id: 'grid-column-controls',
+      label: 'Grid Column Controls',
+      permission: 'programme.format.edit',
+    },
+    {
+      id: 'timeline-gridlines-markers',
+      label: 'Timeline Gridlines & Markers',
+      permission: 'programme.format.edit',
+    },
+    {
+      id: 'print-export-styling',
+      label: 'Print/Export Styling',
+      permission: 'programme.export.view',
+    },
+    {
+      id: 'custom-bar-styles',
+      label: 'Custom Bar Styles',
+      permission: 'programme.format.edit',
+    },
   ];
 
   private readonly fileSections = [
     { id: 'project-save', label: 'Project Save', permission: 'programme.save' },
-    { id: 'import-export', label: 'Import & Export', permission: 'programme.save' },
+    {
+      id: 'import-export',
+      label: 'Import & Export',
+      permission: 'programme.save',
+    },
     { id: 'two-way-sync', label: '2-Way Sync', permission: 'programme.import' },
-    { id: 'project-metadata', label: 'Project Metadata', permission: 'programme.admin' }
+    {
+      id: 'project-metadata',
+      label: 'Project Metadata',
+      permission: 'programme.admin',
+    },
   ];
 
   private readonly adminSections = [
-    { id: 'tags-labels', label: 'Tags & Labels', permission: 'programme.admin.manage' },
-    { id: 'task-statuses', label: 'Task Statuses', permission: 'programme.admin.manage' },
-    { id: 'theme-config', label: 'Theme Config', permission: 'programme.admin.manage' },
-    { id: 'custom-fields', label: 'Custom Fields', permission: 'programme.admin.manage' }
+    {
+      id: 'tags-labels',
+      label: 'Tags & Labels',
+      permission: 'programme.admin.manage',
+    },
+    {
+      id: 'task-statuses',
+      label: 'Task Statuses',
+      permission: 'programme.admin.manage',
+    },
+    {
+      id: 'theme-config',
+      label: 'Theme Config',
+      permission: 'programme.admin.manage',
+    },
+    {
+      id: 'custom-fields',
+      label: 'Custom Fields',
+      permission: 'programme.admin.manage',
+    },
   ];
 
   /**
@@ -144,31 +200,34 @@ class RibbonAuditService {
       details: {
         tabs: [],
         permissions: [],
-        storage: { supabaseTables: [], localStorageUsage: { found: false, keys: [] }, errors: [] },
+        storage: {
+          supabaseTables: [],
+          localStorageUsage: { found: false, keys: [] },
+          errors: [],
+        },
         demoMode: { isDemoMode: false, restrictions: {}, violations: [] },
-        localStorage: { found: false, keys: [], violations: [] }
-      }
+        localStorage: { found: false, keys: [], violations: [] },
+      },
     };
 
     try {
       // Audit tabs
       result.details.tabs = await this.auditTabs();
-      
+
       // Audit permissions
       result.details.permissions = await this.auditPermissions();
-      
+
       // Audit storage
       result.details.storage = await this.auditStorage();
-      
+
       // Audit demo mode
       result.details.demoMode = await this.auditDemoMode();
-      
+
       // Audit localStorage usage
       result.details.localStorage = await this.auditLocalStorage();
 
       // Compile errors and warnings
       this.compileAuditResults(result);
-      
     } catch (error) {
       result.success = false;
       result.errors.push(`Audit failed: ${error}`);
@@ -189,9 +248,10 @@ class RibbonAuditService {
         label: tab.label,
         visible: true,
         permissionRequired: tab.permission,
-        permissionGranted: !tab.permission || await this.checkPermission(tab.permission),
+        permissionGranted:
+          !tab.permission || (await this.checkPermission(tab.permission)),
         sections: [],
-        errors: []
+        errors: [],
       };
 
       // Audit sections based on tab
@@ -227,23 +287,77 @@ class RibbonAuditService {
         label: section.label,
         visible: true,
         tools: [],
-        errors: []
+        errors: [],
       };
 
       // Define tools for each section
       switch (section.id) {
         case 'critical-path':
           result.tools = [
-            { toolId: 'critical-path-toggle', label: 'Critical Path Toggle', type: 'toggle', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'critical-path-color', label: 'Critical Path Color', type: 'dropdown', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'critical-path-legend', label: 'Critical Path Legend', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: false, errors: [] }
+            {
+              toolId: 'critical-path-toggle',
+              label: 'Critical Path Toggle',
+              type: 'toggle',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'critical-path-color',
+              label: 'Critical Path Color',
+              type: 'dropdown',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'critical-path-legend',
+              label: 'Critical Path Legend',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: false,
+              errors: [],
+            },
           ];
           break;
         case 'milestone-styling':
           result.tools = [
-            { toolId: 'milestone-icon', label: 'Milestone Icon', type: 'dropdown', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'milestone-color', label: 'Milestone Color', type: 'dropdown', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'milestone-label', label: 'Milestone Label', type: 'toggle', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] }
+            {
+              toolId: 'milestone-icon',
+              label: 'Milestone Icon',
+              type: 'dropdown',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'milestone-color',
+              label: 'Milestone Color',
+              type: 'dropdown',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'milestone-label',
+              label: 'Milestone Label',
+              type: 'toggle',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
           ];
           break;
         // Add other sections...
@@ -267,24 +381,87 @@ class RibbonAuditService {
         label: section.label,
         visible: true,
         tools: [],
-        errors: []
+        errors: [],
       };
 
       // Define tools for each section
       switch (section.id) {
         case 'project-save':
           result.tools = [
-            { toolId: 'save-changes', label: 'Save Changes', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: false, errors: [] },
-            { toolId: 'save-as-template', label: 'Save As Template', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: false, errors: [] },
-            { toolId: 'auto-save-toggle', label: 'Auto-Save Toggle', type: 'toggle', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] }
+            {
+              toolId: 'save-changes',
+              label: 'Save Changes',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: false,
+              errors: [],
+            },
+            {
+              toolId: 'save-as-template',
+              label: 'Save As Template',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: false,
+              errors: [],
+            },
+            {
+              toolId: 'auto-save-toggle',
+              label: 'Auto-Save Toggle',
+              type: 'toggle',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
           ];
           break;
         case 'import-export':
           result.tools = [
-            { toolId: 'import-project', label: 'Import Project', type: 'modal', enabled: true, permissionRequired: 'programme.import', permissionGranted: await this.checkPermission('programme.import'), demoModeRestricted: true, errors: [] },
-            { toolId: 'export-pdf', label: 'Export as PDF', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'export-csv', label: 'Export as CSV', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'export-image', label: 'Export as Image', type: 'button', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] }
+            {
+              toolId: 'import-project',
+              label: 'Import Project',
+              type: 'modal',
+              enabled: true,
+              permissionRequired: 'programme.import',
+              permissionGranted: await this.checkPermission('programme.import'),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'export-pdf',
+              label: 'Export as PDF',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'export-csv',
+              label: 'Export as CSV',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'export-image',
+              label: 'Export as Image',
+              type: 'button',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
           ];
           break;
         // Add other sections...
@@ -308,21 +485,57 @@ class RibbonAuditService {
         label: section.label,
         visible: true,
         tools: [],
-        errors: []
+        errors: [],
       };
 
       // Define tools for each section
       switch (section.id) {
         case 'tags-labels':
           result.tools = [
-            { toolId: 'manage-tags', label: 'Manage Tags', type: 'modal', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'color-palette', label: 'Colour Palette', type: 'dropdown', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] }
+            {
+              toolId: 'manage-tags',
+              label: 'Manage Tags',
+              type: 'modal',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'color-palette',
+              label: 'Colour Palette',
+              type: 'dropdown',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
           ];
           break;
         case 'task-statuses':
           result.tools = [
-            { toolId: 'edit-status-list', label: 'Edit Status List', type: 'modal', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] },
-            { toolId: 'set-default-status', label: 'Set Default Status', type: 'dropdown', enabled: true, permissionRequired: section.permission, permissionGranted: await this.checkPermission(section.permission), demoModeRestricted: true, errors: [] }
+            {
+              toolId: 'edit-status-list',
+              label: 'Edit Status List',
+              type: 'modal',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
+            {
+              toolId: 'set-default-status',
+              label: 'Set Default Status',
+              type: 'dropdown',
+              enabled: true,
+              permissionRequired: section.permission,
+              permissionGranted: await this.checkPermission(section.permission),
+              demoModeRestricted: true,
+              errors: [],
+            },
           ];
           break;
         // Add other sections...
@@ -345,7 +558,7 @@ class RibbonAuditService {
       'programme.format.view',
       'programme.format.edit',
       'programme.admin',
-      'programme.admin.manage'
+      'programme.admin.manage',
     ];
 
     const results: PermissionAuditResult[] = [];
@@ -353,11 +566,11 @@ class RibbonAuditService {
     for (const permission of permissions) {
       const granted = await this.checkPermission(permission);
       const requiredBy = this.findPermissionUsage(permission);
-      
+
       results.push({
         permission,
         granted,
-        requiredBy
+        requiredBy,
       });
     }
 
@@ -371,7 +584,7 @@ class RibbonAuditService {
     const result: StorageAuditResult = {
       supabaseTables: [],
       localStorageUsage: { found: false, keys: [] },
-      errors: []
+      errors: [],
     };
 
     // Check Supabase tables
@@ -380,12 +593,12 @@ class RibbonAuditService {
         const accessible = await this.checkSupabaseTableAccess(table);
         const hasData = await this.checkSupabaseTableHasData(table);
         const demoDataCount = await this.countDemoDataInTable(table);
-        
+
         result.supabaseTables.push({
           table,
           accessible,
           hasData,
-          demoDataCount
+          demoDataCount,
         });
       } catch (error) {
         result.errors.push(`Error checking table ${table}: ${error}`);
@@ -402,8 +615,8 @@ class RibbonAuditService {
    * Audit demo mode
    */
   private async auditDemoMode(): Promise<DemoModeAuditResult> {
-    const isDemoMode = await demoModeService.isDemoMode();
-    
+    const isDemoMode = await demoModeService.getDemoMode();
+
     const result: DemoModeAuditResult = {
       isDemoMode,
       restrictions: {
@@ -413,9 +626,9 @@ class RibbonAuditService {
         maxCustomFields: isDemoMode ? 2 : 15,
         importDisabled: isDemoMode,
         syncDisabled: isDemoMode,
-        exportWatermarked: isDemoMode
+        exportWatermarked: isDemoMode,
       },
-      violations: []
+      violations: [],
     };
 
     // Check for demo mode violations
@@ -434,25 +647,28 @@ class RibbonAuditService {
     const result: LocalStorageAuditResult = {
       found: false,
       keys: [],
-      violations: []
+      violations: [],
     };
 
     try {
       // Check if localStorage is being used
       const localStorageKeys = Object.keys(localStorage);
-      const ribbonRelatedKeys = localStorageKeys.filter(key => 
-        key.includes('ribbon') || 
-        key.includes('programme') || 
-        key.includes('gantt') || 
-        key.includes('format') ||
-        key.includes('admin') ||
-        key.includes('file')
+      const ribbonRelatedKeys = localStorageKeys.filter(
+        key =>
+          key.includes('ribbon') ||
+          key.includes('programme') ||
+          key.includes('gantt') ||
+          key.includes('format') ||
+          key.includes('admin') ||
+          key.includes('file')
       );
 
       if (ribbonRelatedKeys.length > 0) {
         result.found = true;
         result.keys = ribbonRelatedKeys;
-        result.violations.push('localStorage usage detected - should use Supabase instead');
+        result.violations.push(
+          'localStorage usage detected - should use Supabase instead'
+        );
       }
     } catch (error) {
       result.violations.push(`Error checking localStorage: ${error}`);
@@ -475,7 +691,7 @@ class RibbonAuditService {
    */
   private findPermissionUsage(permission: string): string[] {
     const usage: string[] = [];
-    
+
     // Check tabs
     for (const tab of this.ribbonTabs) {
       if (tab.permission === permission) {
@@ -484,7 +700,11 @@ class RibbonAuditService {
     }
 
     // Check sections
-    for (const section of [...this.formatSections, ...this.fileSections, ...this.adminSections]) {
+    for (const section of [
+      ...this.formatSections,
+      ...this.fileSections,
+      ...this.adminSections,
+    ]) {
       if (section.permission === permission) {
         usage.push(`Section: ${section.label}`);
       }
@@ -535,18 +755,22 @@ class RibbonAuditService {
   /**
    * Check localStorage usage
    */
-  private async checkLocalStorageUsage(): Promise<{ found: boolean; keys: string[] }> {
+  private async checkLocalStorageUsage(): Promise<{
+    found: boolean;
+    keys: string[];
+  }> {
     try {
       const keys = Object.keys(localStorage);
-      const ribbonKeys = keys.filter(key => 
-        key.includes('ribbon') || 
-        key.includes('programme') || 
-        key.includes('gantt')
+      const ribbonKeys = keys.filter(
+        key =>
+          key.includes('ribbon') ||
+          key.includes('programme') ||
+          key.includes('gantt')
       );
-      
+
       return {
         found: ribbonKeys.length > 0,
-        keys: ribbonKeys
+        keys: ribbonKeys,
       };
     } catch (error) {
       return { found: false, keys: [] };
@@ -558,10 +782,10 @@ class RibbonAuditService {
    */
   private async checkDemoModeViolations(): Promise<string[]> {
     const violations: string[] = [];
-    
+
     // Check for violations of demo mode restrictions
     // This would check actual data against demo limits
-    
+
     return violations;
   }
 
@@ -574,12 +798,14 @@ class RibbonAuditService {
       if (tab.errors.length > 0) {
         result.errors.push(`Tab ${tab.label}: ${tab.errors.join(', ')}`);
       }
-      
+
       for (const section of tab.sections) {
         if (section.errors.length > 0) {
-          result.errors.push(`Section ${section.label}: ${section.errors.join(', ')}`);
+          result.errors.push(
+            `Section ${section.label}: ${section.errors.join(', ')}`
+          );
         }
-        
+
         for (const tool of section.tools) {
           if (tool.errors.length > 0) {
             result.errors.push(`Tool ${tool.label}: ${tool.errors.join(', ')}`);
@@ -591,22 +817,30 @@ class RibbonAuditService {
     // Check for permission issues
     const permissionIssues = result.details.permissions.filter(p => !p.granted);
     if (permissionIssues.length > 0) {
-      result.warnings.push(`Permission issues: ${permissionIssues.map(p => p.permission).join(', ')}`);
+      result.warnings.push(
+        `Permission issues: ${permissionIssues.map(p => p.permission).join(', ')}`
+      );
     }
 
     // Check for storage issues
     if (result.details.storage.errors.length > 0) {
-      result.errors.push(`Storage issues: ${result.details.storage.errors.join(', ')}`);
+      result.errors.push(
+        `Storage issues: ${result.details.storage.errors.join(', ')}`
+      );
     }
 
     // Check for localStorage violations
     if (result.details.localStorage.found) {
-      result.errors.push(`localStorage usage detected: ${result.details.localStorage.keys.join(', ')}`);
+      result.errors.push(
+        `localStorage usage detected: ${result.details.localStorage.keys.join(', ')}`
+      );
     }
 
     // Check for demo mode violations
     if (result.details.demoMode.violations.length > 0) {
-      result.warnings.push(`Demo mode violations: ${result.details.demoMode.violations.join(', ')}`);
+      result.warnings.push(
+        `Demo mode violations: ${result.details.demoMode.violations.join(', ')}`
+      );
     }
 
     // Set overall success
@@ -618,10 +852,10 @@ class RibbonAuditService {
    */
   async generateAuditReport(): Promise<string> {
     const audit = await this.performAudit();
-    
+
     let report = `# Ribbon System Audit Report\n\n`;
     report += `**Overall Status:** ${audit.success ? '✅ PASSED' : '❌ FAILED'}\n\n`;
-    
+
     if (audit.errors.length > 0) {
       report += `## Errors\n`;
       audit.errors.forEach(error => {
@@ -629,7 +863,7 @@ class RibbonAuditService {
       });
       report += `\n`;
     }
-    
+
     if (audit.warnings.length > 0) {
       report += `## Warnings\n`;
       audit.warnings.forEach(warning => {
@@ -637,25 +871,25 @@ class RibbonAuditService {
       });
       report += `\n`;
     }
-    
+
     report += `## Tab Status\n`;
     for (const tab of audit.details.tabs) {
       const status = tab.errors.length === 0 ? '✅' : '❌';
       report += `${status} **${tab.label}** (${tab.sections.length} sections)\n`;
     }
-    
+
     report += `\n## Demo Mode\n`;
     report += `- **Active:** ${audit.details.demoMode.isDemoMode ? 'Yes' : 'No'}\n`;
     if (audit.details.demoMode.isDemoMode) {
       report += `- **Restrictions:** ${JSON.stringify(audit.details.demoMode.restrictions, null, 2)}\n`;
     }
-    
+
     report += `\n## Storage\n`;
     report += `- **Supabase Tables:** ${audit.details.storage.supabaseTables.length}\n`;
     report += `- **localStorage Usage:** ${audit.details.localStorage.found ? '❌ Found' : '✅ None'}\n`;
-    
+
     return report;
   }
 }
 
-export const ribbonAuditService = new RibbonAuditService(); 
+export const ribbonAuditService = new RibbonAuditService();

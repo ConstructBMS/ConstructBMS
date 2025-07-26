@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { PrinterIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
 import { demoModeService } from '../../services/demoModeService';
-import { timelinePrintService, TimelinePrintOptions } from '../../services/timelinePrintService';
+import {
+  timelinePrintService,
+  TimelinePrintOptions,
+} from '../../services/timelinePrintService';
 import TimelinePrintOptionsModal from './TimelinePrintOptionsModal';
 import TimelinePrintPreviewModal from './TimelinePrintPreviewModal';
 
@@ -31,13 +34,14 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
   selectedProjects = [],
   className = '',
   variant = 'button',
-  onPrintComplete
+  onPrintComplete,
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [currentOptions, setCurrentOptions] = useState<TimelinePrintOptions | null>(null);
+  const [currentOptions, setCurrentOptions] =
+    useState<TimelinePrintOptions | null>(null);
   const [loading, setLoading] = useState(false);
 
   const canPrint = canAccess('programme.export');
@@ -45,7 +49,7 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -95,7 +99,7 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
   const handlePreviewPrint = async (options: TimelinePrintOptions) => {
     try {
       setLoading(true);
-      
+
       const printData = {
         projectId,
         projectName,
@@ -106,16 +110,21 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
         currentView,
         branding: {
           companyName: 'ConstructBMS',
-          poweredBy: isDemoMode ? 'DEMO VERSION - NOT FOR DISTRIBUTION' : 'ConstructBMS'
-        }
+          poweredBy: isDemoMode
+            ? 'DEMO VERSION - NOT FOR DISTRIBUTION'
+            : 'ConstructBMS',
+        },
       };
 
-      const result = await timelinePrintService.openPrintDialog(options, printData);
-      
+      const result = await timelinePrintService.openPrintDialog(
+        options,
+        printData
+      );
+
       if (result.success) {
         setShowPreviewModal(false);
         setCurrentOptions(null);
-        
+
         // Call completion callback
         if (onPrintComplete && result.printMetadata) {
           onPrintComplete(result.printMetadata);
@@ -138,9 +147,9 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
           onClick={handlePrintClick}
           disabled={!canPrint || loading}
           className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-          title="Print Timeline"
+          title='Print Timeline'
         >
-          <PrinterIcon className="w-4 h-4 mr-2" />
+          <PrinterIcon className='w-4 h-4 mr-2' />
           Print Timeline
         </button>
 
@@ -186,10 +195,10 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
         <button
           onClick={handlePrintClick}
           disabled={!canPrint || loading}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Print Timeline"
+          className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+          title='Print Timeline'
         >
-          <PrinterIcon className="w-4 h-4 mr-2" />
+          <PrinterIcon className='w-4 h-4 mr-2' />
           Print
         </button>
 
@@ -235,18 +244,16 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
         <button
           onClick={handlePrintClick}
           disabled={!canPrint || loading}
-          className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded transition-colors bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Print Timeline"
+          className='inline-flex items-center px-3 py-1.5 text-xs font-medium rounded transition-colors bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed'
+          title='Print Timeline'
         >
-          <PrinterIcon className="w-3 h-3 mr-1" />
+          <PrinterIcon className='w-3 h-3 mr-1' />
           Print
         </button>
 
         {/* Demo Mode Indicator */}
         {isDemoMode && (
-          <span className="text-xs text-yellow-600 font-medium">
-            DEMO
-          </span>
+          <span className='text-xs text-yellow-600 font-medium'>DEMO</span>
         )}
 
         {/* Modals */}
@@ -288,4 +295,4 @@ const TimelinePrintView: React.FC<TimelinePrintViewProps> = ({
   return null;
 };
 
-export default TimelinePrintView; 
+export default TimelinePrintView;

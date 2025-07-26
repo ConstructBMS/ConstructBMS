@@ -40,11 +40,36 @@ class TaskCalendarService {
   private isDemoMode = false;
 
   constructor() {
-    this.checkDemoMode();
+    // Initialize demo mode status asynchronously
+    this.checkDemoMode().catch(error => {
+      console.warn('Error initializing demo mode status:', error);
+      this.isDemoMode = this.checkDemoModeManually();
+    });
   }
 
-  private checkDemoMode() {
-    this.isDemoMode = demoModeService.isDemoMode();
+  private async checkDemoMode() {
+    try {
+      this.isDemoMode = await demoModeService.getDemoMode();
+    } catch (error) {
+      console.warn('Error checking demo mode, using fallback:', error);
+      this.isDemoMode = this.checkDemoModeManually();
+    }
+  }
+
+  private checkDemoModeManually(): boolean {
+    // Check environment variables, user role, or other indicators
+    const envDemoMode =
+      process.env.NODE_ENV === 'development' ||
+      process.env.REACT_APP_DEMO_MODE === 'true';
+
+    // Check localStorage for demo mode setting
+    const localStorageDemoMode = localStorage.getItem('demo_mode') === 'true';
+
+    // Check URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlDemoMode = urlParams.get('demo') === 'true';
+
+    return envDemoMode || localStorageDemoMode || urlDemoMode;
   }
 
   /**

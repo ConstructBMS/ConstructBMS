@@ -37,20 +37,30 @@ class ConstraintsService {
     taskId: string,
     type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP',
     constraintDate: Date
-  ): Promise<{ constraint?: TaskConstraint, error?: string; success: boolean; }> {
+  ): Promise<{
+    constraint?: TaskConstraint;
+    error?: string;
+    success: boolean;
+  }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Check demo mode restrictions
       if (isDemoMode) {
         const constraintCount = await this.getConstraintCount();
         if (constraintCount >= 3) {
-          return { success: false, error: 'Maximum 3 tasks with constraints allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Maximum 3 tasks with constraints allowed in demo mode',
+          };
         }
 
         const taskConstraintCount = await this.getTaskConstraintCount(taskId);
         if (taskConstraintCount >= 1) {
-          return { success: false, error: 'Only one constraint per task allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Only one constraint per task allowed in demo mode',
+          };
         }
       }
 
@@ -65,7 +75,7 @@ class ConstraintsService {
         constraintDate: new Date(constraintDate),
         userId: 'current-user', // This should come from auth context
         createdAt: new Date(),
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
       // Save to storage
@@ -87,11 +97,13 @@ class ConstraintsService {
   /**
    * Remove constraint for a task
    */
-  async removeConstraint(taskId: string): Promise<{ error?: string, success: boolean; }> {
+  async removeConstraint(
+    taskId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const constraints = await this.getAllConstraints();
       const filteredConstraints = constraints.filter(c => c.taskId !== taskId);
-      
+
       if (filteredConstraints.length === constraints.length) {
         return { success: false, error: 'No constraint found for this task' };
       }
@@ -147,7 +159,7 @@ class ConstraintsService {
         return { isValid: true, violations: [] };
       }
 
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
 
       switch (constraint.type) {
         case 'SNET': // Start No Earlier Than
@@ -155,7 +167,7 @@ class ConstraintsService {
             violations.push({
               isViolated: true,
               message: `Task cannot start before ${constraint.constraintDate.toLocaleDateString()}`,
-              severity: isDemoMode ? 'warning' : 'error'
+              severity: isDemoMode ? 'warning' : 'error',
             });
           }
           break;
@@ -165,7 +177,7 @@ class ConstraintsService {
             violations.push({
               isViolated: true,
               message: `Task cannot finish after ${constraint.constraintDate.toLocaleDateString()}`,
-              severity: isDemoMode ? 'warning' : 'error'
+              severity: isDemoMode ? 'warning' : 'error',
             });
           }
           break;
@@ -175,7 +187,7 @@ class ConstraintsService {
             violations.push({
               isViolated: true,
               message: `Task must start on ${constraint.constraintDate.toLocaleDateString()}`,
-              severity: isDemoMode ? 'warning' : 'error'
+              severity: isDemoMode ? 'warning' : 'error',
             });
           }
           break;
@@ -185,7 +197,7 @@ class ConstraintsService {
             violations.push({
               isViolated: true,
               message: `Task must finish on ${constraint.constraintDate.toLocaleDateString()}`,
-              severity: isDemoMode ? 'warning' : 'error'
+              severity: isDemoMode ? 'warning' : 'error',
             });
           }
           break;
@@ -195,12 +207,17 @@ class ConstraintsService {
           break;
       }
 
-      const isValid = violations.length === 0 || (isDemoMode && violations.every(v => v.severity === 'warning'));
+      const isValid =
+        violations.length === 0 ||
+        (isDemoMode && violations.every(v => v.severity === 'warning'));
 
       return {
         isValid,
         violations,
-        suggestedDates: violations.length > 0 ? this.getSuggestedDates(constraint, startDate, endDate) : undefined
+        suggestedDates:
+          violations.length > 0
+            ? this.getSuggestedDates(constraint, startDate, endDate)
+            : undefined,
       };
     } catch (error) {
       console.error('Error validating task dates:', error);
@@ -237,7 +254,9 @@ class ConstraintsService {
           break;
 
         case 'MSO': // Must Start On
-          if (task.startDate.getTime() !== constraint.constraintDate.getTime()) {
+          if (
+            task.startDate.getTime() !== constraint.constraintDate.getTime()
+          ) {
             newStartDate = new Date(constraint.constraintDate);
             const duration = task.endDate.getTime() - task.startDate.getTime();
             newEndDate = new Date(newStartDate.getTime() + duration);
@@ -262,7 +281,7 @@ class ConstraintsService {
         await taskService.updateTask(constraint.taskId, {
           startDate: newStartDate,
           endDate: newEndDate,
-          demo: constraint.demo
+          demo: constraint.demo,
         });
         console.log('Constraint logic enforced for task:', constraint.taskId);
       }
@@ -278,32 +297,32 @@ class ConstraintsService {
     constraint: TaskConstraint,
     currentStartDate: Date,
     currentEndDate: Date
-  ): { endDate?: Date, startDate?: Date; } {
+  ): { endDate?: Date; startDate?: Date } {
     const duration = currentEndDate.getTime() - currentStartDate.getTime();
 
     switch (constraint.type) {
       case 'SNET':
         return {
           startDate: new Date(constraint.constraintDate),
-          endDate: new Date(constraint.constraintDate.getTime() + duration)
+          endDate: new Date(constraint.constraintDate.getTime() + duration),
         };
 
       case 'FNLT':
         return {
           startDate: new Date(constraint.constraintDate.getTime() - duration),
-          endDate: new Date(constraint.constraintDate)
+          endDate: new Date(constraint.constraintDate),
         };
 
       case 'MSO':
         return {
           startDate: new Date(constraint.constraintDate),
-          endDate: new Date(constraint.constraintDate.getTime() + duration)
+          endDate: new Date(constraint.constraintDate.getTime() + duration),
         };
 
       case 'MFO':
         return {
           startDate: new Date(constraint.constraintDate.getTime() - duration),
-          endDate: new Date(constraint.constraintDate)
+          endDate: new Date(constraint.constraintDate),
         };
 
       default:
@@ -319,7 +338,11 @@ class ConstraintsService {
       const task = await taskService.getTask(taskId);
       if (!task) return false;
 
-      const validation = await this.validateTaskDates(taskId, task.startDate, task.endDate);
+      const validation = await this.validateTaskDates(
+        taskId,
+        task.startDate,
+        task.endDate
+      );
       return !validation.isValid;
     } catch (error) {
       console.error('Error checking constraint violations:', error);
@@ -356,28 +379,44 @@ class ConstraintsService {
   /**
    * Get constraint type display name
    */
-  getConstraintTypeName(type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP'): string {
+  getConstraintTypeName(
+    type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP'
+  ): string {
     switch (type) {
-      case 'SNET': return 'Start No Earlier Than';
-      case 'FNLT': return 'Finish No Later Than';
-      case 'MSO': return 'Must Start On';
-      case 'MFO': return 'Must Finish On';
-      case 'ASAP': return 'As Soon As Possible';
-      default: return 'Unknown';
+      case 'SNET':
+        return 'Start No Earlier Than';
+      case 'FNLT':
+        return 'Finish No Later Than';
+      case 'MSO':
+        return 'Must Start On';
+      case 'MFO':
+        return 'Must Finish On';
+      case 'ASAP':
+        return 'As Soon As Possible';
+      default:
+        return 'Unknown';
     }
   }
 
   /**
    * Get constraint type description
    */
-  getConstraintTypeDescription(type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP'): string {
+  getConstraintTypeDescription(
+    type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP'
+  ): string {
     switch (type) {
-      case 'SNET': return 'Task cannot start before the specified date';
-      case 'FNLT': return 'Task cannot finish after the specified date';
-      case 'MSO': return 'Task must start exactly on the specified date';
-      case 'MFO': return 'Task must finish exactly on the specified date';
-      case 'ASAP': return 'Task should start as soon as possible after predecessors';
-      default: return 'Unknown constraint type';
+      case 'SNET':
+        return 'Task cannot start before the specified date';
+      case 'FNLT':
+        return 'Task cannot finish after the specified date';
+      case 'MSO':
+        return 'Task must start exactly on the specified date';
+      case 'MFO':
+        return 'Task must finish exactly on the specified date';
+      case 'ASAP':
+        return 'Task should start as soon as possible after predecessors';
+      default:
+        return 'Unknown constraint type';
     }
   }
 
@@ -386,12 +425,18 @@ class ConstraintsService {
    */
   getConstraintIcon(type: 'SNET' | 'FNLT' | 'MSO' | 'MFO' | 'ASAP'): string {
     switch (type) {
-      case 'SNET': return '📅';
-      case 'FNLT': return '⏰';
-      case 'MSO': return '📌';
-      case 'MFO': return '🎯';
-      case 'ASAP': return '⚡';
-      default: return '❓';
+      case 'SNET':
+        return '📅';
+      case 'FNLT':
+        return '⏰';
+      case 'MSO':
+        return '📌';
+      case 'MFO':
+        return '🎯';
+      case 'ASAP':
+        return '⚡';
+      default:
+        return '❓';
     }
   }
 
@@ -426,7 +471,7 @@ class ConstraintsService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllConstraintData();
         console.log('Demo constraint data reset');
@@ -438,4 +483,4 @@ class ConstraintsService {
   }
 }
 
-export const constraintsService = new ConstraintsService(); 
+export const constraintsService = new ConstraintsService();

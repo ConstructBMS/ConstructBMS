@@ -6,7 +6,21 @@ import { constraintsService } from './constraintsService';
 import { milestoneService } from './milestoneService';
 
 export interface ProgrammeAction {
-  actionType: 'task_create' | 'task_update' | 'task_delete' | 'bar_move' | 'bar_resize' | 'dependency_link' | 'dependency_unlink' | 'milestone_create' | 'milestone_edit' | 'flag_update' | 'note_update' | 'structure_collapse' | 'structure_expand' | 'calendar_override';
+  actionType:
+    | 'task_create'
+    | 'task_update'
+    | 'task_delete'
+    | 'bar_move'
+    | 'bar_resize'
+    | 'dependency_link'
+    | 'dependency_unlink'
+    | 'milestone_create'
+    | 'milestone_edit'
+    | 'flag_update'
+    | 'note_update'
+    | 'structure_collapse'
+    | 'structure_expand'
+    | 'calendar_override';
   afterState: any;
   beforeState: any;
   demo?: boolean;
@@ -37,20 +51,23 @@ class ProgrammeUndoRedoService {
   private readonly maxStackSize = 20; // Default max stack size per user/project
   private readonly demoMaxStackSize = 3; // Demo mode max stack size
   private readonly demoMaxUndos = 3; // Max undos allowed in demo mode
-  
+
   // In-memory command stacks (not localStorage as per prompt requirements)
   private commandStacks: Map<string, ProgrammeUndoRedoState> = new Map();
 
   /**
    * Get or create command stack for a project/user combination
    */
-  private getCommandStack(projectId: string, userId: string): ProgrammeUndoRedoState {
+  private getCommandStack(
+    projectId: string,
+    userId: string
+  ): ProgrammeUndoRedoState {
     const key = `${projectId}_${userId}`;
     if (!this.commandStacks.has(key)) {
       this.commandStacks.set(key, {
         undoStack: [],
         redoStack: [],
-        maxStackSize: this.maxStackSize
+        maxStackSize: this.maxStackSize,
       });
     }
     return this.commandStacks.get(key)!;
@@ -59,22 +76,27 @@ class ProgrammeUndoRedoService {
   /**
    * Initialize undo/redo state for a project
    */
-  async initializeProject(projectId: string, userId: string): Promise<ProgrammeUndoRedoState> {
+  async initializeProject(
+    projectId: string,
+    userId: string
+  ): Promise<ProgrammeUndoRedoState> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      const maxStackSize = isDemoMode ? this.demoMaxStackSize : this.maxStackSize;
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+      const maxStackSize = isDemoMode
+        ? this.demoMaxStackSize
+        : this.maxStackSize;
+
       // Get or create in-memory stack
       const stack = this.getCommandStack(projectId, userId);
       stack.maxStackSize = maxStackSize;
-      
+
       return stack;
     } catch (error) {
       console.error('Error initializing project undo/redo state:', error);
       return {
         undoStack: [],
         redoStack: [],
-        maxStackSize: this.maxStackSize
+        maxStackSize: this.maxStackSize,
       };
     }
   }
@@ -82,10 +104,12 @@ class ProgrammeUndoRedoService {
   /**
    * Record an action for undo/redo
    */
-  async recordAction(payload: ActionPayload): Promise<{ error?: string, success: boolean; }> {
+  async recordAction(
+    payload: ActionPayload
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       const action: ProgrammeAction = {
         id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'current-user', // This should be replaced with actual user ID
@@ -96,20 +120,20 @@ class ProgrammeUndoRedoService {
         afterState: payload.afterState,
         taskId: payload.taskId,
         description: payload.description,
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
       // Get in-memory stack
       const stack = this.getCommandStack(payload.projectId, action.userId);
-      
+
       // Add to undo stack
       stack.undoStack.push(action);
-      
+
       // Limit stack size
       if (stack.undoStack.length > stack.maxStackSize) {
         stack.undoStack.shift(); // Remove oldest action
       }
-      
+
       // Clear redo stack when new action is recorded
       stack.redoStack = [];
 
@@ -127,13 +151,16 @@ class ProgrammeUndoRedoService {
   /**
    * Undo the last action
    */
-  async undo(projectId: string, userId: string): Promise<{ action?: ProgrammeAction, error?: string; success: boolean; }> {
+  async undo(
+    projectId: string,
+    userId: string
+  ): Promise<{ action?: ProgrammeAction; error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Get in-memory stack
       const stack = this.getCommandStack(projectId, userId);
-      
+
       // Check demo mode limits
       if (isDemoMode) {
         if (stack.undoStack.length >= this.demoMaxUndos) {
@@ -149,7 +176,7 @@ class ProgrammeUndoRedoService {
 
       // Apply reverse action
       const reverseResult = await this.applyReverseAction(action);
-      
+
       if (!reverseResult.success) {
         // Put action back on stack if reverse failed
         stack.undoStack.push(action);
@@ -175,9 +202,12 @@ class ProgrammeUndoRedoService {
   /**
    * Redo the last undone action
    */
-  async redo(projectId: string, userId: string): Promise<{ action?: ProgrammeAction, error?: string; success: boolean; }> {
+  async redo(
+    projectId: string,
+    userId: string
+  ): Promise<{ action?: ProgrammeAction; error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         return { success: false, error: 'Redo not available in demo mode' };
       }
@@ -193,7 +223,7 @@ class ProgrammeUndoRedoService {
 
       // Apply action
       const applyResult = await this.applyAction(action);
-      
+
       if (!applyResult.success) {
         // Put action back on redo stack if apply failed
         stack.redoStack.push(action);
@@ -220,8 +250,8 @@ class ProgrammeUndoRedoService {
   async canUndo(projectId: string, userId: string): Promise<boolean> {
     try {
       const stack = this.getCommandStack(projectId, userId);
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       if (isDemoMode && stack.undoStack.length >= this.demoMaxUndos) {
         return false;
       }
@@ -238,7 +268,7 @@ class ProgrammeUndoRedoService {
    */
   async canRedo(projectId: string, userId: string): Promise<boolean> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) return false;
 
       const stack = this.getCommandStack(projectId, userId);
@@ -278,11 +308,14 @@ class ProgrammeUndoRedoService {
   /**
    * Clear undo/redo history for a project
    */
-  async clearHistory(projectId: string, userId: string): Promise<{ error?: string, success: boolean; }> {
+  async clearHistory(
+    projectId: string,
+    userId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const key = `${projectId}_${userId}`;
       this.commandStacks.delete(key);
-      
+
       console.log('Undo/redo history cleared for project:', projectId);
       return { success: true };
     } catch (error) {
@@ -294,7 +327,9 @@ class ProgrammeUndoRedoService {
   /**
    * Apply an action
    */
-  private async applyAction(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyAction(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       switch (action.actionType) {
         case 'task_create':
@@ -334,13 +369,15 @@ class ProgrammeUndoRedoService {
   /**
    * Apply reverse action
    */
-  private async applyReverseAction(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyReverseAction(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       // For reverse actions, we swap before and after states
       const reverseAction: ProgrammeAction = {
         ...action,
         beforeState: action.afterState,
-        afterState: action.beforeState
+        afterState: action.beforeState,
       };
 
       return await this.applyAction(reverseAction);
@@ -351,7 +388,9 @@ class ProgrammeUndoRedoService {
   }
 
   // Action-specific implementations
-  private async applyTaskCreate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskCreate(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -365,7 +404,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyTaskUpdate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskUpdate(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -380,7 +421,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyTaskDelete(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskDelete(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -395,14 +438,16 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyBarChange(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyBarChange(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
         .update({
           start_date: action.afterState.start_date,
           end_date: action.afterState.end_date,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', action.taskId);
 
@@ -414,7 +459,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyDependencyLink(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyDependencyLink(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('task_dependencies')
@@ -428,7 +475,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyDependencyUnlink(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyDependencyUnlink(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('task_dependencies')
@@ -443,7 +492,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyMilestoneCreate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyMilestoneCreate(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('milestones')
@@ -457,7 +508,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyMilestoneEdit(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyMilestoneEdit(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('milestones')
@@ -472,14 +525,16 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyFlagNoteUpdate(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyFlagNoteUpdate(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
         .update({
           flags: action.afterState.flags,
           notes: action.afterState.notes,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', action.taskId);
 
@@ -491,14 +546,16 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyStructureChange(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyStructureChange(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
         .update({
           parent_id: action.afterState.parent_id,
           level: action.afterState.level,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', action.taskId);
 
@@ -510,7 +567,9 @@ class ProgrammeUndoRedoService {
     }
   }
 
-  private async applyCalendarOverride(action: ProgrammeAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyCalendarOverride(
+    action: ProgrammeAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('calendar_overrides')
@@ -527,23 +586,21 @@ class ProgrammeUndoRedoService {
   // Helper methods
   private async logToAuditLog(action: ProgrammeAction): Promise<void> {
     try {
-      await supabase
-        .from('programme_audit_logs')
-        .insert({
-          user_id: action.userId,
-          project_id: action.projectId,
-          action_type: action.actionType,
-          task_id: action.taskId,
-          description: action.description,
-          before_state: action.beforeState,
-          after_state: action.afterState,
-          timestamp: action.timestamp.toISOString(),
-          demo: action.demo
-        });
+      await supabase.from('programme_audit_logs').insert({
+        user_id: action.userId,
+        project_id: action.projectId,
+        action_type: action.actionType,
+        task_id: action.taskId,
+        description: action.description,
+        before_state: action.beforeState,
+        after_state: action.afterState,
+        timestamp: action.timestamp.toISOString(),
+        demo: action.demo,
+      });
     } catch (error) {
       console.error('Error logging to audit log:', error);
     }
   }
 }
 
-export const programmeUndoRedoService = new ProgrammeUndoRedoService(); 
+export const programmeUndoRedoService = new ProgrammeUndoRedoService();

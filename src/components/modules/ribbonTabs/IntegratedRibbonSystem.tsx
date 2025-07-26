@@ -48,7 +48,7 @@ import {
   UserGroupIcon,
   CubeIcon,
   PaintBrushIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 
 export interface RibbonTab {
@@ -64,9 +64,9 @@ export interface RibbonState {
   activeTab: string;
   // File tab states
   autoSaveEnabled: boolean;
-  availableStatuses: Array<{ color: string, id: string; name: string; }>;
+  availableStatuses: Array<{ color: string; id: string; name: string }>;
   columnOrder: string[];
-  
+
   criticalPathColor: string;
   // Format tab states
   criticalPathEnabled: boolean;
@@ -88,17 +88,17 @@ export interface RibbonState {
   milestoneShowLabel: boolean;
   pageLayout: string;
   projectId: string;
-  
+
   projectStatus: string;
   rowBorder: string;
   rowStriping: boolean;
   showTodayMarker: boolean;
-  
+
   syncStatus: 'success' | 'error' | 'pending' | 'none';
   timeScale: string;
   userId: string;
   visibleColumns: string[];
-  
+
   zoomLevel: number;
 }
 
@@ -106,12 +106,21 @@ const IntegratedRibbonSystem: React.FC = () => {
   const { canAccess } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get active tab from URL or default to 'home'
   const getActiveTabFromURL = () => {
     const pathSegments = location.pathname.split('/');
     const lastSegment = pathSegments[pathSegments.length - 1] || '';
-    const validTabs = ['file', 'home', 'project', 'view', 'allocation', '4d', 'format', 'admin'];
+    const validTabs = [
+      'file',
+      'home',
+      'project',
+      'view',
+      'allocation',
+      '4d',
+      'format',
+      'admin',
+    ];
     return validTabs.includes(lastSegment) ? lastSegment : 'home';
   };
 
@@ -121,7 +130,7 @@ const IntegratedRibbonSystem: React.FC = () => {
     projectId: 'demo-project-1',
     userId: 'current-user',
     isDemoMode: false,
-    
+
     // Format tab defaults
     criticalPathEnabled: false,
     criticalPathColor: '#EF4444',
@@ -133,18 +142,32 @@ const IntegratedRibbonSystem: React.FC = () => {
     rowStriping: true,
     rowBorder: 'bottom',
     highlightActiveRow: true,
-    visibleColumns: ['task', 'startDate', 'endDate', 'duration', 'progress', 'status'],
-    columnOrder: ['task', 'startDate', 'endDate', 'duration', 'progress', 'status'],
+    visibleColumns: [
+      'task',
+      'startDate',
+      'endDate',
+      'duration',
+      'progress',
+      'status',
+    ],
+    columnOrder: [
+      'task',
+      'startDate',
+      'endDate',
+      'duration',
+      'progress',
+      'status',
+    ],
     showTodayMarker: true,
     gridlineStyle: 'dotted',
     pageLayout: 'A4 Landscape',
     exportTheme: 'Default',
-    
+
     // File tab defaults
     autoSaveEnabled: false,
     projectStatus: 'active',
     syncStatus: 'none',
-    
+
     // Admin tab defaults
     currentColorPalette: 'default',
     currentDefaultStatus: 'not-started',
@@ -152,12 +175,12 @@ const IntegratedRibbonSystem: React.FC = () => {
       { id: 'not-started', name: 'Not Started', color: '#6B7280' },
       { id: 'in-progress', name: 'In Progress', color: '#3B82F6' },
       { id: 'completed', name: 'Completed', color: '#10B981' },
-      { id: 'on-hold', name: 'On Hold', color: '#F59E0B' }
+      { id: 'on-hold', name: 'On Hold', color: '#F59E0B' },
     ],
     currentThemePreset: 'default',
-    
+
     // Loading states
-    loading: {}
+    loading: {},
   });
 
   // Modal states
@@ -169,7 +192,7 @@ const IntegratedRibbonSystem: React.FC = () => {
     customDateMarker: false,
     exportPreview: false,
     manageBarStyles: false,
-    assignStyleRules: false
+    assignStyleRules: false,
   });
 
   // Define ribbon tabs with permissions
@@ -179,52 +202,52 @@ const IntegratedRibbonSystem: React.FC = () => {
       label: 'File',
       icon: DocumentIcon,
       component: FileTab,
-      permission: 'programme.save'
+      permission: 'programme.save',
     },
     {
       id: 'home',
       label: 'Home',
-      icon: HomeIcon
+      icon: HomeIcon,
     },
     {
       id: 'project',
       label: 'Project',
-      icon: FolderIcon
+      icon: FolderIcon,
     },
     {
       id: 'view',
       label: 'View',
-      icon: EyeIcon
+      icon: EyeIcon,
     },
     {
       id: 'allocation',
       label: 'Allocation',
-      icon: UserGroupIcon
+      icon: UserGroupIcon,
     },
     {
       id: '4d',
       label: '4D',
-      icon: CubeIcon
+      icon: CubeIcon,
     },
     {
       id: 'format',
       label: 'Format',
       icon: PaintBrushIcon,
-      permission: 'programme.format.view'
+      permission: 'programme.format.view',
     },
     {
       id: 'admin',
       label: 'Admin',
       icon: Cog6ToothIcon,
       component: AdminTab,
-      permission: 'programme.admin.manage'
-    }
+      permission: 'programme.admin.manage',
+    },
   ];
 
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setState(prev => ({ ...prev, isDemoMode: isDemo }));
     };
     checkDemoMode();
@@ -245,25 +268,29 @@ const IntegratedRibbonSystem: React.FC = () => {
 
   const loadInitialData = async () => {
     try {
-      setState(prev => ({ ...prev, loading: { ...prev.loading, initial: true } }));
-      
+      setState(prev => ({
+        ...prev,
+        loading: { ...prev.loading, initial: true },
+      }));
+
       // Load Format tab data
-      const criticalPathConfig = await criticalPathHighlightingService.getConfig();
+      const criticalPathConfig =
+        await criticalPathHighlightingService.getConfig();
       const milestoneConfig = await milestoneStylingService.getConfig();
       const zoomConfig = await ganttZoomScaleService.getConfig();
       const rowConfig = await taskRowStylingService.getConfig();
       const gridConfig = await gridColumnControlsService.getConfig();
       const timelineConfig = await timelineGridlinesMarkersService.getConfig();
       const exportConfig = await printExportStylingService.getConfig();
-      
+
       // Load File tab data
       const fileConfig = await fileTabService.getConfig();
-      
+
       // Load Admin tab data
       const adminConfig = await adminTabService.getConfig();
       const statuses = await adminTabService.getTaskStatuses(state.projectId);
       const tags = await adminTabService.getProjectTags(state.projectId);
-      
+
       setState(prev => ({
         ...prev,
         // Format tab data
@@ -283,20 +310,24 @@ const IntegratedRibbonSystem: React.FC = () => {
         gridlineStyle: timelineConfig.gridlineStyle,
         pageLayout: exportConfig.pageLayout,
         exportTheme: exportConfig.theme,
-        
+
         // File tab data
         autoSaveEnabled: fileConfig.autoSaveEnabled,
         projectStatus: fileConfig.projectStatus || 'active',
-        
+
         // Admin tab data
         availableStatuses: statuses,
-        currentDefaultStatus: statuses.find(s => s.isDefault)?.id || 'not-started',
-        
-        loading: { ...prev.loading, initial: false }
+        currentDefaultStatus:
+          statuses.find(s => s.isDefault)?.id || 'not-started',
+
+        loading: { ...prev.loading, initial: false },
       }));
     } catch (error) {
       console.error('Error loading initial data:', error);
-      setState(prev => ({ ...prev, loading: { ...prev.loading, initial: false } }));
+      setState(prev => ({
+        ...prev,
+        loading: { ...prev.loading, initial: false },
+      }));
     }
   };
 
@@ -311,7 +342,7 @@ const IntegratedRibbonSystem: React.FC = () => {
   const setLoading = (key: string, loading: boolean) => {
     setState(prev => ({
       ...prev,
-      loading: { ...prev.loading, [key]: loading }
+      loading: { ...prev.loading, [key]: loading },
     }));
   };
 
@@ -330,7 +361,7 @@ const IntegratedRibbonSystem: React.FC = () => {
       const newEnabled = !state.criticalPathEnabled;
       await criticalPathHighlightingService.updateConfig({
         showCriticalPath: newEnabled,
-        criticalColor: state.criticalPathColor
+        criticalColor: state.criticalPathColor,
       });
       setState(prev => ({ ...prev, criticalPathEnabled: newEnabled }));
     } catch (error) {
@@ -345,7 +376,7 @@ const IntegratedRibbonSystem: React.FC = () => {
       setLoading('criticalPathColor', true);
       await criticalPathHighlightingService.updateConfig({
         showCriticalPath: state.criticalPathEnabled,
-        criticalColor: color
+        criticalColor: color,
       });
       setState(prev => ({ ...prev, criticalPathColor: color }));
     } catch (error) {
@@ -362,15 +393,16 @@ const IntegratedRibbonSystem: React.FC = () => {
         milestoneStyle: {
           icon: field === 'icon' ? value : state.milestoneIcon,
           color: field === 'color' ? value : state.milestoneColor,
-          showLabel: field === 'showLabel' ? value : state.milestoneShowLabel
-        }
+          showLabel: field === 'showLabel' ? value : state.milestoneShowLabel,
+        },
       };
       await milestoneStylingService.updateConfig(newConfig);
       setState(prev => ({
         ...prev,
         milestoneIcon: field === 'icon' ? value : prev.milestoneIcon,
         milestoneColor: field === 'color' ? value : prev.milestoneColor,
-        milestoneShowLabel: field === 'showLabel' ? value : prev.milestoneShowLabel
+        milestoneShowLabel:
+          field === 'showLabel' ? value : prev.milestoneShowLabel,
       }));
     } catch (error) {
       console.error('Error changing milestone style:', error);
@@ -384,13 +416,13 @@ const IntegratedRibbonSystem: React.FC = () => {
       setLoading('zoom', true);
       const newConfig = {
         zoomLevel: field === 'zoomLevel' ? value : state.zoomLevel,
-        timeScale: field === 'timeScale' ? value : state.timeScale
+        timeScale: field === 'timeScale' ? value : state.timeScale,
       };
       await ganttZoomScaleService.updateConfig(newConfig);
       setState(prev => ({
         ...prev,
         zoomLevel: field === 'zoomLevel' ? value : prev.zoomLevel,
-        timeScale: field === 'timeScale' ? value : prev.timeScale
+        timeScale: field === 'timeScale' ? value : prev.timeScale,
       }));
     } catch (error) {
       console.error('Error changing zoom settings:', error);
@@ -405,14 +437,16 @@ const IntegratedRibbonSystem: React.FC = () => {
       const newConfig = {
         striping: field === 'striping' ? value : state.rowStriping,
         rowBorder: field === 'rowBorder' ? value : state.rowBorder,
-        highlightActive: field === 'highlightActive' ? value : state.highlightActiveRow
+        highlightActive:
+          field === 'highlightActive' ? value : state.highlightActiveRow,
       };
       await taskRowStylingService.updateConfig(newConfig);
       setState(prev => ({
         ...prev,
         rowStriping: field === 'striping' ? value : prev.rowStriping,
         rowBorder: field === 'rowBorder' ? value : prev.rowBorder,
-        highlightActiveRow: field === 'highlightActive' ? value : prev.highlightActiveRow
+        highlightActiveRow:
+          field === 'highlightActive' ? value : prev.highlightActiveRow,
       }));
     } catch (error) {
       console.error('Error changing row styling:', error);
@@ -489,13 +523,13 @@ const IntegratedRibbonSystem: React.FC = () => {
       setLoading('defaultStatus', true);
       const updatedStatuses = state.availableStatuses.map(status => ({
         ...status,
-        isDefault: status.id === statusId
+        isDefault: status.id === statusId,
       }));
       await adminTabService.saveTaskStatuses(state.projectId, updatedStatuses);
-      setState(prev => ({ 
-        ...prev, 
+      setState(prev => ({
+        ...prev,
         currentDefaultStatus: statusId,
-        availableStatuses: updatedStatuses
+        availableStatuses: updatedStatuses,
       }));
     } catch (error) {
       console.error('Error changing default status:', error);
@@ -518,11 +552,11 @@ const IntegratedRibbonSystem: React.FC = () => {
 
   // Render ribbon tabs
   const renderRibbonTabs = () => (
-    <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
-      {ribbonTabs.map((tab) => {
+    <div className='flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto'>
+      {ribbonTabs.map(tab => {
         const hasPermission = !tab.permission || canAccess(tab.permission);
         const isActive = state.activeTab === tab.id;
-        
+
         return (
           <button
             key={tab.id}
@@ -531,14 +565,15 @@ const IntegratedRibbonSystem: React.FC = () => {
             className={`
               flex items-center space-x-2 px-4 py-2 text-sm font-medium
               border-b-2 transition-colors duration-200
-              ${isActive
-                ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900'
-                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+              ${
+                isActive
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900'
+                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
               }
               ${!hasPermission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
           >
-            <tab.icon className="w-5 h-5" />
+            <tab.icon className='w-5 h-5' />
             <span>{tab.label}</span>
           </button>
         );
@@ -549,13 +584,13 @@ const IntegratedRibbonSystem: React.FC = () => {
   // Render active tab content
   const renderActiveTabContent = () => {
     const activeTab = ribbonTabs.find(tab => tab.id === state.activeTab);
-    
+
     if (!activeTab) return null;
-    
+
     // Check permissions
     if (activeTab.permission && !canAccess(activeTab.permission)) {
       return (
-        <div className="flex items-center justify-center h-32 text-gray-500 dark:text-gray-400">
+        <div className='flex items-center justify-center h-32 text-gray-500 dark:text-gray-400'>
           <p>You don't have permission to access this tab.</p>
         </div>
       );
@@ -570,48 +605,64 @@ const IntegratedRibbonSystem: React.FC = () => {
     // Render Format tab with sections
     if (state.activeTab === 'format') {
       return (
-        <div className="flex items-center px-4 py-2 space-x-6 overflow-x-auto min-h-[100px]">
+        <div className='flex items-center px-4 py-2 space-x-6 overflow-x-auto min-h-[100px]'>
           <CriticalPathHighlightingSection
             enabled={state.criticalPathEnabled}
             color={state.criticalPathColor}
             onToggle={handleCriticalPathToggle}
             onColorChange={handleCriticalPathColorChange}
             disabled={state.isDemoMode}
-            loading={state.loading.criticalPath || state.loading.criticalPathColor}
+            loading={
+              state.loading.criticalPath || state.loading.criticalPathColor
+            }
           />
-          
+
           <MilestoneStylingSection
             icon={state.milestoneIcon}
             color={state.milestoneColor}
             showLabel={state.milestoneShowLabel}
-            onIconChange={(icon) => handleMilestoneStyleChange('icon', icon)}
-            onColorChange={(color) => handleMilestoneStyleChange('color', color)}
-            onLabelToggle={(showLabel) => handleMilestoneStyleChange('showLabel', showLabel)}
+            onIconChange={icon => handleMilestoneStyleChange('icon', icon)}
+            onColorChange={color => handleMilestoneStyleChange('color', color)}
+            onLabelToggle={showLabel =>
+              handleMilestoneStyleChange('showLabel', showLabel)
+            }
             disabled={state.isDemoMode}
             loading={state.loading.milestone}
           />
-          
+
           <GanttZoomScaleSection
             zoomLevel={state.zoomLevel}
             timeScale={state.timeScale}
-            onZoomIn={() => handleZoomChange('zoomLevel', Math.min(state.zoomLevel + 1, 5))}
-            onZoomOut={() => handleZoomChange('zoomLevel', Math.max(state.zoomLevel - 1, 1))}
-            onTimeScaleChange={(timeScale) => handleZoomChange('timeScale', timeScale)}
+            onZoomIn={() =>
+              handleZoomChange('zoomLevel', Math.min(state.zoomLevel + 1, 5))
+            }
+            onZoomOut={() =>
+              handleZoomChange('zoomLevel', Math.max(state.zoomLevel - 1, 1))
+            }
+            onTimeScaleChange={timeScale =>
+              handleZoomChange('timeScale', timeScale)
+            }
             disabled={state.isDemoMode}
             loading={state.loading.zoom}
           />
-          
+
           <TaskRowStylingSection
             striping={state.rowStriping}
             rowBorder={state.rowBorder}
             highlightActive={state.highlightActiveRow}
-            onStripingToggle={(striping) => handleRowStylingChange('striping', striping)}
-            onBorderChange={(rowBorder) => handleRowStylingChange('rowBorder', rowBorder)}
-            onHighlightToggle={(highlightActive) => handleRowStylingChange('highlightActive', highlightActive)}
+            onStripingToggle={striping =>
+              handleRowStylingChange('striping', striping)
+            }
+            onBorderChange={rowBorder =>
+              handleRowStylingChange('rowBorder', rowBorder)
+            }
+            onHighlightToggle={highlightActive =>
+              handleRowStylingChange('highlightActive', highlightActive)
+            }
             disabled={state.isDemoMode}
             loading={state.loading.rowStyling}
           />
-          
+
           <GridColumnControlsSection
             onOpenManageColumns={() => openModal('manageColumns')}
             onColumnPresetChange={() => {}}
@@ -619,7 +670,7 @@ const IntegratedRibbonSystem: React.FC = () => {
             disabled={state.isDemoMode}
             loading={state.loading.gridColumns}
           />
-          
+
           <TimelineGridlinesMarkersSection
             showToday={state.showTodayMarker}
             gridlineStyle={state.gridlineStyle}
@@ -629,7 +680,7 @@ const IntegratedRibbonSystem: React.FC = () => {
             disabled={state.isDemoMode}
             loading={state.loading.timeline}
           />
-          
+
           <PrintExportStylingSection
             pageLayout={state.pageLayout}
             exportTheme={state.exportTheme}
@@ -639,7 +690,7 @@ const IntegratedRibbonSystem: React.FC = () => {
             disabled={state.isDemoMode}
             loading={state.loading.export}
           />
-          
+
           <CustomBarStylesSection
             onOpenManageBarStyles={() => openModal('manageBarStyles')}
             onOpenAssignStyleRules={() => openModal('assignStyleRules')}
@@ -705,8 +756,8 @@ const IntegratedRibbonSystem: React.FC = () => {
 
     // Default tab content
     return (
-      <div className="flex items-center px-4 py-2 space-x-6 overflow-x-auto min-h-[100px]">
-        <p className="text-gray-500 dark:text-gray-400">
+      <div className='flex items-center px-4 py-2 space-x-6 overflow-x-auto min-h-[100px]'>
+        <p className='text-gray-500 dark:text-gray-400'>
           {activeTab.label} tab content will be implemented here.
         </p>
       </div>
@@ -714,10 +765,10 @@ const IntegratedRibbonSystem: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className='bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700'>
       {renderRibbonTabs()}
       {renderActiveTabContent()}
-      
+
       {/* Modals */}
       <ManageTagsModal
         isOpen={modals.manageTags}
@@ -728,14 +779,14 @@ const IntegratedRibbonSystem: React.FC = () => {
         projectId={state.projectId}
         loading={state.loading.manageTags}
       />
-      
+
       <ImportProjectModal
         isOpen={modals.importProject}
         onClose={() => closeModal('importProject')}
         onImport={() => {}}
         loading={state.loading.import}
       />
-      
+
       <ProjectPropertiesModal
         isOpen={modals.projectProperties}
         onClose={() => closeModal('projectProperties')}
@@ -743,7 +794,7 @@ const IntegratedRibbonSystem: React.FC = () => {
         projectId={state.projectId}
         loading={state.loading.projectProperties}
       />
-      
+
       <ManageColumnsModal
         isOpen={modals.manageColumns}
         onClose={() => closeModal('manageColumns')}
@@ -752,14 +803,14 @@ const IntegratedRibbonSystem: React.FC = () => {
         columnOrder={state.columnOrder}
         loading={state.loading.manageColumns}
       />
-      
+
       <CustomDateMarkerModal
         isOpen={modals.customDateMarker}
         onClose={() => closeModal('customDateMarker')}
         onSave={() => {}}
         loading={state.loading.customDateMarker}
       />
-      
+
       <ExportPreviewModal
         isOpen={modals.exportPreview}
         onClose={() => closeModal('exportPreview')}
@@ -768,7 +819,7 @@ const IntegratedRibbonSystem: React.FC = () => {
         exportTheme={state.exportTheme}
         loading={state.loading.exportPreview}
       />
-      
+
       <ManageBarStylesModal
         isOpen={modals.manageBarStyles}
         onClose={() => closeModal('manageBarStyles')}
@@ -776,7 +827,7 @@ const IntegratedRibbonSystem: React.FC = () => {
         projectId={state.projectId}
         loading={state.loading.manageBarStyles}
       />
-      
+
       <AssignStyleRulesModal
         isOpen={modals.assignStyleRules}
         onClose={() => closeModal('assignStyleRules')}
@@ -788,4 +839,4 @@ const IntegratedRibbonSystem: React.FC = () => {
   );
 };
 
-export default IntegratedRibbonSystem; 
+export default IntegratedRibbonSystem;

@@ -37,7 +37,7 @@ class ProgrammeTaskFlagsService {
   }
 
   private checkDemoMode() {
-    this.isDemoMode = demoModeService.isDemoMode();
+    this.isDemoMode = demoModeService.getDemoMode();
   }
 
   /**

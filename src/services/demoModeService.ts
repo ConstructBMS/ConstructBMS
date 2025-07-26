@@ -30,14 +30,14 @@ class DemoModeService {
   /**
    * Check if current mode is demo (async for consistency with other services)
    */
-  async isDemoMode(): Promise<boolean> {
+  async getDemoMode(): Promise<boolean> {
     return this.isDemoMode;
   }
 
   /**
    * Check if current mode is demo (synchronous version for compatibility)
    */
-  isDemoModeSync(): boolean {
+  getDemoModeSync(): boolean {
     return this.isDemoMode;
   }
 

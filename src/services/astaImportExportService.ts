@@ -81,19 +81,27 @@ class AstaImportExportService {
     projectId: string = 'demo'
   ): Promise<ImportExportResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
       if (isDemoMode && parsedData.tasks.length > this.maxDemoTasks) {
         return {
           success: false,
-          errors: [`Demo mode limited to ${this.maxDemoTasks} tasks. File contains ${parsedData.tasks.length} tasks.`]
+          errors: [
+            `Demo mode limited to ${this.maxDemoTasks} tasks. File contains ${parsedData.tasks.length} tasks.`,
+          ],
         };
       }
 
       // Get current project data
-      const currentTasks = await persistentStorage.getSetting(`tasks_${projectId}`, 'tasks') || [];
-      const projectConfig = await persistentStorage.getSetting(`project_${projectId}`, 'config') || {};
+      const currentTasks =
+        (await persistentStorage.getSetting(`tasks_${projectId}`, 'tasks')) ||
+        [];
+      const projectConfig =
+        (await persistentStorage.getSetting(
+          `project_${projectId}`,
+          'config'
+        )) || {};
 
       // Map Asta fields to ConstructBMS task schema
       const importedTasks = parsedData.tasks.map((task, index) => ({
@@ -114,14 +122,18 @@ class AstaImportExportService {
         sourceFileName: task.sourceFileName,
         importedAt: task.importedAt,
         demo: isDemoMode,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       }));
 
       // Merge with existing tasks
       const updatedTasks = [...currentTasks, ...importedTasks];
 
       // Save updated tasks
-      await persistentStorage.setSetting(`tasks_${projectId}`, updatedTasks, 'tasks');
+      await persistentStorage.setSetting(
+        `tasks_${projectId}`,
+        updatedTasks,
+        'tasks'
+      );
 
       // Update project config
       projectConfig.lastImport = {
@@ -129,10 +141,14 @@ class AstaImportExportService {
         date: new Date().toISOString(),
         taskCount: importedTasks.length,
         projectName: parsedData.projectName,
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
-      await persistentStorage.setSetting(`project_${projectId}`, projectConfig, 'config');
+      await persistentStorage.setSetting(
+        `project_${projectId}`,
+        projectConfig,
+        'config'
+      );
 
       // Log import activity to Supabase audit trail
       await this.logImportActivity(projectId, parsedData, importedTasks.length);
@@ -144,7 +160,10 @@ class AstaImportExportService {
         'asta_import',
         `Imported ${importedTasks.length} tasks from Asta file: ${parsedData.projectName}`,
         null,
-        { importedTasks: importedTasks.length, sourceFile: parsedData.projectName }
+        {
+          importedTasks: importedTasks.length,
+          sourceFile: parsedData.projectName,
+        }
       );
 
       if (isDemoMode) {
@@ -156,15 +175,15 @@ class AstaImportExportService {
         data: {
           tasksImported: importedTasks.length,
           totalTasks: updatedTasks.length,
-          demo: isDemoMode
+          demo: isDemoMode,
         },
-        errors: []
+        errors: [],
       };
     } catch (error) {
       console.error('Failed to import Asta data:', error);
       return {
         success: false,
-        errors: [error instanceof Error ? error.message : 'Unknown error']
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -177,8 +196,8 @@ class AstaImportExportService {
     projectId: string = 'demo'
   ): Promise<ExportResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
       if (isDemoMode) {
         const exportCount = await this.getDemoExportCount(projectId);
@@ -187,35 +206,68 @@ class AstaImportExportService {
             success: false,
             fileName: '',
             fileSize: 0,
-            errors: [`Demo mode limited to ${this.maxDemoExports} exports per session.`]
+            errors: [
+              `Demo mode limited to ${this.maxDemoExports} exports per session.`,
+            ],
           };
         }
       }
 
       // Get current programme data
-      const tasks = await persistentStorage.getSetting(`tasks_${projectId}`, 'tasks') || [];
-      const projectConfig = await persistentStorage.getSetting(`project_${projectId}`, 'config') || {};
-      const baselines = await persistentStorage.getSetting(`baselines_${projectId}`, 'baselines') || [];
-      const calendars = await persistentStorage.getSetting(`calendars_${projectId}`, 'calendars') || [];
+      const tasks =
+        (await persistentStorage.getSetting(`tasks_${projectId}`, 'tasks')) ||
+        [];
+      const projectConfig =
+        (await persistentStorage.getSetting(
+          `project_${projectId}`,
+          'config'
+        )) || {};
+      const baselines =
+        (await persistentStorage.getSetting(
+          `baselines_${projectId}`,
+          'baselines'
+        )) || [];
+      const calendars =
+        (await persistentStorage.getSetting(
+          `calendars_${projectId}`,
+          'calendars'
+        )) || [];
 
       // Filter tasks by date range
       const filteredTasks = tasks.filter((task: any) => {
         const taskStart = new Date(task.startDate);
-        return taskStart >= settings.dateRange.start && taskStart <= settings.dateRange.end;
+        return (
+          taskStart >= settings.dateRange.start &&
+          taskStart <= settings.dateRange.end
+        );
       });
 
       // Generate Asta-compatible data
-      const astaData = this.generateAstaData(filteredTasks, projectConfig, baselines, calendars, settings);
+      const astaData = this.generateAstaData(
+        filteredTasks,
+        projectConfig,
+        baselines,
+        calendars,
+        settings
+      );
 
       // Create file blob
       const blob = this.createAstaFile(astaData, settings.fileType);
-      const fileName = this.generateFileName(projectConfig.name || 'Project', settings.fileType);
+      const fileName = this.generateFileName(
+        projectConfig.name || 'Project',
+        settings.fileType
+      );
 
       // Trigger download
       this.downloadFile(blob, fileName);
 
       // Log export activity
-      await this.logExportActivity(projectId, settings, fileName, filteredTasks.length);
+      await this.logExportActivity(
+        projectId,
+        settings,
+        fileName,
+        filteredTasks.length
+      );
 
       // Log to audit trail service
       await auditTrailService.logAction(
@@ -224,7 +276,11 @@ class AstaImportExportService {
         'asta_export',
         `Exported ${filteredTasks.length} tasks to Asta format: ${fileName}`,
         null,
-        { exportedTasks: filteredTasks.length, fileName, format: settings.fileType }
+        {
+          exportedTasks: filteredTasks.length,
+          fileName,
+          format: settings.fileType,
+        }
       );
 
       if (isDemoMode) {
@@ -236,7 +292,7 @@ class AstaImportExportService {
         success: true,
         fileName,
         fileSize: blob.size,
-        errors: []
+        errors: [],
       };
     } catch (error) {
       console.error('Failed to export to Asta:', error);
@@ -244,7 +300,7 @@ class AstaImportExportService {
         success: false,
         fileName: '',
         fileSize: 0,
-        errors: [error instanceof Error ? error.message : 'Unknown error']
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -255,13 +311,15 @@ class AstaImportExportService {
   async parseAstaFile(file: File): Promise<ParsedAstaProgramme> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         try {
           const content = e.target?.result as string;
-          const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-          
+          const fileExtension = file.name
+            .toLowerCase()
+            .substring(file.name.lastIndexOf('.'));
+
           let parsedData: ParsedAstaProgramme;
-          
+
           switch (fileExtension) {
             case '.csv':
               parsedData = this.parseCSV(content, file.name);
@@ -275,7 +333,7 @@ class AstaImportExportService {
             default:
               throw new Error(`Unsupported file format: ${fileExtension}`);
           }
-          
+
           resolve(parsedData);
         } catch (error) {
           reject(error);
@@ -294,10 +352,18 @@ class AstaImportExportService {
     imports: any[];
   }> {
     try {
-      const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];
-      
-      const imports = activityLog.filter((log: any) => log.type === 'asta_import');
-      const exports = activityLog.filter((log: any) => log.type === 'asta_export');
+      const activityLog =
+        (await persistentStorage.getSetting(
+          `activityLog_${projectId}`,
+          'activity'
+        )) || [];
+
+      const imports = activityLog.filter(
+        (log: any) => log.type === 'asta_import'
+      );
+      const exports = activityLog.filter(
+        (log: any) => log.type === 'asta_export'
+      );
 
       return { imports, exports };
     } catch (error) {
@@ -308,7 +374,13 @@ class AstaImportExportService {
 
   // Private helper methods
 
-  private generateAstaData(tasks: any[], projectConfig: any, baselines: any[], calendars: any[], settings: AstaExportSettings): any {
+  private generateAstaData(
+    tasks: any[],
+    projectConfig: any,
+    baselines: any[],
+    calendars: any[],
+    settings: AstaExportSettings
+  ): any {
     return {
       project: {
         name: projectConfig.name || 'Project',
@@ -316,16 +388,18 @@ class AstaImportExportService {
         endDate: projectConfig.endDate,
         generatedBy: 'ConstructBMS',
         generatedAt: new Date().toISOString(),
-        demo: settings.demo
+        demo: settings.demo,
       },
-      tasks: settings.includeConstraints ? tasks : tasks.map(({ constraints, ...task }) => task),
+      tasks: settings.includeConstraints
+        ? tasks
+        : tasks.map(({ constraints, ...task }) => task),
       baselines: settings.includeBaselines ? baselines : [],
       calendars: settings.includeCalendars ? calendars : [],
       settings: {
         dateFormat: 'dd/mm/yyyy',
         includeNotes: settings.includeNotes,
-        includeResources: settings.includeResources
-      }
+        includeResources: settings.includeResources,
+      },
     };
   }
 
@@ -368,7 +442,9 @@ class AstaImportExportService {
   </ProjectInfo>
   
   <Tasks>
-    ${data.tasks.map((task: any) => `
+    ${data.tasks
+      .map(
+        (task: any) => `
     <Task>
       <ID>${task.id}</ID>
       <Name>${task.name}</Name>
@@ -377,7 +453,9 @@ class AstaImportExportService {
       <Duration>${task.duration || 0}</Duration>
       <Progress>${task.percentComplete || 0}</Progress>
       <IsMilestone>${task.isMilestone ? 'true' : 'false'}</IsMilestone>
-    </Task>`).join('')}
+    </Task>`
+      )
+      .join('')}
   </Tasks>
 </AstaProject>`;
   }
@@ -390,13 +468,24 @@ ProjectName,${data.project.name}
 StartDate,${data.project.startDate}
 EndDate,${data.project.endDate}
 Tasks
-${data.tasks.map((task: any) => 
-  `${task.id},${task.name},${task.startDate},${task.finishDate},${task.duration},${task.percentComplete}`
-).join('\n')}`;
+${data.tasks
+  .map(
+    (task: any) =>
+      `${task.id},${task.name},${task.startDate},${task.finishDate},${task.duration},${task.percentComplete}`
+  )
+  .join('\n')}`;
   }
 
   private generateCSV(data: any): string {
-    const headers = ['Task ID', 'Name', 'Start Date', 'Finish Date', 'Duration', 'Progress', 'Is Milestone'];
+    const headers = [
+      'Task ID',
+      'Name',
+      'Start Date',
+      'Finish Date',
+      'Duration',
+      'Progress',
+      'Is Milestone',
+    ];
     const rows = data.tasks.map((task: any) => [
       task.id,
       task.name,
@@ -404,9 +493,9 @@ ${data.tasks.map((task: any) =>
       task.finishDate,
       task.duration || 0,
       task.percentComplete || 0,
-      task.isMilestone ? 'Yes' : 'No'
+      task.isMilestone ? 'Yes' : 'No',
     ]);
-    
+
     return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
@@ -430,7 +519,7 @@ ${data.tasks.map((task: any) =>
         originalId: values[0] || '',
         originalStructure: '',
         sourceFileName: fileName,
-        importedAt: new Date().toISOString()
+        importedAt: new Date().toISOString(),
       };
       tasks.push(task);
     }
@@ -443,7 +532,7 @@ ${data.tasks.map((task: any) =>
       calendars: [],
       resources: [],
       importedFrom: 'Asta',
-      demo: false
+      demo: false,
     };
   }
 
@@ -457,7 +546,7 @@ ${data.tasks.map((task: any) =>
       calendars: data.calendars || [],
       resources: data.resources || [],
       importedFrom: 'Asta',
-      demo: false
+      demo: false,
     };
   }
 
@@ -487,7 +576,7 @@ ${data.tasks.map((task: any) =>
           originalId: values[0] || '',
           originalStructure: '',
           sourceFileName: fileName,
-          importedAt: new Date().toISOString()
+          importedAt: new Date().toISOString(),
         };
         tasks.push(task);
       }
@@ -501,13 +590,20 @@ ${data.tasks.map((task: any) =>
       calendars: [],
       resources: [],
       importedFrom: 'Asta',
-      demo: false
+      demo: false,
     };
   }
 
   private generateFileName(projectName: string, fileType: string): string {
     const date = new Date().toISOString().split('T')[0];
-    const extension = fileType === 'xer' ? '.xer' : fileType === 'mpx' ? '.mpx' : fileType === 'json' ? '.json' : '.csv';
+    const extension =
+      fileType === 'xer'
+        ? '.xer'
+        : fileType === 'mpx'
+          ? '.mpx'
+          : fileType === 'json'
+            ? '.json'
+            : '.csv';
     return `${projectName}_${date}${extension}`;
   }
 
@@ -522,10 +618,18 @@ ${data.tasks.map((task: any) =>
     window.URL.revokeObjectURL(url);
   }
 
-  private async logImportActivity(projectId: string, parsedData: ParsedAstaProgramme, taskCount: number): Promise<void> {
+  private async logImportActivity(
+    projectId: string,
+    parsedData: ParsedAstaProgramme,
+    taskCount: number
+  ): Promise<void> {
     try {
-      const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];
-      
+      const activityLog =
+        (await persistentStorage.getSetting(
+          `activityLog_${projectId}`,
+          'activity'
+        )) || [];
+
       activityLog.push({
         id: `asta_import_${Date.now()}`,
         type: 'asta_import',
@@ -533,19 +637,32 @@ ${data.tasks.map((task: any) =>
         projectName: parsedData.projectName,
         taskCount,
         timestamp: new Date().toISOString(),
-        demo: parsedData.demo
+        demo: parsedData.demo,
       });
 
-      await persistentStorage.setSetting(`activityLog_${projectId}`, activityLog, 'activity');
+      await persistentStorage.setSetting(
+        `activityLog_${projectId}`,
+        activityLog,
+        'activity'
+      );
     } catch (error) {
       console.error('Failed to log import activity:', error);
     }
   }
 
-  private async logExportActivity(projectId: string, settings: AstaExportSettings, fileName: string, taskCount: number): Promise<void> {
+  private async logExportActivity(
+    projectId: string,
+    settings: AstaExportSettings,
+    fileName: string,
+    taskCount: number
+  ): Promise<void> {
     try {
-      const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];
-      
+      const activityLog =
+        (await persistentStorage.getSetting(
+          `activityLog_${projectId}`,
+          'activity'
+        )) || [];
+
       activityLog.push({
         id: `asta_export_${Date.now()}`,
         type: 'asta_export',
@@ -553,10 +670,14 @@ ${data.tasks.map((task: any) =>
         fileName,
         taskCount,
         timestamp: new Date().toISOString(),
-        demo: settings.demo
+        demo: settings.demo,
       });
 
-      await persistentStorage.setSetting(`activityLog_${projectId}`, activityLog, 'activity');
+      await persistentStorage.setSetting(
+        `activityLog_${projectId}`,
+        activityLog,
+        'activity'
+      );
     } catch (error) {
       console.error('Failed to log export activity:', error);
     }
@@ -564,12 +685,17 @@ ${data.tasks.map((task: any) =>
 
   async getDemoExportCount(projectId: string): Promise<number> {
     try {
-      const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];
+      const activityLog =
+        (await persistentStorage.getSetting(
+          `activityLog_${projectId}`,
+          'activity'
+        )) || [];
       const today = new Date().toISOString().split('T')[0];
-      return activityLog.filter((log: any) => 
-        log.type === 'asta_export' && 
-        log.timestamp.startsWith(today) &&
-        log.demo
+      return activityLog.filter(
+        (log: any) =>
+          log.type === 'asta_export' &&
+          log.timestamp.startsWith(today) &&
+          log.demo
       ).length;
     } catch (error) {
       return 0;
@@ -578,11 +704,17 @@ ${data.tasks.map((task: any) =>
 
   private async incrementDemoExportCount(projectId: string): Promise<void> {
     try {
-      const activityLog = await persistentStorage.getSetting(`activityLog_${projectId}`, 'activity') || [];
+      const activityLog =
+        (await persistentStorage.getSetting(
+          `activityLog_${projectId}`,
+          'activity'
+        )) || [];
       const exportCount = await this.getDemoExportCount(projectId);
-      
+
       // Update or create demo export count
-      const demoExportCount = activityLog.find((log: any) => log.type === 'demo_export_count');
+      const demoExportCount = activityLog.find(
+        (log: any) => log.type === 'demo_export_count'
+      );
       if (demoExportCount) {
         demoExportCount.count = exportCount + 1;
       } else {
@@ -590,15 +722,19 @@ ${data.tasks.map((task: any) =>
           id: `demo_export_count_${Date.now()}`,
           type: 'demo_export_count',
           count: 1,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
-      await persistentStorage.setSetting(`activityLog_${projectId}`, activityLog, 'activity');
+      await persistentStorage.setSetting(
+        `activityLog_${projectId}`,
+        activityLog,
+        'activity'
+      );
     } catch (error) {
       console.error('Failed to increment demo export count:', error);
     }
   }
 }
 
-export const astaImportExportService = new AstaImportExportService(); 
+export const astaImportExportService = new AstaImportExportService();

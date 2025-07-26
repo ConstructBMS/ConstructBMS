@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  XMarkIcon, 
-  PlusIcon, 
-  PencilIcon, 
-  TrashIcon, 
+import {
+  XMarkIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
   CalendarIcon,
   ClockIcon,
   CheckIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { taskCalendarService, TaskCalendar } from '../../services/taskCalendarService';
+import {
+  taskCalendarService,
+  TaskCalendar,
+} from '../../services/taskCalendarService';
 import { demoModeService } from '../../services/demoModeService';
 
 interface CalendarManagerModalProps {
@@ -21,7 +24,7 @@ interface CalendarManagerModalProps {
 }
 
 interface CalendarFormData {
-  dailyHours: { end: string, start: string; };
+  dailyHours: { end: string; start: string };
   holidays: string[];
   isGlobal: boolean;
   name: string;
@@ -32,11 +35,13 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
   isOpen,
   onClose,
   projectId,
-  onCalendarChange
+  onCalendarChange,
 }) => {
   const { canAccess } = usePermissions();
   const [calendars, setCalendars] = useState<TaskCalendar[]>([]);
-  const [selectedCalendar, setSelectedCalendar] = useState<TaskCalendar | null>(null);
+  const [selectedCalendar, setSelectedCalendar] = useState<TaskCalendar | null>(
+    null
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -54,7 +59,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
     workingDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     dailyHours: { start: '08:00', end: '17:00' },
     holidays: [],
-    isGlobal: false
+    isGlobal: false,
   });
 
   // Day options
@@ -65,7 +70,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
     { value: 'Thu', label: 'Thursday' },
     { value: 'Fri', label: 'Friday' },
     { value: 'Sat', label: 'Saturday' },
-    { value: 'Sun', label: 'Sunday' }
+    { value: 'Sun', label: 'Sunday' },
   ];
 
   // Load data on mount
@@ -77,7 +82,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
   }, [isOpen, projectId]);
 
   const checkDemoMode = async () => {
-    const isDemo = await demoModeService.isDemoMode();
+    const isDemo = await demoModeService.getDemoMode();
     setIsDemoMode(isDemo);
   };
 
@@ -86,9 +91,10 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
       setLoading(true);
       setError(null);
 
-      const projectCalendars = await taskCalendarService.getProjectCalendars(projectId);
+      const projectCalendars =
+        await taskCalendarService.getProjectCalendars(projectId);
       const globalCalendars = await taskCalendarService.getGlobalCalendars();
-      
+
       setCalendars([...projectCalendars, ...globalCalendars]);
     } catch (error) {
       console.error('Error loading calendars:', error);
@@ -104,7 +110,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
       workingDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
       dailyHours: { start: '08:00', end: '17:00' },
       holidays: [],
-      isGlobal: false
+      isGlobal: false,
     });
     setIsCreating(true);
     setIsEditing(false);
@@ -118,7 +124,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
       workingDays: calendar.workingDays,
       dailyHours: calendar.dailyHours,
       holidays: calendar.holidays,
-      isGlobal: calendar.isGlobal
+      isGlobal: calendar.isGlobal,
     });
     setSelectedCalendar(calendar);
     setIsEditing(true);
@@ -129,11 +135,15 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
   const handleDelete = async (calendar: TaskCalendar) => {
     if (!canEdit || isDemoMode) return;
 
-    if (window.confirm(`Are you sure you want to delete the calendar "${calendar.name}"?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the calendar "${calendar.name}"?`
+      )
+    ) {
       try {
         setSaving(true);
         const success = await taskCalendarService.deleteCalendar(calendar.id);
-        
+
         if (success) {
           await loadCalendars();
           onCalendarChange?.();
@@ -162,11 +172,14 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
         const newCalendar = await taskCalendarService.createCalendar({
           ...formData,
           projectId,
-          createdBy: 'current-user' // This should come from auth context
+          createdBy: 'current-user', // This should come from auth context
         });
         success = !!newCalendar;
       } else if (isEditing && selectedCalendar) {
-        success = await taskCalendarService.updateCalendar(selectedCalendar.id, formData);
+        success = await taskCalendarService.updateCalendar(
+          selectedCalendar.id,
+          formData
+        );
       }
 
       if (success) {
@@ -193,7 +206,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
       workingDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
       dailyHours: { start: '08:00', end: '17:00' },
       holidays: [],
-      isGlobal: false
+      isGlobal: false,
     });
     setError(null);
   };
@@ -208,7 +221,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
         : [...prev.workingDays, day].sort((a, b) => {
             const order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
             return order.indexOf(a) - order.indexOf(b);
-          })
+          }),
     }));
   };
 
@@ -218,7 +231,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
     const today = new Date().toISOString().split('T')[0];
     setFormData(prev => ({
       ...prev,
-      holidays: [...prev.holidays, today]
+      holidays: [...prev.holidays, today],
     }));
   };
 
@@ -227,7 +240,7 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
 
     setFormData(prev => ({
       ...prev,
-      holidays: prev.holidays.filter(h => h !== holiday)
+      holidays: prev.holidays.filter(h => h !== holiday),
     }));
   };
 
@@ -240,54 +253,58 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
   const demoConfig = getDemoModeConfig();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden'>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-3">
-            <CalendarIcon className="w-6 h-6 text-blue-600" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
+          <div className='flex items-center space-x-3'>
+            <CalendarIcon className='w-6 h-6 text-blue-600' />
+            <h2 className='text-xl font-semibold text-gray-900 dark:text-white'>
               Manage Calendars
             </h2>
             {isDemoMode && (
-              <div className="flex items-center space-x-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
-                <ExclamationTriangleIcon className="w-3 h-3" />
+              <div className='flex items-center space-x-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs'>
+                <ExclamationTriangleIcon className='w-3 h-3' />
                 <span>Demo Mode</span>
               </div>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className='text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className='w-6 h-6' />
           </button>
         </div>
 
-        <div className="flex h-[calc(90vh-120px)]">
+        <div className='flex h-[calc(90vh-120px)]'>
           {/* Left Panel - Calendar List */}
-          <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Calendars</h3>
+          <div className='w-1/3 border-r border-gray-200 dark:border-gray-700 p-4 overflow-y-auto'>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
+                Calendars
+              </h3>
               {canEdit && !isDemoMode && (
                 <button
                   onClick={handleCreateNew}
-                  className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  className='flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
                 >
-                  <PlusIcon className="w-4 h-4" />
+                  <PlusIcon className='w-4 h-4' />
                   <span>New</span>
                 </button>
               )}
             </div>
 
             {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Loading...</p>
+              <div className='text-center py-8'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto'></div>
+                <p className='mt-2 text-gray-600 dark:text-gray-400'>
+                  Loading...
+                </p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {calendars.map((calendar) => (
+              <div className='space-y-2'>
+                {calendars.map(calendar => (
                   <div
                     key={calendar.id}
                     className={`p-3 border rounded-lg cursor-pointer transition-colors ${
@@ -297,44 +314,45 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
                     }`}
                     onClick={() => setSelectedCalendar(calendar)}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className='flex items-center justify-between'>
                       <div>
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                        <h4 className='font-medium text-gray-900 dark:text-white'>
                           {calendar.name}
                         </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {calendar.workingDays.join(', ')} • {calendar.dailyHours.start}-{calendar.dailyHours.end}
+                        <p className='text-sm text-gray-500 dark:text-gray-400'>
+                          {calendar.workingDays.join(', ')} •{' '}
+                          {calendar.dailyHours.start}-{calendar.dailyHours.end}
                         </p>
                         {calendar.isGlobal && (
-                          <span className="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                          <span className='inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded'>
                             Global
                           </span>
                         )}
                         {calendar.demo && (
-                          <span className="inline-block mt-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
+                          <span className='inline-block mt-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded'>
                             Demo
                           </span>
                         )}
                       </div>
                       {canEdit && !calendar.demo && (
-                        <div className="flex space-x-1">
+                        <div className='flex space-x-1'>
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleEdit(calendar);
                             }}
-                            className="p-1 text-gray-400 hover:text-blue-600"
+                            className='p-1 text-gray-400 hover:text-blue-600'
                           >
-                            <PencilIcon className="w-4 h-4" />
+                            <PencilIcon className='w-4 h-4' />
                           </button>
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation();
                               handleDelete(calendar);
                             }}
-                            className="p-1 text-gray-400 hover:text-red-600"
+                            className='p-1 text-gray-400 hover:text-red-600'
                           >
-                            <TrashIcon className="w-4 h-4" />
+                            <TrashIcon className='w-4 h-4' />
                           </button>
                         </div>
                       )}
@@ -346,56 +364,61 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
           </div>
 
           {/* Right Panel - Calendar Details/Edit */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className='flex-1 p-4 overflow-y-auto'>
             {isCreating || isEditing ? (
-              <div className="space-y-6">
+              <div className='space-y-6'>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  <h3 className='text-lg font-medium text-gray-900 dark:text-white mb-4'>
                     {isCreating ? 'Create New Calendar' : 'Edit Calendar'}
                   </h3>
-                  
+
                   {error && (
-                    <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+                    <div className='mb-4 p-3 bg-red-100 text-red-700 rounded-lg'>
                       {error}
                     </div>
                   )}
 
                   {/* Calendar Name */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                       Calendar Name
                     </label>
                     <input
-                      type="text"
+                      type='text'
                       value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={e =>
+                        setFormData(prev => ({ ...prev, name: e.target.value }))
+                      }
                       disabled={!canEdit || isDemoMode}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                      placeholder="Enter calendar name"
+                      className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+                      placeholder='Enter calendar name'
                     />
                   </div>
 
                   {/* Working Days */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3'>
                       Working Days
                     </label>
-                    <div className="grid grid-cols-7 gap-2">
-                      {dayOptions.map((day) => {
-                        const isSelected = formData.workingDays.includes(day.value);
+                    <div className='grid grid-cols-7 gap-2'>
+                      {dayOptions.map(day => {
+                        const isSelected = formData.workingDays.includes(
+                          day.value
+                        );
                         return (
                           <button
                             key={day.value}
-                            type="button"
+                            type='button'
                             onClick={() => handleWorkingDayToggle(day.value)}
                             disabled={!canEdit || isDemoMode}
                             className={`
                               p-3 border rounded-lg text-sm font-medium transition-colors
-                              ${isSelected
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                              ${
+                                isSelected
+                                  ? 'bg-blue-600 text-white border-blue-600'
+                                  : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
                               }
-                              ${(!canEdit || isDemoMode) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                              ${!canEdit || isDemoMode ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                             `}
                           >
                             {day.label.slice(0, 3)}
@@ -406,95 +429,114 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
                   </div>
 
                   {/* Daily Hours */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                       Daily Hours
                     </label>
-                    <div className="flex space-x-4">
+                    <div className='flex space-x-4'>
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Start</label>
+                        <label className='block text-xs text-gray-500 dark:text-gray-400 mb-1'>
+                          Start
+                        </label>
                         <input
-                          type="time"
+                          type='time'
                           value={formData.dailyHours.start}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            dailyHours: { ...prev.dailyHours, start: e.target.value }
-                          }))}
+                          onChange={e =>
+                            setFormData(prev => ({
+                              ...prev,
+                              dailyHours: {
+                                ...prev.dailyHours,
+                                start: e.target.value,
+                              },
+                            }))
+                          }
                           disabled={!canEdit || isDemoMode}
-                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">End</label>
+                        <label className='block text-xs text-gray-500 dark:text-gray-400 mb-1'>
+                          End
+                        </label>
                         <input
-                          type="time"
+                          type='time'
                           value={formData.dailyHours.end}
-                          onChange={(e) => setFormData(prev => ({ 
-                            ...prev, 
-                            dailyHours: { ...prev.dailyHours, end: e.target.value }
-                          }))}
+                          onChange={e =>
+                            setFormData(prev => ({
+                              ...prev,
+                              dailyHours: {
+                                ...prev.dailyHours,
+                                end: e.target.value,
+                              },
+                            }))
+                          }
                           disabled={!canEdit || isDemoMode}
-                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Holidays */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className='mb-4'>
+                    <div className='flex items-center justify-between mb-2'>
+                      <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>
                         Holidays ({formData.holidays.length})
                       </label>
                       {canEdit && !isDemoMode && (
                         <button
-                          type="button"
+                          type='button'
                           onClick={handleAddHoliday}
-                          className="text-sm text-blue-600 hover:text-blue-700"
+                          className='text-sm text-blue-600 hover:text-blue-700'
                         >
                           Add Holiday
                         </button>
                       )}
                     </div>
                     {formData.holidays.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {formData.holidays.map((holiday) => (
+                      <div className='grid grid-cols-2 gap-2'>
+                        {formData.holidays.map(holiday => (
                           <div
                             key={holiday}
-                            className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded"
+                            className='flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded'
                           >
-                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                            <span className='text-sm text-gray-700 dark:text-gray-300'>
                               {new Date(holiday).toLocaleDateString()}
                             </span>
                             {canEdit && !isDemoMode && (
                               <button
                                 onClick={() => handleRemoveHoliday(holiday)}
-                                className="text-red-600 hover:text-red-700"
+                                className='text-red-600 hover:text-red-700'
                               >
-                                <XMarkIcon className="w-4 h-4" />
+                                <XMarkIcon className='w-4 h-4' />
                               </button>
                             )}
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                      <p className='text-sm text-gray-500 dark:text-gray-400 italic'>
                         No holidays defined
                       </p>
                     )}
                   </div>
 
                   {/* Global Calendar Toggle */}
-                  <div className="mb-6">
-                    <label className="flex items-center space-x-2">
+                  <div className='mb-6'>
+                    <label className='flex items-center space-x-2'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         checked={formData.isGlobal}
-                        onChange={(e) => setFormData(prev => ({ ...prev, isGlobal: e.target.checked }))}
+                        onChange={e =>
+                          setFormData(prev => ({
+                            ...prev,
+                            isGlobal: e.target.checked,
+                          }))
+                        }
                         disabled={!canEdit || isDemoMode}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                       />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className='text-sm text-gray-700 dark:text-gray-300'>
                         Make this calendar available globally
                       </span>
                     </label>
@@ -502,31 +544,31 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
 
                   {/* Demo Mode Warning */}
                   {isDemoMode && (
-                    <div className="p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm">
-                      <div className="flex items-center space-x-2">
-                        <ExclamationTriangleIcon className="w-4 h-4" />
+                    <div className='p-3 bg-yellow-100 text-yellow-800 rounded-lg text-sm'>
+                      <div className='flex items-center space-x-2'>
+                        <ExclamationTriangleIcon className='w-4 h-4' />
                         <span>{demoConfig.tooltipMessage}</span>
                       </div>
                     </div>
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex space-x-3">
+                  <div className='flex space-x-3'>
                     <button
                       onClick={handleSave}
                       disabled={!canEdit || saving || !formData.name.trim()}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       {saving ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white'></div>
                       ) : (
-                        <CheckIcon className="w-4 h-4" />
+                        <CheckIcon className='w-4 h-4' />
                       )}
                       <span>{saving ? 'Saving...' : 'Save'}</span>
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className='px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700'
                     >
                       Cancel
                     </button>
@@ -534,29 +576,33 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
                 </div>
               </div>
             ) : selectedCalendar ? (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              <div className='space-y-6'>
+                <div className='flex items-center justify-between'>
+                  <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
                     {selectedCalendar.name}
                   </h3>
                   {canEdit && !selectedCalendar.demo && (
                     <button
                       onClick={() => handleEdit(selectedCalendar)}
-                      className="flex items-center space-x-1 px-3 py-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                      className='flex items-center space-x-1 px-3 py-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded'
                     >
-                      <PencilIcon className="w-4 h-4" />
+                      <PencilIcon className='w-4 h-4' />
                       <span>Edit</span>
                     </button>
                   )}
                 </div>
 
                 {/* Calendar Details */}
-                <div className="space-y-4">
+                <div className='space-y-4'>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Working Days</h4>
-                    <div className="grid grid-cols-7 gap-2">
-                      {dayOptions.map((day) => {
-                        const isWorking = selectedCalendar.workingDays.includes(day.value);
+                    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                      Working Days
+                    </h4>
+                    <div className='grid grid-cols-7 gap-2'>
+                      {dayOptions.map(day => {
+                        const isWorking = selectedCalendar.workingDays.includes(
+                          day.value
+                        );
                         return (
                           <div
                             key={day.value}
@@ -574,37 +620,44 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Daily Hours</h4>
-                    <div className="flex items-center space-x-2 text-gray-900 dark:text-white">
-                      <ClockIcon className="w-4 h-4" />
-                      <span>{selectedCalendar.dailyHours.start} - {selectedCalendar.dailyHours.end}</span>
+                    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                      Daily Hours
+                    </h4>
+                    <div className='flex items-center space-x-2 text-gray-900 dark:text-white'>
+                      <ClockIcon className='w-4 h-4' />
+                      <span>
+                        {selectedCalendar.dailyHours.start} -{' '}
+                        {selectedCalendar.dailyHours.end}
+                      </span>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                       Holidays ({selectedCalendar.holidays.length})
                     </h4>
                     {selectedCalendar.holidays.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedCalendar.holidays.map((holiday) => (
+                      <div className='grid grid-cols-2 gap-2'>
+                        {selectedCalendar.holidays.map(holiday => (
                           <div
                             key={holiday}
-                            className="p-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300"
+                            className='p-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300'
                           >
                             {new Date(holiday).toLocaleDateString()}
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 italic">No holidays defined</p>
+                      <p className='text-sm text-gray-500 dark:text-gray-400 italic'>
+                        No holidays defined
+                      </p>
                     )}
                   </div>
 
                   {selectedCalendar.isGlobal && (
-                    <div className="p-3 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg">
-                      <div className="flex items-center space-x-2">
-                        <CheckIcon className="w-4 h-4" />
+                    <div className='p-3 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg'>
+                      <div className='flex items-center space-x-2'>
+                        <CheckIcon className='w-4 h-4' />
                         <span>This calendar is available globally</span>
                       </div>
                     </div>
@@ -612,12 +665,12 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8">
-                <CalendarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              <div className='text-center py-8'>
+                <CalendarIcon className='w-12 h-12 text-gray-400 mx-auto mb-4' />
+                <h3 className='text-lg font-medium text-gray-900 dark:text-white mb-2'>
                   Select a Calendar
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className='text-gray-500 dark:text-gray-400'>
                   Choose a calendar from the list to view its details
                 </p>
               </div>
@@ -629,4 +682,4 @@ const CalendarManagerModal: React.FC<CalendarManagerModalProps> = ({
   );
 };
 
-export default CalendarManagerModal; 
+export default CalendarManagerModal;

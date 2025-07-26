@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   DocumentDuplicateIcon,
   ArrowPathIcon,
   EyeIcon,
   ExclamationTriangleIcon,
-  PlusIcon
+  PlusIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../../hooks/usePermissions';
 import { demoModeService } from '../../../services/demoModeService';
-import { 
-  programmeVersioningService, 
-  ProgrammeVersion 
+import {
+  programmeVersioningService,
+  ProgrammeVersion,
 } from '../../../services/programmeVersioningService';
 import VersionManagerModal from '../VersionManagerModal';
 import VersionCompareModal from '../VersionCompareModal';
 
 interface VersionControlsProps {
-  currentTasks: Array<{ [key: string]: any, id: string; }>;
+  currentTasks: Array<{ [key: string]: any; id: string }>;
   onVersionChange?: (version: ProgrammeVersion | null) => void;
   projectId: string;
 }
@@ -24,7 +24,7 @@ interface VersionControlsProps {
 const VersionControls: React.FC<VersionControlsProps> = ({
   projectId,
   currentTasks,
-  onVersionChange
+  onVersionChange,
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -42,7 +42,7 @@ const VersionControls: React.FC<VersionControlsProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -56,7 +56,8 @@ const VersionControls: React.FC<VersionControlsProps> = ({
   const loadVersions = async () => {
     try {
       setLoading(true);
-      const projectVersions = await programmeVersioningService.getProjectVersions(projectId);
+      const projectVersions =
+        await programmeVersioningService.getProjectVersions(projectId);
       setVersions(projectVersions);
     } catch (error) {
       console.error('Error loading versions:', error);
@@ -102,15 +103,17 @@ const VersionControls: React.FC<VersionControlsProps> = ({
   }
 
   const demoConfig = getDemoModeConfig();
-  const canCreateSnapshot = canCreate && (!isDemoMode || versions.length < demoConfig.maxVersionsPerProject);
+  const canCreateSnapshot =
+    canCreate &&
+    (!isDemoMode || versions.length < demoConfig.maxVersionsPerProject);
 
   return (
     <>
-      <div className="flex flex-col items-center min-w-fit">
-        <h3 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
+      <div className='flex flex-col items-center min-w-fit'>
+        <h3 className='text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide'>
           Versions
         </h3>
-        <div className="flex items-center space-x-1">
+        <div className='flex items-center space-x-1'>
           {/* Save Snapshot Button */}
           <button
             onClick={handleCreateSnapshot}
@@ -122,16 +125,16 @@ const VersionControls: React.FC<VersionControlsProps> = ({
             }`}
             title={
               !canCreateSnapshot
-                ? isDemoMode 
+                ? isDemoMode
                   ? demoConfig.tooltipMessage
                   : 'No permission to create versions'
                 : 'Save current state as snapshot'
             }
           >
             {creatingSnapshot ? (
-              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+              <div className='animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600'></div>
             ) : (
-              <DocumentDuplicateIcon className="w-3 h-3" />
+              <DocumentDuplicateIcon className='w-3 h-3' />
             )}
           </button>
 
@@ -148,11 +151,11 @@ const VersionControls: React.FC<VersionControlsProps> = ({
               !canCompare
                 ? 'No permission to compare versions'
                 : versions.length < 2
-                ? 'Need at least 2 versions to compare'
-                : 'Compare two versions'
+                  ? 'Need at least 2 versions to compare'
+                  : 'Compare two versions'
             }
           >
-            <EyeIcon className="w-3 h-3" />
+            <EyeIcon className='w-3 h-3' />
           </button>
 
           {/* Restore Version Button */}
@@ -168,11 +171,11 @@ const VersionControls: React.FC<VersionControlsProps> = ({
               isDemoMode
                 ? demoConfig.tooltipMessage
                 : !canRestore
-                ? 'No permission to restore versions'
-                : 'Restore from previous version'
+                  ? 'No permission to restore versions'
+                  : 'Restore from previous version'
             }
           >
-            <ArrowPathIcon className="w-3 h-3" />
+            <ArrowPathIcon className='w-3 h-3' />
           </button>
 
           {/* Version Manager Button */}
@@ -184,17 +187,17 @@ const VersionControls: React.FC<VersionControlsProps> = ({
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
             }`}
-            title="Manage versions"
+            title='Manage versions'
           >
-            <PlusIcon className="w-3 h-3" />
+            <PlusIcon className='w-3 h-3' />
           </button>
         </div>
 
         {/* Demo Mode Indicator */}
         {isDemoMode && (
-          <div className="mt-1 flex items-center gap-1">
-            <ExclamationTriangleIcon className="w-2 h-2 text-yellow-500" />
-            <span className="text-xs text-yellow-600 dark:text-yellow-400">
+          <div className='mt-1 flex items-center gap-1'>
+            <ExclamationTriangleIcon className='w-2 h-2 text-yellow-500' />
+            <span className='text-xs text-yellow-600 dark:text-yellow-400'>
               {versions.length}/{demoConfig.maxVersionsPerProject}
             </span>
           </div>
@@ -221,4 +224,4 @@ const VersionControls: React.FC<VersionControlsProps> = ({
   );
 };
 
-export default VersionControls; 
+export default VersionControls;

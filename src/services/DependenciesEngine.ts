@@ -7,7 +7,7 @@ export interface TaskDependency {
   demo?: boolean;
   id: string;
   predecessorId: string;
-  projectId: string; 
+  projectId: string;
   successorId: string;
   type: 'FS' | 'SS' | 'FF' | 'SF';
   // Finish-to-Start, Start-to-Start, Finish-to-Finish, Start-to-Finish
@@ -42,7 +42,11 @@ class DependenciesEngine {
     successorId: string,
     type: 'FS' | 'SS' | 'FF' | 'SF',
     projectId: string
-  ): Promise<{ dependency?: TaskDependency, error?: string; success: boolean; }> {
+  ): Promise<{
+    dependency?: TaskDependency;
+    error?: string;
+    success: boolean;
+  }> {
     try {
       // Validate inputs
       if (predecessorId === successorId) {
@@ -50,27 +54,42 @@ class DependenciesEngine {
       }
 
       // Check demo mode restrictions
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         const dependencyCount = await this.getDependencyCount(projectId);
         if (dependencyCount >= 3) {
-          return { success: false, error: 'Maximum 3 dependencies allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Maximum 3 dependencies allowed in demo mode',
+          };
         }
 
         // Demo mode only allows FS dependencies
         if (type !== 'FS') {
-          return { success: false, error: 'Only Finish-to-Start dependencies allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Only Finish-to-Start dependencies allowed in demo mode',
+          };
         }
       }
 
       // Check for circular dependencies
-      const wouldCreateCycle = await this.wouldCreateCircularDependency(predecessorId, successorId);
+      const wouldCreateCycle = await this.wouldCreateCircularDependency(
+        predecessorId,
+        successorId
+      );
       if (wouldCreateCycle) {
-        return { success: false, error: 'This would create a circular dependency' };
+        return {
+          success: false,
+          error: 'This would create a circular dependency',
+        };
       }
 
       // Check if dependency already exists
-      const existingDependency = await this.getDependency(predecessorId, successorId);
+      const existingDependency = await this.getDependency(
+        predecessorId,
+        successorId
+      );
       if (existingDependency) {
         return { success: false, error: 'Dependency already exists' };
       }
@@ -84,7 +103,7 @@ class DependenciesEngine {
         type,
         userId: 'current-user', // This should come from auth context
         createdAt: new Date(),
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
       // Save to storage
@@ -106,22 +125,31 @@ class DependenciesEngine {
   /**
    * Unlink tasks by dependency ID
    */
-  async unlinkTasks(dependencyId: string): Promise<{ error?: string, success: boolean; }> {
+  async unlinkTasks(
+    dependencyId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const dependencies = await this.getAllDependencies();
-      const dependencyIndex = dependencies.findIndex(d => d.id === dependencyId);
-      
+      const dependencyIndex = dependencies.findIndex(
+        d => d.id === dependencyId
+      );
+
       if (dependencyIndex === -1) {
         return { success: false, error: 'Dependency not found' };
       }
 
       const dependency = dependencies[dependencyIndex];
-      
+
       // Remove the dependency
       dependencies.splice(dependencyIndex, 1);
       await persistentStorage.set(this.dependenciesKey, dependencies);
 
-      console.log('Tasks unlinked:', dependency.predecessorId, '→', dependency.successorId);
+      console.log(
+        'Tasks unlinked:',
+        dependency.predecessorId,
+        '→',
+        dependency.successorId
+      );
       return { success: true };
     } catch (error) {
       console.error('Error unlinking tasks:', error);
@@ -138,8 +166,8 @@ class DependenciesEngine {
   }> {
     try {
       const dependencies = await this.getAllDependencies();
-      const taskDependencies = dependencies.filter(d => 
-        d.predecessorId === taskId || d.successorId === taskId
+      const taskDependencies = dependencies.filter(
+        d => d.predecessorId === taskId || d.successorId === taskId
       );
 
       const predecessors: DependencyLink[] = [];
@@ -156,7 +184,7 @@ class DependenciesEngine {
               successorId: dep.successorId,
               type: dep.type,
               predecessorName: predecessorTask.name,
-              successorName: predecessorTask.name // This will be the current task
+              successorName: predecessorTask.name, // This will be the current task
             });
           }
         } else {
@@ -169,7 +197,7 @@ class DependenciesEngine {
               successorId: dep.successorId,
               type: dep.type,
               predecessorName: predecessorTask?.name || 'Unknown',
-              successorName: successorTask.name
+              successorName: successorTask.name,
             });
           }
         }
@@ -257,7 +285,7 @@ class DependenciesEngine {
       startY,
       endX,
       endY,
-      type
+      type,
     };
   }
 
@@ -266,7 +294,9 @@ class DependenciesEngine {
    */
   async enforceSchedulingLogic(dependency: TaskDependency): Promise<void> {
     try {
-      const predecessorTask = await taskService.getTask(dependency.predecessorId);
+      const predecessorTask = await taskService.getTask(
+        dependency.predecessorId
+      );
       const successorTask = await taskService.getTask(dependency.successorId);
 
       if (!predecessorTask || !successorTask) return;
@@ -278,28 +308,36 @@ class DependenciesEngine {
         case 'FS': // Finish-to-Start
           if (successorTask.startDate < predecessorTask.endDate) {
             newStartDate = new Date(predecessorTask.endDate);
-            const duration = successorTask.endDate.getTime() - successorTask.startDate.getTime();
+            const duration =
+              successorTask.endDate.getTime() -
+              successorTask.startDate.getTime();
             newEndDate = new Date(newStartDate.getTime() + duration);
           }
           break;
         case 'SS': // Start-to-Start
           if (successorTask.startDate < predecessorTask.startDate) {
             newStartDate = new Date(predecessorTask.startDate);
-            const duration = successorTask.endDate.getTime() - successorTask.startDate.getTime();
+            const duration =
+              successorTask.endDate.getTime() -
+              successorTask.startDate.getTime();
             newEndDate = new Date(newStartDate.getTime() + duration);
           }
           break;
         case 'FF': // Finish-to-Finish
           if (successorTask.endDate < predecessorTask.endDate) {
             newEndDate = new Date(predecessorTask.endDate);
-            const duration = successorTask.endDate.getTime() - successorTask.startDate.getTime();
+            const duration =
+              successorTask.endDate.getTime() -
+              successorTask.startDate.getTime();
             newStartDate = new Date(newEndDate.getTime() - duration);
           }
           break;
         case 'SF': // Start-to-Finish
           if (successorTask.endDate < predecessorTask.startDate) {
             newEndDate = new Date(predecessorTask.startDate);
-            const duration = successorTask.endDate.getTime() - successorTask.startDate.getTime();
+            const duration =
+              successorTask.endDate.getTime() -
+              successorTask.startDate.getTime();
             newStartDate = new Date(newEndDate.getTime() - duration);
           }
           break;
@@ -310,9 +348,12 @@ class DependenciesEngine {
         await taskService.updateTask(dependency.successorId, {
           startDate: newStartDate,
           endDate: newEndDate,
-          demo: dependency.demo
+          demo: dependency.demo,
         });
-        console.log('Scheduling logic enforced for task:', dependency.successorId);
+        console.log(
+          'Scheduling logic enforced for task:',
+          dependency.successorId
+        );
       }
     } catch (error) {
       console.error('Error enforcing scheduling logic:', error);
@@ -322,7 +363,10 @@ class DependenciesEngine {
   /**
    * Check if creating a dependency would create a circular dependency
    */
-  async wouldCreateCircularDependency(predecessorId: string, successorId: string): Promise<boolean> {
+  async wouldCreateCircularDependency(
+    predecessorId: string,
+    successorId: string
+  ): Promise<boolean> {
     try {
       const visited = new Set<string>();
       const recursionStack = new Set<string>();
@@ -362,7 +406,7 @@ class DependenciesEngine {
         successorId,
         type: 'FS',
         userId: 'temp',
-        createdAt: new Date()
+        createdAt: new Date(),
       };
       dependencies.push(tempDependency);
 
@@ -379,12 +423,18 @@ class DependenciesEngine {
   /**
    * Get a specific dependency between two tasks
    */
-  async getDependency(predecessorId: string, successorId: string): Promise<TaskDependency | null> {
+  async getDependency(
+    predecessorId: string,
+    successorId: string
+  ): Promise<TaskDependency | null> {
     try {
       const dependencies = await this.getAllDependencies();
-      return dependencies.find(d => 
-        d.predecessorId === predecessorId && d.successorId === successorId
-      ) || null;
+      return (
+        dependencies.find(
+          d =>
+            d.predecessorId === predecessorId && d.successorId === successorId
+        ) || null
+      );
     } catch (error) {
       console.error('Error getting dependency:', error);
       return null;
@@ -422,7 +472,7 @@ class DependenciesEngine {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllDependencyData();
         console.log('Demo dependency data reset');
@@ -445,11 +495,16 @@ class DependenciesEngine {
    */
   getDependencyTypeName(type: 'FS' | 'SS' | 'FF' | 'SF'): string {
     switch (type) {
-      case 'FS': return 'Finish-to-Start';
-      case 'SS': return 'Start-to-Start';
-      case 'FF': return 'Finish-to-Finish';
-      case 'SF': return 'Start-to-Finish';
-      default: return 'Unknown';
+      case 'FS':
+        return 'Finish-to-Start';
+      case 'SS':
+        return 'Start-to-Start';
+      case 'FF':
+        return 'Finish-to-Finish';
+      case 'SF':
+        return 'Start-to-Finish';
+      default:
+        return 'Unknown';
     }
   }
 
@@ -458,13 +513,18 @@ class DependenciesEngine {
    */
   getDependencyTypeDescription(type: 'FS' | 'SS' | 'FF' | 'SF'): string {
     switch (type) {
-      case 'FS': return 'Successor cannot start until predecessor finishes';
-      case 'SS': return 'Successor cannot start until predecessor starts';
-      case 'FF': return 'Successor cannot finish until predecessor finishes';
-      case 'SF': return 'Successor cannot finish until predecessor starts';
-      default: return 'Unknown dependency type';
+      case 'FS':
+        return 'Successor cannot start until predecessor finishes';
+      case 'SS':
+        return 'Successor cannot start until predecessor starts';
+      case 'FF':
+        return 'Successor cannot finish until predecessor finishes';
+      case 'SF':
+        return 'Successor cannot finish until predecessor starts';
+      default:
+        return 'Unknown dependency type';
     }
   }
 }
 
-export const dependenciesEngine = new DependenciesEngine(); 
+export const dependenciesEngine = new DependenciesEngine();

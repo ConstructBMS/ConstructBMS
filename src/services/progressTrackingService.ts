@@ -5,7 +5,7 @@ import { demoModeService } from './demoModeService';
 export interface TaskProgress {
   actualFinishDate: string | null;
   // 0-100
-  actualStartDate: string | null; 
+  actualStartDate: string | null;
   demo: boolean;
   id: string;
   percentComplete: number;
@@ -35,7 +35,7 @@ const DEMO_MODE_CONFIG = {
   autoProgressDisabled: true,
   barColor: 'bg-blue-300', // Light blue for demo mode
   tooltipSuffix: ' (DEMO MODE)',
-  watermarkPattern: 'bg-gradient-to-r from-blue-200 to-blue-300'
+  watermarkPattern: 'bg-gradient-to-r from-blue-200 to-blue-300',
 };
 
 class ProgressTrackingService {
@@ -51,7 +51,7 @@ class ProgressTrackingService {
    */
   private checkDemoMode(): boolean {
     // This should be integrated with your demo mode service
-    return demoModeService.isDemoMode();
+    return demoModeService.getDemoMode();
   }
 
   /**
@@ -75,7 +75,9 @@ class ProgressTrackingService {
     try {
       const { data, error } = await supabase
         .from('asta_tasks')
-        .select('id, percent_complete, actual_start_date, actual_finish_date, progress_updated_by, progress_updated_at, demo')
+        .select(
+          'id, percent_complete, actual_start_date, actual_finish_date, progress_updated_by, progress_updated_at, demo'
+        )
         .eq('id', taskId)
         .single();
 
@@ -89,8 +91,10 @@ class ProgressTrackingService {
         actualStartDate: data.actual_start_date,
         actualFinishDate: data.actual_finish_date,
         progressUpdatedBy: data.progress_updated_by,
-        progressUpdatedAt: data.progress_updated_at ? new Date(data.progress_updated_at) : null,
-        demo: data.demo || false
+        progressUpdatedAt: data.progress_updated_at
+          ? new Date(data.progress_updated_at)
+          : null,
+        demo: data.demo || false,
       };
     } catch (error) {
       console.error('Error fetching task progress:', error);
@@ -133,7 +137,7 @@ class ProgressTrackingService {
           actual_finish_date: finalActualFinishDate,
           progress_updated_by: (await supabase.auth.getUser()).data.user?.id,
           progress_updated_at: new Date().toISOString(),
-          demo: this.isDemoMode
+          demo: this.isDemoMode,
         })
         .eq('id', update.taskId);
 
@@ -151,7 +155,7 @@ class ProgressTrackingService {
    */
   async getDemoTaskCount(): Promise<number> {
     if (!this.isDemoMode) return 0;
-    
+
     try {
       const { count, error } = await supabase
         .from('asta_tasks')
@@ -171,7 +175,7 @@ class ProgressTrackingService {
    */
   async canEditInDemoMode(): Promise<boolean> {
     if (!this.isDemoMode) return true;
-    
+
     const currentCount = await this.getDemoTaskCount();
     return currentCount < DEMO_MODE_CONFIG.maxEditableTasks;
   }
@@ -179,7 +183,9 @@ class ProgressTrackingService {
   /**
    * Calculate aggregated progress for parent tasks
    */
-  async calculateAggregatedProgress(taskId: string): Promise<ProgressAggregation> {
+  async calculateAggregatedProgress(
+    taskId: string
+  ): Promise<ProgressAggregation> {
     try {
       // Get all child tasks
       const { data: children, error } = await supabase
@@ -193,7 +199,11 @@ class ProgressTrackingService {
       let calculatedProgress = 0;
 
       if (childCount > 0) {
-        const totalProgress = children?.reduce((sum, child) => sum + (child.percent_complete || 0), 0) || 0;
+        const totalProgress =
+          children?.reduce(
+            (sum, child) => sum + (child.percent_complete || 0),
+            0
+          ) || 0;
         calculatedProgress = Math.round(totalProgress / childCount);
       }
 
@@ -201,7 +211,7 @@ class ProgressTrackingService {
         taskId,
         calculatedProgress,
         childCount,
-        hasChildren: childCount > 0
+        hasChildren: childCount > 0,
       };
     } catch (error) {
       console.error('Error calculating aggregated progress:', error);
@@ -209,7 +219,7 @@ class ProgressTrackingService {
         taskId,
         calculatedProgress: 0,
         childCount: 0,
-        hasChildren: false
+        hasChildren: false,
       };
     }
   }
@@ -217,7 +227,10 @@ class ProgressTrackingService {
   /**
    * Get progress bar styling based on mode and progress
    */
-  getProgressBarStyle(progress: number, isDemo: boolean = false): {
+  getProgressBarStyle(
+    progress: number,
+    isDemo: boolean = false
+  ): {
     color: string;
     tooltip: string;
     watermarkClass?: string;
@@ -225,7 +238,7 @@ class ProgressTrackingService {
   } {
     const maxProgress = isDemo ? DEMO_MODE_CONFIG.maxProgress : 100;
     const width = `${Math.min(progress, maxProgress)}%`;
-    
+
     let color = 'bg-blue-500';
     let tooltip = `Progress: ${progress}%`;
     let watermarkClass: string | undefined;
@@ -269,7 +282,10 @@ class ProgressTrackingService {
   /**
    * Get actual date marker styling
    */
-  getActualDateMarkerStyle(date: string | null, type: 'start' | 'finish'): {
+  getActualDateMarkerStyle(
+    date: string | null,
+    type: 'start' | 'finish'
+  ): {
     color: string;
     icon: string;
     tooltip: string;
@@ -278,7 +294,7 @@ class ProgressTrackingService {
       return {
         icon: type === 'start' ? '⬅️' : '➡️',
         tooltip: `No actual ${type} date set`,
-        color: 'text-gray-400'
+        color: 'text-gray-400',
       };
     }
 
@@ -286,10 +302,10 @@ class ProgressTrackingService {
     return {
       icon: type === 'start' ? '⬅️' : '➡️',
       tooltip: `Actual ${type}: ${formattedDate}`,
-      color: 'text-blue-600'
+      color: 'text-blue-600',
     };
   }
 }
 
 // Export singleton instance
-export const progressTrackingService = new ProgressTrackingService(); 
+export const progressTrackingService = new ProgressTrackingService();

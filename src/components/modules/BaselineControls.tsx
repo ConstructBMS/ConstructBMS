@@ -17,7 +17,7 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
   showBaseline,
   onShowBaselineChange,
   onBaselineSelect,
-  onOpenBaselineManager
+  onOpenBaselineManager,
 }) => {
   const { canAccess } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -33,7 +33,7 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
   // Check demo mode on mount
   useEffect(() => {
     const checkDemoMode = async () => {
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
     };
     checkDemoMode();
@@ -49,7 +49,7 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
       setLoading(true);
       const [projectBaselines, active] = await Promise.all([
         baselineService.getProjectBaselines(projectId),
-        baselineService.getActiveBaseline(projectId)
+        baselineService.getActiveBaseline(projectId),
       ]);
       setBaselines(projectBaselines);
       setActiveBaseline(active);
@@ -80,7 +80,7 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className='flex items-center space-x-2'>
       {/* Show Baseline Toggle */}
       <button
         onClick={() => onShowBaselineChange(!showBaseline)}
@@ -89,40 +89,44 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
             ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
             : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
         }`}
-        title="Show baseline overlay"
+        title='Show baseline overlay'
       >
-        <ClockIcon className="w-4 h-4" />
-        <span className="text-sm font-medium">Show Baseline</span>
+        <ClockIcon className='w-4 h-4' />
+        <span className='text-sm font-medium'>Show Baseline</span>
       </button>
 
       {/* Baseline Selection Dropdown */}
       {showBaseline && canManage && (
-        <div className="relative">
+        <div className='relative'>
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+            className='flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200'
             disabled={loading}
           >
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className='text-sm text-gray-700 dark:text-gray-300'>
               {activeBaseline ? activeBaseline.name : 'Select Baseline'}
             </span>
-            <ChevronDownIcon className="w-4 h-4 text-gray-500" />
+            <ChevronDownIcon className='w-4 h-4 text-gray-500' />
           </button>
 
           {showDropdown && (
-            <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
-              <div className="p-2">
+            <div className='absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50'>
+              <div className='p-2'>
                 {loading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Loading...</p>
+                  <div className='text-center py-4'>
+                    <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto'></div>
+                    <p className='text-xs text-gray-500 dark:text-gray-400 mt-2'>
+                      Loading...
+                    </p>
                   </div>
                 ) : baselines.length === 0 ? (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">No baselines available</p>
+                  <div className='text-center py-4'>
+                    <p className='text-sm text-gray-500 dark:text-gray-400'>
+                      No baselines available
+                    </p>
                   </div>
                 ) : (
-                  <div className="space-y-1">
+                  <div className='space-y-1'>
                     {baselines.map(baseline => (
                       <button
                         key={baseline.id}
@@ -133,17 +137,17 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="truncate">
+                        <div className='flex items-center justify-between'>
+                          <span className='truncate'>
                             {baseline.name}
                             {isDemoMode && baseline.demo && (
-                              <span className="ml-1 text-xs text-yellow-600 dark:text-yellow-400">
+                              <span className='ml-1 text-xs text-yellow-600 dark:text-yellow-400'>
                                 DEMO
                               </span>
                             )}
                           </span>
                           {activeBaseline?.id === baseline.id && (
-                            <span className="text-xs bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
+                            <span className='text-xs bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded'>
                               Active
                             </span>
                           )}
@@ -155,15 +159,15 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
 
                 {/* Create Baseline Option */}
                 {canCreate && (
-                  <div className="border-t border-gray-200 dark:border-gray-600 mt-2 pt-2">
+                  <div className='border-t border-gray-200 dark:border-gray-600 mt-2 pt-2'>
                     <button
                       onClick={handleCreateBaseline}
                       disabled={isDemoMode && baselines.length >= 1}
-                      className="w-full text-left px-3 py-2 rounded-md text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                      className='w-full text-left px-3 py-2 rounded-md text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200'
                     >
                       + Create New Baseline
                       {isDemoMode && baselines.length >= 1 && (
-                        <span className="ml-1 text-xs text-yellow-600 dark:text-yellow-400">
+                        <span className='ml-1 text-xs text-yellow-600 dark:text-yellow-400'>
                           (DEMO LIMIT)
                         </span>
                       )}
@@ -173,13 +177,13 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
 
                 {/* Manage Baselines Option */}
                 {canManage && (
-                  <div className="border-t border-gray-200 dark:border-gray-600 mt-2 pt-2">
+                  <div className='border-t border-gray-200 dark:border-gray-600 mt-2 pt-2'>
                     <button
                       onClick={() => {
                         setShowDropdown(false);
                         onOpenBaselineManager();
                       }}
-                      className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                      className='w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200'
                     >
                       Manage Baselines...
                     </button>
@@ -196,17 +200,17 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
         <button
           onClick={handleCreateBaseline}
           disabled={isDemoMode && baselines.length >= 1}
-          className="flex items-center space-x-2 px-3 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          title="Create baseline from current state"
+          className='flex items-center space-x-2 px-3 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-md hover:bg-green-200 dark:hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200'
+          title='Create baseline from current state'
         >
-          <ClockIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Create Baseline</span>
+          <ClockIcon className='w-4 h-4' />
+          <span className='text-sm font-medium'>Create Baseline</span>
         </button>
       )}
 
       {/* Demo Mode Indicator */}
       {isDemoMode && showBaseline && (
-        <div className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded font-medium">
+        <div className='px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded font-medium'>
           DEMO
         </div>
       )}
@@ -214,4 +218,4 @@ const BaselineControls: React.FC<BaselineControlsProps> = ({
   );
 };
 
-export default BaselineControls; 
+export default BaselineControls;

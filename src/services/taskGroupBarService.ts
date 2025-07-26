@@ -28,7 +28,7 @@ class TaskGroupBarService {
   }
 
   private async checkDemoMode() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+    this.isDemoMode = await demoModeService.getDemoMode();
   }
 
   /**
@@ -46,7 +46,8 @@ class TaskGroupBarService {
         return null;
       }
 
-      const groupDuration = await taskService.calculateGroupDuration(parentTaskId);
+      const groupDuration =
+        await taskService.calculateGroupDuration(parentTaskId);
       if (!groupDuration.startDate || !groupDuration.endDate) {
         return null;
       }
@@ -63,7 +64,7 @@ class TaskGroupBarService {
         childCount: children.length,
         groupColor,
         isDemo: this.isDemoMode,
-        tooltip
+        tooltip,
       };
     } catch (error) {
       console.error('Error getting group bar info:', error);
@@ -78,16 +79,16 @@ class TaskGroupBarService {
     try {
       const tasks = await taskService.getProjectTasks(projectId);
       const parentTasks = tasks.filter(task => task.type === 'phase');
-      
+
       const groupBars: GroupBarInfo[] = [];
-      
+
       for (const parentTask of parentTasks) {
         const groupBar = await this.getGroupBarInfo(parentTask.id);
         if (groupBar) {
           groupBars.push(groupBar);
         }
       }
-      
+
       return groupBars;
     } catch (error) {
       console.error('Error getting project group bars:', error);
@@ -98,21 +99,35 @@ class TaskGroupBarService {
   /**
    * Generate tooltip text for group bar
    */
-  private generateTooltip(parentTask: Task, children: Task[], groupDuration: { duration: number, endDate: Date | null; startDate: Date | null; }): string {
+  private generateTooltip(
+    parentTask: Task,
+    children: Task[],
+    groupDuration: {
+      duration: number;
+      endDate: Date | null;
+      startDate: Date | null;
+    }
+  ): string {
     const childCount = children.length;
-    const startDate = groupDuration.startDate?.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-    const endDate = groupDuration.endDate?.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-    
+    const startDate = groupDuration.startDate?.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+    });
+    const endDate = groupDuration.endDate?.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+    });
+
     let tooltip = `Group: ${childCount} sub-task${childCount !== 1 ? 's' : ''}`;
-    
+
     if (startDate && endDate) {
       tooltip += `, Span: ${startDate}–${endDate}`;
     }
-    
+
     if (this.isDemoMode) {
       tooltip += ' (Demo mode – Task nesting limited)';
     }
-    
+
     return tooltip;
   }
 
@@ -147,7 +162,7 @@ class TaskGroupBarService {
   getGroupBarStyle(groupBar: GroupBarInfo): GroupBarStyle {
     const baseStyle: GroupBarStyle = {
       backgroundColor: groupBar.groupColor || '#3B82F6',
-      opacity: 0.3
+      opacity: 0.3,
     };
 
     // Demo mode styling
@@ -157,7 +172,7 @@ class TaskGroupBarService {
         backgroundColor: '#6B7280',
         opacity: 0.4,
         borderColor: '#9CA3AF',
-        borderWidth: 1
+        borderWidth: 1,
       };
     }
 
@@ -189,14 +204,14 @@ class TaskGroupBarService {
     try {
       const children = await taskService.getChildTasks(parentId);
       const visibleChildren: Task[] = [];
-      
+
       for (const child of children) {
         const isVisible = await taskService.isTaskVisible(child.id);
         if (isVisible) {
           visibleChildren.push(child);
         }
       }
-      
+
       return visibleChildren;
     } catch (error) {
       console.error('Error getting visible child tasks:', error);
@@ -214,7 +229,10 @@ class TaskGroupBarService {
         return 0;
       }
 
-      const totalProgress = children.reduce((sum, child) => sum + (child.progress || 0), 0);
+      const totalProgress = children.reduce(
+        (sum, child) => sum + (child.progress || 0),
+        0
+      );
       return Math.round(totalProgress / children.length);
     } catch (error) {
       console.error('Error calculating group progress:', error);
@@ -230,14 +248,16 @@ class TaskGroupBarService {
       maxNestingLevel: 1,
       groupBarColor: '#6B7280',
       tooltipSuffix: ' (Demo mode – Task nesting limited)',
-      isActive: this.isDemoMode
+      isActive: this.isDemoMode,
     };
   }
 
   /**
    * Validate group bar creation (demo mode restrictions)
    */
-  async validateGroupBarCreation(parentId: string): Promise<{ reason?: string, valid: boolean; }> {
+  async validateGroupBarCreation(
+    parentId: string
+  ): Promise<{ reason?: string; valid: boolean }> {
     if (!this.isDemoMode) {
       return { valid: true };
     }
@@ -249,16 +269,22 @@ class TaskGroupBarService {
       }
 
       const children = await taskService.getChildTasks(parentId);
-      
+
       // Demo mode: max 3 tasks per phase
       if (children.length >= 3) {
-        return { valid: false, reason: 'Demo mode - Maximum 3 tasks per phase allowed' };
+        return {
+          valid: false,
+          reason: 'Demo mode - Maximum 3 tasks per phase allowed',
+        };
       }
 
       // Demo mode: max 1 level of nesting
       const parentLevel = await taskService.getTaskLevel(parentId);
       if (parentLevel >= 1) {
-        return { valid: false, reason: 'Demo mode - Maximum 1 level of nesting allowed' };
+        return {
+          valid: false,
+          reason: 'Demo mode - Maximum 1 level of nesting allowed',
+        };
       }
 
       return { valid: true };
@@ -270,4 +296,4 @@ class TaskGroupBarService {
 }
 
 // Export singleton instance
-export const taskGroupBarService = new TaskGroupBarService(); 
+export const taskGroupBarService = new TaskGroupBarService();

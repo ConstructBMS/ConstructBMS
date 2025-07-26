@@ -50,10 +50,13 @@ class TaskCommentsService {
     parentCommentId?: string
   ): Promise<CommentResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Get current user
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
         return { success: false, error: 'User not authenticated' };
       }
@@ -61,10 +64,15 @@ class TaskCommentsService {
       // Check demo mode restrictions
       if (isDemoMode) {
         const existingComments = await this.getTaskComments(taskId);
-        if (existingComments.success && existingComments.comments && existingComments.comments.length >= this.maxDemoComments) {
-          return { 
-            success: false, 
-            error: 'DEMO LIMIT - Maximum 5 comments per task allowed in demo mode' 
+        if (
+          existingComments.success &&
+          existingComments.comments &&
+          existingComments.comments.length >= this.maxDemoComments
+        ) {
+          return {
+            success: false,
+            error:
+              'DEMO LIMIT - Maximum 5 comments per task allowed in demo mode',
           };
         }
       }
@@ -75,13 +83,14 @@ class TaskCommentsService {
       const commentData = {
         task_id: taskId,
         author_id: user.id,
-        author_name: user.user_metadata?.full_name || user.email || 'Unknown User',
+        author_name:
+          user.user_metadata?.full_name || user.email || 'Unknown User',
         author_role: userRole,
         content: content.trim(),
         parent_comment_id: parentCommentId || null,
         demo: isDemoMode,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       const { data, error } = await supabase
@@ -102,7 +111,7 @@ class TaskCommentsService {
         parentCommentId: data.parent_comment_id,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
-        demo: data.demo
+        demo: data.demo,
       };
 
       console.log('Comment added:', comment.id, taskId);
@@ -116,10 +125,12 @@ class TaskCommentsService {
   /**
    * Get comments for a task
    */
-  async getTaskComments(taskId: string): Promise<{ comments?: TaskComment[]; error?: string, success: boolean; }> {
+  async getTaskComments(
+    taskId: string
+  ): Promise<{ comments?: TaskComment[]; error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let query = supabase
         .from('programme_task_comments')
         .select('*')
@@ -145,7 +156,7 @@ class TaskCommentsService {
         parentCommentId: row.parent_comment_id,
         createdAt: new Date(row.created_at),
         updatedAt: new Date(row.updated_at),
-        demo: row.demo
+        demo: row.demo,
       }));
 
       return { success: true, comments };
@@ -158,9 +169,15 @@ class TaskCommentsService {
   /**
    * Update a comment
    */
-  async updateComment(commentId: string, content: string): Promise<CommentResult> {
+  async updateComment(
+    commentId: string,
+    content: string
+  ): Promise<CommentResult> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
         return { success: false, error: 'User not authenticated' };
       }
@@ -169,7 +186,7 @@ class TaskCommentsService {
         .from('programme_task_comments')
         .update({
           content: content.trim(),
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', commentId)
         .eq('author_id', user.id) // Only allow updating own comments
@@ -188,7 +205,7 @@ class TaskCommentsService {
         parentCommentId: data.parent_comment_id,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
-        demo: data.demo
+        demo: data.demo,
       };
 
       return { success: true, comment };
@@ -201,9 +218,14 @@ class TaskCommentsService {
   /**
    * Delete a comment
    */
-  async deleteComment(commentId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteComment(
+    commentId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
         return { success: false, error: 'User not authenticated' };
       }
@@ -231,12 +253,15 @@ class TaskCommentsService {
     fieldChanged: string,
     previousValue?: string,
     newValue?: string
-  ): Promise<{ error?: string, success: boolean; }> {
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Get current user
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
         return { success: false, error: 'User not authenticated' };
       }
@@ -244,9 +269,14 @@ class TaskCommentsService {
       // Check demo mode restrictions
       if (isDemoMode) {
         const existingHistory = await this.getTaskHistory(taskId);
-        if (existingHistory.success && existingHistory.entries && existingHistory.entries.length >= this.maxDemoHistoryEntries) {
+        if (
+          existingHistory.success &&
+          existingHistory.entries &&
+          existingHistory.entries.length >= this.maxDemoHistoryEntries
+        ) {
           // Remove oldest entry to make room for new one
-          const oldestEntry = existingHistory.entries[existingHistory.entries.length - 1];
+          const oldestEntry =
+            existingHistory.entries[existingHistory.entries.length - 1];
           if (oldestEntry) {
             await this.deleteHistoryEntry(oldestEntry.id);
           }
@@ -260,7 +290,7 @@ class TaskCommentsService {
         previous_value: previousValue || null,
         new_value: newValue || null,
         demo: isDemoMode,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
@@ -282,8 +312,8 @@ class TaskCommentsService {
    */
   async getTaskHistory(taskId: string): Promise<HistoryResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let query = supabase
         .from('programme_task_history')
         .select('*')
@@ -307,7 +337,7 @@ class TaskCommentsService {
         previousValue: row.previous_value,
         newValue: row.new_value,
         createdAt: new Date(row.created_at),
-        demo: row.demo
+        demo: row.demo,
       }));
 
       return { success: true, entries };
@@ -322,10 +352,7 @@ class TaskCommentsService {
    */
   private async deleteHistoryEntry(entryId: string): Promise<void> {
     try {
-      await supabase
-        .from('programme_task_history')
-        .delete()
-        .eq('id', entryId);
+      await supabase.from('programme_task_history').delete().eq('id', entryId);
     } catch (error) {
       console.error('Error deleting history entry:', error);
     }
@@ -348,13 +375,13 @@ class TaskCommentsService {
 
       // Map role to display name
       const roleMap: Record<string, string> = {
-        'admin': 'Administrator',
-        'project_manager': 'Project Manager',
-        'team_lead': 'Team Lead',
-        'developer': 'Developer',
-        'designer': 'Designer',
-        'tester': 'Tester',
-        'user': 'User'
+        admin: 'Administrator',
+        project_manager: 'Project Manager',
+        team_lead: 'Team Lead',
+        developer: 'Developer',
+        designer: 'Designer',
+        tester: 'Tester',
+        user: 'User',
       };
 
       return roleMap[data.role] || 'User';
@@ -400,4 +427,4 @@ class TaskCommentsService {
 }
 
 // Export singleton instance
-export const taskCommentsService = new TaskCommentsService(); 
+export const taskCommentsService = new TaskCommentsService();

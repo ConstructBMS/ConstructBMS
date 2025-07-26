@@ -35,10 +35,12 @@ class ProgrammeCustomFieldsService {
   /**
    * Get all custom fields for a project
    */
-  async getProjectCustomFields(projectId: string): Promise<ProgrammeCustomField[]> {
+  async getProjectCustomFields(
+    projectId: string
+  ): Promise<ProgrammeCustomField[]> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       const { data, error } = await supabase
         .from('programme_custom_fields')
         .select('*')
@@ -51,7 +53,7 @@ class ProgrammeCustomFieldsService {
       }
 
       const fields = data.map(this.mapDatabaseToCustomField);
-      
+
       // Demo mode restrictions
       if (isDemoMode) {
         return fields
@@ -70,7 +72,9 @@ class ProgrammeCustomFieldsService {
   /**
    * Get visible custom fields for a project
    */
-  async getVisibleProjectCustomFields(projectId: string): Promise<ProgrammeCustomField[]> {
+  async getVisibleProjectCustomFields(
+    projectId: string
+  ): Promise<ProgrammeCustomField[]> {
     try {
       const fields = await this.getProjectCustomFields(projectId);
       return fields.filter(field => field.isVisibleInModal);
@@ -83,7 +87,9 @@ class ProgrammeCustomFieldsService {
   /**
    * Get custom fields visible in grid for a project
    */
-  async getGridVisibleCustomFields(projectId: string): Promise<ProgrammeCustomField[]> {
+  async getGridVisibleCustomFields(
+    projectId: string
+  ): Promise<ProgrammeCustomField[]> {
     try {
       const fields = await this.getProjectCustomFields(projectId);
       return fields.filter(field => field.isVisibleInGrid);
@@ -96,19 +102,33 @@ class ProgrammeCustomFieldsService {
   /**
    * Create a new custom field
    */
-  async createCustomField(field: Omit<ProgrammeCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ error?: string; field?: ProgrammeCustomField, success: boolean; }> {
+  async createCustomField(
+    field: Omit<ProgrammeCustomField, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<{
+    error?: string;
+    field?: ProgrammeCustomField;
+    success: boolean;
+  }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
       if (isDemoMode) {
-        const existingFields = await this.getProjectCustomFields(field.projectId);
+        const existingFields = await this.getProjectCustomFields(
+          field.projectId
+        );
         if (existingFields.length >= this.maxDemoFields) {
-          return { success: false, error: 'Maximum 2 custom fields allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Maximum 2 custom fields allowed in demo mode',
+          };
         }
-        
+
         if (field.type !== 'text' && field.type !== 'dropdown') {
-          return { success: false, error: 'Only text and dropdown types allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Only text and dropdown types allowed in demo mode',
+          };
         }
       }
 
@@ -135,13 +155,28 @@ class ProgrammeCustomFieldsService {
   /**
    * Update a custom field
    */
-  async updateCustomField(fieldId: string, updates: Partial<ProgrammeCustomField>): Promise<{ error?: string; field?: ProgrammeCustomField, success: boolean; }> {
+  async updateCustomField(
+    fieldId: string,
+    updates: Partial<ProgrammeCustomField>
+  ): Promise<{
+    error?: string;
+    field?: ProgrammeCustomField;
+    success: boolean;
+  }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
-      if (isDemoMode && updates.type && updates.type !== 'text' && updates.type !== 'dropdown') {
-        return { success: false, error: 'Only text and dropdown types allowed in demo mode' };
+      if (
+        isDemoMode &&
+        updates.type &&
+        updates.type !== 'text' &&
+        updates.type !== 'dropdown'
+      ) {
+        return {
+          success: false,
+          error: 'Only text and dropdown types allowed in demo mode',
+        };
       }
 
       const { data, error } = await supabase
@@ -168,7 +203,9 @@ class ProgrammeCustomFieldsService {
   /**
    * Delete a custom field
    */
-  async deleteCustomField(fieldId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteCustomField(
+    fieldId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_custom_fields')
@@ -191,14 +228,18 @@ class ProgrammeCustomFieldsService {
   /**
    * Get custom field values for a task
    */
-  async getTaskCustomFieldValues(taskId: string): Promise<CustomFieldWithValue[]> {
+  async getTaskCustomFieldValues(
+    taskId: string
+  ): Promise<CustomFieldWithValue[]> {
     try {
       const { data, error } = await supabase
         .from('programme_task_custom_values')
-        .select(`
+        .select(
+          `
           *,
           programme_custom_fields (*)
-        `)
+        `
+        )
         .eq('task_id', taskId);
 
       if (error) {
@@ -208,7 +249,7 @@ class ProgrammeCustomFieldsService {
 
       return data.map(item => ({
         ...this.mapDatabaseToCustomField(item.programme_custom_fields),
-        value: item.value
+        value: item.value,
       }));
     } catch (error) {
       console.error('Error getting task custom field values:', error);
@@ -219,14 +260,18 @@ class ProgrammeCustomFieldsService {
   /**
    * Save a custom field value for a task
    */
-  async saveTaskCustomFieldValue(taskId: string, customFieldId: string, value: string): Promise<{ error?: string, success: boolean; }> {
+  async saveTaskCustomFieldValue(
+    taskId: string,
+    customFieldId: string,
+    value: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_task_custom_values')
         .upsert({
           task_id: taskId,
           custom_field_id: customFieldId,
-          value: value
+          value: value,
         });
 
       if (error) {
@@ -244,7 +289,10 @@ class ProgrammeCustomFieldsService {
   /**
    * Delete a custom field value for a task
    */
-  async deleteTaskCustomFieldValue(taskId: string, customFieldId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteTaskCustomFieldValue(
+    taskId: string,
+    customFieldId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_task_custom_values')
@@ -272,7 +320,7 @@ class ProgrammeCustomFieldsService {
       text: 'Text',
       number: 'Number',
       date: 'Date',
-      dropdown: 'Dropdown'
+      dropdown: 'Dropdown',
     };
     return labels[type as keyof typeof labels] || type;
   }
@@ -280,24 +328,33 @@ class ProgrammeCustomFieldsService {
   /**
    * Validate custom field
    */
-  validateCustomField(field: Partial<ProgrammeCustomField>): { errors: string[], isValid: boolean; } {
+  validateCustomField(field: Partial<ProgrammeCustomField>): {
+    errors: string[];
+    isValid: boolean;
+  } {
     const errors: string[] = [];
 
     if (!field.label || field.label.trim().length === 0) {
       errors.push('Field label is required');
     }
 
-    if (!field.type || !['text', 'number', 'date', 'dropdown'].includes(field.type)) {
+    if (
+      !field.type ||
+      !['text', 'number', 'date', 'dropdown'].includes(field.type)
+    ) {
       errors.push('Valid field type is required');
     }
 
-    if (field.type === 'dropdown' && (!field.options || field.options.length === 0)) {
+    if (
+      field.type === 'dropdown' &&
+      (!field.options || field.options.length === 0)
+    ) {
       errors.push('Dropdown fields must have at least one option');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -317,7 +374,7 @@ class ProgrammeCustomFieldsService {
       isVisibleInModal: data.is_visible_in_modal,
       demo: data.demo,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     };
   }
 
@@ -326,19 +383,21 @@ class ProgrammeCustomFieldsService {
    */
   private mapCustomFieldToDatabase(field: Partial<ProgrammeCustomField>): any {
     const record: any = {};
-    
+
     if (field.projectId !== undefined) record.project_id = field.projectId;
     if (field.label !== undefined) record.label = field.label;
     if (field.type !== undefined) record.type = field.type;
     if (field.options !== undefined) record.options = field.options;
     if (field.createdBy !== undefined) record.created_by = field.createdBy;
     if (field.isRequired !== undefined) record.is_required = field.isRequired;
-    if (field.isVisibleInGrid !== undefined) record.is_visible_in_grid = field.isVisibleInGrid;
-    if (field.isVisibleInModal !== undefined) record.is_visible_in_modal = field.isVisibleInModal;
+    if (field.isVisibleInGrid !== undefined)
+      record.is_visible_in_grid = field.isVisibleInGrid;
+    if (field.isVisibleInModal !== undefined)
+      record.is_visible_in_modal = field.isVisibleInModal;
     if (field.demo !== undefined) record.demo = field.demo;
-    
+
     return record;
   }
 }
 
-export const programmeCustomFieldsService = new ProgrammeCustomFieldsService(); 
+export const programmeCustomFieldsService = new ProgrammeCustomFieldsService();

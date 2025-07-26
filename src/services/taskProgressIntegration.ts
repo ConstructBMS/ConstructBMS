@@ -28,7 +28,8 @@ class TaskProgressIntegrationService {
     try {
       const { data, error } = await supabase
         .from('asta_tasks')
-        .select(`
+        .select(
+          `
           id,
           name,
           start_date,
@@ -44,7 +45,8 @@ class TaskProgressIntegrationService {
           assigned_to,
           level,
           parent_task_id
-        `)
+        `
+        )
         .eq('project_id', projectId)
         .order('level, start_date');
 
@@ -64,7 +66,8 @@ class TaskProgressIntegrationService {
     try {
       const { data, error } = await supabase
         .from('asta_tasks')
-        .select(`
+        .select(
+          `
           id,
           name,
           start_date,
@@ -80,7 +83,8 @@ class TaskProgressIntegrationService {
           assigned_to,
           level,
           parent_task_id
-        `)
+        `
+        )
         .eq('id', taskId)
         .single();
 
@@ -103,15 +107,15 @@ class TaskProgressIntegrationService {
     taskId: string;
   }): Promise<boolean> {
     try {
-      const isDemo = await demoModeService.isDemoMode();
-      
+      const isDemo = await demoModeService.getDemoMode();
+
       // Update progress tracking fields
       const progressSuccess = await progressTrackingService.updateTaskProgress({
         taskId: update.taskId,
         percentComplete: update.percentComplete,
         actualStartDate: update.actualStartDate,
         actualFinishDate: update.actualFinishDate,
-        demoMode: isDemo
+        demoMode: isDemo,
       });
 
       if (!progressSuccess) return false;
@@ -120,7 +124,7 @@ class TaskProgressIntegrationService {
       const { error } = await supabase
         .from('asta_tasks')
         .update({
-          progress: update.percentComplete
+          progress: update.percentComplete,
         })
         .eq('id', update.taskId);
 
@@ -146,15 +150,23 @@ class TaskProgressIntegrationService {
   }> {
     try {
       const tasks = await this.getTasksWithProgress(projectId);
-      
+
       const totalTasks = tasks.length;
-      const completedTasks = tasks.filter(t => t.percentComplete === 100).length;
-      const inProgressTasks = tasks.filter(t => t.percentComplete > 0 && t.percentComplete < 100).length;
+      const completedTasks = tasks.filter(
+        t => t.percentComplete === 100
+      ).length;
+      const inProgressTasks = tasks.filter(
+        t => t.percentComplete > 0 && t.percentComplete < 100
+      ).length;
       const notStartedTasks = tasks.filter(t => t.percentComplete === 0).length;
       const demoTasks = tasks.filter(t => t.demo).length;
-      
-      const totalProgress = tasks.reduce((sum, task) => sum + task.percentComplete, 0);
-      const averageProgress = totalTasks > 0 ? Math.round(totalProgress / totalTasks) : 0;
+
+      const totalProgress = tasks.reduce(
+        (sum, task) => sum + task.percentComplete,
+        0
+      );
+      const averageProgress =
+        totalTasks > 0 ? Math.round(totalProgress / totalTasks) : 0;
 
       return {
         totalTasks,
@@ -162,7 +174,7 @@ class TaskProgressIntegrationService {
         inProgressTasks,
         notStartedTasks,
         averageProgress,
-        demoTasks
+        demoTasks,
       };
     } catch (error) {
       console.error('Error getting project progress stats:', error);
@@ -172,7 +184,7 @@ class TaskProgressIntegrationService {
         inProgressTasks: 0,
         notStartedTasks: 0,
         averageProgress: 0,
-        demoTasks: 0
+        demoTasks: 0,
       };
     }
   }
@@ -180,26 +192,31 @@ class TaskProgressIntegrationService {
   /**
    * Get tasks that need attention (overdue, behind schedule, etc.)
    */
-  async getTasksNeedingAttention(projectId: string): Promise<TaskWithProgress[]> {
+  async getTasksNeedingAttention(
+    projectId: string
+  ): Promise<TaskWithProgress[]> {
     try {
       const tasks = await this.getTasksWithProgress(projectId);
       const today = new Date();
-      
+
       return tasks.filter(task => {
         // Tasks that are overdue
         if (task.endDate < today && task.percentComplete < 100) {
           return true;
         }
-        
+
         // Tasks that are behind schedule (less than 50% complete and past halfway point)
         const taskDuration = task.endDate.getTime() - task.startDate.getTime();
         const elapsed = today.getTime() - task.startDate.getTime();
-        const expectedProgress = Math.min(100, Math.round((elapsed / taskDuration) * 100));
-        
+        const expectedProgress = Math.min(
+          100,
+          Math.round((elapsed / taskDuration) * 100)
+        );
+
         if (task.percentComplete < expectedProgress - 20) {
           return true;
         }
-        
+
         return false;
       });
     } catch (error) {
@@ -222,12 +239,14 @@ class TaskProgressIntegrationService {
       actualStartDate: dbTask.actual_start_date,
       actualFinishDate: dbTask.actual_finish_date,
       progressUpdatedBy: dbTask.progress_updated_by,
-      progressUpdatedAt: dbTask.progress_updated_at ? new Date(dbTask.progress_updated_at) : null,
+      progressUpdatedAt: dbTask.progress_updated_at
+        ? new Date(dbTask.progress_updated_at)
+        : null,
       demo: dbTask.demo || false,
       status: dbTask.status || 'not-started',
       assignedTo: dbTask.assigned_to,
       level: dbTask.level || 0,
-      parentId: dbTask.parent_task_id
+      parentId: dbTask.parent_task_id,
     };
   }
 
@@ -249,7 +268,7 @@ class TaskProgressIntegrationService {
         await supabase
           .from('asta_tasks')
           .update({
-            percent_complete: task.progress || 0
+            percent_complete: task.progress || 0,
           })
           .eq('id', task.id);
       }
@@ -263,4 +282,4 @@ class TaskProgressIntegrationService {
 }
 
 // Export singleton instance
-export const taskProgressIntegration = new TaskProgressIntegrationService(); 
+export const taskProgressIntegration = new TaskProgressIntegrationService();

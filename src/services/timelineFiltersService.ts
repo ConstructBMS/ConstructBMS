@@ -35,11 +35,13 @@ class TimelineFiltersService {
    */
   async getFilterPreferences(projectId: string): Promise<TimelineFilters> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allPreferences = await this.getAllFilterPreferences();
-      
-      let projectPreferences = allPreferences.find(p => p.projectId === projectId && p.type === 'timeline');
-      
+
+      let projectPreferences = allPreferences.find(
+        p => p.projectId === projectId && p.type === 'timeline'
+      );
+
       if (!projectPreferences) {
         projectPreferences = {
           id: `filter_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -50,15 +52,15 @@ class TimelineFiltersService {
             status: [],
             type: [],
             tags: [],
-            assignees: []
+            assignees: [],
           },
           updatedAt: new Date(),
-          demo: isDemoMode
+          demo: isDemoMode,
         };
         allPreferences.push(projectPreferences);
         await persistentStorage.set(this.filterPreferencesKey, allPreferences);
       }
-      
+
       return projectPreferences.filters;
     } catch (error) {
       console.error('Error getting filter preferences:', error);
@@ -66,7 +68,7 @@ class TimelineFiltersService {
         status: [],
         type: [],
         tags: [],
-        assignees: []
+        assignees: [],
       };
     }
   }
@@ -74,13 +76,18 @@ class TimelineFiltersService {
   /**
    * Update filter preferences
    */
-  async updateFilterPreferences(projectId: string, filters: Partial<TimelineFilters>): Promise<{ error?: string, success: boolean; }> {
+  async updateFilterPreferences(
+    projectId: string,
+    filters: Partial<TimelineFilters>
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allPreferences = await this.getAllFilterPreferences();
-      
-      let projectPreferences = allPreferences.find(p => p.projectId === projectId && p.type === 'timeline');
-      
+
+      let projectPreferences = allPreferences.find(
+        p => p.projectId === projectId && p.type === 'timeline'
+      );
+
       if (!projectPreferences) {
         projectPreferences = {
           id: `filter_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -91,36 +98,42 @@ class TimelineFiltersService {
             status: [],
             type: [],
             tags: [],
-            assignees: []
+            assignees: [],
           },
           updatedAt: new Date(),
-          demo: isDemoMode
+          demo: isDemoMode,
         };
         allPreferences.push(projectPreferences);
       }
-      
+
       // Apply updates
       projectPreferences.filters = {
         ...projectPreferences.filters,
-        ...filters
+        ...filters,
       };
       projectPreferences.updatedAt = new Date();
       projectPreferences.demo = isDemoMode;
-      
+
       // Demo mode restrictions
       if (isDemoMode) {
         // Limit to max 2 filters
-        const totalFilters = Object.values(projectPreferences.filters).reduce((sum, arr) => sum + arr.length, 0);
+        const totalFilters = Object.values(projectPreferences.filters).reduce(
+          (sum, arr) => sum + arr.length,
+          0
+        );
         if (totalFilters > this.maxDemoFilters) {
-          return { success: false, error: `Maximum ${this.maxDemoFilters} filters allowed in demo mode` };
+          return {
+            success: false,
+            error: `Maximum ${this.maxDemoFilters} filters allowed in demo mode`,
+          };
         }
-        
+
         // Disable assignee filters in demo mode
         projectPreferences.filters.assignees = [];
       }
-      
+
       await persistentStorage.set(this.filterPreferencesKey, allPreferences);
-      
+
       console.log('Filter preferences updated:', filters);
       return { success: true };
     } catch (error) {
@@ -132,12 +145,15 @@ class TimelineFiltersService {
   /**
    * Save filter preferences with debouncing
    */
-  async saveFilterPreferencesDebounced(projectId: string, filters: Partial<TimelineFilters>): Promise<void> {
+  async saveFilterPreferencesDebounced(
+    projectId: string,
+    filters: Partial<TimelineFilters>
+  ): Promise<void> {
     // Clear existing timeout
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
-    
+
     // Set new timeout for debounced save
     this.saveTimeout = setTimeout(async () => {
       await this.updateFilterPreferences(projectId, filters);
@@ -147,15 +163,17 @@ class TimelineFiltersService {
   /**
    * Clear all filters for a project
    */
-  async clearFilters(projectId: string): Promise<{ error?: string, success: boolean; }> {
+  async clearFilters(
+    projectId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const emptyFilters: TimelineFilters = {
         status: [],
         type: [],
         tags: [],
-        assignees: []
+        assignees: [],
       };
-      
+
       return await this.updateFilterPreferences(projectId, emptyFilters);
     } catch (error) {
       console.error('Error clearing filters:', error);
@@ -172,26 +190,35 @@ class TimelineFiltersService {
     tags: FilterOption[];
     type: FilterOption[];
   } {
-    const statusMap = new Map<string, { color?: string, count: number; label: string; }>();
-    const typeMap = new Map<string, { count: number, label: string; }>();
-    const tagMap = new Map<string, { color?: string, count: number; label: string; }>();
-    const assigneeMap = new Map<string, { count: number, label: string; }>();
-    
+    const statusMap = new Map<
+      string,
+      { color?: string; count: number; label: string }
+    >();
+    const typeMap = new Map<string, { count: number; label: string }>();
+    const tagMap = new Map<
+      string,
+      { color?: string; count: number; label: string }
+    >();
+    const assigneeMap = new Map<string, { count: number; label: string }>();
+
     tasks.forEach(task => {
       // Status options
       if (task.statusId) {
-        const status = statusMap.get(task.statusId) || { label: task.statusId, count: 0 };
+        const status = statusMap.get(task.statusId) || {
+          label: task.statusId,
+          count: 0,
+        };
         status.count++;
         statusMap.set(task.statusId, status);
       }
-      
+
       // Type options
       if (task.type) {
         const type = typeMap.get(task.type) || { label: task.type, count: 0 };
         type.count++;
         typeMap.set(task.type, type);
       }
-      
+
       // Tag options
       if (task.tags && Array.isArray(task.tags)) {
         task.tags.forEach((tagId: string) => {
@@ -200,38 +227,41 @@ class TimelineFiltersService {
           tagMap.set(tagId, tag);
         });
       }
-      
+
       // Assignee options
       if (task.assigneeId) {
-        const assignee = assigneeMap.get(task.assigneeId) || { label: task.assigneeId, count: 0 };
+        const assignee = assigneeMap.get(task.assigneeId) || {
+          label: task.assigneeId,
+          count: 0,
+        };
         assignee.count++;
         assigneeMap.set(task.assigneeId, assignee);
       }
     });
-    
+
     return {
       status: Array.from(statusMap.entries()).map(([id, data]) => ({
         id,
         label: data.label,
         count: data.count,
-        color: data.color
+        color: data.color,
       })),
       type: Array.from(typeMap.entries()).map(([id, data]) => ({
         id,
         label: data.label,
-        count: data.count
+        count: data.count,
       })),
       tags: Array.from(tagMap.entries()).map(([id, data]) => ({
         id,
         label: data.label,
         count: data.count,
-        color: data.color
+        color: data.color,
       })),
       assignees: Array.from(assigneeMap.entries()).map(([id, data]) => ({
         id,
         label: data.label,
-        count: data.count
-      }))
+        count: data.count,
+      })),
     };
   }
 
@@ -241,29 +271,37 @@ class TimelineFiltersService {
   applyFilters(tasks: any[], filters: TimelineFilters): any[] {
     return tasks.filter(task => {
       // Status filter
-      if (filters.status.length > 0 && !filters.status.includes(task.statusId)) {
+      if (
+        filters.status.length > 0 &&
+        !filters.status.includes(task.statusId)
+      ) {
         return false;
       }
-      
+
       // Type filter
       if (filters.type.length > 0 && !filters.type.includes(task.type)) {
         return false;
       }
-      
+
       // Tags filter (task must have ALL selected tags)
       if (filters.tags.length > 0) {
         const taskTags = task.tags || [];
-        const hasAllTags = filters.tags.every(tagId => taskTags.includes(tagId));
+        const hasAllTags = filters.tags.every(tagId =>
+          taskTags.includes(tagId)
+        );
         if (!hasAllTags) {
           return false;
         }
       }
-      
+
       // Assignee filter
-      if (filters.assignees.length > 0 && !filters.assignees.includes(task.assigneeId)) {
+      if (
+        filters.assignees.length > 0 &&
+        !filters.assignees.includes(task.assigneeId)
+      ) {
         return false;
       }
-      
+
       return true;
     });
   }
@@ -297,11 +335,16 @@ class TimelineFiltersService {
    */
   getFilterDisplayName(filterType: string): string {
     switch (filterType) {
-      case 'status': return 'Status';
-      case 'type': return 'Type';
-      case 'tags': return 'Tags';
-      case 'assignees': return 'Assignee';
-      default: return filterType;
+      case 'status':
+        return 'Status';
+      case 'type':
+        return 'Type';
+      case 'tags':
+        return 'Tags';
+      case 'assignees':
+        return 'Assignee';
+      default:
+        return filterType;
     }
   }
 
@@ -310,11 +353,16 @@ class TimelineFiltersService {
    */
   getFilterDescription(filterType: string): string {
     switch (filterType) {
-      case 'status': return 'Filter by task status';
-      case 'type': return 'Filter by task type';
-      case 'tags': return 'Filter by task tags';
-      case 'assignees': return 'Filter by assigned user';
-      default: return `Filter by ${filterType}`;
+      case 'status':
+        return 'Filter by task status';
+      case 'type':
+        return 'Filter by task type';
+      case 'tags':
+        return 'Filter by task tags';
+      case 'assignees':
+        return 'Filter by assigned user';
+      default:
+        return `Filter by ${filterType}`;
     }
   }
 
@@ -323,7 +371,9 @@ class TimelineFiltersService {
    */
   private async getAllFilterPreferences(): Promise<FilterPreferences[]> {
     try {
-      const preferences = await persistentStorage.get(this.filterPreferencesKey);
+      const preferences = await persistentStorage.get(
+        this.filterPreferencesKey
+      );
       return preferences || [];
     } catch (error) {
       console.error('Error getting all filter preferences:', error);
@@ -349,7 +399,7 @@ class TimelineFiltersService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllFilterData();
         console.log('Demo filter data reset');
@@ -361,4 +411,4 @@ class TimelineFiltersService {
   }
 }
 
-export const timelineFiltersService = new TimelineFiltersService(); 
+export const timelineFiltersService = new TimelineFiltersService();

@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  XMarkIcon, 
-  CalendarIcon, 
+import {
+  XMarkIcon,
+  CalendarIcon,
   ClockIcon,
   ExclamationTriangleIcon,
   PlusIcon,
   TrashIcon,
-  CheckIcon
+  CheckIcon,
 } from '@heroicons/react/24/outline';
 import { usePermissions } from '../../hooks/usePermissions';
-import { programmeWorkingCalendarService, type ProgrammeCalendar, type CalendarException, type GlobalHoliday } from '../../services/programmeWorkingCalendarService';
+import {
+  programmeWorkingCalendarService,
+  type ProgrammeCalendar,
+  type CalendarException,
+  type GlobalHoliday,
+} from '../../services/programmeWorkingCalendarService';
 import { demoModeService } from '../../services/demoModeService';
 
 interface WorkingCalendarModalProps {
@@ -23,7 +28,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
   isOpen,
   onClose,
   projectId,
-  onSave
+  onSave,
 }) => {
   const { canAccess } = usePermissions();
   const [calendar, setCalendar] = useState<ProgrammeCalendar | null>(null);
@@ -45,7 +50,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
     { value: 'Thu', label: 'Thursday' },
     { value: 'Fri', label: 'Friday' },
     { value: 'Sat', label: 'Saturday' },
-    { value: 'Sun', label: 'Sunday' }
+    { value: 'Sun', label: 'Sunday' },
   ];
 
   // Load data on mount
@@ -61,21 +66,26 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
       setError(null);
 
       // Check demo mode
-      const isDemo = await demoModeService.isDemoMode();
+      const isDemo = await demoModeService.getDemoMode();
       setIsDemoMode(isDemo);
 
       // Load calendar
-      const projectCalendar = await programmeWorkingCalendarService.getCalendarForProject(projectId);
+      const projectCalendar =
+        await programmeWorkingCalendarService.getCalendarForProject(projectId);
       if (projectCalendar) {
         setCalendar(projectCalendar);
-        
+
         // Load exceptions
-        const calendarExceptions = await programmeWorkingCalendarService.getCalendarExceptions(projectCalendar.id);
+        const calendarExceptions =
+          await programmeWorkingCalendarService.getCalendarExceptions(
+            projectCalendar.id
+          );
         setExceptions(calendarExceptions);
       }
 
       // Load global holidays
-      const holidays = await programmeWorkingCalendarService.getGlobalHolidays();
+      const holidays =
+        await programmeWorkingCalendarService.getGlobalHolidays();
       setGlobalHolidays(holidays);
     } catch (error) {
       console.error('Error loading calendar data:', error);
@@ -97,16 +107,19 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
     setCalendar({
       ...calendar,
-      workdays: newWorkdays
+      workdays: newWorkdays,
     });
   };
 
-  const handleShiftTimeChange = (field: 'shiftStart' | 'shiftEnd', value: string) => {
+  const handleShiftTimeChange = (
+    field: 'shiftStart' | 'shiftEnd',
+    value: string
+  ) => {
     if (!calendar || !canEdit) return;
 
     setCalendar({
       ...calendar,
-      [field]: value
+      [field]: value,
     });
   };
 
@@ -115,7 +128,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
     setCalendar({
       ...calendar,
-      useGlobalHolidays: !calendar.useGlobalHolidays
+      useGlobalHolidays: !calendar.useGlobalHolidays,
     });
   };
 
@@ -127,16 +140,19 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
       calendarId: calendar.id,
       date: today,
       type: 'non-working',
-      description: ''
+      description: '',
     };
 
     addCalendarException(newException);
   };
 
-  const addCalendarException = async (exception: Omit<CalendarException, 'id' | 'createdAt'>) => {
+  const addCalendarException = async (
+    exception: Omit<CalendarException, 'id' | 'createdAt'>
+  ) => {
     try {
-      const result = await programmeWorkingCalendarService.addCalendarException(exception);
-      
+      const result =
+        await programmeWorkingCalendarService.addCalendarException(exception);
+
       if (result.success && result.exception) {
         setExceptions(prev => [...prev, result.exception!]);
       } else {
@@ -150,8 +166,11 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
   const handleRemoveException = async (exceptionId: string) => {
     try {
-      const result = await programmeWorkingCalendarService.removeCalendarException(exceptionId);
-      
+      const result =
+        await programmeWorkingCalendarService.removeCalendarException(
+          exceptionId
+        );
+
       if (result.success) {
         setExceptions(prev => prev.filter(ex => ex.id !== exceptionId));
       } else {
@@ -177,7 +196,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
         shiftStart: calendar.shiftStart,
         shiftEnd: calendar.shiftEnd,
         useGlobalHolidays: calendar.useGlobalHolidays,
-        createdBy: calendar.createdBy
+        createdBy: calendar.createdBy,
       });
 
       if (result.success && result.calendar) {
@@ -208,11 +227,13 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
       weekday: 'short',
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
-  const getExceptionTypeLabel = (type: 'non-working' | 'custom-shift'): string => {
+  const getExceptionTypeLabel = (
+    type: 'non-working' | 'custom-shift'
+  ): string => {
     return type === 'non-working' ? 'Non-working' : 'Custom Shift';
   };
 
@@ -220,11 +241,11 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading calendar...</span>
+      <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        <div className='bg-white rounded-lg p-6 max-w-md w-full mx-4'>
+          <div className='flex items-center justify-center'>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+            <span className='ml-2 text-gray-600'>Loading calendar...</span>
           </div>
         </div>
       </div>
@@ -232,54 +253,56 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+      <div className='bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden'>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <CalendarIcon className="w-6 h-6 text-blue-600" />
-            <h2 className="text-xl font-semibold text-gray-900">
+        <div className='flex items-center justify-between p-6 border-b border-gray-200'>
+          <div className='flex items-center space-x-3'>
+            <CalendarIcon className='w-6 h-6 text-blue-600' />
+            <h2 className='text-xl font-semibold text-gray-900'>
               Working Calendar
             </h2>
             {isDemoMode && (
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+              <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>
                 DEMO MODE
               </span>
             )}
           </div>
           <button
             onClick={handleCancel}
-            className="text-gray-400 hover:text-gray-600"
+            className='text-gray-400 hover:text-gray-600'
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className='w-6 h-6' />
           </button>
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-140px)] p-6">
+        <div className='overflow-y-auto max-h-[calc(90vh-140px)] p-6'>
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-              <div className="flex items-start space-x-2">
-                <ExclamationTriangleIcon className="w-5 h-5 text-red-600 mt-0.5" />
-                <span className="text-sm text-red-800">{error}</span>
+            <div className='mb-4 bg-red-50 border border-red-200 rounded-md p-4'>
+              <div className='flex items-start space-x-2'>
+                <ExclamationTriangleIcon className='w-5 h-5 text-red-600 mt-0.5' />
+                <span className='text-sm text-red-800'>{error}</span>
               </div>
             </div>
           )}
 
           {/* Demo Mode Warning */}
           {isDemoMode && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-md p-4">
-              <div className="flex items-start space-x-2">
-                <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
-                <div className="text-sm text-yellow-800">
-                  <p className="font-medium">Demo Mode Restrictions:</p>
-                  <ul className="mt-1 space-y-1">
-                    {programmeWorkingCalendarService.getDemoModeRestrictions().map((restriction, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <span className="text-yellow-600 mt-1">•</span>
-                        <span>{restriction}</span>
-                      </li>
-                    ))}
+            <div className='mb-6 bg-yellow-50 border border-yellow-200 rounded-md p-4'>
+              <div className='flex items-start space-x-2'>
+                <ExclamationTriangleIcon className='w-5 h-5 text-yellow-600 mt-0.5' />
+                <div className='text-sm text-yellow-800'>
+                  <p className='font-medium'>Demo Mode Restrictions:</p>
+                  <ul className='mt-1 space-y-1'>
+                    {programmeWorkingCalendarService
+                      .getDemoModeRestrictions()
+                      .map((restriction, index) => (
+                        <li key={index} className='flex items-start space-x-2'>
+                          <span className='text-yellow-600 mt-1'>•</span>
+                          <span>{restriction}</span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </div>
@@ -287,12 +310,14 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
           )}
 
           {calendar && (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* Working Days */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Working Days</h3>
-                <div className="grid grid-cols-7 gap-2">
-                  {dayOptions.map((day) => (
+                <h3 className='text-lg font-medium text-gray-900 mb-4'>
+                  Working Days
+                </h3>
+                <div className='grid grid-cols-7 gap-2'>
+                  {dayOptions.map(day => (
                     <button
                       key={day.value}
                       onClick={() => handleWorkdayToggle(day.value)}
@@ -302,47 +327,62 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
                           ? 'bg-blue-50 border-blue-300 text-blue-700'
                           : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
                       } ${
-                        !canEdit || isDemoMode ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                        !canEdit || isDemoMode
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'cursor-pointer'
                       }`}
                     >
                       {day.label}
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  Pattern: {programmeWorkingCalendarService.getShiftPatternDisplayName(calendar.workdays)}
+                <p className='mt-2 text-sm text-gray-600'>
+                  Pattern:{' '}
+                  {programmeWorkingCalendarService.getShiftPatternDisplayName(
+                    calendar.workdays
+                  )}
                 </p>
               </div>
 
               {/* Shift Times */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Shift Times</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <h3 className='text-lg font-medium text-gray-900 mb-4'>
+                  Shift Times
+                </h3>
+                <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className='block text-sm font-medium text-gray-700 mb-2'>
                       Start Time
                     </label>
                     <input
-                      type="time"
+                      type='time'
                       value={calendar.shiftStart}
-                      onChange={(e) => handleShiftTimeChange('shiftStart', e.target.value)}
+                      onChange={e =>
+                        handleShiftTimeChange('shiftStart', e.target.value)
+                      }
                       disabled={!canEdit || isDemoMode}
                       className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        !canEdit || isDemoMode ? 'opacity-50 cursor-not-allowed' : ''
+                        !canEdit || isDemoMode
+                          ? 'opacity-50 cursor-not-allowed'
+                          : ''
                       }`}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className='block text-sm font-medium text-gray-700 mb-2'>
                       End Time
                     </label>
                     <input
-                      type="time"
+                      type='time'
                       value={calendar.shiftEnd}
-                      onChange={(e) => handleShiftTimeChange('shiftEnd', e.target.value)}
+                      onChange={e =>
+                        handleShiftTimeChange('shiftEnd', e.target.value)
+                      }
                       disabled={!canEdit || isDemoMode}
                       className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        !canEdit || isDemoMode ? 'opacity-50 cursor-not-allowed' : ''
+                        !canEdit || isDemoMode
+                          ? 'opacity-50 cursor-not-allowed'
+                          : ''
                       }`}
                     />
                   </div>
@@ -351,30 +391,42 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
               {/* Global Holidays */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Global Holidays</h3>
-                <div className="flex items-center space-x-3">
+                <h3 className='text-lg font-medium text-gray-900 mb-4'>
+                  Global Holidays
+                </h3>
+                <div className='flex items-center space-x-3'>
                   <input
-                    type="checkbox"
-                    id="useGlobalHolidays"
+                    type='checkbox'
+                    id='useGlobalHolidays'
                     checked={calendar.useGlobalHolidays}
                     onChange={handleGlobalHolidaysToggle}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className='w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
                   />
-                  <label htmlFor="useGlobalHolidays" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor='useGlobalHolidays'
+                    className='text-sm font-medium text-gray-700'
+                  >
                     Include global holidays (UK Bank Holidays)
                   </label>
                 </div>
-                
+
                 {calendar.useGlobalHolidays && (
-                  <div className="mt-4">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Upcoming Holidays:</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      {globalHolidays.slice(0, 6).map((holiday) => (
-                        <div key={holiday.id} className="flex items-center space-x-2 text-sm text-gray-600">
-                          <CheckIcon className="w-4 h-4 text-green-500" />
+                  <div className='mt-4'>
+                    <h4 className='text-sm font-medium text-gray-700 mb-2'>
+                      Upcoming Holidays:
+                    </h4>
+                    <div className='grid grid-cols-2 gap-2'>
+                      {globalHolidays.slice(0, 6).map(holiday => (
+                        <div
+                          key={holiday.id}
+                          className='flex items-center space-x-2 text-sm text-gray-600'
+                        >
+                          <CheckIcon className='w-4 h-4 text-green-500' />
                           <span>{holiday.name}</span>
-                          <span className="text-gray-400">({formatDate(holiday.date)})</span>
+                          <span className='text-gray-400'>
+                            ({formatDate(holiday.date)})
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -384,55 +436,67 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
 
               {/* Custom Exceptions */}
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">Custom Exceptions</h3>
+                <div className='flex items-center justify-between mb-4'>
+                  <h3 className='text-lg font-medium text-gray-900'>
+                    Custom Exceptions
+                  </h3>
                   {canEdit && (
                     <button
                       onClick={handleAddException}
                       disabled={isDemoMode && exceptions.length >= 3}
-                      className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <PlusIcon className="w-4 h-4" />
+                      <PlusIcon className='w-4 h-4' />
                       <span>Add Exception</span>
                     </button>
                   )}
                 </div>
 
                 {exceptions.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No custom exceptions defined</p>
+                  <p className='text-gray-500 text-sm'>
+                    No custom exceptions defined
+                  </p>
                 ) : (
-                  <div className="space-y-2">
-                    {exceptions.map((exception) => (
-                      <div key={exception.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium text-gray-900">
+                  <div className='space-y-2'>
+                    {exceptions.map(exception => (
+                      <div
+                        key={exception.id}
+                        className='flex items-center justify-between p-3 bg-gray-50 rounded-md'
+                      >
+                        <div className='flex items-center space-x-3'>
+                          <div className='flex items-center space-x-2'>
+                            <span className='text-sm font-medium text-gray-900'>
                               {formatDate(exception.date)}
                             </span>
-                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800'>
                               {getExceptionTypeLabel(exception.type)}
                             </span>
                             {exception.demo && (
-                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                              <span className='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>
                                 DEMO
                               </span>
                             )}
                           </div>
                           {exception.description && (
-                            <span className="text-sm text-gray-600">- {exception.description}</span>
-                          )}
-                          {exception.type === 'custom-shift' && exception.customShiftStart && exception.customShiftEnd && (
-                            <span className="text-sm text-gray-600">
-                              ({exception.customShiftStart} - {exception.customShiftEnd})
+                            <span className='text-sm text-gray-600'>
+                              - {exception.description}
                             </span>
                           )}
+                          {exception.type === 'custom-shift' &&
+                            exception.customShiftStart &&
+                            exception.customShiftEnd && (
+                              <span className='text-sm text-gray-600'>
+                                ({exception.customShiftStart} -{' '}
+                                {exception.customShiftEnd})
+                              </span>
+                            )}
                         </div>
                         {canEdit && (
                           <button
                             onClick={() => handleRemoveException(exception.id)}
-                            className="text-red-600 hover:text-red-800"
+                            className='text-red-600 hover:text-red-800'
                           >
-                            <TrashIcon className="w-4 h-4" />
+                            <TrashIcon className='w-4 h-4' />
                           </button>
                         )}
                       </div>
@@ -441,7 +505,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
                 )}
 
                 {isDemoMode && exceptions.length >= 3 && (
-                  <p className="text-sm text-yellow-600 mt-2">
+                  <p className='text-sm text-yellow-600 mt-2'>
                     Maximum 3 custom exceptions allowed in demo mode
                   </p>
                 )}
@@ -451,10 +515,10 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+        <div className='flex items-center justify-end space-x-3 p-6 border-t border-gray-200'>
           <button
             onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+            className='px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200'
           >
             Cancel
           </button>
@@ -462,7 +526,7 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
             <button
               onClick={handleSave}
               disabled={saving || !calendar}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {saving ? 'Saving...' : 'Save Calendar'}
             </button>
@@ -473,4 +537,4 @@ const WorkingCalendarModal: React.FC<WorkingCalendarModalProps> = ({
   );
 };
 
-export default WorkingCalendarModal; 
+export default WorkingCalendarModal;

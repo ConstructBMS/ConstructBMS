@@ -52,20 +52,30 @@ class AuditTrailService {
     description: string,
     before: any = null,
     after: any = null
-  ): Promise<{ error?: string, success: boolean; }> {
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Get current user
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
       if (authError || !user) {
         return { success: false, error: 'User not authenticated' };
       }
 
       // Apply demo mode restrictions
       if (isDemoMode) {
-        const existingLogs = await this.getAuditLogs({ projectId, limit: this.maxDemoLogs });
-        if (existingLogs.success && existingLogs.logs && existingLogs.logs.length >= this.maxDemoLogs) {
+        const existingLogs = await this.getAuditLogs({
+          projectId,
+          limit: this.maxDemoLogs,
+        });
+        if (
+          existingLogs.success &&
+          existingLogs.logs &&
+          existingLogs.logs.length >= this.maxDemoLogs
+        ) {
           // Remove oldest log to make room for new one
           const oldestLog = existingLogs.logs[existingLogs.logs.length - 1];
           if (oldestLog) {
@@ -82,22 +92,20 @@ class AuditTrailService {
         description,
         before,
         after,
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
-      const { error } = await supabase
-        .from('programme_audit_logs')
-        .insert({
-          project_id: auditEntry.projectId,
-          task_id: auditEntry.taskId,
-          user_id: auditEntry.userId,
-          action_type: auditEntry.actionType,
-          description: auditEntry.description,
-          before: auditEntry.before,
-          after: auditEntry.after,
-          demo: auditEntry.demo,
-          created_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('programme_audit_logs').insert({
+        project_id: auditEntry.projectId,
+        task_id: auditEntry.taskId,
+        user_id: auditEntry.userId,
+        action_type: auditEntry.actionType,
+        description: auditEntry.description,
+        before: auditEntry.before,
+        after: auditEntry.after,
+        demo: auditEntry.demo,
+        created_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
@@ -112,10 +120,12 @@ class AuditTrailService {
   /**
    * Get audit logs with filtering
    */
-  async getAuditLogs(filter: AuditLogFilter & { limit?: number; offset?: number }): Promise<AuditLogResult> {
+  async getAuditLogs(
+    filter: AuditLogFilter & { limit?: number; offset?: number }
+  ): Promise<AuditLogResult> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let query = supabase
         .from('programme_audit_logs')
         .select('*')
@@ -166,16 +176,17 @@ class AuditTrailService {
         before: row.before,
         after: row.after,
         createdAt: new Date(row.created_at),
-        demo: row.demo
+        demo: row.demo,
       }));
 
       // Apply search filter if provided
       let filteredLogs = logs;
       if (filter.searchKeyword) {
         const keyword = filter.searchKeyword.toLowerCase();
-        filteredLogs = logs.filter(log => 
-          log.description.toLowerCase().includes(keyword) ||
-          log.actionType.toLowerCase().includes(keyword)
+        filteredLogs = logs.filter(
+          log =>
+            log.description.toLowerCase().includes(keyword) ||
+            log.actionType.toLowerCase().includes(keyword)
         );
       }
 
@@ -189,24 +200,32 @@ class AuditTrailService {
   /**
    * Get audit logs for a specific task
    */
-  async getTaskAuditLogs(taskId: string, limit: number = 10): Promise<AuditLogResult> {
+  async getTaskAuditLogs(
+    taskId: string,
+    limit: number = 10
+  ): Promise<AuditLogResult> {
     return await this.getAuditLogs({ taskId, limit });
   }
 
   /**
    * Get audit logs for a project
    */
-  async getProjectAuditLogs(projectId: string, limit: number = 50): Promise<AuditLogResult> {
+  async getProjectAuditLogs(
+    projectId: string,
+    limit: number = 50
+  ): Promise<AuditLogResult> {
     return await this.getAuditLogs({ projectId, limit });
   }
 
   /**
    * Get audit statistics
    */
-  async getAuditStats(projectId: string): Promise<{ error?: string; stats?: AuditLogStats, success: boolean; }> {
+  async getAuditStats(
+    projectId: string
+  ): Promise<{ error?: string; stats?: AuditLogStats; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       let query = supabase
         .from('programme_audit_logs')
         .select('*')
@@ -231,7 +250,7 @@ class AuditTrailService {
         before: row.before,
         after: row.after,
         createdAt: new Date(row.created_at),
-        demo: row.demo
+        demo: row.demo,
       }));
 
       // Calculate statistics
@@ -239,7 +258,8 @@ class AuditTrailService {
       const actionsByUser: Record<string, number> = {};
 
       logs.forEach(log => {
-        actionsByType[log.actionType] = (actionsByType[log.actionType] || 0) + 1;
+        actionsByType[log.actionType] =
+          (actionsByType[log.actionType] || 0) + 1;
         actionsByUser[log.userId] = (actionsByUser[log.userId] || 0) + 1;
       });
 
@@ -247,7 +267,7 @@ class AuditTrailService {
         totalActions: logs.length,
         actionsByType,
         actionsByUser,
-        recentActivity: logs.slice(0, 10) // Last 10 activities
+        recentActivity: logs.slice(0, 10), // Last 10 activities
       };
 
       return { success: true, stats };
@@ -260,7 +280,9 @@ class AuditTrailService {
   /**
    * Delete an audit log (for demo mode cleanup)
    */
-  private async deleteAuditLog(logId: string): Promise<{ error?: string, success: boolean; }> {
+  private async deleteAuditLog(
+    logId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_audit_logs')
@@ -285,7 +307,7 @@ class AuditTrailService {
       'User names redacted in logs',
       'Diff view hidden (shows "Demo redacted")',
       'Tooltip: "Upgrade for full audit history"',
-      'All logs tagged as demo'
+      'All logs tagged as demo',
     ];
   }
 
@@ -294,26 +316,26 @@ class AuditTrailService {
    */
   getActionTypeIcon(actionType: string): string {
     const iconMap: Record<string, string> = {
-      'task_create': '📝',
-      'task_update': '✏️',
-      'task_delete': '🗑️',
-      'task_move': '📤',
-      'task_resize': '📏',
-      'dependency_create': '🔗',
-      'dependency_delete': '🔓',
-      'milestone_create': '🎯',
-      'milestone_update': '🎯',
-      'flag_create': '🚩',
-      'flag_update': '🚩',
-      'flag_delete': '🚩',
-      'constraint_set': '🔒',
-      'constraint_clear': '🔓',
-      'status_change': '🔄',
-      'progress_update': '📊',
-      'resource_assign': '👤',
-      'resource_unassign': '👤',
-      'structure_change': '📁',
-      'calendar_update': '📅'
+      task_create: '📝',
+      task_update: '✏️',
+      task_delete: '🗑️',
+      task_move: '📤',
+      task_resize: '📏',
+      dependency_create: '🔗',
+      dependency_delete: '🔓',
+      milestone_create: '🎯',
+      milestone_update: '🎯',
+      flag_create: '🚩',
+      flag_update: '🚩',
+      flag_delete: '🚩',
+      constraint_set: '🔒',
+      constraint_clear: '🔓',
+      status_change: '🔄',
+      progress_update: '📊',
+      resource_assign: '👤',
+      resource_unassign: '👤',
+      structure_change: '📁',
+      calendar_update: '📅',
     };
 
     return iconMap[actionType] || '📋';
@@ -324,26 +346,26 @@ class AuditTrailService {
    */
   getActionTypeDisplayName(actionType: string): string {
     const displayMap: Record<string, string> = {
-      'task_create': 'Task Created',
-      'task_update': 'Task Updated',
-      'task_delete': 'Task Deleted',
-      'task_move': 'Task Moved',
-      'task_resize': 'Task Resized',
-      'dependency_create': 'Dependency Created',
-      'dependency_delete': 'Dependency Removed',
-      'milestone_create': 'Milestone Created',
-      'milestone_update': 'Milestone Updated',
-      'flag_create': 'Flag Added',
-      'flag_update': 'Flag Updated',
-      'flag_delete': 'Flag Removed',
-      'constraint_set': 'Constraint Set',
-      'constraint_clear': 'Constraint Cleared',
-      'status_change': 'Status Changed',
-      'progress_update': 'Progress Updated',
-      'resource_assign': 'Resource Assigned',
-      'resource_unassign': 'Resource Unassigned',
-      'structure_change': 'Structure Changed',
-      'calendar_update': 'Calendar Updated'
+      task_create: 'Task Created',
+      task_update: 'Task Updated',
+      task_delete: 'Task Deleted',
+      task_move: 'Task Moved',
+      task_resize: 'Task Resized',
+      dependency_create: 'Dependency Created',
+      dependency_delete: 'Dependency Removed',
+      milestone_create: 'Milestone Created',
+      milestone_update: 'Milestone Updated',
+      flag_create: 'Flag Added',
+      flag_update: 'Flag Updated',
+      flag_delete: 'Flag Removed',
+      constraint_set: 'Constraint Set',
+      constraint_clear: 'Constraint Cleared',
+      status_change: 'Status Changed',
+      progress_update: 'Progress Updated',
+      resource_assign: 'Resource Assigned',
+      resource_unassign: 'Resource Unassigned',
+      structure_change: 'Structure Changed',
+      calendar_update: 'Calendar Updated',
     };
 
     return displayMap[actionType] || actionType;
@@ -352,7 +374,10 @@ class AuditTrailService {
   /**
    * Format audit log description for display
    */
-  formatAuditDescription(log: AuditLogEntry, isDemoMode: boolean = false): string {
+  formatAuditDescription(
+    log: AuditLogEntry,
+    isDemoMode: boolean = false
+  ): string {
     if (isDemoMode) {
       return `${this.getActionTypeDisplayName(log.actionType)} - Demo redacted`;
     }
@@ -363,7 +388,10 @@ class AuditTrailService {
   /**
    * Get user display name (with demo mode redaction)
    */
-  async getUserDisplayName(userId: string, isDemoMode: boolean = false): Promise<string> {
+  async getUserDisplayName(
+    userId: string,
+    isDemoMode: boolean = false
+  ): Promise<string> {
     if (isDemoMode) {
       return 'Demo User';
     }
@@ -388,4 +416,4 @@ class AuditTrailService {
 }
 
 // Export singleton instance
-export const auditTrailService = new AuditTrailService(); 
+export const auditTrailService = new AuditTrailService();

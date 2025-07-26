@@ -14,7 +14,9 @@ interface IntegrationTestProps {
   onComplete: (results: TestResult[]) => void;
 }
 
-const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) => {
+const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({
+  onComplete,
+}) => {
   const { canAccess } = usePermissions();
   const [results, setResults] = useState<TestResult[]>([]);
   const [currentTest, setCurrentTest] = useState<string>('');
@@ -61,17 +63,26 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testRibbonTabsRendering = async (): Promise<TestResult> => {
     setCurrentTest('Ribbon Tabs Rendering');
-    
+
     const result: TestResult = {
       testName: 'Ribbon Tabs Rendering',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
-      const expectedTabs = ['file', 'home', 'project', 'view', 'allocation', '4d', 'format', 'admin'];
-      
+      const expectedTabs = [
+        'file',
+        'home',
+        'project',
+        'view',
+        'allocation',
+        '4d',
+        'format',
+        'admin',
+      ];
+
       // Check if all expected tabs are defined
       for (const tabId of expectedTabs) {
         // This would check if the tab component exists and renders
@@ -92,12 +103,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testPermissionSystem = async (): Promise<TestResult> => {
     setCurrentTest('Permission System');
-    
+
     const result: TestResult = {
       testName: 'Permission System',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -108,7 +119,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'programme.format.view',
         'programme.format.edit',
         'programme.admin',
-        'programme.admin.manage'
+        'programme.admin.manage',
       ];
 
       for (const permission of requiredPermissions) {
@@ -130,12 +141,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testSupabaseIntegration = async (): Promise<TestResult> => {
     setCurrentTest('Supabase Integration');
-    
+
     const result: TestResult = {
       testName: 'Supabase Integration',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -149,7 +160,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'style_rules',
         'export_settings',
         'sync_logs',
-        'project_properties'
+        'project_properties',
       ];
 
       // Test basic Supabase connectivity
@@ -175,24 +186,24 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testDemoModeRestrictions = async (): Promise<TestResult> => {
     setCurrentTest('Demo Mode Restrictions');
-    
+
     const result: TestResult = {
       testName: 'Demo Mode Restrictions',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       if (isDemoMode) {
         // Test demo mode restrictions
         const restrictions = {
           maxTags: 3,
           maxStatuses: 3,
           maxThemes: 1,
-          maxCustomFields: 2
+          maxCustomFields: 2,
         };
 
         for (const [key, limit] of Object.entries(restrictions)) {
@@ -214,31 +225,35 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testLocalStorageUsage = async (): Promise<TestResult> => {
     setCurrentTest('localStorage Usage Check');
-    
+
     const result: TestResult = {
       testName: 'localStorage Usage Check',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
       const localStorageKeys = Object.keys(localStorage);
-      const ribbonRelatedKeys = localStorageKeys.filter(key => 
-        key.includes('ribbon') || 
-        key.includes('programme') || 
-        key.includes('gantt') || 
-        key.includes('format') ||
-        key.includes('admin') ||
-        key.includes('file')
+      const ribbonRelatedKeys = localStorageKeys.filter(
+        key =>
+          key.includes('ribbon') ||
+          key.includes('programme') ||
+          key.includes('gantt') ||
+          key.includes('format') ||
+          key.includes('admin') ||
+          key.includes('file')
       );
 
       if (ribbonRelatedKeys.length > 0) {
         result.passed = false;
-        result.errors.push(`Found localStorage usage: ${ribbonRelatedKeys.join(', ')}`);
+        result.errors.push(
+          `Found localStorage usage: ${ribbonRelatedKeys.join(', ')}`
+        );
         result.details = `localStorage should not be used - found ${ribbonRelatedKeys.length} keys`;
       } else {
-        result.details = 'No localStorage usage detected - using Supabase correctly';
+        result.details =
+          'No localStorage usage detected - using Supabase correctly';
       }
     } catch (error) {
       result.passed = false;
@@ -250,12 +265,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testFormatTabSections = async (): Promise<TestResult> => {
     setCurrentTest('Format Tab Sections');
-    
+
     const result: TestResult = {
       testName: 'Format Tab Sections',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -267,7 +282,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'Grid Column Controls',
         'Timeline Gridlines & Markers',
         'Print/Export Styling',
-        'Custom Bar Styles'
+        'Custom Bar Styles',
       ];
 
       // Check if all format sections are properly implemented
@@ -287,12 +302,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testFileTabSections = async (): Promise<TestResult> => {
     setCurrentTest('File Tab Sections');
-    
+
     const result: TestResult = {
       testName: 'File Tab Sections',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -300,7 +315,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'Project Save',
         'Import & Export',
         '2-Way Sync',
-        'Project Metadata'
+        'Project Metadata',
       ];
 
       // Check if all file sections are properly implemented
@@ -320,12 +335,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testAdminTabSections = async (): Promise<TestResult> => {
     setCurrentTest('Admin Tab Sections');
-    
+
     const result: TestResult = {
       testName: 'Admin Tab Sections',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -333,7 +348,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'Tags & Labels',
         'Task Statuses',
         'Theme Config',
-        'Custom Fields'
+        'Custom Fields',
       ];
 
       // Check if all admin sections are properly implemented
@@ -353,12 +368,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testModalIntegration = async (): Promise<TestResult> => {
     setCurrentTest('Modal Integration');
-    
+
     const result: TestResult = {
       testName: 'Modal Integration',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -370,7 +385,7 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         'CustomDateMarkerModal',
         'ExportPreviewModal',
         'ManageBarStylesModal',
-        'AssignStyleRulesModal'
+        'AssignStyleRulesModal',
       ];
 
       // Check if all required modals are properly implemented
@@ -390,12 +405,12 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
 
   const testStatePersistence = async (): Promise<TestResult> => {
     setCurrentTest('State Persistence');
-    
+
     const result: TestResult = {
       testName: 'State Persistence',
       passed: true,
       details: '',
-      errors: []
+      errors: [],
     };
 
     try {
@@ -405,13 +420,14 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         criticalPathColor: '#FF0000',
         milestoneIcon: 'diamond',
         zoomLevel: 2,
-        timeScale: 'daily'
+        timeScale: 'daily',
       };
 
       // This would test actual persistence to Supabase
       console.log('Testing state persistence to Supabase');
-      
-      result.details = 'Verified state changes are persisted to Supabase correctly';
+
+      result.details =
+        'Verified state changes are persisted to Supabase correctly';
     } catch (error) {
       result.passed = false;
       result.errors.push(`Error testing state persistence: ${error}`);
@@ -437,9 +453,9 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+    <div className='p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg'>
+      <div className='flex items-center justify-between mb-6'>
+        <h2 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
           Ribbon System Integration Test
         </h2>
         <div className={`text-lg font-semibold ${getStatusColor()}`}>
@@ -447,15 +463,16 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         </div>
       </div>
 
-      <div className="mb-6">
+      <div className='mb-6'>
         <button
           onClick={runAllTests}
           disabled={isRunning}
           className={`
             px-6 py-3 rounded-lg font-medium transition-colors duration-200
-            ${isRunning
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
+            ${
+              isRunning
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
             }
           `}
         >
@@ -464,10 +481,10 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
       </div>
 
       {isRunning && (
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
-          <div className="flex items-center space-x-3">
-            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-blue-700 dark:text-blue-300">
+        <div className='mb-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg'>
+          <div className='flex items-center space-x-3'>
+            <div className='w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
+            <span className='text-blue-700 dark:text-blue-300'>
               Running: {currentTest}
             </span>
           </div>
@@ -475,11 +492,11 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
       )}
 
       {results.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className='space-y-4'>
+          <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
             Test Results
           </h3>
-          
+
           {results.map((result, index) => (
             <div
               key={index}
@@ -489,37 +506,43 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
                   : 'bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <h4 className={`font-medium ${
-                  result.passed
-                    ? 'text-green-800 dark:text-green-200'
-                    : 'text-red-800 dark:text-red-200'
-                }`}>
+              <div className='flex items-center justify-between mb-2'>
+                <h4
+                  className={`font-medium ${
+                    result.passed
+                      ? 'text-green-800 dark:text-green-200'
+                      : 'text-red-800 dark:text-red-200'
+                  }`}
+                >
                   {result.passed ? '✅' : '❌'} {result.testName}
                 </h4>
-                <span className={`text-sm font-medium ${
-                  result.passed
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-red-600 dark:text-red-400'
-                }`}>
+                <span
+                  className={`text-sm font-medium ${
+                    result.passed
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`}
+                >
                   {result.passed ? 'PASSED' : 'FAILED'}
                 </span>
               </div>
-              
-              <p className={`text-sm mb-2 ${
-                result.passed
-                  ? 'text-green-700 dark:text-green-300'
-                  : 'text-red-700 dark:text-red-300'
-              }`}>
+
+              <p
+                className={`text-sm mb-2 ${
+                  result.passed
+                    ? 'text-green-700 dark:text-green-300'
+                    : 'text-red-700 dark:text-red-300'
+                }`}
+              >
                 {result.details}
               </p>
-              
+
               {result.errors.length > 0 && (
-                <div className="mt-2">
-                  <h5 className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
+                <div className='mt-2'>
+                  <h5 className='text-sm font-medium text-red-800 dark:text-red-200 mb-1'>
                     Errors:
                   </h5>
-                  <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
+                  <ul className='text-sm text-red-700 dark:text-red-300 space-y-1'>
                     {result.errors.map((error, errorIndex) => (
                       <li key={errorIndex}>• {error}</li>
                     ))}
@@ -531,11 +554,11 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
         </div>
       )}
 
-      <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-        <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+      <div className='mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg'>
+        <h4 className='font-medium text-gray-900 dark:text-gray-100 mb-2'>
           Test Coverage
         </h4>
-        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+        <ul className='text-sm text-gray-600 dark:text-gray-400 space-y-1'>
           <li>• Ribbon tabs rendering and navigation</li>
           <li>• Permission system integration</li>
           <li>• Supabase data persistence</li>
@@ -552,4 +575,4 @@ const RibbonIntegrationTest: React.FC<IntegrationTestProps> = ({ onComplete }) =
   );
 };
 
-export default RibbonIntegrationTest; 
+export default RibbonIntegrationTest;

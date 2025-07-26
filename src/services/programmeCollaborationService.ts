@@ -52,7 +52,7 @@ class ProgrammeCollaborationService {
   }
 
   private async setupDemoModeCheck() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+    this.isDemoMode = await demoModeService.getDemoMode();
   }
 
   /**
@@ -60,7 +60,9 @@ class ProgrammeCollaborationService {
    */
   async initializeCollaboration(projectId: string): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       this.currentProjectId = projectId;
@@ -68,17 +70,22 @@ class ProgrammeCollaborationService {
 
       // Join presence
       await this.joinPresence(projectId, user);
-      
+
       // Setup realtime subscriptions
       this.setupRealtimeSubscriptions(projectId);
-      
+
       // Start heartbeat
       this.startHeartbeat(projectId);
 
       this.emit('collaborationInitialized', { projectId, user });
     } catch (error) {
       console.error('Error initializing collaboration:', error);
-      this.emit('error', { error: error instanceof Error ? error.message : 'Failed to initialize collaboration' });
+      this.emit('error', {
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to initialize collaboration',
+      });
     }
   }
 
@@ -86,17 +93,20 @@ class ProgrammeCollaborationService {
    * Join presence for a project
    */
   private async joinPresence(projectId: string, user: any): Promise<void> {
-    const isDemoMode = await demoModeService.isDemoMode();
-    
+    const isDemoMode = await demoModeService.getDemoMode();
+
     const presenceData = {
       user_id: user.id,
       project_id: projectId,
-      user_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown User',
+      user_name:
+        user.user_metadata?.full_name ||
+        user.email?.split('@')[0] ||
+        'Unknown User',
       user_email: user.email,
       user_avatar: user.user_metadata?.avatar_url,
       last_seen: new Date().toISOString(),
       is_online: true,
-      demo: isDemoMode
+      demo: isDemoMode,
     };
 
     const { error } = await supabase
@@ -119,13 +129,13 @@ class ProgrammeCollaborationService {
           event: '*',
           schema: 'public',
           table: 'programme_presence',
-          filter: `project_id=eq.${projectId}`
+          filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        payload => {
           this.handlePresenceChange(payload);
         }
       )
-      .subscribe((status) => {
+      .subscribe(status => {
         if (status === 'SUBSCRIBED') {
           console.log('✅ Programme presence real-time subscription connected');
         } else if (status === 'CHANNEL_ERROR') {
@@ -142,15 +152,17 @@ class ProgrammeCollaborationService {
           event: '*',
           schema: 'public',
           table: 'programme_task_locks',
-          filter: `project_id=eq.${projectId}`
+          filter: `project_id=eq.${projectId}`,
         },
-        (payload) => {
+        payload => {
           this.handleTaskLockChange(payload);
         }
       )
-      .subscribe((status) => {
+      .subscribe(status => {
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Programme task locks real-time subscription connected');
+          console.log(
+            '✅ Programme task locks real-time subscription connected'
+          );
         } else if (status === 'CHANNEL_ERROR') {
           console.warn('⚠️ Programme task locks real-time subscription failed');
         }
@@ -172,7 +184,7 @@ class ProgrammeCollaborationService {
       isOnline: payload.new.is_online,
       demo: payload.new.demo,
       createdAt: new Date(payload.new.created_at),
-      updatedAt: new Date(payload.new.updated_at)
+      updatedAt: new Date(payload.new.updated_at),
     };
 
     if (payload.eventType === 'INSERT') {
@@ -197,7 +209,7 @@ class ProgrammeCollaborationService {
       lockedAt: new Date(payload.new.locked_at),
       expiresAt: new Date(payload.new.expires_at),
       demo: payload.new.demo,
-      createdAt: new Date(payload.new.created_at)
+      createdAt: new Date(payload.new.created_at),
     };
 
     if (payload.eventType === 'INSERT') {
@@ -219,7 +231,7 @@ class ProgrammeCollaborationService {
           .from('programme_presence')
           .update({
             last_seen: new Date().toISOString(),
-            is_online: true
+            is_online: true,
           })
           .eq('user_id', this.currentUserId)
           .eq('project_id', projectId);
@@ -232,7 +244,9 @@ class ProgrammeCollaborationService {
   /**
    * Lock a task for editing
    */
-  async lockTask(taskId: string): Promise<{ error?: string; lock?: TaskLock, success: boolean; }> {
+  async lockTask(
+    taskId: string
+  ): Promise<{ error?: string; lock?: TaskLock; success: boolean }> {
     try {
       if (!this.currentUserId || !this.currentProjectId) {
         return { success: false, error: 'Not connected to project' };
@@ -241,31 +255,41 @@ class ProgrammeCollaborationService {
       // Check if task is already locked
       const existingLock = await this.getTaskLock(taskId);
       if (existingLock && existingLock.lockedBy !== this.currentUserId) {
-        return { 
-          success: false, 
-          error: `Task is currently being edited by ${existingLock.lockedByUser}` 
+        return {
+          success: false,
+          error: `Task is currently being edited by ${existingLock.lockedByUser}`,
         };
       }
 
       // Demo mode restrictions
       if (this.isDemoMode) {
-        const activeLocks = await this.getProjectTaskLocks(this.currentProjectId);
+        const activeLocks = await this.getProjectTaskLocks(
+          this.currentProjectId
+        );
         if (activeLocks.length >= 1) {
-          return { success: false, error: 'Maximum 1 task lock allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Maximum 1 task lock allowed in demo mode',
+          };
         }
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       const lockData = {
         task_id: taskId,
         project_id: this.currentProjectId,
         locked_by: this.currentUserId,
-        locked_by_user: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown User',
+        locked_by_user:
+          user.user_metadata?.full_name ||
+          user.email?.split('@')[0] ||
+          'Unknown User',
         locked_at: new Date().toISOString(),
         expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       };
 
       const { data: lock, error } = await supabase
@@ -285,7 +309,7 @@ class ProgrammeCollaborationService {
         lockedAt: new Date(lock.locked_at),
         expiresAt: new Date(lock.expires_at),
         demo: lock.demo,
-        createdAt: new Date(lock.created_at)
+        createdAt: new Date(lock.created_at),
       };
 
       return { success: true, lock: taskLock };
@@ -298,7 +322,9 @@ class ProgrammeCollaborationService {
   /**
    * Unlock a task
    */
-  async unlockTask(taskId: string): Promise<{ error?: string, success: boolean; }> {
+  async unlockTask(
+    taskId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       if (!this.currentUserId || !this.currentProjectId) {
         return { success: false, error: 'Not connected to project' };
@@ -335,10 +361,7 @@ class ProgrammeCollaborationService {
       // Check if lock has expired
       if (new Date(lock.expires_at) < new Date()) {
         // Auto-delete expired lock
-        await supabase
-          .from('programme_task_locks')
-          .delete()
-          .eq('id', lock.id);
+        await supabase.from('programme_task_locks').delete().eq('id', lock.id);
         return null;
       }
 
@@ -351,7 +374,7 @@ class ProgrammeCollaborationService {
         lockedAt: new Date(lock.locked_at),
         expiresAt: new Date(lock.expires_at),
         demo: lock.demo,
-        createdAt: new Date(lock.created_at)
+        createdAt: new Date(lock.created_at),
       };
     } catch (error) {
       console.error('Error getting task lock:', error);
@@ -372,10 +395,14 @@ class ProgrammeCollaborationService {
       if (error) throw error;
 
       // Filter out expired locks
-      const validLocks = locks.filter(lock => new Date(lock.expires_at) > new Date());
+      const validLocks = locks.filter(
+        lock => new Date(lock.expires_at) > new Date()
+      );
 
       // Auto-delete expired locks
-      const expiredLocks = locks.filter(lock => new Date(lock.expires_at) <= new Date());
+      const expiredLocks = locks.filter(
+        lock => new Date(lock.expires_at) <= new Date()
+      );
       if (expiredLocks.length > 0) {
         const expiredIds = expiredLocks.map(lock => lock.id);
         await supabase
@@ -393,7 +420,7 @@ class ProgrammeCollaborationService {
         lockedAt: new Date(lock.locked_at),
         expiresAt: new Date(lock.expires_at),
         demo: lock.demo,
-        createdAt: new Date(lock.created_at)
+        createdAt: new Date(lock.created_at),
       }));
     } catch (error) {
       console.error('Error getting project task locks:', error);
@@ -431,7 +458,7 @@ class ProgrammeCollaborationService {
         isOnline: p.is_online,
         demo: p.demo,
         createdAt: new Date(p.created_at),
-        updatedAt: new Date(p.updated_at)
+        updatedAt: new Date(p.updated_at),
       }));
     } catch (error) {
       console.error('Error getting project presence:', error);
@@ -450,7 +477,7 @@ class ProgrammeCollaborationService {
           .from('programme_presence')
           .update({
             is_online: false,
-            last_seen: new Date().toISOString()
+            last_seen: new Date().toISOString(),
           })
           .eq('user_id', this.currentUserId)
           .eq('project_id', this.currentProjectId);
@@ -524,4 +551,5 @@ class ProgrammeCollaborationService {
 }
 
 // Export singleton instance
-export const programmeCollaborationService = new ProgrammeCollaborationService(); 
+export const programmeCollaborationService =
+  new ProgrammeCollaborationService();

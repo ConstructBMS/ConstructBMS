@@ -13,7 +13,17 @@ export interface TimelineAction {
   projectId: string;
   taskId?: string;
   timestamp: Date;
-  type: 'update_task' | 'create_task' | 'delete_task' | 'create_dependency' | 'delete_dependency' | 'update_constraint' | 'create_milestone' | 'update_milestone' | 'update_status' | 'update_tags';
+  type:
+    | 'update_task'
+    | 'create_task'
+    | 'delete_task'
+    | 'create_dependency'
+    | 'delete_dependency'
+    | 'update_constraint'
+    | 'create_milestone'
+    | 'update_milestone'
+    | 'update_status'
+    | 'update_tags';
   userId: string;
 }
 
@@ -42,30 +52,32 @@ class UndoRedoService {
    */
   async initializeProject(projectId: string): Promise<UndoRedoState> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      const maxStackSize = isDemoMode ? this.demoMaxStackSize : this.maxStackSize;
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+      const maxStackSize = isDemoMode
+        ? this.demoMaxStackSize
+        : this.maxStackSize;
+
       const allStates = await this.getAllUndoRedoStates();
       let projectState = allStates.find(s => s.projectId === projectId);
-      
+
       if (!projectState) {
         projectState = {
           projectId,
           undoStack: [],
           redoStack: [],
-          maxStackSize
+          maxStackSize,
         };
         allStates.push(projectState);
         await persistentStorage.set(this.undoRedoKey, allStates);
       }
-      
+
       return projectState;
     } catch (error) {
       console.error('Error initializing project undo/redo state:', error);
       return {
         undoStack: [],
         redoStack: [],
-        maxStackSize: this.maxStackSize
+        maxStackSize: this.maxStackSize,
       };
     }
   }
@@ -73,10 +85,12 @@ class UndoRedoService {
   /**
    * Record an action for undo/redo
    */
-  async recordAction(payload: ActionPayload): Promise<{ error?: string, success: boolean; }> {
+  async recordAction(
+    payload: ActionPayload
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       const action: TimelineAction = {
         id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: payload.type,
@@ -86,29 +100,29 @@ class UndoRedoService {
         after: payload.after,
         timestamp: new Date(),
         userId: 'current-user',
-        demo: isDemoMode
+        demo: isDemoMode,
       };
 
       // Get current state
       const state = await this.getProjectState(payload.projectId);
-      
+
       // Add to undo stack
       state.undoStack.push(action);
-      
+
       // Limit stack size
       if (state.undoStack.length > state.maxStackSize) {
         state.undoStack.shift(); // Remove oldest action
       }
-      
+
       // Clear redo stack when new action is recorded
       state.redoStack = [];
-      
+
       // Save state
       await this.saveProjectState(payload.projectId, state);
-      
+
       // Optionally log to action logs
       await this.logAction(action);
-      
+
       console.log('Action recorded:', action.type, action.taskId);
       return { success: true };
     } catch (error) {
@@ -120,37 +134,39 @@ class UndoRedoService {
   /**
    * Undo the last action
    */
-  async undo(projectId: string): Promise<{ action?: TimelineAction, error?: string; success: boolean; }> {
+  async undo(
+    projectId: string
+  ): Promise<{ action?: TimelineAction; error?: string; success: boolean }> {
     try {
       const state = await this.getProjectState(projectId);
-      
+
       if (state.undoStack.length === 0) {
         return { success: false, error: 'No actions to undo' };
       }
-      
+
       const action = state.undoStack.pop()!;
-      
+
       // Apply reverse action
       const reverseResult = await this.applyReverseAction(action);
-      
+
       if (!reverseResult.success) {
         // Put action back on stack if reverse failed
         state.undoStack.push(action);
         await this.saveProjectState(projectId, state);
         return { success: false, error: reverseResult.error };
       }
-      
+
       // Add to redo stack (except in demo mode)
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (!isDemoMode) {
         state.redoStack.push(action);
         if (state.redoStack.length > state.maxStackSize) {
           state.redoStack.shift();
         }
       }
-      
+
       await this.saveProjectState(projectId, state);
-      
+
       console.log('Action undone:', action.type, action.taskId);
       return { success: true, action };
     } catch (error) {
@@ -162,39 +178,41 @@ class UndoRedoService {
   /**
    * Redo the last undone action
    */
-  async redo(projectId: string): Promise<{ action?: TimelineAction, error?: string; success: boolean; }> {
+  async redo(
+    projectId: string
+  ): Promise<{ action?: TimelineAction; error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         return { success: false, error: 'Redo not available in demo mode' };
       }
-      
+
       const state = await this.getProjectState(projectId);
-      
+
       if (state.redoStack.length === 0) {
         return { success: false, error: 'No actions to redo' };
       }
-      
+
       const action = state.redoStack.pop()!;
-      
+
       // Apply action
       const applyResult = await this.applyAction(action);
-      
+
       if (!applyResult.success) {
         // Put action back on redo stack if apply failed
         state.redoStack.push(action);
         await this.saveProjectState(projectId, state);
         return { success: false, error: applyResult.error };
       }
-      
+
       // Add back to undo stack
       state.undoStack.push(action);
       if (state.undoStack.length > state.maxStackSize) {
         state.undoStack.shift();
       }
-      
+
       await this.saveProjectState(projectId, state);
-      
+
       console.log('Action redone:', action.type, action.taskId);
       return { success: true, action };
     } catch (error) {
@@ -221,9 +239,9 @@ class UndoRedoService {
    */
   async canRedo(projectId: string): Promise<boolean> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) return false;
-      
+
       const state = await this.getProjectState(projectId);
       return state.redoStack.length > 0;
     } catch (error) {
@@ -250,9 +268,9 @@ class UndoRedoService {
    */
   async getRedoCount(projectId: string): Promise<number> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) return 0;
-      
+
       const state = await this.getProjectState(projectId);
       return state.redoStack.length;
     } catch (error) {
@@ -264,12 +282,14 @@ class UndoRedoService {
   /**
    * Clear undo/redo history for a project
    */
-  async clearHistory(projectId: string): Promise<{ error?: string, success: boolean; }> {
+  async clearHistory(
+    projectId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const state = await this.getProjectState(projectId);
       state.undoStack = [];
       state.redoStack = [];
-      
+
       await this.saveProjectState(projectId, state);
       console.log('Undo/redo history cleared for project:', projectId);
       return { success: true };
@@ -282,7 +302,9 @@ class UndoRedoService {
   /**
    * Apply an action
    */
-  private async applyAction(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyAction(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       switch (action.type) {
         case 'update_task':
@@ -317,15 +339,17 @@ class UndoRedoService {
   /**
    * Apply reverse action
    */
-  private async applyReverseAction(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyReverseAction(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       // Swap before and after for reverse action
       const reverseAction = {
         ...action,
         before: action.after,
-        after: action.before
+        after: action.before,
       };
-      
+
       return await this.applyAction(reverseAction);
     } catch (error) {
       console.error('Error applying reverse action:', error);
@@ -336,9 +360,11 @@ class UndoRedoService {
   /**
    * Apply task update action
    */
-  private async applyTaskUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskUpdate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
+
     const result = await taskService.updateTask(action.taskId, action.after);
     return { success: result.success, error: result.error };
   }
@@ -346,7 +372,9 @@ class UndoRedoService {
   /**
    * Apply task create action
    */
-  private async applyTaskCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskCreate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     const result = await taskService.createTask(action.after);
     return { success: result.success, error: result.error };
   }
@@ -354,9 +382,11 @@ class UndoRedoService {
   /**
    * Apply task delete action
    */
-  private async applyTaskDelete(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTaskDelete(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
+
     const result = await taskService.deleteTask(action.taskId);
     return { success: result.success, error: result.error };
   }
@@ -364,33 +394,50 @@ class UndoRedoService {
   /**
    * Apply dependency create action
    */
-  private async applyDependencyCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyDependencyCreate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     const { predecessorId, successorId, type, projectId } = action.after;
-    const result = await dependenciesEngine.linkTasks(predecessorId, successorId, type, projectId);
+    const result = await dependenciesEngine.linkTasks(
+      predecessorId,
+      successorId,
+      type,
+      projectId
+    );
     return { success: result.success, error: result.error };
   }
 
   /**
    * Apply dependency delete action
    */
-  private async applyDependencyDelete(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
-    const result = await dependenciesEngine.unlinkTasks(action.after.dependencyId);
+  private async applyDependencyDelete(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
+    const result = await dependenciesEngine.unlinkTasks(
+      action.after.dependencyId
+    );
     return { success: result.success, error: result.error };
   }
 
   /**
    * Apply constraint update action
    */
-  private async applyConstraintUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyConstraintUpdate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
+
     if (action.after === null) {
       // Remove constraint
       const result = await constraintsService.removeConstraint(action.taskId);
       return { success: result.success, error: result.error };
     } else {
       // Set constraint
-      const result = await constraintsService.setConstraint(action.taskId, action.after.type, action.after.constraintDate);
+      const result = await constraintsService.setConstraint(
+        action.taskId,
+        action.after.type,
+        action.after.constraintDate
+      );
       return { success: result.success, error: result.error };
     }
   }
@@ -398,7 +445,9 @@ class UndoRedoService {
   /**
    * Apply milestone create action
    */
-  private async applyMilestoneCreate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyMilestoneCreate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     const result = await milestoneService.createMilestone(action.after);
     return { success: result.success, error: result.error };
   }
@@ -406,30 +455,43 @@ class UndoRedoService {
   /**
    * Apply milestone update action
    */
-  private async applyMilestoneUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyMilestoneUpdate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
-    const result = await milestoneService.updateMilestone(action.taskId, action.after);
+
+    const result = await milestoneService.updateMilestone(
+      action.taskId,
+      action.after
+    );
     return { success: result.success, error: result.error };
   }
 
   /**
    * Apply status update action
    */
-  private async applyStatusUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyStatusUpdate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
-    const result = await taskService.updateTask(action.taskId, { statusId: action.after.statusId });
+
+    const result = await taskService.updateTask(action.taskId, {
+      statusId: action.after.statusId,
+    });
     return { success: result.success, error: result.error };
   }
 
   /**
    * Apply tags update action
    */
-  private async applyTagsUpdate(action: TimelineAction): Promise<{ error?: string, success: boolean; }> {
+  private async applyTagsUpdate(
+    action: TimelineAction
+  ): Promise<{ error?: string; success: boolean }> {
     if (!action.taskId) return { success: false, error: 'Task ID required' };
-    
-    const result = await taskService.updateTask(action.taskId, { tags: action.after.tags });
+
+    const result = await taskService.updateTask(action.taskId, {
+      tags: action.after.tags,
+    });
     return { success: result.success, error: result.error };
   }
 
@@ -439,34 +501,39 @@ class UndoRedoService {
   private async getProjectState(projectId: string): Promise<UndoRedoState> {
     const allStates = await this.getAllUndoRedoStates();
     let projectState = allStates.find(s => s.projectId === projectId);
-    
+
     if (!projectState) {
       projectState = await this.initializeProject(projectId);
     }
-    
+
     return projectState;
   }
 
   /**
    * Save project state
    */
-  private async saveProjectState(projectId: string, state: UndoRedoState): Promise<void> {
+  private async saveProjectState(
+    projectId: string,
+    state: UndoRedoState
+  ): Promise<void> {
     const allStates = await this.getAllUndoRedoStates();
     const existingIndex = allStates.findIndex(s => s.projectId === projectId);
-    
+
     if (existingIndex >= 0) {
       allStates[existingIndex] = { ...state, projectId };
     } else {
       allStates.push({ ...state, projectId });
     }
-    
+
     await persistentStorage.set(this.undoRedoKey, allStates);
   }
 
   /**
    * Get all undo/redo states
    */
-  private async getAllUndoRedoStates(): Promise<Array<UndoRedoState & { projectId: string }>> {
+  private async getAllUndoRedoStates(): Promise<
+    Array<UndoRedoState & { projectId: string }>
+  > {
     try {
       const states = await persistentStorage.get(this.undoRedoKey);
       return states || [];
@@ -483,12 +550,12 @@ class UndoRedoService {
     try {
       const allLogs = await this.getAllActionLogs();
       allLogs.push(action);
-      
+
       // Keep only last 1000 logs
       if (allLogs.length > 1000) {
         allLogs.splice(0, allLogs.length - 1000);
       }
-      
+
       await persistentStorage.set(this.actionLogsKey, allLogs);
     } catch (error) {
       console.error('Error logging action:', error);
@@ -527,7 +594,7 @@ class UndoRedoService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllUndoRedoData();
         console.log('Demo undo/redo data reset');
@@ -539,4 +606,4 @@ class UndoRedoService {
   }
 }
 
-export const undoRedoService = new UndoRedoService(); 
+export const undoRedoService = new UndoRedoService();

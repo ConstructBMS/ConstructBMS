@@ -43,20 +43,24 @@ class CustomFieldsService {
   /**
    * Get all custom field definitions for a project
    */
-  async getProjectCustomFields(projectId: string): Promise<ProjectCustomField[]> {
+  async getProjectCustomFields(
+    projectId: string
+  ): Promise<ProjectCustomField[]> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allFields = await this.getAllProjectCustomFields();
-      
-      let projectFields = allFields.filter(field => field.projectId === projectId);
-      
+
+      let projectFields = allFields.filter(
+        field => field.projectId === projectId
+      );
+
       // Demo mode: limit to max fields and only allow text/dropdown types
       if (isDemoMode) {
         projectFields = projectFields
           .filter(field => field.type === 'text' || field.type === 'dropdown')
           .slice(0, this.maxDemoFields);
       }
-      
+
       return projectFields;
     } catch (error) {
       console.error('Error getting project custom fields:', error);
@@ -67,7 +71,9 @@ class CustomFieldsService {
   /**
    * Get visible custom field definitions for a project
    */
-  async getVisibleProjectCustomFields(projectId: string): Promise<ProjectCustomField[]> {
+  async getVisibleProjectCustomFields(
+    projectId: string
+  ): Promise<ProjectCustomField[]> {
     try {
       const fields = await this.getProjectCustomFields(projectId);
       return fields.filter(field => field.isVisible);
@@ -80,35 +86,45 @@ class CustomFieldsService {
   /**
    * Create a new custom field definition
    */
-  async createProjectCustomField(field: Omit<ProjectCustomField, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ error?: string; field?: ProjectCustomField, success: boolean; }> {
+  async createProjectCustomField(
+    field: Omit<ProjectCustomField, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<{ error?: string; field?: ProjectCustomField; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode restrictions
       if (isDemoMode) {
-        const existingFields = await this.getProjectCustomFields(field.projectId);
+        const existingFields = await this.getProjectCustomFields(
+          field.projectId
+        );
         if (existingFields.length >= this.maxDemoFields) {
-          return { success: false, error: 'Maximum 3 custom fields allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Maximum 3 custom fields allowed in demo mode',
+          };
         }
-        
+
         if (field.type !== 'text' && field.type !== 'dropdown') {
-          return { success: false, error: 'Only text and dropdown types allowed in demo mode' };
+          return {
+            success: false,
+            error: 'Only text and dropdown types allowed in demo mode',
+          };
         }
       }
-      
+
       const newField: ProjectCustomField = {
         ...field,
         id: `field_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         createdAt: new Date(),
         updatedAt: new Date(),
-        demo: isDemoMode
+        demo: isDemoMode,
       };
-      
+
       const allFields = await this.getAllProjectCustomFields();
       allFields.push(newField);
-      
+
       await persistentStorage.set(this.projectCustomFieldsKey, allFields);
-      
+
       console.log('Custom field created:', newField.name);
       return { success: true, field: newField };
     } catch (error) {
@@ -120,30 +136,36 @@ class CustomFieldsService {
   /**
    * Update a custom field definition
    */
-  async updateProjectCustomField(fieldId: string, updates: Partial<ProjectCustomField>): Promise<{ error?: string, success: boolean; }> {
+  async updateProjectCustomField(
+    fieldId: string,
+    updates: Partial<ProjectCustomField>
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode: no editing of field definitions
       if (isDemoMode) {
-        return { success: false, error: 'Cannot edit field definitions in demo mode' };
+        return {
+          success: false,
+          error: 'Cannot edit field definitions in demo mode',
+        };
       }
-      
+
       const allFields = await this.getAllProjectCustomFields();
       const fieldIndex = allFields.findIndex(field => field.id === fieldId);
-      
+
       if (fieldIndex === -1) {
         return { success: false, error: 'Custom field not found' };
       }
-      
+
       allFields[fieldIndex] = {
         ...allFields[fieldIndex],
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
-      
+
       await persistentStorage.set(this.projectCustomFieldsKey, allFields);
-      
+
       console.log('Custom field updated:', fieldId);
       return { success: true };
     } catch (error) {
@@ -155,23 +177,28 @@ class CustomFieldsService {
   /**
    * Delete a custom field definition
    */
-  async deleteProjectCustomField(fieldId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteProjectCustomField(
+    fieldId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
-      
+      const isDemoMode = await demoModeService.getDemoMode();
+
       // Demo mode: no deletion of field definitions
       if (isDemoMode) {
-        return { success: false, error: 'Cannot delete field definitions in demo mode' };
+        return {
+          success: false,
+          error: 'Cannot delete field definitions in demo mode',
+        };
       }
-      
+
       const allFields = await this.getAllProjectCustomFields();
       const filteredFields = allFields.filter(field => field.id !== fieldId);
-      
+
       await persistentStorage.set(this.projectCustomFieldsKey, filteredFields);
-      
+
       // Also delete all task custom field values for this field
       await this.deleteTaskCustomFieldsByFieldId(fieldId);
-      
+
       console.log('Custom field deleted:', fieldId);
       return { success: true };
     } catch (error) {
@@ -196,13 +223,16 @@ class CustomFieldsService {
   /**
    * Get custom field values with field definitions for a task
    */
-  async getTaskCustomFieldValues(taskId: string, projectId: string): Promise<CustomFieldValue[]> {
+  async getTaskCustomFieldValues(
+    taskId: string,
+    projectId: string
+  ): Promise<CustomFieldValue[]> {
     try {
       const [taskFields, projectFields] = await Promise.all([
         this.getTaskCustomFields(taskId),
-        this.getVisibleProjectCustomFields(projectId)
+        this.getVisibleProjectCustomFields(projectId),
       ]);
-      
+
       return projectFields.map(projectField => {
         const taskField = taskFields.find(tf => tf.fieldId === projectField.id);
         return {
@@ -211,7 +241,7 @@ class CustomFieldsService {
           fieldType: projectField.type,
           value: taskField?.value || null,
           isRequired: projectField.isRequired,
-          options: projectField.options
+          options: projectField.options,
         };
       });
     } catch (error) {
@@ -223,20 +253,26 @@ class CustomFieldsService {
   /**
    * Save a custom field value for a task
    */
-  async saveTaskCustomField(taskId: string, fieldId: string, value: string | number | Date | null): Promise<{ error?: string, success: boolean; }> {
+  async saveTaskCustomField(
+    taskId: string,
+    fieldId: string,
+    value: string | number | Date | null
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       const allTaskFields = await this.getAllTaskCustomFields();
-      
+
       // Find existing field value
-      const existingIndex = allTaskFields.findIndex(field => field.taskId === taskId && field.fieldId === fieldId);
-      
+      const existingIndex = allTaskFields.findIndex(
+        field => field.taskId === taskId && field.fieldId === fieldId
+      );
+
       if (existingIndex >= 0) {
         // Update existing value
         allTaskFields[existingIndex] = {
           ...allTaskFields[existingIndex],
           value,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
       } else {
         // Create new field value
@@ -248,13 +284,13 @@ class CustomFieldsService {
           userId: 'current-user',
           createdAt: new Date(),
           updatedAt: new Date(),
-          demo: isDemoMode
+          demo: isDemoMode,
         };
         allTaskFields.push(newTaskField);
       }
-      
+
       await persistentStorage.set(this.taskCustomFieldsKey, allTaskFields);
-      
+
       console.log('Task custom field saved:', fieldId, value);
       return { success: true };
     } catch (error) {
@@ -266,13 +302,17 @@ class CustomFieldsService {
   /**
    * Delete all custom field values for a task
    */
-  async deleteTaskCustomFields(taskId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteTaskCustomFields(
+    taskId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const allTaskFields = await this.getAllTaskCustomFields();
-      const filteredFields = allTaskFields.filter(field => field.taskId !== taskId);
-      
+      const filteredFields = allTaskFields.filter(
+        field => field.taskId !== taskId
+      );
+
       await persistentStorage.set(this.taskCustomFieldsKey, filteredFields);
-      
+
       console.log('Task custom fields deleted for task:', taskId);
       return { success: true };
     } catch (error) {
@@ -284,13 +324,17 @@ class CustomFieldsService {
   /**
    * Delete all custom field values for a specific field definition
    */
-  async deleteTaskCustomFieldsByFieldId(fieldId: string): Promise<{ error?: string, success: boolean; }> {
+  async deleteTaskCustomFieldsByFieldId(
+    fieldId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const allTaskFields = await this.getAllTaskCustomFields();
-      const filteredFields = allTaskFields.filter(field => field.fieldId !== fieldId);
-      
+      const filteredFields = allTaskFields.filter(
+        field => field.fieldId !== fieldId
+      );
+
       await persistentStorage.set(this.taskCustomFieldsKey, filteredFields);
-      
+
       console.log('Task custom fields deleted for field:', fieldId);
       return { success: true };
     } catch (error) {
@@ -315,16 +359,27 @@ class CustomFieldsService {
   /**
    * Validate custom field value
    */
-  validateCustomFieldValue(field: ProjectCustomField, value: any): { error?: string, isValid: boolean; } {
+  validateCustomFieldValue(
+    field: ProjectCustomField,
+    value: any
+  ): { error?: string; isValid: boolean } {
     // Required field validation
-    if (field.isRequired && (value === null || value === undefined || value === '')) {
+    if (
+      field.isRequired &&
+      (value === null || value === undefined || value === '')
+    ) {
       return { isValid: false, error: `${field.name} is required` };
     }
-    
+
     // Type-specific validation
     switch (field.type) {
       case 'number':
-        if (value !== null && value !== undefined && value !== '' && isNaN(Number(value))) {
+        if (
+          value !== null &&
+          value !== undefined &&
+          value !== '' &&
+          isNaN(Number(value))
+        ) {
           return { isValid: false, error: `${field.name} must be a number` };
         }
         break;
@@ -332,17 +387,29 @@ class CustomFieldsService {
         if (value !== null && value !== undefined && value !== '') {
           const date = new Date(value);
           if (isNaN(date.getTime())) {
-            return { isValid: false, error: `${field.name} must be a valid date` };
+            return {
+              isValid: false,
+              error: `${field.name} must be a valid date`,
+            };
           }
         }
         break;
       case 'dropdown':
-        if (value !== null && value !== undefined && value !== '' && field.options && !field.options.includes(value)) {
-          return { isValid: false, error: `${field.name} must be one of the available options` };
+        if (
+          value !== null &&
+          value !== undefined &&
+          value !== '' &&
+          field.options &&
+          !field.options.includes(value)
+        ) {
+          return {
+            isValid: false,
+            error: `${field.name} must be one of the available options`,
+          };
         }
         break;
     }
-    
+
     return { isValid: true };
   }
 
@@ -351,11 +418,16 @@ class CustomFieldsService {
    */
   getFieldTypeDisplayName(type: string): string {
     switch (type) {
-      case 'text': return 'Text';
-      case 'number': return 'Number';
-      case 'date': return 'Date';
-      case 'dropdown': return 'Dropdown';
-      default: return type;
+      case 'text':
+        return 'Text';
+      case 'number':
+        return 'Number';
+      case 'date':
+        return 'Date';
+      case 'dropdown':
+        return 'Dropdown';
+      default:
+        return type;
     }
   }
 
@@ -364,11 +436,16 @@ class CustomFieldsService {
    */
   getFieldTypeDescription(type: string): string {
     switch (type) {
-      case 'text': return 'Single line text input';
-      case 'number': return 'Numeric value input';
-      case 'date': return 'Date picker input';
-      case 'dropdown': return 'Select from predefined options';
-      default: return 'Unknown field type';
+      case 'text':
+        return 'Single line text input';
+      case 'number':
+        return 'Numeric value input';
+      case 'date':
+        return 'Date picker input';
+      case 'dropdown':
+        return 'Select from predefined options';
+      default:
+        return 'Unknown field type';
     }
   }
 
@@ -417,7 +494,7 @@ class CustomFieldsService {
    */
   async resetDemoData(): Promise<void> {
     try {
-      const isDemoMode = await demoModeService.isDemoMode();
+      const isDemoMode = await demoModeService.getDemoMode();
       if (isDemoMode) {
         await this.clearAllCustomFieldsData();
         console.log('Demo custom fields data reset');
@@ -429,4 +506,4 @@ class CustomFieldsService {
   }
 }
 
-export const customFieldsService = new CustomFieldsService(); 
+export const customFieldsService = new CustomFieldsService();

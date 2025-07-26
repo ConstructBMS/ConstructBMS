@@ -33,26 +33,33 @@ class ActionTracker {
   private isDemoMode: boolean = false;
   private onActionRecorded?: (action: ActionPayload) => void;
 
-  constructor(projectId: string, onActionRecorded?: (action: ActionPayload) => void) {
+  constructor(
+    projectId: string,
+    onActionRecorded?: (action: ActionPayload) => void
+  ) {
     this.projectId = projectId;
     this.onActionRecorded = onActionRecorded;
     this.checkDemoMode();
   }
 
   private async checkDemoMode() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+    this.isDemoMode = await demoModeService.getDemoMode();
   }
 
   /**
    * Track task update action
    */
-  async trackTaskUpdate(taskId: string, before: TaskUpdateData, after: TaskUpdateData): Promise<void> {
+  async trackTaskUpdate(
+    taskId: string,
+    before: TaskUpdateData,
+    after: TaskUpdateData
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'update_task',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -66,7 +73,7 @@ class ActionTracker {
       type: 'create_task',
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -75,13 +82,17 @@ class ActionTracker {
   /**
    * Track task delete action
    */
-  async trackTaskDelete(taskId: string, before: any, after: null): Promise<void> {
+  async trackTaskDelete(
+    taskId: string,
+    before: any,
+    after: null
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'delete_task',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -90,12 +101,15 @@ class ActionTracker {
   /**
    * Track dependency create action
    */
-  async trackDependencyCreate(before: null, after: DependencyData): Promise<void> {
+  async trackDependencyCreate(
+    before: null,
+    after: DependencyData
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'create_dependency',
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -104,12 +118,16 @@ class ActionTracker {
   /**
    * Track dependency delete action
    */
-  async trackDependencyDelete(dependencyId: string, before: DependencyData, after: null): Promise<void> {
+  async trackDependencyDelete(
+    dependencyId: string,
+    before: DependencyData,
+    after: null
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'delete_dependency',
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -118,13 +136,17 @@ class ActionTracker {
   /**
    * Track constraint update action
    */
-  async trackConstraintUpdate(taskId: string, before: ConstraintData | null, after: ConstraintData | null): Promise<void> {
+  async trackConstraintUpdate(
+    taskId: string,
+    before: ConstraintData | null,
+    after: ConstraintData | null
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'update_constraint',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -138,7 +160,7 @@ class ActionTracker {
       type: 'create_milestone',
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -147,13 +169,17 @@ class ActionTracker {
   /**
    * Track milestone update action
    */
-  async trackMilestoneUpdate(taskId: string, before: any, after: any): Promise<void> {
+  async trackMilestoneUpdate(
+    taskId: string,
+    before: any,
+    after: any
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'update_milestone',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -162,13 +188,17 @@ class ActionTracker {
   /**
    * Track status update action
    */
-  async trackStatusUpdate(taskId: string, before: { statusId: string }, after: { statusId: string }): Promise<void> {
+  async trackStatusUpdate(
+    taskId: string,
+    before: { statusId: string },
+    after: { statusId: string }
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'update_status',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -177,13 +207,17 @@ class ActionTracker {
   /**
    * Track tags update action
    */
-  async trackTagsUpdate(taskId: string, before: { tags: string[] }, after: { tags: string[] }): Promise<void> {
+  async trackTagsUpdate(
+    taskId: string,
+    before: { tags: string[] },
+    after: { tags: string[] }
+  ): Promise<void> {
     const action: ActionPayload = {
       type: 'update_tags',
       taskId,
       projectId: this.projectId,
       before,
-      after
+      after,
     };
 
     await this.recordAction(action);
@@ -195,7 +229,7 @@ class ActionTracker {
   private async recordAction(action: ActionPayload): Promise<void> {
     try {
       const result = await undoRedoService.recordAction(action);
-      
+
       if (result.success) {
         this.onActionRecorded?.(action);
         console.log('Action tracked:', action.type, action.taskId);
@@ -242,23 +276,23 @@ class ActionTracker {
    */
   shouldTrackInDemoMode(action: ActionPayload): boolean {
     if (!this.isDemoMode) return true;
-    
+
     // Demo mode: only track certain action types
     const demoAllowedActions = [
       'update_task',
       'create_task',
       'delete_task',
       'create_dependency',
-      'delete_dependency'
+      'delete_dependency',
     ];
-    
+
     return demoAllowedActions.includes(action.type);
   }
 }
 
 const ActionTrackerComponent: React.FC<ActionTrackerProps> = ({
   projectId,
-  onActionRecorded
+  onActionRecorded,
 }) => {
   const actionTrackerRef = useRef<ActionTracker | null>(null);
 
@@ -280,4 +314,4 @@ const ActionTrackerComponent: React.FC<ActionTrackerProps> = ({
 };
 
 export default ActionTrackerComponent;
-export { ActionTracker }; 
+export { ActionTracker };

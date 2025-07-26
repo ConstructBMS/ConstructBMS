@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  PlusIcon, 
+import {
+  PlusIcon,
   FlagIcon,
   ExclamationTriangleIcon,
   CalendarIcon,
   PencilIcon,
-  TrashIcon
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 import { type Milestone } from '../../services/milestoneService';
 import { milestoneService } from '../../services/milestoneService';
@@ -37,13 +37,17 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
   onAddMilestone,
   onEditMilestone,
   onDeleteMilestone,
-  selectedMilestonesCount = 0
+  selectedMilestonesCount = 0,
 }) => {
   const { canAccess } = usePermissions();
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingMilestone, setEditingMilestone] = useState<Milestone | undefined>();
-  const [selectedMilestoneId, setSelectedMilestoneId] = useState<string | null>(null);
+  const [editingMilestone, setEditingMilestone] = useState<
+    Milestone | undefined
+  >();
+  const [selectedMilestoneId, setSelectedMilestoneId] = useState<string | null>(
+    null
+  );
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [milestoneCount, setMilestoneCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -59,9 +63,9 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
   // Check demo mode
   const checkDemoMode = async () => {
-    const isDemo = await demoModeService.isDemoMode();
+    const isDemo = await demoModeService.getDemoMode();
     setIsDemoMode(isDemo);
-    
+
     if (isDemo) {
       const count = await milestoneService.getMilestoneCount(projectId);
       setMilestoneCount(count);
@@ -72,9 +76,10 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
   const loadMilestones = async () => {
     try {
       setLoading(true);
-      const projectMilestones = await milestoneService.getProjectMilestones(projectId);
+      const projectMilestones =
+        await milestoneService.getProjectMilestones(projectId);
       setMilestones(projectMilestones);
-      
+
       if (onMilestoneChange) {
         onMilestoneChange(projectMilestones);
       }
@@ -107,7 +112,7 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
     // Notify parent component
     if (onMilestoneChange) {
-      const updatedMilestones = milestones.map(m => 
+      const updatedMilestones = milestones.map(m =>
         m.id === milestone.id ? milestone : m
       );
       const existingIndex = milestones.findIndex(m => m.id === milestone.id);
@@ -140,10 +145,10 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
     try {
       const result = await milestoneService.deleteMilestone(milestoneId);
-      
+
       if (result.success) {
         setMilestones(prev => prev.filter(m => m.id !== milestoneId));
-        
+
         // Update milestone count in demo mode
         if (isDemoMode) {
           setMilestoneCount(prev => Math.max(0, prev - 1));
@@ -151,7 +156,9 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
         // Notify parent component
         if (onMilestoneChange) {
-          const updatedMilestones = milestones.filter(m => m.id !== milestoneId);
+          const updatedMilestones = milestones.filter(
+            m => m.id !== milestoneId
+          );
           onMilestoneChange(updatedMilestones);
         }
 
@@ -205,14 +212,17 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
   // Get demo mode configuration
   const demoConfig = milestoneService.getDemoModeConfig();
-  const isDemoLimitReached = isDemoMode && milestoneCount >= demoConfig.maxMilestonesPerProject;
+  const isDemoLimitReached =
+    isDemoMode && milestoneCount >= demoConfig.maxMilestonesPerProject;
 
   if (loading) {
     return (
       <div className={`milestone-manager ${className}`}>
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600 dark:text-gray-400">Loading milestones...</span>
+        <div className='flex items-center justify-center py-8'>
+          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+          <span className='ml-2 text-gray-600 dark:text-gray-400'>
+            Loading milestones...
+          </span>
         </div>
       </div>
     );
@@ -221,22 +231,24 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
   return (
     <div className={`milestone-manager ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <FlagIcon className="w-5 h-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+      <div className='flex items-center justify-between mb-4'>
+        <div className='flex items-center space-x-2'>
+          <FlagIcon className='w-5 h-5 text-blue-600' />
+          <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
             Project Milestones
           </h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className='text-sm text-gray-500 dark:text-gray-400'>
             ({milestones.length})
           </span>
         </div>
 
         {/* Demo mode indicator */}
         {isDemoMode && (
-          <div className="flex items-center space-x-2 text-sm text-pink-600 dark:text-pink-400">
-            <ExclamationTriangleIcon className="w-4 h-4" />
-            <span>Demo Mode: {milestoneCount}/{demoConfig.maxMilestonesPerProject}</span>
+          <div className='flex items-center space-x-2 text-sm text-pink-600 dark:text-pink-400'>
+            <ExclamationTriangleIcon className='w-4 h-4' />
+            <span>
+              Demo Mode: {milestoneCount}/{demoConfig.maxMilestonesPerProject}
+            </span>
           </div>
         )}
 
@@ -251,20 +263,20 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
                 : 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             }`}
             title={
-              isDemoLimitReached 
+              isDemoLimitReached
                 ? `Demo Mode: Maximum ${demoConfig.maxMilestonesPerProject} milestones reached`
                 : 'Add new milestone'
             }
           >
-            <PlusIcon className="w-4 h-4" />
+            <PlusIcon className='w-4 h-4' />
             <span>Add Milestone</span>
           </button>
         )}
       </div>
 
       {/* Milestone list */}
-      <div className="space-y-2">
-        {milestones.map((milestone) => (
+      <div className='space-y-2'>
+        {milestones.map(milestone => (
           <div
             key={milestone.id}
             className={`milestone-item p-3 border rounded-lg transition-colors ${
@@ -289,14 +301,13 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
 
       {/* Empty State */}
       {milestones.length === 0 && (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          <FlagIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
-          <p className="text-sm">No milestones created yet</p>
-          <p className="text-xs mt-1">
-            {canEdit 
+        <div className='text-center py-8 text-gray-500 dark:text-gray-400'>
+          <FlagIcon className='w-12 h-12 mx-auto mb-3 opacity-50' />
+          <p className='text-sm'>No milestones created yet</p>
+          <p className='text-xs mt-1'>
+            {canEdit
               ? 'Click "Add Milestone" to create your first milestone'
-              : 'Contact your project manager to add milestones'
-            }
+              : 'Contact your project manager to add milestones'}
           </p>
         </div>
       )}
@@ -313,4 +324,4 @@ const MilestoneManager: React.FC<MilestoneManagerProps> = ({
   );
 };
 
-export default MilestoneManager; 
+export default MilestoneManager;
