@@ -1,9 +1,7 @@
 @echo off
-echo Staging changes...
-git add .
-echo Committing...
-git commit -m "Auto-save: %date% %time%"
-echo Pushing...
-git push
-echo Done.
-pause 
+echo Running git command: %*
+git %*
+if %ERRORLEVEL% NEQ 0 (
+    echo Git command failed with error code: %ERRORLEVEL%
+    pause
+) 
