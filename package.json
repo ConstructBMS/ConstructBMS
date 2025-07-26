@@ -59,8 +59,11 @@
     "enterprise:setup": "npm run setup && npm run security:fix && npm run format && npm run type-check",
     "fix:env": "powershell -ExecutionPolicy Bypass -File scripts/fix-environment.ps1",
     "fix:env:batch": "scripts/fix-environment.bat",
+    "fix:all": "powershell -ExecutionPolicy Bypass -File fix-all-issues.ps1",
     "clear:caches": "npm cache clean --force && rimraf .cache .vite dist build node_modules/.vite node_modules/.cache/.tsbuildinfo",
-    "restart:clean": "npm run clear:caches && npm install && npm run dev"
+    "restart:clean": "npm run clear:caches && npm install && npm run dev",
+    "git:commit": "git add . && git commit -m \"Auto-save: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')\" && git push",
+    "git:status": "git status"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

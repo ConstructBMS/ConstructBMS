@@ -1,0 +1,9 @@
+@echo off
+echo Staging changes...
+git add .
+echo Committing...
+git commit -m "Auto-save: %date% %time%"
+echo Pushing...
+git push
+echo Done.
+pause 
