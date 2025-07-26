@@ -1,6 +1,10 @@
 import { supabase } from './supabase';
 import { demoModeService } from './demoModeService';
-import { multiProjectService, type ProjectInfo, type MultiProjectTask } from './multiProjectService';
+import {
+  multiProjectService,
+  type ProjectInfo,
+  type MultiProjectTask,
+} from './multiProjectService';
 
 export interface TimelineExportOptions {
   dateRange?: {
@@ -102,7 +106,7 @@ const DEMO_MODE_CONFIG = {
   pngDisabled: true,
   pageSizeFixed: 'A4' as const,
   brandingRequired: true,
-  tooltipMessage: 'Upgrade for full export features'
+  tooltipMessage: 'Upgrade for full export features',
 };
 
 class TimelineExportService {
@@ -112,8 +116,8 @@ class TimelineExportService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode(): Promise<void> {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -134,8 +138,8 @@ class TimelineExportService {
       multiProject: {
         enabled: false,
         selectedProjects: [],
-        groupByProject: true
-      }
+        groupByProject: true,
+      },
     };
   }
 
@@ -149,7 +153,7 @@ class TimelineExportService {
       'Page size fixed to A4',
       'Branding cannot be disabled',
       'Watermarked with "DEMO EXPORT"',
-      'Multi-project limited to 2 projects'
+      'Multi-project limited to 2 projects',
     ];
   }
 
@@ -186,7 +190,9 @@ class TimelineExportService {
   ): Promise<TimelineExportData> {
     try {
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const exportUser = user?.email || 'Unknown User';
 
       // Get project info
@@ -250,16 +256,16 @@ class TimelineExportService {
           .eq('project_id', projectId)
           .eq('is_active', true)
           .single();
-        
+
         if (baselineData) {
           const { data: baselineTasksData } = await supabase
             .from('baseline_tasks')
             .select('*')
             .eq('baseline_id', baselineData.id);
-          
+
           baseline = {
             ...baselineData,
-            tasks: baselineTasksData || []
+            tasks: baselineTasksData || [],
           };
         }
       }
@@ -270,7 +276,10 @@ class TimelineExportService {
         // This would be calculated based on task dependencies
         // For now, we'll use a placeholder
         criticalPath = {
-          taskIds: tasksData?.filter((task: any) => task.is_critical)?.map((task: any) => task.id) || []
+          taskIds:
+            tasksData
+              ?.filter((task: any) => task.is_critical)
+              ?.map((task: any) => task.id) || [],
         };
       }
 
@@ -279,22 +288,28 @@ class TimelineExportService {
       if (options.multiProject?.enabled) {
         const selectedProjects = options.multiProject.selectedProjects;
         const projects = await multiProjectService.getAccessibleProjects();
-        const filteredProjects = projects.filter(p => selectedProjects.includes(p.id));
-        
+        const filteredProjects = projects.filter(p =>
+          selectedProjects.includes(p.id)
+        );
+
         if (filteredProjects.length > 0) {
-          const allTasks = await multiProjectService.getTasksForProjects(selectedProjects);
+          const allTasks =
+            await multiProjectService.getTasksForProjects(selectedProjects);
           const groupedTasks = multiProjectService.getTasksGroupedByProject();
-          
+
           multiProjectData = {
             projects: filteredProjects,
-            groupedTasks
+            groupedTasks,
           };
         }
       }
 
       // Apply demo mode restrictions
       let finalTasks = tasksData || [];
-      if (this.isDemoMode && finalTasks.length > DEMO_MODE_CONFIG.maxTasksVisible) {
+      if (
+        this.isDemoMode &&
+        finalTasks.length > DEMO_MODE_CONFIG.maxTasksVisible
+      ) {
         finalTasks = finalTasks.slice(0, DEMO_MODE_CONFIG.maxTasksVisible);
       }
 
@@ -317,19 +332,19 @@ class TimelineExportService {
           type: task.type,
           projectId: task.project_id,
           projectName: projectData.name,
-          projectColor: '#3B82F6'
+          projectColor: '#3B82F6',
         })),
         milestones: milestones.map((milestone: any) => ({
           id: milestone.id,
           name: milestone.name,
           date: new Date(milestone.date),
           type: milestone.type,
-          projectId: milestone.project_id
+          projectId: milestone.project_id,
         })),
         dependencies: dependencies.map((dep: any) => ({
           sourceId: dep.source_task_id,
           targetId: dep.target_task_id,
-          type: dep.dependency_type
+          type: dep.dependency_type,
         })),
         baseline,
         criticalPath,
@@ -337,9 +352,9 @@ class TimelineExportService {
           status: [],
           priority: [],
           tags: [],
-          assignee: []
+          assignee: [],
         },
-        multiProject: multiProjectData
+        multiProject: multiProjectData,
       };
 
       return exportData;
@@ -362,18 +377,22 @@ class TimelineExportService {
       if (!this.canExportInDemoMode(options)) {
         return {
           success: false,
-          error: 'Export not allowed in demo mode with current options'
+          error: 'Export not allowed in demo mode with current options',
         };
       }
 
       // Import required libraries
       const [html2canvas, jsPDF] = await Promise.all([
         import('html2canvas'),
-        import('jspdf')
+        import('jspdf'),
       ]);
 
       // Prepare element for export
-      const exportElement = this.prepareElementForExport(ganttElement, options, exportData);
+      const exportElement = this.prepareElementForExport(
+        ganttElement,
+        options,
+        exportData
+      );
 
       // Capture the element
       const canvas = await html2canvas.default(exportElement, {
@@ -384,14 +403,14 @@ class TimelineExportService {
         width: exportElement.scrollWidth,
         height: exportElement.scrollHeight,
         scrollX: 0,
-        scrollY: 0
+        scrollY: 0,
       });
 
       // Create PDF
       const pdf = new jsPDF.default({
         orientation: options.orientation,
         unit: 'mm',
-        format: options.pageSize
+        format: options.pageSize,
       });
 
       // Calculate dimensions
@@ -441,7 +460,7 @@ class TimelineExportService {
       if (this.isDemoMode) {
         return {
           success: false,
-          error: 'PNG export disabled in demo mode'
+          error: 'PNG export disabled in demo mode',
         };
       }
 
@@ -449,7 +468,11 @@ class TimelineExportService {
       const html2canvas = await import('html2canvas');
 
       // Prepare element for export
-      const exportElement = this.prepareElementForExport(ganttElement, options, exportData);
+      const exportElement = this.prepareElementForExport(
+        ganttElement,
+        options,
+        exportData
+      );
 
       // Capture the element
       const canvas = await html2canvas.default(exportElement, {
@@ -460,7 +483,7 @@ class TimelineExportService {
         width: exportElement.scrollWidth,
         height: exportElement.scrollHeight,
         scrollX: 0,
-        scrollY: 0
+        scrollY: 0,
       });
 
       // Convert to data URL
@@ -546,7 +569,7 @@ class TimelineExportService {
       </div>
     `;
 
-    const projectInfo = exportData.multiProject?.enabled 
+    const projectInfo = exportData.multiProject?.enabled
       ? `Multi-Project Timeline (${exportData.multiProject.projects.length} projects)`
       : exportData.projectName;
 
@@ -592,21 +615,29 @@ class TimelineExportService {
   /**
    * Add PDF header
    */
-  private addPDFHeader(pdf: any, exportData: TimelineExportData, pageWidth: number): void {
+  private addPDFHeader(
+    pdf: any,
+    exportData: TimelineExportData,
+    pageWidth: number
+  ): void {
     pdf.setFontSize(16);
     pdf.setFont('helvetica', 'bold');
-    
-    const projectName = exportData.multiProject?.enabled 
+
+    const projectName = exportData.multiProject?.enabled
       ? `Multi-Project Timeline (${exportData.multiProject.projects.length} projects)`
       : exportData.projectName;
-    
+
     pdf.text(projectName, 10, 20);
-    
+
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`Exported: ${exportData.exportDate.toLocaleDateString()}`, pageWidth - 60, 20);
+    pdf.text(
+      `Exported: ${exportData.exportDate.toLocaleDateString()}`,
+      pageWidth - 60,
+      20
+    );
     pdf.text(`By: ${exportData.exportUser}`, pageWidth - 60, 25);
-    
+
     if (this.isDemoMode) {
       pdf.setFontSize(8);
       pdf.setTextColor(251, 191, 36);
@@ -618,21 +649,39 @@ class TimelineExportService {
   /**
    * Add PDF footer
    */
-  private addPDFFooter(pdf: any, exportData: TimelineExportData, pageWidth: number, pageHeight: number): void {
+  private addPDFFooter(
+    pdf: any,
+    exportData: TimelineExportData,
+    pageWidth: number,
+    pageHeight: number
+  ): void {
     const footerY = pageHeight - 10;
-    
+
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`Generated by ConstructBMS - ${new Date().toLocaleString()}`, 10, footerY);
-    pdf.text(`Page ${pdf.getCurrentPageInfo().pageNumber}`, pageWidth - 20, footerY);
-    
+    pdf.text(
+      `Generated by ConstructBMS - ${new Date().toLocaleString()}`,
+      10,
+      footerY
+    );
+    pdf.text(
+      `Page ${pdf.getCurrentPageInfo().pageNumber}`,
+      pageWidth - 20,
+      footerY
+    );
+
     // Add filters info if available
     if (exportData.filters) {
       const activeFilters = [];
-      if (exportData.filters.status.length) activeFilters.push(`Status: ${exportData.filters.status.join(', ')}`);
-      if (exportData.filters.priority.length) activeFilters.push(`Priority: ${exportData.filters.priority.join(', ')}`);
-      if (exportData.filters.tags.length) activeFilters.push(`Tags: ${exportData.filters.tags.join(', ')}`);
-      
+      if (exportData.filters.status.length)
+        activeFilters.push(`Status: ${exportData.filters.status.join(', ')}`);
+      if (exportData.filters.priority.length)
+        activeFilters.push(
+          `Priority: ${exportData.filters.priority.join(', ')}`
+        );
+      if (exportData.filters.tags.length)
+        activeFilters.push(`Tags: ${exportData.filters.tags.join(', ')}`);
+
       if (activeFilters.length > 0) {
         pdf.text(`Filters: ${activeFilters.join(' | ')}`, 10, footerY - 5);
       }
@@ -642,7 +691,10 @@ class TimelineExportService {
   /**
    * Apply date range filter
    */
-  private applyDateRangeFilter(element: HTMLElement, dateRange: { end: Date, start: Date; }): void {
+  private applyDateRangeFilter(
+    element: HTMLElement,
+    dateRange: { end: Date; start: Date }
+  ): void {
     // This would filter tasks based on the date range
     // Implementation depends on the specific DOM structure
     console.log('Applying date range filter:', dateRange);
@@ -682,22 +734,25 @@ class TimelineExportService {
   /**
    * Save export settings to Supabase
    */
-  async saveExportSettings(projectId: string, options: TimelineExportOptions): Promise<{ error?: string, success: boolean; }> {
+  async saveExportSettings(
+    projectId: string,
+    options: TimelineExportOptions
+  ): Promise<{ error?: string; success: boolean }> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return { success: false, error: 'User not authenticated' };
       }
 
-      const { error } = await supabase
-        .from('timeline_export_settings')
-        .upsert({
-          user_id: user.id,
-          project_id: projectId,
-          settings: options,
-          demo: this.isDemoMode,
-          updated_at: new Date().toISOString()
-        });
+      const { error } = await supabase.from('timeline_export_settings').upsert({
+        user_id: user.id,
+        project_id: projectId,
+        settings: options,
+        demo: this.isDemoMode,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) throw error;
 
@@ -711,9 +766,13 @@ class TimelineExportService {
   /**
    * Load export settings from Supabase
    */
-  async loadExportSettings(projectId: string): Promise<TimelineExportOptions | null> {
+  async loadExportSettings(
+    projectId: string
+  ): Promise<TimelineExportOptions | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
 
       const { data, error } = await supabase
@@ -733,4 +792,4 @@ class TimelineExportService {
   }
 }
 
-export const timelineExportService = new TimelineExportService(); 
+export const timelineExportService = new TimelineExportService();

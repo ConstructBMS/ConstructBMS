@@ -7,11 +7,11 @@ export interface TaskCalendar {
   // ['2025-08-26', ...]
   createdBy: string;
   // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-  dailyHours: { end: string, start: string; };
-  demo: boolean; 
+  dailyHours: { end: string; start: string };
+  demo: boolean;
   // e.g. { start: '08:00', end: '17:00' }
-  holidays: string[]; 
-  id: string; 
+  holidays: string[];
+  id: string;
   isGlobal: boolean;
   name: string;
   projectId: string;
@@ -33,7 +33,7 @@ const DEMO_MODE_CONFIG = {
   defaultDailyHours: { start: '09:00', end: '17:00' },
   defaultHolidays: ['2025-12-25'],
   tooltipMessage: 'Demo – Only default calendar editable',
-  editingDisabled: true
+  editingDisabled: true,
 };
 
 class TaskCalendarService {
@@ -43,8 +43,8 @@ class TaskCalendarService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -117,7 +117,9 @@ class TaskCalendarService {
   /**
    * Create a new calendar
    */
-  async createCalendar(calendar: Omit<TaskCalendar, 'id' | 'createdAt' | 'updatedAt'>): Promise<TaskCalendar | null> {
+  async createCalendar(
+    calendar: Omit<TaskCalendar, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<TaskCalendar | null> {
     // Check demo mode restrictions
     if (this.isDemoMode) {
       if (DEMO_MODE_CONFIG.editingDisabled) {
@@ -125,7 +127,9 @@ class TaskCalendarService {
         return null;
       }
 
-      const existingCalendars = await this.getProjectCalendars(calendar.projectId);
+      const existingCalendars = await this.getProjectCalendars(
+        calendar.projectId
+      );
       if (existingCalendars.length >= DEMO_MODE_CONFIG.maxCalendars) {
         console.warn('Maximum calendars reached for demo mode');
         return null;
@@ -144,7 +148,7 @@ class TaskCalendarService {
         is_global: calendar.isGlobal,
         demo: this.isDemoMode,
         created_at: now.toISOString(),
-        updated_at: now.toISOString()
+        updated_at: now.toISOString(),
       };
 
       const { data, error } = await supabase
@@ -165,7 +169,10 @@ class TaskCalendarService {
   /**
    * Update an existing calendar
    */
-  async updateCalendar(calendarId: string, updates: Partial<TaskCalendar>): Promise<boolean> {
+  async updateCalendar(
+    calendarId: string,
+    updates: Partial<TaskCalendar>
+  ): Promise<boolean> {
     // Check demo mode restrictions
     if (this.isDemoMode) {
       if (DEMO_MODE_CONFIG.editingDisabled) {
@@ -176,13 +183,17 @@ class TaskCalendarService {
 
     try {
       const updateData: any = {};
-      
+
       if (updates.name !== undefined) updateData.name = updates.name;
-      if (updates.workingDays !== undefined) updateData.working_days = updates.workingDays;
-      if (updates.dailyHours !== undefined) updateData.daily_hours = updates.dailyHours;
-      if (updates.holidays !== undefined) updateData.holidays = updates.holidays;
-      if (updates.isGlobal !== undefined) updateData.is_global = updates.isGlobal;
-      
+      if (updates.workingDays !== undefined)
+        updateData.working_days = updates.workingDays;
+      if (updates.dailyHours !== undefined)
+        updateData.daily_hours = updates.dailyHours;
+      if (updates.holidays !== undefined)
+        updateData.holidays = updates.holidays;
+      if (updates.isGlobal !== undefined)
+        updateData.is_global = updates.isGlobal;
+
       updateData.updated_at = new Date().toISOString();
 
       const { error } = await supabase
@@ -227,7 +238,10 @@ class TaskCalendarService {
   /**
    * Assign calendar to task
    */
-  async assignCalendarToTask(taskId: string, calendarId: string | null): Promise<boolean> {
+  async assignCalendarToTask(
+    taskId: string,
+    calendarId: string | null
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -246,7 +260,9 @@ class TaskCalendarService {
   /**
    * Get calendar assignment for task
    */
-  async getTaskCalendarAssignment(taskId: string): Promise<TaskCalendarAssignment | null> {
+  async getTaskCalendarAssignment(
+    taskId: string
+  ): Promise<TaskCalendarAssignment | null> {
     try {
       const { data, error } = await supabase
         .from('asta_tasks')
@@ -259,7 +275,7 @@ class TaskCalendarService {
       return {
         taskId: data.id,
         calendarId: data.calendar_id,
-        projectId: data.project_id
+        projectId: data.project_id,
       };
     } catch (error) {
       console.error('Error getting task calendar assignment:', error);
@@ -297,7 +313,11 @@ class TaskCalendarService {
   /**
    * Calculate working days between two dates for a specific calendar
    */
-  async getWorkingDaysBetween(startDate: Date, endDate: Date, calendarId: string): Promise<number> {
+  async getWorkingDaysBetween(
+    startDate: Date,
+    endDate: Date,
+    calendarId: string
+  ): Promise<number> {
     try {
       let workingDays = 0;
       const current = new Date(startDate);
@@ -312,14 +332,22 @@ class TaskCalendarService {
       return workingDays;
     } catch (error) {
       console.error('Error calculating working days:', error);
-      return Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      return (
+        Math.ceil(
+          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        ) + 1
+      );
     }
   }
 
   /**
    * Add working days to a date for a specific calendar
    */
-  async addWorkingDays(startDate: Date, workingDays: number, calendarId: string): Promise<Date> {
+  async addWorkingDays(
+    startDate: Date,
+    workingDays: number,
+    calendarId: string
+  ): Promise<Date> {
     try {
       let current = new Date(startDate);
       let daysAdded = 0;
@@ -344,10 +372,15 @@ class TaskCalendarService {
   /**
    * Create default demo calendar
    */
-  async createDefaultDemoCalendar(projectId: string): Promise<TaskCalendar | null> {
+  async createDefaultDemoCalendar(
+    projectId: string
+  ): Promise<TaskCalendar | null> {
     if (!this.isDemoMode) return null;
 
-    const defaultCalendar: Omit<TaskCalendar, 'id' | 'createdAt' | 'updatedAt'> = {
+    const defaultCalendar: Omit<
+      TaskCalendar,
+      'id' | 'createdAt' | 'updatedAt'
+    > = {
       projectId,
       name: DEMO_MODE_CONFIG.defaultCalendarName,
       workingDays: DEMO_MODE_CONFIG.defaultWorkingDays,
@@ -355,7 +388,7 @@ class TaskCalendarService {
       holidays: DEMO_MODE_CONFIG.defaultHolidays,
       createdBy: 'demo-user',
       isGlobal: false,
-      demo: true
+      demo: true,
     };
 
     return this.createCalendar(defaultCalendar);
@@ -367,7 +400,7 @@ class TaskCalendarService {
   getDemoModeConfig() {
     return {
       ...DEMO_MODE_CONFIG,
-      isDemoMode: this.isDemoMode
+      isDemoMode: this.isDemoMode,
     };
   }
 
@@ -386,7 +419,7 @@ class TaskCalendarService {
       isGlobal: data.is_global,
       demo: data.demo,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     };
   }
 
@@ -399,4 +432,4 @@ class TaskCalendarService {
   }
 }
 
-export const taskCalendarService = new TaskCalendarService(); 
+export const taskCalendarService = new TaskCalendarService();

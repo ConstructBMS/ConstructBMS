@@ -7,18 +7,13 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-// Temporary context placeholders
-const AuthProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const EmailProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const MenuProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const LogoProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const ChatProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const ProgrammeUndoRedoProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-
-// Temporary hooks
-const useAuth = () => ({ isAuthenticated: false, isLoading: false, user: null, login: () => Promise.resolve(), logout: () => Promise.resolve(), signup: () => Promise.resolve(), checkPermission: () => true, checkRole: () => true });
-const useEmail = () => ({ unreadCount: 0 });
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { EmailProvider, useEmail } from './contexts/EmailContext';
+import { MenuProvider } from './contexts/MenuContext';
+import { LogoProvider } from './contexts/LogoContext';
+import { ChatProvider } from './contexts/ChatContext';
+import { ProgrammeUndoRedoProvider } from './contexts/ProgrammeUndoRedoContext';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import CRM from './components/modules/CRM';
@@ -28,7 +23,6 @@ import Chat from './components/modules/Chat';
 import ChatNotificationBadge from './components/ChatNotificationBadge';
 import DocumentHub from './components/modules/DocumentHub';
 import DocumentBuilder from './components/modules/DocumentBuilder';
-
 
 import DocumentControlCentre from './components/modules/E-Signature';
 import Estimating from './components/modules/Estimating';
@@ -78,10 +72,12 @@ import { initializeDemoData, hasDemoData } from './utils/initializeDemoData';
 
 // Placeholder component for Gantt functionality
 const GanttPlaceholder: React.FC = () => (
-  <div className="flex items-center justify-center h-64 text-gray-500">
-    <div className="text-center">
-      <h3 className="text-lg font-medium mb-2">Gantt Chart</h3>
-      <p className="text-sm">Gantt functionality is available in the Programme Manager module.</p>
+  <div className='flex items-center justify-center h-64 text-gray-500'>
+    <div className='text-center'>
+      <h3 className='text-lg font-medium mb-2'>Gantt Chart</h3>
+      <p className='text-sm'>
+        Gantt functionality is available in the Programme Manager module.
+      </p>
     </div>
   </div>
 );
@@ -105,21 +101,24 @@ function AppContent() {
 
   const handleModuleChange = (module: string, params?: Record<string, any>) => {
     setActiveModule(module);
-    
+
     // Handle Programme Manager sub-routes
     if (module === 'programme-manager') {
       // If no specific tab is provided, default to home
       navigate('/programme-manager/home');
       return;
     }
-    
+
     // Update URL to reflect the active module
     navigate(`/${module}`);
-    
+
     // Handle specific parameters for opening items
     if (params?.['openProject']) {
       // Store the project data in sessionStorage for the Projects module to access
-      sessionStorage.setItem('openProject', JSON.stringify(params['openProject']));
+      sessionStorage.setItem(
+        'openProject',
+        JSON.stringify(params['openProject'])
+      );
     }
     if (params?.['openTask']) {
       sessionStorage.setItem('openTask', JSON.stringify(params['openTask']));
@@ -152,21 +151,23 @@ function AppContent() {
         console.log('🚫 Demo data was just cleared, skipping initialization');
         return;
       }
-      
+
       // Check demo mode status and initialize demo data
       const checkAndInitializeDemoData = async () => {
         try {
           const isInDemoMode = await demoDataService.isDemoMode();
           setIsDemoMode(isInDemoMode);
           if (isInDemoMode) {
-        
             await demoDataService.ensureDemoDataExists();
           }
         } catch (error) {
-          console.warn('Failed to check demo mode or initialize demo data:', error);
+          console.warn(
+            'Failed to check demo mode or initialize demo data:',
+            error
+          );
         }
       };
-      
+
       checkAndInitializeDemoData();
     }
   }, [isAuthenticated, user]);
@@ -200,16 +201,27 @@ function AppContent() {
     if (activeModule === 'programme-manager') {
       const pathSegments = location.pathname.split('/');
       const subRoute = pathSegments[2]; // programme-manager/[subRoute]
-      
+
       // If we have a sub-route, let the Programme Manager handle it
-      if (subRoute && ['file', 'home', 'project', 'view', 'allocation', '4d', 'format'].includes(subRoute)) {
+      if (
+        subRoute &&
+        [
+          'file',
+          'home',
+          'project',
+          'view',
+          'allocation',
+          '4d',
+          'format',
+        ].includes(subRoute)
+      ) {
         return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
       }
-      
+
       // Default to home if no valid sub-route
       return <ProgrammeManager onNavigateToModule={handleModuleChange} />;
     }
-    
+
     switch (activeModule) {
       case 'dashboard':
       case 'quick-start':
@@ -375,11 +387,12 @@ function AppContent() {
     return <LoginForm />;
   }
 
-
-
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col safe-area-inset ios-accelerated'>
-      <DemoModeIndicator isDemoMode={isDemoMode} onNavigateToSettings={handleNavigateToSettings} />
+      <DemoModeIndicator
+        isDemoMode={isDemoMode}
+        onNavigateToSettings={handleNavigateToSettings}
+      />
       <div className='flex flex-1'>
         <Sidebar
           collapsed={sidebarCollapsed}
@@ -394,7 +407,7 @@ function AppContent() {
             emailUnreadCount={unreadCount}
           />
           <main className='flex-1 p-2 sm:p-4 md:p-6 w-full max-w-full sidebar-ios-fix safe-area-inset'>
-            <ProgrammeUndoRedoProvider projectId="default">
+            <ProgrammeUndoRedoProvider projectId='default'>
               {renderActiveModule()}
             </ProgrammeUndoRedoProvider>
           </main>
@@ -430,18 +443,35 @@ function App() {
     // Initialize logging service
     loggingService.logSystemInfo();
     loggingService.info('Application started', { version: '1.0.0' }, 'App');
-    
+
     // Add some more visible logs
-    loggingService.info('Console Logging UI is now available in General Settings', { feature: 'logging-ui' }, 'App');
-    loggingService.info('Application logging system initialized', { feature: 'logging' }, 'App');
-    
+    loggingService.info(
+      'Console Logging UI is now available in General Settings',
+      { feature: 'logging-ui' },
+      'App'
+    );
+    loggingService.info(
+      'Application logging system initialized',
+      { feature: 'logging' },
+      'App'
+    );
+
     // Initialize demo data service
     const initializeApp = async () => {
       try {
         await demoDataService.initializeDemoTables();
-        loggingService.info('Demo data service initialized successfully', { service: 'demoData' }, 'App');
+        loggingService.info(
+          'Demo data service initialized successfully',
+          { service: 'demoData' },
+          'App'
+        );
       } catch (error) {
-        loggingService.error('Failed to initialize demo data service', error as Error, { service: 'demoData' }, 'App');
+        loggingService.error(
+          'Failed to initialize demo data service',
+          error as Error,
+          { service: 'demoData' },
+          'App'
+        );
       }
     };
 
@@ -469,14 +499,17 @@ function App() {
                     />
                     <Route path='/login' element={<LoginForm />} />
                     <Route path='/signup' element={<SignUpForm />} />
-                    
+
                     {/* Programme Manager routes */}
-                    <Route path='/programme-manager/*' element={
-                      <ProtectedRoute>
-                        <AppContent />
-                      </ProtectedRoute>
-                    } />
-                    
+                    <Route
+                      path='/programme-manager/*'
+                      element={
+                        <ProtectedRoute>
+                          <AppContent />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     {/* All other routes */}
                     <Route
                       path='*'

@@ -6,9 +6,9 @@ export interface ProgrammeCalendar {
   createdAt: Date;
   createdBy?: string;
   demo?: boolean;
-  id: string; 
-  name: string; 
-  projectId: string; 
+  id: string;
+  name: string;
+  projectId: string;
   // e.g. '08:00'
   shiftEnd: string;
   // ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
@@ -22,7 +22,7 @@ export interface ProgrammeCalendar {
 export interface CalendarException {
   calendarId: string;
   createdAt: Date;
-  createdBy?: string; 
+  createdBy?: string;
   customShiftEnd?: string;
   customShiftStart?: string;
   date: string;
@@ -37,7 +37,7 @@ export interface GlobalHoliday {
   // YYYY-MM-DD format
   country: string;
   createdAt: Date;
-  date: string; 
+  date: string;
   id: string;
   isActive: boolean;
   name: string;
@@ -65,8 +65,8 @@ const DEMO_MODE_CONFIG = {
     'Only 1 calendar editable',
     'Max 3 custom dates allowed',
     'Shift hours fixed (08:00–16:00)',
-    'Limited holiday management'
-  ]
+    'Limited holiday management',
+  ],
 };
 
 class ProgrammeWorkingCalendarService {
@@ -76,8 +76,8 @@ class ProgrammeWorkingCalendarService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -90,7 +90,9 @@ class ProgrammeWorkingCalendarService {
   /**
    * Get calendar for project
    */
-  async getCalendarForProject(projectId: string): Promise<ProgrammeCalendar | null> {
+  async getCalendarForProject(
+    projectId: string
+  ): Promise<ProgrammeCalendar | null> {
     try {
       const { data, error } = await supabase
         .from('programme_calendars')
@@ -115,7 +117,7 @@ class ProgrammeWorkingCalendarService {
         createdBy: data.created_by,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
-        demo: data.demo
+        demo: data.demo,
       };
 
       // Apply demo mode restrictions
@@ -135,15 +137,24 @@ class ProgrammeWorkingCalendarService {
   /**
    * Create default calendar for project
    */
-  private async createDefaultCalendar(projectId: string): Promise<ProgrammeCalendar> {
-    const defaultCalendar: Omit<ProgrammeCalendar, 'id' | 'createdAt' | 'updatedAt'> = {
+  private async createDefaultCalendar(
+    projectId: string
+  ): Promise<ProgrammeCalendar> {
+    const defaultCalendar: Omit<
+      ProgrammeCalendar,
+      'id' | 'createdAt' | 'updatedAt'
+    > = {
       projectId,
       name: 'Default',
       workdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-      shiftStart: this.isDemoMode ? DEMO_MODE_CONFIG.fixedShiftHours.start : '08:00',
-      shiftEnd: this.isDemoMode ? DEMO_MODE_CONFIG.fixedShiftHours.end : '16:00',
+      shiftStart: this.isDemoMode
+        ? DEMO_MODE_CONFIG.fixedShiftHours.start
+        : '08:00',
+      shiftEnd: this.isDemoMode
+        ? DEMO_MODE_CONFIG.fixedShiftHours.end
+        : '16:00',
       useGlobalHolidays: true,
-      demo: this.isDemoMode
+      demo: this.isDemoMode,
     };
 
     const result = await this.saveCalendar(defaultCalendar);
@@ -156,22 +167,30 @@ class ProgrammeWorkingCalendarService {
       ...defaultCalendar,
       id: `temp_${Date.now()}`,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
   }
 
   /**
    * Save calendar
    */
-  async saveCalendar(calendar: Omit<ProgrammeCalendar, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ calendar?: ProgrammeCalendar; error?: string, success: boolean; }> {
+  async saveCalendar(
+    calendar: Omit<ProgrammeCalendar, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<{
+    calendar?: ProgrammeCalendar;
+    error?: string;
+    success: boolean;
+  }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
-        if (calendar.shiftStart !== DEMO_MODE_CONFIG.fixedShiftHours.start || 
-            calendar.shiftEnd !== DEMO_MODE_CONFIG.fixedShiftHours.end) {
-          return { 
-            success: false, 
-            error: 'Shift hours are fixed in demo mode' 
+        if (
+          calendar.shiftStart !== DEMO_MODE_CONFIG.fixedShiftHours.start ||
+          calendar.shiftEnd !== DEMO_MODE_CONFIG.fixedShiftHours.end
+        ) {
+          return {
+            success: false,
+            error: 'Shift hours are fixed in demo mode',
           };
         }
       }
@@ -186,7 +205,7 @@ class ProgrammeWorkingCalendarService {
         use_global_holidays: calendar.useGlobalHolidays,
         created_by: calendar.createdBy || 'current-user',
         updated_at: now.toISOString(),
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       };
 
       const { data, error } = await supabase
@@ -208,7 +227,7 @@ class ProgrammeWorkingCalendarService {
         createdBy: data.created_by,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
-        demo: data.demo
+        demo: data.demo,
       };
 
       return { success: true, calendar: savedCalendar };
@@ -221,7 +240,9 @@ class ProgrammeWorkingCalendarService {
   /**
    * Get calendar exceptions
    */
-  async getCalendarExceptions(calendarId: string): Promise<CalendarException[]> {
+  async getCalendarExceptions(
+    calendarId: string
+  ): Promise<CalendarException[]> {
     try {
       const { data, error } = await supabase
         .from('programme_calendar_exceptions')
@@ -241,7 +262,7 @@ class ProgrammeWorkingCalendarService {
         description: item.description,
         createdBy: item.created_by,
         createdAt: new Date(item.created_at),
-        demo: item.demo
+        demo: item.demo,
       }));
     } catch (error) {
       console.error('Error loading calendar exceptions:', error);
@@ -252,15 +273,23 @@ class ProgrammeWorkingCalendarService {
   /**
    * Add calendar exception
    */
-  async addCalendarException(exception: Omit<CalendarException, 'id' | 'createdAt'>): Promise<{ error?: string, exception?: CalendarException; success: boolean; }> {
+  async addCalendarException(
+    exception: Omit<CalendarException, 'id' | 'createdAt'>
+  ): Promise<{
+    error?: string;
+    exception?: CalendarException;
+    success: boolean;
+  }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
-        const existingExceptions = await this.getCalendarExceptions(exception.calendarId);
+        const existingExceptions = await this.getCalendarExceptions(
+          exception.calendarId
+        );
         if (existingExceptions.length >= DEMO_MODE_CONFIG.maxCustomDates) {
-          return { 
-            success: false, 
-            error: `Maximum ${DEMO_MODE_CONFIG.maxCustomDates} custom dates allowed in demo mode` 
+          return {
+            success: false,
+            error: `Maximum ${DEMO_MODE_CONFIG.maxCustomDates} custom dates allowed in demo mode`,
           };
         }
       }
@@ -273,7 +302,7 @@ class ProgrammeWorkingCalendarService {
         custom_shift_end: exception.customShiftEnd,
         description: exception.description,
         created_by: exception.createdBy || 'current-user',
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       };
 
       const { data, error } = await supabase
@@ -294,7 +323,7 @@ class ProgrammeWorkingCalendarService {
         description: data.description,
         createdBy: data.created_by,
         createdAt: new Date(data.created_at),
-        demo: data.demo
+        demo: data.demo,
       };
 
       return { success: true, exception: savedException };
@@ -307,7 +336,9 @@ class ProgrammeWorkingCalendarService {
   /**
    * Remove calendar exception
    */
-  async removeCalendarException(exceptionId: string): Promise<{ error?: string, success: boolean; }> {
+  async removeCalendarException(
+    exceptionId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_calendar_exceptions')
@@ -344,7 +375,7 @@ class ProgrammeWorkingCalendarService {
         country: item.country,
         isActive: item.is_active,
         createdAt: new Date(item.created_at),
-        updatedAt: new Date(item.updated_at)
+        updatedAt: new Date(item.updated_at),
       }));
     } catch (error) {
       console.error('Error loading global holidays:', error);
@@ -364,20 +395,20 @@ class ProgrammeWorkingCalendarService {
           end: '16:00',
           isWorkingDay: true,
           isHoliday: false,
-          isCustomShift: false
+          isCustomShift: false,
         };
       }
 
       const dateString = date.toISOString().split('T')[0];
       const dayOfWeek = this.getDayOfWeek(date);
-      
+
       // Check if it's a working day of the week
       const isWorkingDayOfWeek = calendar.workdays.includes(dayOfWeek);
-      
+
       // Check for custom exceptions
       const exceptions = await this.getCalendarExceptions(calendar.id);
       const exception = exceptions.find(ex => ex.date === dateString);
-      
+
       if (exception) {
         if (exception.type === 'non-working') {
           return {
@@ -386,7 +417,7 @@ class ProgrammeWorkingCalendarService {
             isWorkingDay: false,
             isHoliday: false,
             isCustomShift: false,
-            description: exception.description
+            description: exception.description,
           };
         } else if (exception.type === 'custom-shift') {
           return {
@@ -397,7 +428,7 @@ class ProgrammeWorkingCalendarService {
             isCustomShift: true,
             customShiftStart: exception.customShiftStart,
             customShiftEnd: exception.customShiftEnd,
-            description: exception.description
+            description: exception.description,
           };
         }
       }
@@ -405,15 +436,17 @@ class ProgrammeWorkingCalendarService {
       // Check for global holidays
       if (calendar.useGlobalHolidays && isWorkingDayOfWeek) {
         const globalHolidays = await this.getGlobalHolidays();
-        const isGlobalHoliday = globalHolidays.some(holiday => holiday.date === dateString);
-        
+        const isGlobalHoliday = globalHolidays.some(
+          holiday => holiday.date === dateString
+        );
+
         if (isGlobalHoliday) {
           return {
             start: calendar.shiftStart,
             end: calendar.shiftEnd,
             isWorkingDay: false,
             isHoliday: true,
-            isCustomShift: false
+            isCustomShift: false,
           };
         }
       }
@@ -423,7 +456,7 @@ class ProgrammeWorkingCalendarService {
         end: calendar.shiftEnd,
         isWorkingDay: isWorkingDayOfWeek,
         isHoliday: false,
-        isCustomShift: false
+        isCustomShift: false,
       };
     } catch (error) {
       console.error('Error checking working day:', error);
@@ -432,7 +465,7 @@ class ProgrammeWorkingCalendarService {
         end: '16:00',
         isWorkingDay: true,
         isHoliday: false,
-        isCustomShift: false
+        isCustomShift: false,
       };
     }
   }
@@ -440,7 +473,11 @@ class ProgrammeWorkingCalendarService {
   /**
    * Get non-working days for a date range
    */
-  async getNonWorkingDays(startDate: Date, endDate: Date, projectId: string): Promise<Date[]> {
+  async getNonWorkingDays(
+    startDate: Date,
+    endDate: Date,
+    projectId: string
+  ): Promise<Date[]> {
     const nonWorkingDays: Date[] = [];
     const currentDate = new Date(startDate);
 
@@ -467,9 +504,17 @@ class ProgrammeWorkingCalendarService {
    * Get shift pattern display name
    */
   getShiftPatternDisplayName(workdays: string[]): string {
-    if (workdays.length === 5 && workdays.includes('Mon') && workdays.includes('Fri')) {
+    if (
+      workdays.length === 5 &&
+      workdays.includes('Mon') &&
+      workdays.includes('Fri')
+    ) {
       return '5-Day Week (Mon-Fri)';
-    } else if (workdays.length === 6 && workdays.includes('Mon') && workdays.includes('Sat')) {
+    } else if (
+      workdays.length === 6 &&
+      workdays.includes('Mon') &&
+      workdays.includes('Sat')
+    ) {
       return '6-Day Week (Mon-Sat)';
     } else if (workdays.length === 7) {
       return '7-Day Week';
@@ -483,17 +528,20 @@ class ProgrammeWorkingCalendarService {
   /**
    * Format exception tooltip
    */
-  formatExceptionTooltip(exception: CalendarException, isDemoMode: boolean): string {
+  formatExceptionTooltip(
+    exception: CalendarException,
+    isDemoMode: boolean
+  ): string {
     const date = new Date(exception.date);
     const formattedDate = date.toLocaleDateString('en-GB', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
 
     let tooltip = `${formattedDate}\n`;
-    
+
     if (exception.type === 'non-working') {
       tooltip += 'Non-working day';
     } else if (exception.type === 'custom-shift') {
@@ -512,4 +560,5 @@ class ProgrammeWorkingCalendarService {
   }
 }
 
-export const programmeWorkingCalendarService = new ProgrammeWorkingCalendarService(); 
+export const programmeWorkingCalendarService =
+  new ProgrammeWorkingCalendarService();

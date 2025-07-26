@@ -32,8 +32,8 @@ class TaskTagsService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode() {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -101,7 +101,7 @@ class TaskTagsService {
           color: tagData.color,
           project_id: tagData.projectId,
           is_global: tagData.isGlobal || false,
-          demo: this.isDemoMode
+          demo: this.isDemoMode,
         })
         .select()
         .single();
@@ -118,7 +118,10 @@ class TaskTagsService {
   /**
    * Update an existing tag
    */
-  async updateTag(tagId: string, updateData: UpdateTagData): Promise<ProgrammeTag | null> {
+  async updateTag(
+    tagId: string,
+    updateData: UpdateTagData
+  ): Promise<ProgrammeTag | null> {
     try {
       const updateFields: any = {};
       if (updateData.label) updateFields.label = updateData.label;
@@ -166,10 +169,12 @@ class TaskTagsService {
     try {
       const { data, error } = await supabase
         .from('asta_tasks')
-        .select(`
+        .select(
+          `
           tag_id,
           programme_tags (*)
-        `)
+        `
+        )
         .eq('id', taskId)
         .single();
 
@@ -189,7 +194,10 @@ class TaskTagsService {
   /**
    * Assign a tag to a task
    */
-  async assignTagToTask(taskId: string, tagId: string | null): Promise<boolean> {
+  async assignTagToTask(
+    taskId: string,
+    tagId: string | null
+  ): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('asta_tasks')
@@ -217,7 +225,7 @@ class TaskTagsService {
         isGlobal: false,
         demo: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: 'demo-2',
@@ -226,7 +234,7 @@ class TaskTagsService {
         isGlobal: false,
         demo: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       {
         id: 'demo-3',
@@ -235,8 +243,8 @@ class TaskTagsService {
         isGlobal: false,
         demo: true,
         createdAt: new Date(),
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     ];
   }
 
@@ -253,7 +261,7 @@ class TaskTagsService {
       projectId: data.project_id,
       demo: data.demo,
       createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at)
+      updatedAt: new Date(data.updated_at),
     };
   }
 
@@ -271,9 +279,9 @@ class TaskTagsService {
       '#06b6d4', // cyan
       '#84cc16', // lime
       '#f97316', // orange
-      '#6366f1'  // indigo
+      '#6366f1', // indigo
     ];
   }
 }
 
-export const taskTagsService = new TaskTagsService(); 
+export const taskTagsService = new TaskTagsService();

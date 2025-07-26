@@ -25,7 +25,7 @@ const DEMO_MODE_CONFIG = {
   maxFlagsPerProject: 1, // Only 1 flag per 5 tasks
   maxNoteLength: 100, // Note length capped to 100 characters
   tooltipMessage: 'DEMO FLAG – Limited note capacity',
-  flagStateTag: 'demo'
+  flagStateTag: 'demo',
 };
 
 class ProgrammeTaskFlagsService {
@@ -36,8 +36,8 @@ class ProgrammeTaskFlagsService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode(): Promise<void> {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -63,7 +63,7 @@ class ProgrammeTaskFlagsService {
             flagColor: flag.flag_color,
             createdBy: flag.created_by,
             createdAt: new Date(flag.created_at),
-            demo: flag.demo || false
+            demo: flag.demo || false,
           });
         });
       }
@@ -94,7 +94,7 @@ class ProgrammeTaskFlagsService {
         flagColor: data.flag_color,
         createdBy: data.created_by,
         createdAt: new Date(data.created_at),
-        demo: data.demo || false
+        demo: data.demo || false,
       };
 
       // Update local cache
@@ -111,26 +111,27 @@ class ProgrammeTaskFlagsService {
    * Add or update a flag for a task
    */
   async addOrUpdateFlag(
-    taskId: string, 
+    taskId: string,
     projectId: string,
     flagColor: 'red' | 'yellow' | 'green' | 'blue',
     note: string
-  ): Promise<{ error?: string; flag?: ProgrammeTaskFlag, success: boolean; }> {
+  ): Promise<{ error?: string; flag?: ProgrammeTaskFlag; success: boolean }> {
     try {
       // Check demo mode restrictions
       if (this.isDemoMode) {
         const existingFlags = Array.from(this.flags.values());
         if (existingFlags.length >= DEMO_MODE_CONFIG.maxFlagsPerProject) {
-          return { 
-            success: false, 
-            error: 'Maximum flags reached in demo mode. Upgrade for unlimited flags.' 
+          return {
+            success: false,
+            error:
+              'Maximum flags reached in demo mode. Upgrade for unlimited flags.',
           };
         }
-        
+
         if (note.length > DEMO_MODE_CONFIG.maxNoteLength) {
-          return { 
-            success: false, 
-            error: `Note too long. Maximum ${DEMO_MODE_CONFIG.maxNoteLength} characters in demo mode.` 
+          return {
+            success: false,
+            error: `Note too long. Maximum ${DEMO_MODE_CONFIG.maxNoteLength} characters in demo mode.`,
           };
         }
       }
@@ -143,14 +144,14 @@ class ProgrammeTaskFlagsService {
         note: note.trim(),
         created_by: 'current-user', // This should come from auth context
         created_at: now.toISOString(),
-        demo: this.isDemoMode
+        demo: this.isDemoMode,
       };
 
       const { data, error } = await supabase
         .from('programme_task_flags')
-        .upsert(flagData, { 
+        .upsert(flagData, {
           onConflict: 'task_id',
-          ignoreDuplicates: false 
+          ignoreDuplicates: false,
         })
         .select()
         .single();
@@ -163,7 +164,7 @@ class ProgrammeTaskFlagsService {
         flagColor: data.flag_color,
         createdBy: data.created_by,
         createdAt: new Date(data.created_at),
-        demo: data.demo || false
+        demo: data.demo || false,
       };
 
       // Update local cache
@@ -179,7 +180,9 @@ class ProgrammeTaskFlagsService {
   /**
    * Remove a flag from a task
    */
-  async removeFlag(taskId: string): Promise<{ error?: string, success: boolean; }> {
+  async removeFlag(
+    taskId: string
+  ): Promise<{ error?: string; success: boolean }> {
     try {
       const { error } = await supabase
         .from('programme_task_flags')
@@ -250,9 +253,9 @@ class ProgrammeTaskFlagsService {
   getFlagColorDisplayName(color: 'red' | 'yellow' | 'green' | 'blue'): string {
     const colorNames = {
       red: 'Red',
-      yellow: 'Yellow', 
+      yellow: 'Yellow',
       green: 'Green',
-      blue: 'Blue'
+      blue: 'Blue',
     };
     return colorNames[color];
   }
@@ -264,8 +267,8 @@ class ProgrammeTaskFlagsService {
     const colorEmojis = {
       red: '🟥',
       yellow: '🟨',
-      green: '🟩', 
-      blue: '🔵'
+      green: '🟩',
+      blue: '🔵',
     };
     return colorEmojis[color];
   }
@@ -276,10 +279,11 @@ class ProgrammeTaskFlagsService {
   formatFlagTooltip(flag: ProgrammeTaskFlag, isDemoMode: boolean): string {
     const emoji = this.getFlagColorEmoji(flag.flagColor);
     const author = isDemoMode ? 'Demo User' : flag.createdBy;
-    const note = isDemoMode && flag.note.length > 50 
-      ? flag.note.substring(0, 50) + '...' 
-      : flag.note;
-    
+    const note =
+      isDemoMode && flag.note.length > 50
+        ? flag.note.substring(0, 50) + '...'
+        : flag.note;
+
     return `${emoji} Note by ${author} – "${note}"`;
   }
 
@@ -291,7 +295,7 @@ class ProgrammeTaskFlagsService {
       `Only ${DEMO_MODE_CONFIG.maxFlagsPerProject} flag per 5 tasks`,
       `Note length capped to ${DEMO_MODE_CONFIG.maxNoteLength} characters`,
       'Markdown not supported',
-      'Tooltip shows limited information'
+      'Tooltip shows limited information',
     ];
   }
 
@@ -311,4 +315,4 @@ class ProgrammeTaskFlagsService {
 }
 
 // Export singleton instance
-export const programmeTaskFlagsService = new ProgrammeTaskFlagsService(); 
+export const programmeTaskFlagsService = new ProgrammeTaskFlagsService();

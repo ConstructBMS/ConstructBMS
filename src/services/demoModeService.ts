@@ -28,21 +28,21 @@ class DemoModeService {
   }
 
   /**
-   * Check if current mode is demo
+   * Check if current mode is demo (synchronous)
+   */
+  isDemoMode(): boolean {
+    return this.isDemoMode;
+  }
+
+  /**
+   * Check if current mode is demo (async version for compatibility)
    */
   async checkDemoModeAsync(): Promise<boolean> {
     return this.isDemoMode;
   }
 
   /**
-   * Check if current mode is demo (alias for checkDemoModeAsync)
-   */
-  async isDemoMode(): Promise<boolean> {
-    return this.isDemoMode;
-  }
-
-  /**
-   * Get demo mode status
+   * Get demo mode status (synchronous)
    */
   getDemoModeStatus(): boolean {
     return this.isDemoMode;

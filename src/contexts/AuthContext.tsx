@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 interface User {
   email: string;
@@ -24,7 +30,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+  console.log('useAuth: Context value:', context);
   if (context === undefined) {
+    console.error('useAuth: Context is undefined - not within AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
@@ -38,9 +46,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log('AuthProvider: Initializing...');
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log('AuthProvider: Checking auth...');
         const token = localStorage.getItem('authToken');
         if (token) {
           const demoUser: User = {
@@ -48,14 +59,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email: 'constructbms@gmail.com',
             name: 'Super Admin',
             role: 'super_admin',
-            permissions: ['*']
+            permissions: ['*'],
           };
           setUser(demoUser);
+          console.log('AuthProvider: User set from token');
+        } else {
+          console.log('AuthProvider: No token found');
         }
       } catch (error) {
         console.error('Auth check failed:', error);
       } finally {
         setIsLoading(false);
+        console.log('AuthProvider: Loading complete');
       }
     };
     checkAuth();
@@ -69,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         name: email.split('@')[0],
         role: email.includes('admin') ? 'admin' : 'employee',
-        permissions: ['*']
+        permissions: ['*'],
       };
       localStorage.setItem('authToken', 'demo-token');
       setUser(demoUser);
@@ -94,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         name,
         role: 'employee',
-        permissions: ['read']
+        permissions: ['read'],
       };
       localStorage.setItem('authToken', 'demo-token');
       setUser(newUser);
@@ -117,7 +132,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkPermission = (permission: string): boolean => {
     if (!user) return false;
-    return user.permissions.includes('*') || user.permissions.includes(permission);
+    return (
+      user.permissions.includes('*') || user.permissions.includes(permission)
+    );
   };
 
   const checkRole = (role: string): boolean => {
@@ -134,12 +151,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     resetPassword,
     checkPermission,
-    checkRole
+    checkRole,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}; 
+  console.log('AuthProvider: Rendering with value:', {
+    isAuthenticated: !!user,
+    isLoading,
+  });
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

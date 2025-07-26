@@ -19,11 +19,16 @@ export interface Milestone {
   priority?: 'low' | 'medium' | 'high' | 'critical';
   projectId: string;
   startDate: Date;
-  status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
-  tag?: string; 
+  status?:
+    | 'not-started'
+    | 'in-progress'
+    | 'completed'
+    | 'on-hold'
+    | 'cancelled';
+  tag?: string;
   // For critical path highlighting
-  tag: string | null; 
-  updatedAt?: Date; 
+  tag: string | null;
+  updatedAt?: Date;
   updatedBy?: string; // All entries tagged demo: true in demo mode
 }
 
@@ -49,7 +54,7 @@ const DEMO_MODE_CONFIG = {
   fixedColor: 'fuchsia-500',
   toastPrefix: 'DEMO MILESTONE: ',
   fixedTag: 'Demo Event', // Tag field fixed to "Demo Event"
-  watermark: 'DEMO MILESTONE' // Watermark in tooltip
+  watermark: 'DEMO MILESTONE', // Watermark in tooltip
 };
 
 class MilestoneService {
@@ -59,8 +64,8 @@ class MilestoneService {
     this.checkDemoMode();
   }
 
-  private async checkDemoMode(): Promise<void> {
-    this.isDemoMode = await demoModeService.isDemoMode();
+  private checkDemoMode() {
+    this.isDemoMode = demoModeService.isDemoMode();
   }
 
   /**
@@ -73,7 +78,12 @@ class MilestoneService {
     options?: {
       isCritical?: boolean;
       notes?: string;
-      status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+      status?:
+        | 'not-started'
+        | 'in-progress'
+        | 'completed'
+        | 'on-hold'
+        | 'cancelled';
       tag?: string;
     }
   ): Promise<MilestoneResult> {
@@ -86,7 +96,7 @@ class MilestoneService {
         if (milestoneCount >= DEMO_MODE_CONFIG.maxMilestonesPerProject) {
           return {
             success: false,
-            message: `${DEMO_MODE_CONFIG.toastPrefix}Maximum ${DEMO_MODE_CONFIG.maxMilestonesPerProject} milestones allowed per project`
+            message: `${DEMO_MODE_CONFIG.toastPrefix}Maximum ${DEMO_MODE_CONFIG.maxMilestonesPerProject} milestones allowed per project`,
           };
         }
 
@@ -100,18 +110,21 @@ class MilestoneService {
         if (milestoneDate < minDate || milestoneDate > maxDate) {
           return {
             success: false,
-            message: `${DEMO_MODE_CONFIG.toastPrefix}Date must be within ±${DEMO_MODE_CONFIG.dateRangeDays} days of today`
+            message: `${DEMO_MODE_CONFIG.toastPrefix}Date must be within ±${DEMO_MODE_CONFIG.dateRangeDays} days of today`,
           };
         }
       }
 
       // Validate milestone date
-      const validation = await this.validateMilestoneDate(milestoneDate, projectId);
+      const validation = await this.validateMilestoneDate(
+        milestoneDate,
+        projectId
+      );
       if (!validation.valid) {
         return {
           success: false,
           message: validation.message,
-          constraintViolations: validation.violations
+          constraintViolations: validation.violations,
         };
       }
 
@@ -126,10 +139,10 @@ class MilestoneService {
         priority: options?.isCritical ? 'critical' : 'medium',
         is_milestone: true, // Standard task with isMilestone: true
         critical: options?.isCritical || false, // For critical path highlighting
-        tag: this.isDemoMode ? DEMO_MODE_CONFIG.fixedTag : (options?.tag || null), // Tag field fixed to "Demo Event" in demo mode
+        tag: this.isDemoMode ? DEMO_MODE_CONFIG.fixedTag : options?.tag || null, // Tag field fixed to "Demo Event" in demo mode
         demo: this.isDemoMode, // All entries tagged demo: true in demo mode
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Add optional fields if they exist in the database
@@ -162,22 +175,21 @@ class MilestoneService {
         isCritical: data.priority === 'critical',
         isMilestone: true,
         critical: data.critical || false,
-        demo: data.demo || false
+        demo: data.demo || false,
       };
 
       return {
         success: true,
         milestone,
-        message: this.isDemoMode 
+        message: this.isDemoMode
           ? `${DEMO_MODE_CONFIG.toastPrefix}Milestone "${name}" created`
-          : `Milestone "${name}" created successfully`
+          : `Milestone "${name}" created successfully`,
       };
-
     } catch (error) {
       console.error('Error creating milestone:', error);
       return {
         success: false,
-        message: 'Failed to create milestone'
+        message: 'Failed to create milestone',
       };
     }
   }
@@ -192,7 +204,12 @@ class MilestoneService {
       milestoneDate?: Date;
       name?: string;
       notes?: string;
-      status?: 'not-started' | 'in-progress' | 'completed' | 'on-hold' | 'cancelled';
+      status?:
+        | 'not-started'
+        | 'in-progress'
+        | 'completed'
+        | 'on-hold'
+        | 'cancelled';
       tag?: string;
     }
   ): Promise<MilestoneResult> {
@@ -210,7 +227,7 @@ class MilestoneService {
       if (fetchError || !currentMilestone) {
         return {
           success: false,
-          message: 'Milestone not found'
+          message: 'Milestone not found',
         };
       }
 
@@ -223,10 +240,13 @@ class MilestoneService {
           const maxDate = new Date(today);
           maxDate.setDate(today.getDate() + DEMO_MODE_CONFIG.dateRangeDays);
 
-          if (updates.milestoneDate < minDate || updates.milestoneDate > maxDate) {
+          if (
+            updates.milestoneDate < minDate ||
+            updates.milestoneDate > maxDate
+          ) {
             return {
               success: false,
-              message: `${DEMO_MODE_CONFIG.toastPrefix}Date must be within ±${DEMO_MODE_CONFIG.dateRangeDays} days of today`
+              message: `${DEMO_MODE_CONFIG.toastPrefix}Date must be within ±${DEMO_MODE_CONFIG.dateRangeDays} days of today`,
             };
           }
         }
@@ -235,7 +255,7 @@ class MilestoneService {
         if (updates.isCritical !== undefined) {
           return {
             success: false,
-            message: `${DEMO_MODE_CONFIG.toastPrefix}Critical toggle is disabled in demo mode`
+            message: `${DEMO_MODE_CONFIG.toastPrefix}Critical toggle is disabled in demo mode`,
           };
         }
       }
@@ -243,7 +263,7 @@ class MilestoneService {
       // Validate milestone date if being updated
       if (updates.milestoneDate) {
         const validation = await this.validateMilestoneDate(
-          updates.milestoneDate, 
+          updates.milestoneDate,
           currentMilestone.project_id,
           milestoneId
         );
@@ -251,14 +271,14 @@ class MilestoneService {
           return {
             success: false,
             message: validation.message,
-            constraintViolations: validation.violations
+            constraintViolations: validation.violations,
           };
         }
       }
 
       // Prepare update data
       const updateData: any = {
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       if (updates.name) updateData.name = updates.name;
@@ -266,7 +286,9 @@ class MilestoneService {
       if (updates.notes) updateData.notes = updates.notes;
 
       if (updates.milestoneDate) {
-        updateData.start_date = updates.milestoneDate.toISOString().split('T')[0];
+        updateData.start_date = updates.milestoneDate
+          .toISOString()
+          .split('T')[0];
         updateData.end_date = updates.milestoneDate.toISOString().split('T')[0];
       }
 
@@ -278,7 +300,9 @@ class MilestoneService {
 
       // Handle tag (fixed in demo mode)
       if (updates.tag !== undefined) {
-        updateData.tag = this.isDemoMode ? DEMO_MODE_CONFIG.fixedTag : updates.tag;
+        updateData.tag = this.isDemoMode
+          ? DEMO_MODE_CONFIG.fixedTag
+          : updates.tag;
       }
 
       // Update in Supabase
@@ -307,22 +331,21 @@ class MilestoneService {
         isCritical: data.priority === 'critical',
         isMilestone: true,
         critical: data.critical || false,
-        demo: data.demo || false
+        demo: data.demo || false,
       };
 
       return {
         success: true,
         milestone,
-        message: this.isDemoMode 
+        message: this.isDemoMode
           ? `${DEMO_MODE_CONFIG.toastPrefix}Milestone updated`
-          : 'Milestone updated successfully'
+          : 'Milestone updated successfully',
       };
-
     } catch (error) {
       console.error('Error updating milestone:', error);
       return {
         success: false,
-        message: 'Failed to update milestone'
+        message: 'Failed to update milestone',
       };
     }
   }
@@ -357,9 +380,8 @@ class MilestoneService {
         isCritical: item.priority === 'critical',
         isMilestone: true,
         critical: item.critical || false,
-        demo: item.demo || false
+        demo: item.demo || false,
       }));
-
     } catch (error) {
       console.error('Error fetching milestones:', error);
       return [];
@@ -381,16 +403,15 @@ class MilestoneService {
 
       return {
         success: true,
-        message: this.isDemoMode 
+        message: this.isDemoMode
           ? `${DEMO_MODE_CONFIG.toastPrefix}Milestone deleted`
-          : 'Milestone deleted successfully'
+          : 'Milestone deleted successfully',
       };
-
     } catch (error) {
       console.error('Error deleting milestone:', error);
       return {
         success: false,
-        message: 'Failed to delete milestone'
+        message: 'Failed to delete milestone',
       };
     }
   }
@@ -423,24 +444,29 @@ class MilestoneService {
       if (error) throw error;
 
       if (overlappingMilestones && overlappingMilestones.length > 0) {
-        violations.push(`Milestone date conflicts with: ${overlappingMilestones.map(m => m.name).join(', ')}`);
+        violations.push(
+          `Milestone date conflicts with: ${overlappingMilestones.map(m => m.name).join(', ')}`
+        );
       }
 
       // Check dependency constraints
-      const dependencyViolations = await this.checkMilestoneDependencies(milestoneDate, projectId, excludeMilestoneId);
+      const dependencyViolations = await this.checkMilestoneDependencies(
+        milestoneDate,
+        projectId,
+        excludeMilestoneId
+      );
       violations.push(...dependencyViolations);
 
       return {
         valid: violations.length === 0,
         message: violations.length > 0 ? violations.join('; ') : 'Valid',
-        violations
+        violations,
       };
-
     } catch (error) {
       console.error('Error validating milestone date:', error);
       return {
         valid: false,
-        message: 'Error validating milestone date'
+        message: 'Error validating milestone date',
       };
     }
   }
@@ -460,14 +486,19 @@ class MilestoneService {
       const { data: dependencies, error } = await supabase
         .from('asta_task_links')
         .select('source_task_id, target_task_id, link_type')
-        .or(`source_task_id.eq.${excludeMilestoneId || ''},target_task_id.eq.${excludeMilestoneId || ''}`);
+        .or(
+          `source_task_id.eq.${excludeMilestoneId || ''},target_task_id.eq.${excludeMilestoneId || ''}`
+        );
 
       if (error) throw error;
 
       for (const dep of dependencies || []) {
         // Get the other task in the dependency
-        const otherTaskId = dep.source_task_id === excludeMilestoneId ? dep.target_task_id : dep.source_task_id;
-        
+        const otherTaskId =
+          dep.source_task_id === excludeMilestoneId
+            ? dep.target_task_id
+            : dep.source_task_id;
+
         const { data: otherTask } = await supabase
           .from('asta_tasks')
           .select('name, is_milestone, start_date, end_date')
@@ -476,25 +507,28 @@ class MilestoneService {
 
         if (!otherTask) continue;
 
-        const otherDate = otherTask.is_milestone 
+        const otherDate = otherTask.is_milestone
           ? new Date(otherTask.start_date)
           : new Date(otherTask.end_date);
 
         // Check dependency constraints
         if (dep.link_type === 'finish-to-start') {
           if (milestoneDate <= otherDate) {
-            violations.push(`Violates finish-to-start dependency with "${otherTask.name}"`);
+            violations.push(
+              `Violates finish-to-start dependency with "${otherTask.name}"`
+            );
           }
         } else if (dep.link_type === 'start-to-start') {
           if (milestoneDate < otherDate) {
-            violations.push(`Violates start-to-start dependency with "${otherTask.name}"`);
+            violations.push(
+              `Violates start-to-start dependency with "${otherTask.name}"`
+            );
           }
         }
         // Add more dependency type checks as needed
       }
 
       return violations;
-
     } catch (error) {
       console.error('Error checking milestone dependencies:', error);
       return [];
@@ -511,7 +545,11 @@ class MilestoneService {
     }
 
     // Return critical color if milestone is critical
-    if (milestone.isCritical || milestone.critical || milestone.priority === 'critical') {
+    if (
+      milestone.isCritical ||
+      milestone.critical ||
+      milestone.priority === 'critical'
+    ) {
       return '#ef4444'; // Red
     }
 
@@ -548,4 +586,4 @@ class MilestoneService {
 }
 
 // Export singleton instance
-export const milestoneService = new MilestoneService(); 
+export const milestoneService = new MilestoneService();
