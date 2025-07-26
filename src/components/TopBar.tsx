@@ -166,10 +166,11 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
 
   const getUserInitials = () => {
     if (!user) return 'U';
-    return (
-      `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() ||
-      'U'
-    );
+    const nameParts = user.name.split(' ');
+    if (nameParts.length >= 2) {
+      return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase();
+    }
+    return user.name.charAt(0).toUpperCase();
   };
 
   const getUserAvatar = () => {
@@ -305,7 +306,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                 </div>
                 <div className='hidden md:block text-left'>
                   <p className='text-sm font-medium text-gray-900 dark:text-white'>
-                    {user ? `${user.firstName} ${user.lastName}` : 'User'}
+                    {user ? user.name : 'User'}
                   </p>
                   <p className='text-xs text-gray-500 dark:text-gray-400'>
                     {getPrimaryRole()}
@@ -333,7 +334,7 @@ const TopBar: React.FC<TopBarProps> = ({ activeModule, onModuleChange }) => {
                       </div>
                       <div className='flex-1 min-w-0'>
                         <p className='text-sm font-medium text-gray-900 dark:text-white truncate'>
-                          {user ? `${user.firstName} ${user.lastName}` : 'User'}
+                          {user ? user.name : 'User'}
                         </p>
                         <p className='text-xs text-gray-500 dark:text-gray-400 truncate'>
                           {user?.email}
