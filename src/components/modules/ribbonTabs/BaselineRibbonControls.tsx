@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  BookmarkIcon, 
-  ChartBarIcon, 
-  EyeIcon, 
+import {
+  BookmarkIcon,
+  ChartBarIcon,
+  EyeIcon,
   EyeSlashIcon,
   PlusIcon,
   ChevronDownIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import { usePermissions } from '../../hooks/usePermissions';
-import { demoModeService } from '../../services/demoModeService';
-import { baselineService, type Baseline } from '../../services/baselineService';
+import { usePermissions } from '../../../hooks/usePermissions';
+import { demoModeService } from '../../../services/demoModeService';
+import {
+  baselineService,
+  type Baseline,
+} from '../../../services/baselineService';
 
 interface BaselineRibbonControlsProps {
   currentTasks: Array<{
@@ -35,7 +38,7 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   onShowBaselineChange,
   onBaselineSelect,
   onOpenBaselineManager,
-  currentTasks
+  currentTasks,
 }) => {
   const { hasPermission } = usePermissions();
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -66,9 +69,10 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   const loadBaselines = async () => {
     try {
       setLoading(true);
-      const projectBaselines = await baselineService.getBaselinesForProject(projectId);
+      const projectBaselines =
+        await baselineService.getBaselinesForProject(projectId);
       setBaselines(projectBaselines);
-      
+
       // Find active baseline
       const active = projectBaselines.find(b => b.isActive);
       setActiveBaseline(active || null);
@@ -102,7 +106,7 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
 
     try {
       setCreatingBaseline(true);
-      
+
       const baseline = await baselineService.createBaseline(
         projectId,
         baselineName.trim(),
@@ -113,7 +117,7 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
           percentComplete: task.percentComplete || 0,
           isMilestone: task.isMilestone || false,
           parentId: task.parentId,
-          name: task.name
+          name: task.name,
         }))
       );
 
@@ -140,84 +144,100 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className='flex items-center space-x-2'>
       {/* Create Baseline Button */}
       <button
         onClick={handleCreateBaseline}
-        disabled={!canCreate || creatingBaseline || (isDemoMode && baselines.length >= 1)}
+        disabled={
+          !canCreate ||
+          creatingBaseline ||
+          (isDemoMode && baselines.length >= 1)
+        }
         className={`
           flex items-center space-x-1 px-3 py-1.5 text-xs font-medium rounded transition-colors
-          ${canCreate && !creatingBaseline && !(isDemoMode && baselines.length >= 1)
-            ? 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/40'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
+          ${
+            canCreate &&
+            !creatingBaseline &&
+            !(isDemoMode && baselines.length >= 1)
+              ? 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/40'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
           }
         `}
-        title={isDemoMode && baselines.length >= 1 ? 'DEMO LIMIT: Maximum 1 baseline allowed' : 'Create new baseline'}
+        title={
+          isDemoMode && baselines.length >= 1
+            ? 'DEMO LIMIT: Maximum 1 baseline allowed'
+            : 'Create new baseline'
+        }
       >
-        <PlusIcon className="w-3 h-3" />
+        <PlusIcon className='w-3 h-3' />
         <span>Create Baseline</span>
-        {creatingBaseline && <div className="animate-spin w-3 h-3 border border-current border-t-transparent rounded-full" />}
+        {creatingBaseline && (
+          <div className='animate-spin w-3 h-3 border border-current border-t-transparent rounded-full' />
+        )}
       </button>
 
       {/* Baseline Selector */}
-      <div className="relative">
+      <div className='relative'>
         <button
           onClick={() => setShowDropdown(!showDropdown)}
           disabled={loading}
-          className="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 rounded transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+          className='flex items-center space-x-1 px-3 py-1.5 text-xs font-medium bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 rounded transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
         >
-          <BookmarkIcon className="w-3 h-3" />
+          <BookmarkIcon className='w-3 h-3' />
           <span>
             {activeBaseline ? activeBaseline.name : 'Select Baseline'}
           </span>
-          <ChevronDownIcon className="w-3 h-3" />
-          {loading && <div className="animate-spin w-3 h-3 border border-current border-t-transparent rounded-full" />}
+          <ChevronDownIcon className='w-3 h-3' />
+          {loading && (
+            <div className='animate-spin w-3 h-3 border border-current border-t-transparent rounded-full' />
+          )}
         </button>
 
         {/* Dropdown */}
         {showDropdown && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
-            <div className="p-2">
-              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-2">
+          <div className='absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50'>
+            <div className='p-2'>
+              <div className='text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 px-2'>
                 Available Baselines
               </div>
-              
+
               {baselines.length === 0 ? (
-                <div className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">
+                <div className='text-xs text-gray-500 dark:text-gray-400 px-2 py-1'>
                   No baselines available
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {baselines.map((baseline) => (
+                <div className='space-y-1'>
+                  {baselines.map(baseline => (
                     <button
                       key={baseline.id}
                       onClick={() => handleBaselineSelect(baseline)}
                       className={`
                         w-full text-left px-2 py-1.5 text-xs rounded transition-colors
-                        ${activeBaseline?.id === baseline.id
-                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400'
-                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ${
+                          activeBaseline?.id === baseline.id
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                         }
                       `}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="truncate">{baseline.name}</span>
+                      <div className='flex items-center justify-between'>
+                        <span className='truncate'>{baseline.name}</span>
                         {baseline.isActive && (
-                          <div className="w-2 h-2 bg-green-500 rounded-full" />
+                          <div className='w-2 h-2 bg-green-500 rounded-full' />
                         )}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className='text-xs text-gray-500 dark:text-gray-400'>
                         {new Date(baseline.createdAt).toLocaleDateString()}
                       </div>
                     </button>
                   ))}
                 </div>
               )}
-              
-              <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
+
+              <div className='border-t border-gray-200 dark:border-gray-700 mt-2 pt-2'>
                 <button
                   onClick={() => handleBaselineSelect(null)}
-                  className="w-full text-left px-2 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                  className='w-full text-left px-2 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors'
                 >
                   Clear Selection
                 </button>
@@ -233,23 +253,34 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
         disabled={!activeBaseline}
         className={`
           flex items-center space-x-1 px-3 py-1.5 text-xs font-medium rounded transition-colors
-          ${activeBaseline
-            ? showBaseline
-              ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/40'
-              : 'bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
+          ${
+            activeBaseline
+              ? showBaseline
+                ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-900/40'
+                : 'bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
           }
         `}
-        title={activeBaseline ? (showBaseline ? 'Hide baseline bars' : 'Show baseline bars') : 'No baseline selected'}
+        title={
+          activeBaseline
+            ? showBaseline
+              ? 'Hide baseline bars'
+              : 'Show baseline bars'
+            : 'No baseline selected'
+        }
       >
-        {showBaseline ? <EyeSlashIcon className="w-3 h-3" /> : <EyeIcon className="w-3 h-3" />}
+        {showBaseline ? (
+          <EyeSlashIcon className='w-3 h-3' />
+        ) : (
+          <EyeIcon className='w-3 h-3' />
+        )}
         <span>Show Baseline</span>
       </button>
 
       {/* Demo Mode Indicator */}
       {isDemoMode && (
-        <div className="flex items-center space-x-1 px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700 dark:bg-orange-900/20 dark:border-orange-700 dark:text-orange-400">
-          <ExclamationTriangleIcon className="w-3 h-3" />
+        <div className='flex items-center space-x-1 px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700 dark:bg-orange-900/20 dark:border-orange-700 dark:text-orange-400'>
+          <ExclamationTriangleIcon className='w-3 h-3' />
           <span>DEMO MODE</span>
         </div>
       )}
@@ -257,4 +288,4 @@ const BaselineRibbonControls: React.FC<BaselineRibbonControlsProps> = ({
   );
 };
 
-export default BaselineRibbonControls; 
+export default BaselineRibbonControls;
