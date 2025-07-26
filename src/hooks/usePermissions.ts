@@ -38,6 +38,7 @@ export const usePermissions = () => {
     return {
       ...defaultPermissions,
       hasPermission: (permission: Permission, projectId?: string) => true,
+      canAccess: (permission: Permission, projectId?: string) => true,
       checkPermission: (permission: Permission, projectId?: string) => ({
         hasPermission: true,
         reason: null,
@@ -73,6 +74,11 @@ export const usePermissions = () => {
     return true; // Allow most other permissions for demo
   };
 
+  const canAccess = (permission: Permission, projectId?: string): boolean => {
+    // Alias for hasPermission for backward compatibility
+    return hasPermission(permission, projectId);
+  };
+
   const checkPermission = (permission: Permission, projectId?: string) => {
     const hasPerm = hasPermission(permission, projectId);
     return {
@@ -85,6 +91,7 @@ export const usePermissions = () => {
   return {
     ...permissions,
     hasPermission,
+    canAccess,
     checkPermission,
     currentRole: user.role as UserRole,
   };
