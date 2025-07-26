@@ -125,21 +125,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     { active: boolean; type: string }
   >;
 
-  // Categorize menu items
-  const coreMenu = (menu || []).filter(
-    item =>
-      modulesMap[item.id]?.type === 'core' ||
-      ['dashboard', 'projects', 'tasks', 'settings'].includes(item.id)
-  );
-
-  const additionalMenu = (menu || []).filter(
-    item =>
-      modulesMap[item.id]?.type === 'additional' &&
-      !['dashboard', 'projects', 'tasks', 'settings'].includes(item.id)
-  );
-
-  const bottomMenu: MenuItem[] = []; // No bottom menu items for now
-
   // Check if user has set a custom sidebar logo
   const hasCustomSidebarLogo =
     logoSettings?.sidebarLogo?.type === 'image' &&
