@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export interface Permissions {
   canCreate: boolean;
@@ -18,7 +17,7 @@ export type Permission = string;
 export type UserRole = 'admin' | 'user' | 'employee';
 
 export const usePermissions = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   // Default permissions for demo mode or when user is not authenticated
   const defaultPermissions: Permissions = {
@@ -42,9 +41,9 @@ export const usePermissions = () => {
       checkPermission: (permission: Permission, projectId?: string) => ({
         hasPermission: true,
         reason: null,
-        requiredRole: null
+        requiredRole: null,
       }),
-      currentRole: 'user' as UserRole
+      currentRole: 'user' as UserRole,
     };
   }
 
@@ -56,10 +55,16 @@ export const usePermissions = () => {
     canManageSettings: user.role === 'admin',
   };
 
-  const hasPermission = (permission: Permission, projectId?: string): boolean => {
+  const hasPermission = (
+    permission: Permission,
+    projectId?: string
+  ): boolean => {
     // For demo purposes, allow most permissions
     // In a real app, you would check against user roles and project-specific permissions
-    if (permission.includes('manage_users') || permission.includes('manage_roles')) {
+    if (
+      permission.includes('manage_users') ||
+      permission.includes('manage_roles')
+    ) {
       return user.role === 'admin';
     }
     if (permission.includes('manage_settings')) {
@@ -73,7 +78,7 @@ export const usePermissions = () => {
     return {
       hasPermission: hasPerm,
       reason: hasPerm ? null : `Permission '${permission}' requires admin role`,
-      requiredRole: hasPerm ? null : 'admin' as UserRole
+      requiredRole: hasPerm ? null : ('admin' as UserRole),
     };
   };
 
@@ -81,7 +86,7 @@ export const usePermissions = () => {
     ...permissions,
     hasPermission,
     checkPermission,
-    currentRole: user.role as UserRole
+    currentRole: user.role as UserRole,
   };
 };
 
@@ -93,25 +98,28 @@ export const withPermission = <P extends object>(
 ) => {
   return (props: P) => {
     const { hasPermission } = usePermissions();
-    
+
     if (!hasPermission(requiredPermission, projectId)) {
       return null;
     }
-    
+
     return React.createElement(Component, props);
   };
 };
 
 // Hook for conditional rendering based on permissions
-export const usePermissionRender = (permission: Permission, projectId?: string) => {
+export const usePermissionRender = (
+  permission: Permission,
+  projectId?: string
+) => {
   const { hasPermission, checkPermission } = usePermissions();
   const canRender = hasPermission(permission, projectId);
   const check = checkPermission(permission, projectId);
-  
+
   return {
     canRender,
     check,
-    render: (children: React.ReactNode) => canRender ? children : null
+    render: (children: React.ReactNode) => (canRender ? children : null),
   };
 };
 
@@ -119,11 +127,11 @@ export const usePermissionRender = (permission: Permission, projectId?: string) 
 export const usePermissionUI = (permission: Permission, projectId?: string) => {
   const { hasPermission, checkPermission } = usePermissions();
   const check = checkPermission(permission, projectId);
-  
+
   return {
     isEnabled: check.hasPermission,
     isDisabled: !check.hasPermission,
     tooltip: check.reason || undefined,
-    requiredRole: check.requiredRole
+    requiredRole: check.requiredRole,
   };
-}; 
+};
