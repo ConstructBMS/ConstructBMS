@@ -29,12 +29,21 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<ThemeId>('light');
+  // Initialize theme from localStorage or default to 'light'
+  const [theme, setTheme] = useState<ThemeId>(() => {
+    const savedTheme = localStorage.getItem('theme') as ThemeId;
+    return savedTheme || 'light';
+  });
 
   const isDark =
     theme === 'dark' ||
     (theme === 'auto' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  // Save theme to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Add/remove 'dark' class on <body> when theme changes
   useEffect(() => {
