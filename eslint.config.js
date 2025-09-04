@@ -54,8 +54,8 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
-      'no-console': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off', // Allow non-null assertions
+      'no-console': 'off', // Allow console statements for development
       'no-debugger': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
