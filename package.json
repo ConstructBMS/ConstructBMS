@@ -33,7 +33,11 @@
     "clean:frontend": "cd frontend && rm -rf dist node_modules/.cache",
     "clean:backend": "cd backend && rm -rf dist node_modules/.cache",
     "quality": "npm run format && npm run lint:fix && npm run typecheck",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "eslint": "eslint .",
+    "prettier": "prettier --check .",
+    "snap": "git add -A && git commit -m \"snap: main \"2025-09-04T08:25:22Z\"\" || echo \"No changes\"",
+    "snap:push": "pnpm snap && git push"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
