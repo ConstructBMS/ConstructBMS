@@ -49,15 +49,6 @@
     "lint-staged": "^16.1.6",
     "prettier": "^3.6.2"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
