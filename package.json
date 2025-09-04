@@ -36,8 +36,8 @@
     "pre-commit": "lint-staged",
     "eslint": "eslint .",
     "prettier": "prettier --check .",
-    "snap": "git add -A && git commit -m \"chore: snapshot main \"2025-09-04T10:41:43Z\"\" || echo \"No changes\"",
-    "snap:push": "pnpm snap && git push"
+    "snap": "./scripts/snap.sh",
+    "snap:push": "./scripts/snap.sh && git push"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
