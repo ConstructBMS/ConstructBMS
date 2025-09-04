@@ -1,0 +1,29 @@
+name: Test Mirror Authentication
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MIRROR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "SSH key length: $(wc -c < ~/.ssh/id_ed25519)"
+          echo "SSH key starts with: $(head -c 50 ~/.ssh/id_ed25519)"
+
+      - name: Test SSH connection
+        run: |
+          ssh -T git@github.com || echo "SSH test completed"
+
+      - name: Show mirror repo info
+        run: |
+          echo "Mirror repo SSH: ${{ secrets.MIRROR_REPO_SSH }}"
+          echo "Mirror repo exists: ${{ secrets.MIRROR_REPO_SSH != '' }}"

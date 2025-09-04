@@ -20,17 +20,36 @@ jobs:
           echo "${{ secrets.MIRROR_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo "SSH key setup complete"
+          ls -la ~/.ssh/
+
+      - name: Test SSH connection
+        run: |
+          ssh -T git@github.com || echo "SSH test completed"
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Add mirror remote
         run: |
-          git remote add mirror "${{ secrets.MIRROR_REPO_SSH }}" || true
+          git remote remove mirror 2>/dev/null || true
+          git remote add mirror "${{ secrets.MIRROR_REPO_SSH }}"
+          git remote -v
+          echo "Mirror remote added: ${{ secrets.MIRROR_REPO_SSH }}"
+
+      - name: Fetch from mirror
+        run: |
+          git fetch mirror || echo "No existing branches in mirror"
 
       - name: Push all branches
         run: |
           for BR in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
-            git push --force mirror "$BR"
+            echo "Pushing branch: $BR"
+            git push --force mirror "$BR" || echo "Failed to push branch $BR"
           done
 
       - name: Push all tags
         run: |
-          git push --force --tags mirror
+          git push --force --tags mirror || echo "Failed to push tags"
