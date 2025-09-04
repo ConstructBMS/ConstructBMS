@@ -1,193 +1,131 @@
-# ConstructBMS - Construction Business Management System
+# 🏗️ ConstructBMS - Construction Business Management System
 
-A comprehensive business management system designed specifically for construction companies, built
-with React, TypeScript, Node.js, and Supabase.
+A comprehensive, modern construction business management platform built with React, Node.js, and
+TypeScript.
 
-## 🚀 Features
+## ✨ Features
 
-- **User Authentication** - Secure login/signup with JWT tokens
-- **Dashboard** - Overview of key business metrics
-- **Project Management** - Track projects, tasks, and timelines
-- **CRM** - Manage clients, contractors, and consultants
-- **Document Management** - Store and organize project documents
-- **Communication Tools** - Email and messaging integration
-- **Reporting** - Generate business reports and analytics
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **React Router** - Navigation
-- **Vite** - Build tool
-
-### Backend
-
-- **Node.js** - Runtime
-- **Express** - Web framework
-- **TypeScript** - Type safety
-- **Supabase** - Database & Auth
-- **JWT** - Authentication
-
-### Development Tools
-
-- **Husky** - Git hooks
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **Commitlint** - Conventional commits
-- **GitHub Actions** - CI/CD
-
-## 📋 Prerequisites
-
-- Node.js 18+
-- pnpm (recommended) or npm
-- Git
+- **📊 Dashboard**: Real-time business metrics and insights
+- **👥 User Management**: Role-based access control with admin, manager, user, and viewer roles
+- **📋 Project Management**: Multiple view modes (Card, Grid, Kanban, List)
+- **📈 Programme Manager**: Asta PowerProject-style project planning with ribbon interface
+- **🔐 Authentication**: Secure JWT-based authentication with Supabase
+- **🎨 Modern UI**: Responsive design with Tailwind CSS and custom themes
 
 ## 🚀 Quick Start
 
-### 1. Clone the repository
+### Prerequisites
 
-```bash
-git clone https://github.com/yourusername/constructbms.git
-cd constructbms
-```
+- Node.js 18+
+- pnpm 8+
+- Supabase account
 
-### 2. Install dependencies
+### Installation
 
-```bash
-pnpm install
-```
+1. **Clone the repository**
 
-### 3. Set up environment variables
+   ```bash
+   git clone git@github.com:ConstructBMS/ConstructBMS.git
+   cd ConstructBMS
+   ```
 
-Create `.env` files in both `frontend/` and `backend/` directories:
+2. **Install dependencies**
 
-**Frontend (.env)**
+   ```bash
+   pnpm install
+   ```
 
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+3. **Environment setup**
 
-**Backend (.env)**
+   ```bash
+   # Backend
+   cp backend/.env.example backend/.env
+   # Edit backend/.env with your Supabase credentials
+   ```
 
-```env
-PORT=5174
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-JWT_SECRET=your_jwt_secret
-```
+4. **Start development servers**
 
-### 4. Start development servers
+   ```bash
+   # Terminal 1 - Backend (Port 5174)
+   pnpm dev:backend
 
-```bash
-# Start both frontend and backend
-pnpm dev
+   # Terminal 2 - Frontend (Port 5173)
+   pnpm dev:frontend
+   ```
 
-# Or start individually
-pnpm dev:frontend  # Frontend on http://localhost:5173
-pnpm dev:backend   # Backend on http://localhost:5174
-```
+## 🏗️ Architecture
+
+- **Frontend**: React 18 + Vite + TypeScript + Tailwind CSS
+- **Backend**: Node.js + Express + TypeScript + Supabase
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: JWT + Supabase Auth
+- **Code Quality**: ESLint + Prettier + Husky + lint-staged
 
 ## 📁 Project Structure
 
 ```
-constructbms/
-├── frontend/                 # React frontend application
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/          # Page components
-│   │   ├── contexts/       # React contexts
-│   │   ├── services/       # API services
-│   │   └── types/          # TypeScript type definitions
-│   └── package.json
-├── backend/                 # Node.js backend API
-│   ├── src/
-│   │   ├── controllers/    # Route controllers
-│   │   ├── middleware/     # Express middleware
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   └── types/          # TypeScript type definitions
-│   └── package.json
-├── database/               # Database schemas and migrations
-├── docs/                   # Documentation
-└── package.json           # Root package.json (monorepo)
+ConstructBMS/
+├── frontend/          # React frontend application
+├── backend/           # Node.js backend API
+├── database/          # Database schemas and migrations
+├── .github/           # GitHub Actions workflows
+├── docs/              # Documentation
+└── scripts/           # Development and deployment scripts
 ```
 
 ## 🛠️ Development
 
 ### Available Scripts
 
-**Root (Monorepo)**
-
-```bash
-pnpm dev              # Start both frontend and backend
-pnpm build            # Build both frontend and backend
-pnpm lint             # Lint all code
-pnpm lint:fix         # Fix linting issues
-pnpm typecheck        # Type check all TypeScript code
-pnpm test             # Run tests
-```
-
-**Frontend**
-
-```bash
-pnpm dev:frontend     # Start frontend dev server
-pnpm build:frontend   # Build frontend
-pnpm lint:frontend    # Lint frontend code
-```
-
-**Backend**
-
-```bash
-pnpm dev:backend      # Start backend dev server
-pnpm build:backend    # Build backend
-pnpm lint:backend     # Lint backend code
-```
+- `pnpm dev` - Start both frontend and backend
+- `pnpm build` - Build both applications
+- `pnpm lint` - Run ESLint
+- `pnpm format` - Format code with Prettier
+- `pnpm typecheck` - Run TypeScript checks
+- `pnpm quality` - Run all quality checks
+- `pnpm snap` - Quick commit with timestamp
 
 ### Code Quality
 
-This project uses several tools to maintain code quality:
+- **Pre-commit hooks** automatically lint and format code
+- **ESLint** enforces code style and catches errors
+- **Prettier** ensures consistent formatting
+- **TypeScript** provides type safety
 
-- **ESLint** - Code linting and style enforcement
-- **Prettier** - Code formatting
-- **Husky** - Git hooks for pre-commit checks
-- **Commitlint** - Conventional commit message validation
-- **TypeScript** - Static type checking
+## 🔐 Environment Variables
 
-### Git Workflow
+### Backend (.env)
 
-1. **Conventional Commits** - All commits must follow conventional commit format:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+JWT_SECRET=your_jwt_secret
+PORT=5174
+```
 
-   ```
-   feat: add new user authentication
-   fix: resolve login issue
-   docs: update README
-   ```
+## 📱 Features
 
-2. **Pre-commit Hooks** - Automatic linting and formatting on commit
-3. **Branch Protection** - Main branch requires PR reviews
+### Dashboard
 
-## 🚀 Deployment
+- Business metrics overview
+- Recent activity feed
+- Quick action buttons
+- Responsive design for all devices
 
-### Frontend Deployment
+### Projects
 
-The frontend can be deployed to:
+- **Card View**: Visual project cards with status indicators
+- **Grid View**: Compact table layout
+- **Kanban View**: Drag-and-drop project management
+- **List View**: Detailed project information
 
-- **Vercel** (recommended)
-- **Netlify**
-- **AWS S3 + CloudFront**
+### Programme Manager
 
-### Backend Deployment
-
-The backend can be deployed to:
-
-- **Railway**
-- **Heroku**
-- **AWS EC2**
-- **DigitalOcean**
+- **Outlook-style Ribbon**: Professional toolbar interface
+- **Three-Pane Layout**: Programme tree, task list, and Gantt chart
+- **Resizable Panes**: Customizable workspace layout
+- **Task Management**: Full CRUD operations for tasks and phases
 
 ## 🤝 Contributing
 
@@ -197,26 +135,18 @@ The backend can be deployed to:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all linting checks pass
-
-## 📝 License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-If you encounter any issues or have questions:
+For support and questions:
 
-1. Check the [Issues](https://github.com/yourusername/constructbms/issues) page
-2. Create a new issue with detailed information
-3. Contact the development team
+- Create an issue on GitHub
+- Check the documentation in the `docs/` folder
+- Review the development guide in `DEVELOPMENT_GUIDE.md`
 
-## 🔄 Changelog
+---
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+**Built with ❤️ for the construction industry**

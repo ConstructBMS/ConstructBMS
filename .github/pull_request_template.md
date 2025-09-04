@@ -1,36 +1,38 @@
-## Description
+## 📝 Description
 
-Brief description of changes made in this PR.
+A clear and concise description of what this PR accomplishes.
 
-## Type of Change
+## 🔄 Changes Made
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as
-      expected)
-- [ ] Documentation update
-- [ ] Refactoring (no functional changes)
+- [ ] Change 1
+- [ ] Change 2
+- [ ] Change 3
 
-## Testing
+## 🧪 Testing
 
-- [ ] I have tested this change locally
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] All existing tests pass
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+- [ ] Cross-browser testing completed
 
-## Checklist
+## 📱 Screenshots
 
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
+If applicable, add screenshots to show the changes.
 
-## Screenshots (if applicable)
+## 📋 Checklist
 
-Add screenshots to help explain your changes.
+- [ ] Code follows project style guidelines
+- [ ] Self-review completed
+- [ ] Code is commented where necessary
+- [ ] Documentation updated
+- [ ] No console errors or warnings
+- [ ] Responsive design tested
+- [ ] Accessibility considerations addressed
 
-## Additional Notes
+## 🔍 Related Issues
 
-Any additional information or context that reviewers should know.
+Closes #[issue number]
+
+## 📚 Additional Notes
+
+Any additional information or context.
