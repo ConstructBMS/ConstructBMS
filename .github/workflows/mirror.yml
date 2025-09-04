@@ -1,0 +1,36 @@
+name: Mirror to Public Repo
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MIRROR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Add mirror remote
+        run: |
+          git remote add mirror "${{ secrets.MIRROR_REPO_SSH }}" || true
+
+      - name: Push all branches
+        run: |
+          for BR in $(git for-each-ref --format='%(refname:short)' refs/heads/); do
+            git push --force mirror "$BR"
+          done
+
+      - name: Push all tags
+        run: |
+          git push --force --tags mirror
