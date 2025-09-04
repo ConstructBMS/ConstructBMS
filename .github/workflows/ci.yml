@@ -29,17 +29,29 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run ESLint
-        run: pnpm eslint
+      - name: Run ESLint (Frontend)
+        run: cd frontend && pnpm lint
 
-      - name: Run Prettier check
-        run: pnpm prettier
+      - name: Run ESLint (Backend)
+        run: cd backend && pnpm lint
 
-      - name: Run TypeScript check
-        run: pnpm typecheck
+      - name: Run Prettier check (Frontend)
+        run: cd frontend && pnpm prettier --check .
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run Prettier check (Backend)
+        run: cd backend && pnpm prettier --check .
+
+      - name: Run TypeScript check (Frontend)
+        run: cd frontend && pnpm typecheck
+
+      - name: Run TypeScript check (Backend)
+        run: cd backend && pnpm typecheck
+
+      - name: Run tests (Frontend)
+        run: cd frontend && pnpm test
+
+      - name: Run tests (Backend)
+        run: cd backend && pnpm test
 
   build:
     name: Build Applications
@@ -65,10 +77,10 @@ jobs:
         run: pnpm install
 
       - name: Build frontend
-        run: pnpm build:frontend
+        run: cd frontend && pnpm build
 
       - name: Build backend
-        run: pnpm build:backend
+        run: cd backend && pnpm build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
