@@ -45,7 +45,8 @@ This guide will help you set up the ConstructBMS database using Supabase.
 
 ## Step 5: Configure Row Level Security (RLS)
 
-For production use, you should enable Row Level Security on your tables. Here are some example policies:
+For production use, you should enable Row Level Security on your tables. Here are some example
+policies:
 
 ```sql
 -- Enable RLS on all tables
@@ -68,6 +69,7 @@ CREATE POLICY "Users can view projects they have access to" ON projects
 ## Step 6: Update Environment Variables
 
 ### Frontend (.env.local)
+
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
@@ -75,6 +77,7 @@ VITE_API_URL=http://localhost:5174/api
 ```
 
 ### Backend (.env)
+
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
@@ -86,51 +89,61 @@ JWT_SECRET=your-super-secret-jwt-key
 ### Core Tables
 
 #### users
+
 - Stores user account information
 - Includes role-based access control
 - Supports avatar images
 
 #### modules
+
 - Defines system modules and their permissions
 - Controls feature access and visibility
 - Supports module activation/deactivation
 
 #### menu_items
+
 - Defines navigation menu structure
 - Supports hierarchical menu items
 - Links to modules for access control
 
 #### projects
+
 - Stores project information
 - Links to clients
 - Tracks project status and budget
 
 #### tasks
+
 - Task management and assignment
 - Links to projects and assignees
 - Supports priority and status tracking
 
 #### clients
+
 - Client contact information
 - Company details
 - Contact history
 
 #### contractors
+
 - Contractor information
 - Specialties and expertise
 - Contact details
 
 #### consultants
+
 - Consultant information
 - Areas of expertise
 - Contact details
 
 #### notes
+
 - Note-taking system
 - Tagging support
 - Author tracking
 
 #### documents
+
 - Document management
 - File storage information
 - Type categorization
@@ -138,11 +151,13 @@ JWT_SECRET=your-super-secret-jwt-key
 ### Junction Tables
 
 #### user_modules
+
 - Links users to modules
 - Defines permissions (access, edit, delete)
 - Supports granular access control
 
 #### user_roles
+
 - Role assignments
 - Audit trail for role changes
 - Supports multiple roles per user
@@ -150,29 +165,38 @@ JWT_SECRET=your-super-secret-jwt-key
 ## Database Features
 
 ### Automatic Timestamps
-All tables include `created_at` and `updated_at` timestamps that are automatically managed by triggers.
+
+All tables include `created_at` and `updated_at` timestamps that are automatically managed by
+triggers.
 
 ### UUID Primary Keys
+
 All tables use UUID primary keys for better security and scalability.
 
 ### Foreign Key Constraints
+
 Proper foreign key relationships ensure data integrity.
 
 ### Indexes
+
 Performance indexes are created on frequently queried columns.
 
 ## Backup and Recovery
 
 ### Automated Backups
+
 Supabase provides automated daily backups for all projects.
 
 ### Manual Backups
+
 You can create manual backups using the Supabase dashboard:
+
 1. Go to **Settings** → **Database**
 2. Click "Create backup"
 3. Download the backup file
 
 ### Restore from Backup
+
 1. Go to **Settings** → **Database**
 2. Click "Restore from backup"
 3. Upload your backup file
@@ -180,13 +204,16 @@ You can create manual backups using the Supabase dashboard:
 ## Monitoring and Analytics
 
 ### Database Metrics
+
 Supabase provides built-in monitoring:
+
 - Query performance
 - Connection usage
 - Storage usage
 - API usage
 
 ### Logs
+
 Access database logs in the Supabase dashboard under **Logs**.
 
 ## Security Best Practices
@@ -202,16 +229,19 @@ Access database logs in the Supabase dashboard under **Logs**.
 ### Common Issues
 
 #### Connection Errors
+
 - Verify your Supabase URL and keys
 - Check if your project is active
 - Ensure your IP is not blocked
 
 #### Permission Errors
+
 - Verify RLS policies are correctly configured
 - Check user roles and permissions
 - Ensure proper authentication
 
 #### Performance Issues
+
 - Check query performance in the dashboard
 - Optimize slow queries
 - Consider adding indexes

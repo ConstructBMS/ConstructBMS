@@ -1,0 +1,14 @@
+{
+  "watch": ["src"],
+  "ext": "ts,js,json",
+  "ignore": ["src/**/*.test.ts", "src/**/*.spec.ts", "node_modules", "dist", "*.log"],
+  "exec": "tsx src/server.ts",
+  "delay": "1000",
+  "restartable": "rs",
+  "verbose": false,
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "maxRestarts": 5,
+  "restartDelay": 2000
+}

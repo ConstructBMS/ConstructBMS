@@ -26,14 +26,28 @@
     "prepare": "husky install",
     "typecheck": "npm run typecheck:frontend && npm run typecheck:backend",
     "typecheck:frontend": "cd frontend && npm run typecheck",
-    "typecheck:backend": "cd backend && npm run typecheck"
+    "typecheck:backend": "cd backend && npm run typecheck",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml}\"",
+    "clean": "npm run clean:frontend && npm run clean:backend",
+    "clean:frontend": "cd frontend && rm -rf dist node_modules/.cache",
+    "clean:backend": "cd backend && rm -rf dist node_modules/.cache",
+    "quality": "npm run format && npm run lint:fix && npm run typecheck",
+    "pre-commit": "lint-staged"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3"
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.34.0",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "concurrently": "^9.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "prettier": "^3.6.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

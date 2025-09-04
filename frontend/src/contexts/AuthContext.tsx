@@ -40,64 +40,84 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
 
+  // Initialize authentication state
   useEffect(() => {
-    // Check if we're in demo mode (no Supabase configured)
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    
-    // Check if we're in demo mode (no Supabase configured)
-    if (!supabaseUrl || !supabaseAnonKey || 
-        supabaseUrl === 'https://your-project.supabase.co' || 
-        supabaseAnonKey === 'your-anon-key') {
-      setIsDemoMode(true);
-      setLoading(false);
-      return;
-    }
-  }, []);
+    const initializeAuth = async () => {
+      // Check if we're in demo mode (no Supabase configured)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-  useEffect(() => {
-    // Check for stored token on app load
-    const token = localStorage.getItem('authToken');
-    if (token && !isDemoMode) {
-      // Verify token with backend
-      fetch('http://localhost:5174/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const isDemo =
+        !supabaseUrl ||
+        !supabaseAnonKey ||
+        supabaseUrl === 'https://your-project.supabase.co' ||
+        supabaseAnonKey === 'your-anon-key';
+
+      setIsDemoMode(isDemo);
+
+      if (isDemo) {
+        // Demo mode - check for demo user in localStorage
+        const demoUser = localStorage.getItem('demoUser');
+        if (demoUser) {
+          setUser(JSON.parse(demoUser));
         }
-      })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Token invalid');
-      })
-      .then(data => {
-        const user: User = {
-          id: data.data.user.id,
-          email: data.data.user.email,
-          user_metadata: {
-            name: data.data.user.name
-          },
-          app_metadata: {
-            role: data.data.user.role
-          }
-        };
-        setUser(user);
-      })
-      .catch(() => {
-        // Token is invalid, remove it
-        localStorage.removeItem('authToken');
-        setUser(null);
-      })
-      .finally(() => {
         setLoading(false);
-      });
-    } else {
+        return;
+      }
+
+      // Production mode - check for stored token
+      const token = localStorage.getItem('authToken');
+      console.log(
+        '🔐 Checking for stored token:',
+        token ? 'Found' : 'Not found'
+      );
+
+      if (token) {
+        try {
+          // Verify token with backend
+          const apiUrl = 'http://localhost:5174';
+          console.log('🔐 Verifying token with backend...');
+          const response = await fetch(`${apiUrl}/api/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Token verified successfully:', data);
+            const user: User = {
+              id: data.data.user.id,
+              email: data.data.user.email,
+              user_metadata: {
+                name: data.data.user.name,
+              },
+              app_metadata: {
+                role: data.data.user.role,
+              },
+            };
+            setUser(user);
+            console.log('👤 User session restored:', user);
+          } else {
+            // Token is invalid, remove it
+            console.log('❌ Token invalid, removing from storage');
+            localStorage.removeItem('authToken');
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('❌ Token verification failed:', error);
+          localStorage.removeItem('authToken');
+          setUser(null);
+        }
+      } else {
+        console.log('🔐 No stored token found');
+      }
+
       setLoading(false);
-    }
-  }, [isDemoMode]);
+    };
 
-
+    initializeAuth();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     if (isDemoMode) {
@@ -106,19 +126,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: 'demo-user-123',
         email: email,
         user_metadata: {
-          name: email.split('@')[0]
+          name: email.split('@')[0],
         },
         app_metadata: {
-          role: 'admin'
-        }
+          role: 'admin',
+        },
       };
       setUser(demoUser);
+      // Store demo user in localStorage for persistence
+      localStorage.setItem('demoUser', JSON.stringify(demoUser));
       return;
     }
 
     try {
       // Use our backend API for authentication
-      const response = await fetch('http://localhost:5174/api/auth/login', {
+      const apiUrl = 'http://localhost:5174'; // Hardcoded for debugging
+      const fullUrl = `${apiUrl}/api/auth/login`;
+      console.log('API URL:', apiUrl);
+      console.log('Full URL:', fullUrl);
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,23 +158,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      
+
       // Create a user object that matches our User interface
       const user: User = {
         id: data.data.user.id,
         email: data.data.user.email,
         user_metadata: {
-          name: data.data.user.name
+          name: data.data.user.name,
         },
         app_metadata: {
-          role: data.data.user.role
-        }
+          role: data.data.user.role,
+        },
       };
-      
+
       setUser(user);
-      
+      console.log('👤 User signed in successfully:', user);
+
       // Store the token for future API calls
       localStorage.setItem('authToken', data.data.token);
+      console.log('🔐 Token stored in localStorage');
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -162,19 +190,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: 'demo-user-123',
         email: email,
         user_metadata: {
-          name: name
+          name: name,
         },
         app_metadata: {
-          role: 'user'
-        }
+          role: 'user',
+        },
       };
       setUser(demoUser);
+      // Store demo user in localStorage for persistence
+      localStorage.setItem('demoUser', JSON.stringify(demoUser));
       return;
     }
 
     try {
       // Use our backend API for registration
-      const response = await fetch('http://localhost:5174/api/auth/register', {
+      const apiUrl = 'http://localhost:5174'; // Hardcoded for debugging
+      const response = await fetch(`${apiUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -188,21 +219,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      
+
       // Create a user object that matches our User interface
       const user: User = {
         id: data.data.user.id,
         email: data.data.user.email,
         user_metadata: {
-          name: data.data.user.name
+          name: data.data.user.name,
         },
         app_metadata: {
-          role: data.data.user.role
-        }
+          role: data.data.user.role,
+        },
       };
-      
+
       setUser(user);
-      
+
       // Store the token for future API calls
       localStorage.setItem('authToken', data.data.token);
     } catch (error) {
@@ -214,6 +245,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     if (isDemoMode) {
       // Demo mode - simulate signout
+      localStorage.removeItem('demoUser');
       setUser(null);
       return;
     }
@@ -237,9 +269,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isDemoMode,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

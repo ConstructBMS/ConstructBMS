@@ -30,14 +30,14 @@ export const authenticateToken = async (
     if (!token) {
       res.status(401).json({
         success: false,
-        message: 'Access token required'
+        message: 'Access token required',
       });
       return;
     }
 
     // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
-    
+
     // Get user from Supabase
     const { data: user, error } = await supabase
       .from('users')
@@ -48,7 +48,7 @@ export const authenticateToken = async (
     if (error || !user) {
       res.status(401).json({
         success: false,
-        message: 'Invalid token'
+        message: 'Invalid token',
       });
       return;
     }
@@ -56,14 +56,14 @@ export const authenticateToken = async (
     (req as AuthRequest).user = {
       id: user.id,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
 
     next();
-  } catch (error) {
+  } catch {
     res.status(401).json({
       success: false,
-      message: 'Invalid token'
+      message: 'Invalid token',
     });
   }
 };
@@ -74,7 +74,7 @@ export const requireRole = (roles: string[]) => {
     if (!authReq.user) {
       res.status(401).json({
         success: false,
-        message: 'Authentication required'
+        message: 'Authentication required',
       });
       return;
     }
@@ -82,7 +82,7 @@ export const requireRole = (roles: string[]) => {
     if (!roles.includes(authReq.user.role)) {
       res.status(403).json({
         success: false,
-        message: 'Insufficient permissions'
+        message: 'Insufficient permissions',
       });
       return;
     }
@@ -91,6 +91,12 @@ export const requireRole = (roles: string[]) => {
   };
 };
 
-export const requireAdmin = requireRole(['admin']);
-export const requireManager = requireRole(['admin', 'manager']);
-export const requireUser = requireRole(['admin', 'manager', 'user']);
+export const requireSuperAdmin = requireRole(['super_admin']);
+export const requireAdmin = requireRole(['super_admin', 'admin']);
+export const requireManager = requireRole(['super_admin', 'admin', 'manager']);
+export const requireUser = requireRole([
+  'super_admin',
+  'admin',
+  'manager',
+  'user',
+]);

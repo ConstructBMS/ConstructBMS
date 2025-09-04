@@ -1,18 +1,25 @@
 {
   "name": "constructbms-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "ConstructBMS Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts --max-warnings 100",
     "lint:fix": "eslint . --ext .ts --fix",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "init-db": "ts-node src/scripts/init-database.ts"
   },
-  "keywords": ["construction", "bms", "api", "backend"],
+  "keywords": [
+    "construction",
+    "bms",
+    "api",
+    "backend"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -27,14 +34,14 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
     "@eslint/eslintrc": "^3.0.0",
+    "@eslint/js": "^9.0.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^20.10.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.23",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.19.11",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
     "eslint": "^9.0.0",
@@ -43,6 +50,8 @@
     "nodemon": "^3.0.2",
     "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.5",
     "typescript": "^5.2.2"
   }
 }

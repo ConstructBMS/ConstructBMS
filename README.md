@@ -1,6 +1,7 @@
 # ConstructBMS - Construction Business Management System
 
-A comprehensive business management system designed specifically for construction companies, built with React, TypeScript, Node.js, and Supabase.
+A comprehensive business management system designed specifically for construction companies, built
+with React, TypeScript, Node.js, and Supabase.
 
 ## 🚀 Features
 
@@ -15,6 +16,7 @@ A comprehensive business management system designed specifically for constructio
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** - UI framework
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
@@ -22,6 +24,7 @@ A comprehensive business management system designed specifically for constructio
 - **Vite** - Build tool
 
 ### Backend
+
 - **Node.js** - Runtime
 - **Express** - Web framework
 - **TypeScript** - Type safety
@@ -29,6 +32,7 @@ A comprehensive business management system designed specifically for constructio
 - **JWT** - Authentication
 
 ### Development Tools
+
 - **Husky** - Git hooks
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
@@ -37,33 +41,38 @@ A comprehensive business management system designed specifically for constructio
 
 ## 📋 Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 - Git
 
 ## 🚀 Quick Start
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/constructbms.git
 cd constructbms
 ```
 
 ### 2. Install dependencies
+
 ```bash
 pnpm install
 ```
 
 ### 3. Set up environment variables
+
 Create `.env` files in both `frontend/` and `backend/` directories:
 
 **Frontend (.env)**
+
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 **Backend (.env)**
+
 ```env
 PORT=5174
 SUPABASE_URL=your_supabase_url
@@ -72,6 +81,7 @@ JWT_SECRET=your_jwt_secret
 ```
 
 ### 4. Start development servers
+
 ```bash
 # Start both frontend and backend
 pnpm dev
@@ -111,6 +121,7 @@ constructbms/
 ### Available Scripts
 
 **Root (Monorepo)**
+
 ```bash
 pnpm dev              # Start both frontend and backend
 pnpm build            # Build both frontend and backend
@@ -121,6 +132,7 @@ pnpm test             # Run tests
 ```
 
 **Frontend**
+
 ```bash
 pnpm dev:frontend     # Start frontend dev server
 pnpm build:frontend   # Build frontend
@@ -128,6 +140,7 @@ pnpm lint:frontend    # Lint frontend code
 ```
 
 **Backend**
+
 ```bash
 pnpm dev:backend      # Start backend dev server
 pnpm build:backend    # Build backend
@@ -147,6 +160,7 @@ This project uses several tools to maintain code quality:
 ### Git Workflow
 
 1. **Conventional Commits** - All commits must follow conventional commit format:
+
    ```
    feat: add new user authentication
    fix: resolve login issue
@@ -159,13 +173,17 @@ This project uses several tools to maintain code quality:
 ## 🚀 Deployment
 
 ### Frontend Deployment
+
 The frontend can be deployed to:
+
 - **Vercel** (recommended)
 - **Netlify**
 - **AWS S3 + CloudFront**
 
 ### Backend Deployment
+
 The backend can be deployed to:
+
 - **Railway**
 - **Heroku**
 - **AWS EC2**

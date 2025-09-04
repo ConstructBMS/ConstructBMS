@@ -4,8 +4,15 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if Supabase credentials are configured
-if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
-  console.warn('⚠️ Supabase credentials not configured. Please set up your environment variables.');
+if (
+  !supabaseUrl ||
+  !supabaseAnonKey ||
+  supabaseUrl === 'https://your-project.supabase.co' ||
+  supabaseAnonKey === 'your-anon-key'
+) {
+  console.warn(
+    '⚠️ Supabase credentials not configured. Please set up your environment variables.'
+  );
   console.warn('📝 Add your Supabase URL and anon key to .env.local file');
 }
 
@@ -18,7 +25,12 @@ export const supabase = createClient(
 export const testSupabaseConnection = async () => {
   try {
     // Check if credentials are properly configured
-    if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+    if (
+      !supabaseUrl ||
+      !supabaseAnonKey ||
+      supabaseUrl === 'https://your-project.supabase.co' ||
+      supabaseAnonKey === 'your-anon-key'
+    ) {
       console.warn('Supabase not configured - using demo mode');
       return false;
     }
@@ -49,5 +61,5 @@ export const TABLES = {
   NOTES: 'notes',
   DOCUMENTS: 'documents',
   USER_MODULES: 'user_modules',
-  USER_ROLES: 'user_roles'
+  USER_ROLES: 'user_roles',
 } as const;

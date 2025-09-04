@@ -1,5 +1,5 @@
-import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -26,17 +26,23 @@ export default [
       },
     },
     plugins: {
-      '@typescript-eslint': (await import('@typescript-eslint/eslint-plugin')).default,
+      '@typescript-eslint': (await import('@typescript-eslint/eslint-plugin'))
+        .default,
       'react-hooks': (await import('eslint-plugin-react-hooks')).default,
       'react-refresh': (await import('eslint-plugin-react-refresh')).default,
+      prettier: (await import('eslint-plugin-prettier')).default,
     },
     rules: {
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true, allowExportNames: ['useAuth'] },
       ],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
+      'prettier/prettier': 'error',
     },
   },
   {

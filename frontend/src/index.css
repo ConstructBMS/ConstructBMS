@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Custom Properties for theming */
+:root {
+  /* Light theme defaults */
+  --background: #ffffff;
+  --surface: #f9fafb;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-light: #334155;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --accent: #60a5fa;
+  --button: #f3f4f6;
+  --button-hover: #e5e7eb;
+  --button-text: #1e293b;
+  --input: #ffffff;
+  --input-border: #1e293b;
+  --input-text: #1e293b;
+  --input-placeholder: #64748b;
+  --dropdown: #ffffff;
+  --dropdown-border: #1e293b;
+  --dropdown-text: #1e293b;
+}
+
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
@@ -10,26 +36,1059 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    background-color: var(--primary);
   }
-  
+
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    background-color: var(--button);
+    color: var(--button-text);
   }
-  
+
+  .btn-secondary:hover {
+    background-color: var(--button-hover);
+  }
+
   .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+    @apply rounded-lg shadow-sm p-6;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
   }
-  
+
   .sidebar-item {
     @apply flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200;
+    color: #f9fafb;
   }
-  
+
   .sidebar-item:hover {
-    @apply bg-gray-100 text-gray-900;
+    background-color: #374151;
+    color: #f9fafb;
   }
-  
+
   .sidebar-item.active {
-    @apply bg-primary-100 text-primary-700;
+    background-color: #3b82f6;
+    color: #f9fafb;
+  }
+
+  /* Dark theme styles */
+  .dark-theme {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+
+  .dark-theme .card {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+
+  .dark-theme .card-title {
+    color: #1f2937;
+  }
+
+  .dark-theme .card-content {
+    color: #f9fafb;
+  }
+
+  .dark-theme .label {
+    color: #1f2937;
+  }
+
+  .dark-theme .text-muted {
+    color: #d1d5db;
+  }
+
+  .dark-theme .text-gray-600 {
+    color: #d1d5db;
+  }
+
+  .dark-theme .text-gray-900 {
+    color: #1f2937;
+  }
+
+  .dark-theme .input {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+  }
+
+  .dark-theme .input::placeholder {
+    color: #9ca3af;
+  }
+
+  .dark-theme input {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme input::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .dark-theme .select-trigger {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+  }
+
+  .dark-theme .textarea {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+  }
+
+  .dark-theme textarea {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme textarea::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .dark-theme .bg-gray-50 {
+    background-color: #4b5563;
+  }
+
+  .dark-theme .bg-gray-100 {
+    background-color: #4b5563;
+  }
+
+  /* Dark theme Select component overrides */
+  .dark-theme [data-radix-select-trigger] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme [data-radix-select-content] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+  }
+
+  .dark-theme [data-radix-select-item] {
+    color: #f9fafb !important;
+  }
+
+  .dark-theme [data-radix-select-item]:hover {
+    background-color: #6b7280 !important;
+  }
+
+  .dark-theme [data-radix-select-item][data-highlighted] {
+    background-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme [data-radix-select-viewport] {
+    background-color: #4b5563 !important;
+  }
+
+  /* Additional Select overrides for Radix UI */
+  .dark-theme .SelectTrigger {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .SelectContent {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+  }
+
+  .dark-theme .SelectItem {
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .SelectItem:hover {
+    background-color: #6b7280 !important;
+  }
+
+  .dark-theme .SelectItem[data-highlighted] {
+    background-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .SelectViewport {
+    background-color: #4b5563 !important;
+  }
+
+  /* Target all select elements */
+  .dark-theme select {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  /* Target any element with select-related classes */
+  .dark-theme [class*='select'] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  /* Force override for any dropdown-like elements */
+  .dark-theme [role='listbox'] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+  }
+
+  .dark-theme [role='option'] {
+    color: #f9fafb !important;
+  }
+
+  .dark-theme [role='option']:hover {
+    background-color: #6b7280 !important;
+  }
+
+  /* Light theme styles */
+  .light-theme {
+    background-color: #ffffff;
+    color: #1f2937;
+  }
+
+  .light-theme .card {
+    background-color: #ffffff;
+    border-color: #e5e7eb;
+    color: #1f2937;
+  }
+
+  .light-theme .card-title {
+    color: #1f2937;
+  }
+
+  .light-theme .card-content {
+    color: #374151;
+  }
+
+  .light-theme .label {
+    color: #374151;
+  }
+
+  .light-theme .text-muted {
+    color: #6b7280;
+  }
+
+  .light-theme .text-gray-600 {
+    color: #4b5563;
+  }
+
+  .light-theme .text-gray-900 {
+    color: #111827;
+  }
+
+  .light-theme .input {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    color: #1f2937;
+  }
+
+  .light-theme .input::placeholder {
+    color: #9ca3af;
+  }
+
+  .light-theme input {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme input::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .light-theme .select-trigger {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    color: #1f2937;
+  }
+
+  .light-theme .textarea {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    color: #1f2937;
+  }
+
+  .light-theme textarea {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme textarea::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .light-theme .bg-gray-50 {
+    background-color: #f9fafb;
+  }
+
+  .light-theme .bg-gray-100 {
+    background-color: #f3f4f6;
+  }
+
+  /* Light theme Select component overrides */
+  .light-theme [data-radix-select-trigger] {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme [data-radix-select-content] {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+  }
+
+  .light-theme [data-radix-select-item] {
+    color: #1f2937 !important;
+  }
+
+  .light-theme [data-radix-select-item]:hover {
+    background-color: #f3f4f6 !important;
+  }
+
+  .light-theme [data-radix-select-item][data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme [data-radix-select-viewport] {
+    background-color: #ffffff !important;
+  }
+
+  /* Additional Select overrides for Radix UI - Light theme */
+  .light-theme .SelectTrigger {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme .SelectContent {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+  }
+
+  .light-theme .SelectItem {
+    color: #1f2937 !important;
+  }
+
+  .light-theme .SelectItem:hover {
+    background-color: #f3f4f6 !important;
+  }
+
+  .light-theme .SelectItem[data-highlighted] {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+  }
+
+  .light-theme .SelectViewport {
+    background-color: #ffffff !important;
+  }
+
+  /* Target all select elements - Light theme */
+  .light-theme select {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #1f2937 !important;
+  }
+
+  /* Force dark theme for SelectTrigger in FooterBuilder */
+  .dark-theme [data-radix-select-trigger] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme [data-radix-select-value] {
+    color: #f9fafb !important;
+  }
+
+  /* Additional specificity for FooterBuilder */
+  .dark-theme .SelectTrigger {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .SelectValue {
+    color: #f9fafb !important;
+  }
+
+  /* Specific targeting for columns dropdown */
+  .dark-theme .columns-dropdown {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .columns-dropdown[data-radix-select-trigger] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .columns-dropdown [data-radix-select-value] {
+    color: #f9fafb !important;
+  }
+
+  /* Force text visibility in columns dropdown */
+  .dark-theme .columns-dropdown span {
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .columns-dropdown div {
+    color: #f9fafb !important;
+  }
+
+  /* Target the actual text content */
+  .dark-theme .columns-dropdown * {
+    color: #f9fafb !important;
+  }
+
+  /* Settings dropdowns styling */
+  .dark-theme .settings-dropdown {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .settings-dropdown[data-radix-select-trigger] {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .settings-dropdown [data-radix-select-value] {
+    color: #f9fafb !important;
+  }
+
+  /* Force text visibility in settings dropdowns */
+  .dark-theme .settings-dropdown span {
+    color: #f9fafb !important;
+  }
+
+  .dark-theme .settings-dropdown div {
+    color: #f9fafb !important;
+  }
+
+  /* Target the actual text content in settings dropdowns */
+  .dark-theme .settings-dropdown * {
+    color: #f9fafb !important;
+  }
+
+  /* Login page input styling */
+  .dark-theme input::placeholder {
+    color: #9ca3af !important;
+  }
+
+  .dark-theme input {
+    background-color: #4b5563 !important;
+    border-color: #6b7280 !important;
+    color: #1f2937 !important;
+  }
+
+  /* Light theme styles */
+  .light-theme {
+    background-color: var(--background);
+    color: var(--text);
+  }
+
+  .light-theme .card {
+    background-color: var(--card);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .light-theme .card-title {
+    color: var(--text);
+  }
+
+  .light-theme .card-content {
+    color: var(--text);
+  }
+
+  .light-theme .label {
+    color: var(--text);
+  }
+
+  .light-theme .text-muted {
+    color: var(--text-muted);
+  }
+
+  .light-theme .text-gray-600 {
+    color: var(--text-muted);
+  }
+
+  .light-theme .text-gray-900 {
+    color: var(--text);
+  }
+
+  .light-theme .input {
+    background-color: var(--input);
+    border-color: var(--input-border);
+    color: var(--input-text);
+  }
+
+  .light-theme .input::placeholder {
+    color: var(--input-placeholder);
+  }
+
+  .light-theme input {
+    background-color: var(--input) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+  }
+
+  .light-theme input::placeholder {
+    color: var(--input-placeholder) !important;
+  }
+
+  .light-theme .select-trigger {
+    background-color: var(--dropdown);
+    border-color: var(--dropdown-border);
+    color: var(--dropdown-text);
+  }
+
+  .light-theme .textarea {
+    background-color: var(--input);
+    border-color: var(--input-border);
+    color: var(--input-text);
+  }
+
+  .light-theme textarea {
+    background-color: var(--input) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+  }
+
+  .light-theme textarea::placeholder {
+    color: var(--input-placeholder) !important;
+  }
+
+  .light-theme .bg-gray-50 {
+    background-color: var(--surface);
+  }
+
+  .light-theme .bg-gray-100 {
+    background-color: var(--surface);
+  }
+
+  /* Light theme Select component overrides */
+  .light-theme [data-radix-select-trigger] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme [data-radix-select-content] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+  }
+
+  .light-theme [data-radix-select-item] {
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme [data-radix-select-item]:hover {
+    background-color: var(--button-hover) !important;
+  }
+
+  .light-theme [data-radix-select-item][data-highlighted] {
+    background-color: var(--button-hover) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme [data-radix-select-viewport] {
+    background-color: var(--dropdown) !important;
+  }
+
+  /* Additional Select overrides for Radix UI */
+  .light-theme .SelectTrigger {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .SelectContent {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+  }
+
+  .light-theme .SelectItem {
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .SelectItem:hover {
+    background-color: var(--button-hover) !important;
+  }
+
+  .light-theme .SelectItem[data-highlighted] {
+    background-color: var(--button-hover) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .SelectViewport {
+    background-color: var(--dropdown) !important;
+  }
+
+  /* Target all select elements */
+  .light-theme select {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Target any element with select-related classes */
+  .light-theme [class*='select'] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Force override for any dropdown-like elements */
+  .light-theme [role='listbox'] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+  }
+
+  .light-theme [role='option'] {
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme [role='option']:hover {
+    background-color: var(--button-hover) !important;
+  }
+
+  /* Light theme specific dropdown styling */
+  .light-theme [data-radix-select-trigger] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme [data-radix-select-value] {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Additional specificity for FooterBuilder */
+  .light-theme .SelectTrigger {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .SelectValue {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Specific targeting for columns dropdown */
+  .light-theme .columns-dropdown {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .columns-dropdown[data-radix-select-trigger] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .columns-dropdown [data-radix-select-value] {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Force text visibility in columns dropdown */
+  .light-theme .columns-dropdown span {
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .columns-dropdown div {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Target the actual text content */
+  .light-theme .columns-dropdown * {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Settings dropdowns styling */
+  .light-theme .settings-dropdown {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .settings-dropdown[data-radix-select-trigger] {
+    background-color: var(--dropdown) !important;
+    border-color: var(--dropdown-border) !important;
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .settings-dropdown [data-radix-select-value] {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Force text visibility in settings dropdowns */
+  .light-theme .settings-dropdown span {
+    color: var(--dropdown-text) !important;
+  }
+
+  .light-theme .settings-dropdown div {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Target the actual text content in settings dropdowns */
+  .light-theme .settings-dropdown * {
+    color: var(--dropdown-text) !important;
+  }
+
+  /* Login page input styling */
+  .light-theme input::placeholder {
+    color: var(--input-placeholder) !important;
+  }
+
+  .light-theme input {
+    background-color: var(--input) !important;
+    border-color: var(--input-border) !important;
+    color: var(--input-text) !important;
+  }
+
+  /* Light theme Footer and Sidebar specific styling */
+  .light-theme footer {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme footer * {
+    color: #1e293b !important;
+  }
+
+  .light-theme footer a {
+    color: #3b82f6 !important;
+  }
+
+  .light-theme footer a:hover {
+    color: #60a5fa !important;
+  }
+
+  .light-theme .sidebar {
+    background-color: #ffffff !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .sidebar-item {
+    color: #1e293b !important;
+    background-color: transparent !important;
+  }
+
+  .light-theme .sidebar-item:hover {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  .light-theme .sidebar-item.active {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  .light-theme .sidebar-item.active:hover {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+  }
+
+  /* Additional sidebar styling for light theme */
+  .light-theme nav {
+    background-color: #ffffff !important;
+  }
+
+  .light-theme nav * {
+    color: #1e293b !important;
+  }
+
+  .light-theme nav a:hover {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  /* Light theme sign out button styling */
+  .light-theme .sign-out-button {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .sign-out-button:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Target any button with sign out related classes */
+  .light-theme [class*='sign-out'] {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme [class*='sign-out']:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Additional targeting for sign out button */
+  .light-theme button[class*='sign'] {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme button[class*='sign']:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Target any button in sidebar that might be sign out */
+  .light-theme .sidebar button {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .sidebar button:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Force override for any button with logout/signout text */
+  .light-theme button:contains('Sign Out'),
+  .light-theme button:contains('Logout'),
+  .light-theme button:contains('Sign out') {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  /* Target the specific sign out button in sidebar footer */
+  .light-theme .sidebar .border-t button {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .sidebar .border-t button:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Widget containers in light theme */
+  .light-theme .card[style*='background-color: #374151'] {
+    background-color: #ffffff !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .card[style*='background-color: #374151'] * {
+    color: #1e293b !important;
+  }
+
+  /* Widget buttons in light theme */
+  .light-theme button[style*='background-color: #4b5563'] {
+    background-color: #ffffff !important;
+    border-color: #1e293b !important;
+    color: #1e293b !important;
+  }
+
+  .light-theme button[style*='background-color: #4b5563']:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #1e293b !important;
+    color: #1e293b !important;
+  }
+
+  /* Widget cards in light theme */
+  .light-theme div[style*='background-color: #4b5563'] {
+    background-color: #ffffff !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme div[style*='background-color: #4b5563'] * {
+    color: #1e293b !important;
+  }
+
+  /* Badge styling in light theme */
+  .light-theme .badge[style*='background-color: #6b7280'] {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+  }
+
+  /* More specific targeting for FooterBuilder components */
+  .light-theme [style*='background-color: #374151'] {
+    background-color: #ffffff !important;
+  }
+
+  .light-theme [style*='background-color: #4b5563'] {
+    background-color: #ffffff !important;
+  }
+
+  .light-theme [style*='border-color: #4b5563'] {
+    border-color: #1e293b !important;
+  }
+
+  .light-theme [style*='border-color: #6b7280'] {
+    border-color: #1e293b !important;
+  }
+
+  /* Target all text elements in light theme */
+  .light-theme [style*='color: #f9fafb'] {
+    color: #1e293b !important;
+  }
+
+  .light-theme [style*='color: #e5e7eb'] {
+    color: #334155 !important;
+  }
+
+  .light-theme [style*='color: #d1d5db'] {
+    color: #64748b !important;
+  }
+
+  /* Specific button targeting */
+  .light-theme button[style*='background-color: #4b5563'] {
+    background-color: #ffffff !important;
+    border-color: #1e293b !important;
+    color: #1e293b !important;
+  }
+
+  .light-theme button[style*='background-color: #4b5563']:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #1e293b !important;
+    color: #1e293b !important;
+  }
+
+  /* Force override for any element with dark background */
+  .light-theme *[style*='background-color: #374151'],
+  .light-theme *[style*='background-color: #4b5563'],
+  .light-theme *[style*='background-color: #6b7280'] {
+    background-color: #ffffff !important;
+  }
+
+  /* Force override for any element with white text */
+  .light-theme *[style*='color: #f9fafb'],
+  .light-theme *[style*='color: #e5e7eb'],
+  .light-theme *[style*='color: #d1d5db'] {
+    color: #1e293b !important;
+  }
+
+  /* Specific sidebar sign out button override */
+  .light-theme .sidebar button {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme .sidebar button:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Nuclear option - override ALL elements with specific styles */
+  .light-theme div[style*='background-color: #374151'],
+  .light-theme div[style*='background-color: #4b5563'],
+  .light-theme div[style*='background-color: #6b7280'],
+  .light-theme button[style*='background-color: #374151'],
+  .light-theme button[style*='background-color: #4b5563'],
+  .light-theme button[style*='background-color: #6b7280'],
+  .light-theme span[style*='background-color: #374151'],
+  .light-theme span[style*='background-color: #4b5563'],
+  .light-theme span[style*='background-color: #6b7280'] {
+    background-color: #ffffff !important;
+  }
+
+  .light-theme div[style*='color: #f9fafb'],
+  .light-theme div[style*='color: #e5e7eb'],
+  .light-theme div[style*='color: #d1d5db'],
+  .light-theme button[style*='color: #f9fafb'],
+  .light-theme button[style*='color: #e5e7eb'],
+  .light-theme button[style*='color: #d1d5db'],
+  .light-theme span[style*='color: #f9fafb'],
+  .light-theme span[style*='color: #e5e7eb'],
+  .light-theme span[style*='color: #d1d5db'] {
+    color: #1e293b !important;
+  }
+
+  /* Target specific FooterBuilder elements by their structure */
+  .light-theme .card[style*='background-color: #374151'] {
+    background-color: #ffffff !important;
+  }
+
+  .light-theme .card[style*='background-color: #374151'] * {
+    color: #1e293b !important;
+  }
+
+  /* Force all buttons in light theme to have white background and navy text */
+  .light-theme button {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    border-color: #1e293b !important;
+  }
+
+  .light-theme button:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+
+  /* Override for login page buttons to keep them blue */
+  .light-theme button[type='submit'] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+  }
+
+  .light-theme button[type='submit']:hover {
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+  }
+
+  /* Keep eye icon button transparent */
+  .light-theme button[type='button'].bg-transparent {
+    background-color: transparent !important;
+    border: none !important;
+  }
+
+  /* Override any element with dark background to white */
+  .light-theme [style*='background-color: #374151'],
+  .light-theme [style*='background-color: #4b5563'],
+  .light-theme [style*='background-color: #6b7280'] {
+    background-color: #ffffff !important;
+  }
+
+  /* Override any element with white text to navy */
+  .light-theme [style*='color: #f9fafb'],
+  .light-theme [style*='color: #e5e7eb'],
+  .light-theme [style*='color: #d1d5db'] {
+    color: #1e293b !important;
+  }
+
+  .light-theme div[style*='border-color: #374151'] {
+    border-color: #1e293b !important;
+  }
+
+  /* Ensure sidebar header text is navy in light theme */
+  .light-theme span[style*='color: #f9fafb'] {
+    color: #1e293b !important;
+  }
+
+  /* Prevent sidebar navigation from being overridden */
+  .light-theme nav[style*='background-color: transparent'] {
+    background-color: transparent !important;
+  }
+
+  .light-theme div[style*='background-color: transparent'] {
+    background-color: transparent !important;
   }
 }

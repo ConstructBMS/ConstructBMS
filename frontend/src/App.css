@@ -1,42 +1,90 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 .card {
-  padding: 2em;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s ease-in-out;
 }
 
-.read-the-docs {
-  color: #888;
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark theme card styling */
+[data-theme="dark"] .card {
+  background: #1f2937;
+  border: 1px solid #374151;
+}
+
+/* Ensure proper text truncation */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Smooth transitions for responsive changes */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 480px) {
+  .card {
+    padding: 0.75rem;
+  }
+
+  /* Ensure content doesn't overflow on very small screens */
+  .dashboard-content {
+    overflow-x: hidden;
+  }
+}
+
+/* Better spacing for mobile devices */
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .mobile-optimized {
+    margin: 0.5rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 768px) {
+  button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Optimize for tablet screens */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .card {
+    padding: 1.25rem;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1025px) {
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+/* Ensure proper contrast and readability */
+@media (max-width: 640px) {
+  .card {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
 }
