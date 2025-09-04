@@ -1,14 +1,42 @@
-import js from '@eslint/js';
-import typescript from '@typescript-eslint/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
-import prettier from 'eslint-plugin-prettier';
+import pluginJs from '@eslint/js';
+import prettierConfig from 'eslint-config-prettier';
+import pluginPrettier from 'eslint-plugin-prettier';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-export default [
-  js.configs.recommended,
+export default tseslint.config(
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      '.out/',
+      '.vercel/',
+      '.next/',
+      '.vite/',
+      'coverage/',
+      '*.config.js',
+      '*.config.ts',
+    ],
+  },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
     languageOptions: {
-      parser: typescriptParser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
+        jest: true,
+        process: true,
+        console: true,
+        Buffer: true,
+        __dirname: true,
+        require: true,
+        module: true,
+        exports: true,
+        global: true,
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
@@ -16,18 +44,11 @@ export default [
           jsx: true,
         },
       },
-      globals: {
-        node: true,
-        browser: true,
-        es2022: true,
-      },
     },
     plugins: {
-      '@typescript-eslint': typescript,
-      prettier: prettier,
+      prettier: pluginPrettier,
     },
     rules: {
-      ...typescript.configs.recommended.rules,
       'prettier/prettier': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -38,21 +59,8 @@ export default [
       'no-debugger': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
+      'no-undef': 'error',
     },
   },
-  {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
-    languageOptions: {
-      globals: {
-        jest: true,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off',
-    },
-  },
-  {
-    ignores: ['node_modules/', 'dist/', 'build/', '*.config.js', '*.config.ts'],
-  },
-];
+  prettierConfig
+);

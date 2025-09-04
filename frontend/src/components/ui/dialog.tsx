@@ -6,11 +6,7 @@ interface DialogProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const Dialog: React.FC<DialogProps> = ({
-  children,
-  open = false,
-  onOpenChange: _onOpenChange,
-}) => {
+const Dialog: React.FC<DialogProps> = ({ children, open = false }) => {
   return <>{open && children}</>;
 };
 
@@ -115,9 +111,9 @@ const DialogTrigger: React.FC<DialogTriggerProps> = ({ children }) => {
 export {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 };

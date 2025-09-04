@@ -27,19 +27,17 @@ const Layout: React.FC = () => {
 
   // Listen for footer config updates
   useEffect(() => {
-    const handleFooterConfigUpdate = (event: CustomEvent) => {
-      setFooterConfig(event.detail);
+    const handleFooterConfigUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      setFooterConfig(customEvent.detail);
     };
 
-    window.addEventListener(
-      'footerConfigUpdated',
-      handleFooterConfigUpdate as EventListener
-    );
+    window.addEventListener('footerConfigUpdated', handleFooterConfigUpdate);
 
     return () => {
       window.removeEventListener(
         'footerConfigUpdated',
-        handleFooterConfigUpdate as EventListener
+        handleFooterConfigUpdate
       );
     };
   }, []);

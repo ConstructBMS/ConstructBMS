@@ -2,6 +2,7 @@
   "name": "constructbms",
   "version": "1.0.0",
   "description": "Construction Business Management System",
+  "type": "module",
   "private": true,
   "workspaces": [
     "frontend",
@@ -49,9 +50,11 @@
     "concurrently": "^9.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.6",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.42.0"
   },
   "engines": {
     "node": ">=18.0.0",

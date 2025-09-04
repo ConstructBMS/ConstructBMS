@@ -75,7 +75,6 @@ interface SelectTriggerProps {
   className?: string;
   isOpen?: boolean;
   setIsOpen?: (open: boolean) => void;
-  _selectedValue?: string;
 }
 
 const SelectTrigger: React.FC<SelectTriggerProps> = ({
@@ -83,7 +82,6 @@ const SelectTrigger: React.FC<SelectTriggerProps> = ({
   className = '',
   isOpen,
   setIsOpen,
-  _selectedValue,
 }) => {
   return (
     <button
