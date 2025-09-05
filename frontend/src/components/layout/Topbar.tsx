@@ -1,16 +1,16 @@
+import {
+  Bell,
+  ChevronDown,
+  Monitor,
+  Moon,
+  Search,
+  Sun,
+  User,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import {
-  Search,
-  Sun,
-  Moon,
-  Monitor,
-  ChevronDown,
-  User,
-  Bell,
-} from 'lucide-react';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();

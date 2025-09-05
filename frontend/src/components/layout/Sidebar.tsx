@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils/cn';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { Button } from '../ui/Button';
@@ -66,6 +67,7 @@ const navigationItems = [
 
 export function Sidebar() {
   const { collapsed, toggle } = useSidebarStore();
+  const location = useLocation();
 
   return (
     <div
@@ -99,30 +101,36 @@ export function Sidebar() {
       <nav className='flex-1 p-4 space-y-2'>
         {navigationItems.map(item => (
           <div key={item.id}>
-            <a
-              href={item.href}
+            <Link
+              to={item.href}
               className={cn(
                 'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                collapsed && 'justify-center'
+                collapsed && 'justify-center',
+                location.pathname === item.href &&
+                  'bg-accent text-accent-foreground'
               )}
               title={collapsed ? item.label : undefined}
             >
               <item.icon className='h-5 w-5 flex-shrink-0' />
               {!collapsed && <span>{item.label}</span>}
-            </a>
+            </Link>
 
             {/* Children */}
             {item.children && !collapsed && (
               <div className='ml-6 mt-1 space-y-1'>
                 {item.children.map(child => (
-                  <a
+                  <Link
                     key={child.id}
-                    href={child.href}
-                    className='flex items-center space-x-3 px-3 py-2 rounded-md text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
+                    to={child.href}
+                    className={cn(
+                      'flex items-center space-x-3 px-3 py-2 rounded-md text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground',
+                      location.pathname === child.href &&
+                        'bg-accent text-accent-foreground'
+                    )}
                   >
                     <child.icon className='h-4 w-4 flex-shrink-0' />
                     <span>{child.label}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}
