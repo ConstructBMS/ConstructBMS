@@ -1,76 +1,177 @@
-# React + TypeScript + Vite
+# ConstructBMS Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive frontend application built with React, TypeScript, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react)
-  uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc)
-  uses [SWC](https://swc.rs/) for Fast Refresh
+### AppShell & Core Structure
 
-## Expanding the ESLint configuration
+- **Responsive Layout**: Grid-based layout with collapsible sidebar and sticky topbar
+- **Theme System**: Light/Dark/System theme with persistent settings
+- **Keyboard Shortcuts**:
+  - `Cmd/Ctrl + B` - Toggle sidebar
+  - `Cmd/Ctrl + K` - Focus global search
+- **Lazy Loading**: All routes are lazy-loaded for optimal performance
 
-If you are developing a production application, we recommend updating the configuration to enable
-type-aware lint rules:
+### UI Components
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Design System**: Consistent UI primitives built with Tailwind CSS
+- **Accessibility**: ARIA-compliant components with keyboard navigation
+- **Responsive**: Mobile-first design with breakpoint-specific layouts
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### State Management
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+- **Zustand Stores**: Lightweight state management for theme and sidebar
+- **React Query**: Server state management and caching
+- **Persistent Storage**: Theme and sidebar preferences saved to localStorage
+
+## 📁 Project Structure
+
+```
+frontend/src/
+├── app/                    # Core application structure
+│   ├── AppShell.tsx       # Main application shell
+│   ├── routes.tsx         # Route configuration
+│   ├── providers/         # Context providers
+│   └── store/            # Zustand stores
+├── components/            # Reusable UI components
+│   ├── layout/           # Layout components
+│   └── ui/               # Base UI primitives
+├── lib/                  # Shared utilities
+│   ├── utils/            # Utility functions
+│   └── types/            # TypeScript types
+├── modules/              # Feature modules
+│   ├── dashboard/        # Dashboard module
+│   ├── projects/         # Project management
+│   ├── settings/         # Settings module
+│   └── ...               # Other modules
+└── pages/                # Page components
 ```
 
-You can also install
-[eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x)
-and
-[eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom)
-for React-specific lint rules:
+## 🛠️ Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+### Prerequisites
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+- Node.js 18+
+- pnpm
+
+### Getting Started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Run linting
+pnpm lint
+
+# Run type checking
+pnpm typecheck
 ```
+
+### Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm lint` - Run ESLint
+- `pnpm typecheck` - Run TypeScript checks
+- `pnpm test` - Run tests
+- `pnpm prettier` - Check formatting
+- `pnpm prettier:fix` - Fix formatting
+
+## 🎨 Theming
+
+The application supports three theme modes:
+
+- **Light**: Clean, bright interface
+- **Dark**: Dark mode for low-light environments
+- **System**: Automatically follows OS preference
+
+Themes are managed through Zustand and persist across sessions.
+
+## 🧩 UI Components
+
+### Available Components
+
+- `Button` - Various button styles and sizes
+- `Card` - Content containers with headers and footers
+- `Input` - Form input fields
+- `Switch` - Toggle switches
+- `Dialog` - Modal dialogs
+- `Tabs` - Tabbed interfaces
+- `Table` - Data tables
+- `Badge` - Status indicators
+
+### Usage
+
+```tsx
+import { Button, Card } from '@/components/ui';
+
+function MyComponent() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Hello World</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button variant='default'>Click me</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## 🧪 Testing
+
+Tests are located in `__tests__` directories alongside the code they test.
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+```
+
+## 📱 Responsive Design
+
+The application is built with a mobile-first approach:
+
+- **Mobile**: < 640px
+- **Tablet**: 640px - 1024px
+- **Desktop**: > 1024px
+
+## 🔧 Configuration
+
+### Tailwind CSS
+
+Custom design tokens and utilities are configured in `tailwind.config.js`.
+
+### TypeScript
+
+Strict TypeScript configuration with path aliases for clean imports.
+
+## 🚀 Deployment
+
+The application builds to static files that can be deployed to any static hosting service.
+
+```bash
+# Build for production
+pnpm build
+
+# Preview production build
+pnpm preview
+```
+
+## 📚 Additional Resources
+
+- [React Documentation](https://react.dev/)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Zustand Documentation](https://zustand-demo.pmnd.rs/)
+- [React Query Documentation](https://tanstack.com/query/latest)

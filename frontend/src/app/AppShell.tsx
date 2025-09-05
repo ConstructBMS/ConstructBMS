@@ -1,0 +1,92 @@
+import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { useSidebarStore } from './store/ui/sidebar.store';
+import { Sidebar } from '../components/layout/Sidebar';
+import { Topbar } from '../components/layout/Topbar';
+import { AppRoutes } from './routes';
+import type { KeyboardShortcut } from '../lib/types/core';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
+
+export function AppShell() {
+  const { toggle } = useSidebarStore();
+
+  // Keyboard shortcuts
+  const shortcuts: KeyboardShortcut[] = [
+    {
+      key: 'b',
+      metaKey: true,
+      action: toggle,
+      description: 'Toggle sidebar',
+    },
+    {
+      key: 'k',
+      metaKey: true,
+      action: () => {
+        const searchInput = document.querySelector(
+          'input[type="search"]'
+        ) as HTMLInputElement;
+        searchInput?.focus();
+      },
+      description: 'Focus global search',
+    },
+  ];
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      shortcuts.forEach(shortcut => {
+        const isMetaKey =
+          (event.metaKey && shortcut.metaKey) ||
+          (event.ctrlKey && shortcut.ctrlKey);
+        const isShiftKey = event.shiftKey === !!shortcut.shiftKey;
+        const isAltKey = event.altKey === !!shortcut.altKey;
+        const isKey = event.key.toLowerCase() === shortcut.key.toLowerCase();
+
+        if (isMetaKey && isShiftKey && isAltKey && isKey) {
+          event.preventDefault();
+          shortcut.action();
+        }
+      });
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [shortcuts]);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <div className='min-h-screen bg-background'>
+            <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] h-screen'>
+              {/* Sidebar */}
+              <div className='row-span-2'>
+                <Sidebar />
+              </div>
+
+              {/* Topbar */}
+              <div className='col-start-2'>
+                <Topbar />
+              </div>
+
+              {/* Main Content */}
+              <main className='col-start-2 row-start-2 overflow-auto'>
+                <AppRoutes />
+              </main>
+            </div>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
