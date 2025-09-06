@@ -12,4 +12,4 @@ export { Dialog } from './dialog';
 export { Input } from './input';
 export { Switch } from './switch';
 export { Table } from './table';
-export { Tabs } from './tabs';
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';

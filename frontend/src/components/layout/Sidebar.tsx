@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
+import { useFeatureFlag } from '../../app/store/featureFlags.store';
 import { cn } from '../../lib/utils/cn';
 import { Button } from '../ui';
 
@@ -28,8 +29,20 @@ const navigationItems = [
     href: '/dashboard',
   },
   { id: 'notes', label: 'Notes', icon: FileText, href: '/notes' },
-  { id: 'chat', label: 'Chat', icon: MessageSquare, href: '/chat' },
-  { id: 'portal', label: 'Portal', icon: Globe, href: '/portal' },
+  {
+    id: 'chat',
+    label: 'Chat',
+    icon: MessageSquare,
+    href: '/chat',
+    flag: 'chat' as const,
+  },
+  {
+    id: 'portal',
+    label: 'Portal',
+    icon: Globe,
+    href: '/portal',
+    flag: 'portal' as const,
+  },
   { id: 'contacts', label: 'Contacts', icon: Users, href: '/contacts' },
   {
     id: 'projects',
@@ -48,18 +61,44 @@ const navigationItems = [
         label: 'Programme Manager',
         icon: GanttChart,
         href: '/projects/programme',
+        flag: 'programme' as const,
       },
     ],
   },
-  { id: 'documents', label: 'Documents', icon: FileStack, href: '/documents' },
-  { id: 'workflows', label: 'Workflows', icon: Workflow, href: '/workflows' },
-  { id: 'pipeline', label: 'Pipeline', icon: TrendingUp, href: '/pipeline' },
-  { id: 'estimates', label: 'Estimates', icon: Calculator, href: '/estimates' },
+  {
+    id: 'documents',
+    label: 'Documents',
+    icon: FileStack,
+    href: '/documents',
+    flag: 'documents.library' as const,
+  },
+  {
+    id: 'workflows',
+    label: 'Workflows',
+    icon: Workflow,
+    href: '/workflows',
+    flag: 'workflows' as const,
+  },
+  {
+    id: 'pipeline',
+    label: 'Pipeline',
+    icon: TrendingUp,
+    href: '/pipeline',
+    flag: 'pipeline' as const,
+  },
+  {
+    id: 'estimates',
+    label: 'Estimates',
+    icon: Calculator,
+    href: '/estimates',
+    flag: 'estimates' as const,
+  },
   {
     id: 'purchase-orders',
     label: 'Purchase Orders',
     icon: ShoppingCart,
     href: '/purchase-orders',
+    flag: 'purchaseOrders' as const,
   },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
 ];
@@ -67,6 +106,25 @@ const navigationItems = [
 export function Sidebar() {
   const { collapsed, toggle } = useSidebarStore();
   const location = useLocation();
+
+  // Filter navigation items based on feature flags
+  const filteredItems = navigationItems
+    .filter(item => {
+      if (!item.flag) return true;
+      return useFeatureFlag(item.flag);
+    })
+    .map(item => {
+      if (item.children) {
+        return {
+          ...item,
+          children: item.children.filter(child => {
+            if (!child.flag) return true;
+            return useFeatureFlag(child.flag);
+          }),
+        };
+      }
+      return item;
+    });
 
   return (
     <div
@@ -98,7 +156,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className='flex-1 p-4 space-y-2'>
-        {navigationItems.map(item => (
+        {filteredItems.map(item => (
           <div key={item.id}>
             <Link
               to={item.href}

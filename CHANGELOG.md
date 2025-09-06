@@ -34,6 +34,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **SQL Migration**: Database schema for roles, role_bindings, and permission_rules tables
 - **ABAC Support**: Attribute-based access control with JSON predicates and condition evaluation
 - **Scope-based Access**: Global, organization, project, and user-level permission scoping
+- **Settings Skeleton**: Complete settings page with tabbed navigation and sections
+- **Organization Switcher**: Multi-org support with dropdown in topbar
+- **Appearance Settings**: Theme toggle and accent color picker with instant application
+- **Feature Flags System**: Registry, store, hooks, and sidebar gating
+- **General Settings**: Organization profile, timezone, currency, locale configuration
+- **Integrations Stubs**: Email, storage, and webhook configuration placeholders
+- **Developer Tools**: Environment info, package versions, and build details
+- **Sidebar Gating**: Navigation items hidden based on feature flag settings
 
 ### Changed
 

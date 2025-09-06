@@ -8,12 +8,16 @@ import {
   User,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { Button, Input } from '../ui';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();
+  const { currentOrgId, orgs, setOrg, getCurrentOrg } = useOrgStore();
   const [searchFocused, setSearchFocused] = useState(false);
+  const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+  const currentOrg = getCurrentOrg();
 
   React.useEffect(() => {
     const handleKeyDownEvent = (event: KeyboardEvent) => {
@@ -26,8 +30,19 @@ export function Topbar() {
       }
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.org-switcher')) {
+        setOrgDropdownOpen(false);
+      }
+    };
+
     document.addEventListener('keydown', handleKeyDownEvent);
-    return () => document.removeEventListener('keydown', handleKeyDownEvent);
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDownEvent);
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   const getThemeIcon = () => {
@@ -70,19 +85,62 @@ export function Topbar() {
         {/* Right side - Actions */}
         <div className='flex items-center space-x-4'>
           {/* Organization Switcher */}
-          <div className='flex items-center space-x-2'>
-            <div className='h-8 w-8 rounded-full bg-primary flex items-center justify-center'>
-              <span className='text-sm font-medium text-primary-foreground'>
-                C
-              </span>
+          <div className='relative org-switcher'>
+            <div
+              className='flex items-center space-x-2 cursor-pointer hover:bg-accent rounded-md p-1'
+              onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
+            >
+              <div className='h-8 w-8 rounded-full bg-primary flex items-center justify-center'>
+                <span className='text-sm font-medium text-primary-foreground'>
+                  {currentOrg?.name?.charAt(0) || 'C'}
+                </span>
+              </div>
+              <div className='hidden sm:block'>
+                <div className='text-sm font-medium'>
+                  {currentOrg?.name || 'ConstructBMS'}
+                </div>
+                <div className='text-xs text-muted-foreground'>
+                  Organization
+                </div>
+              </div>
+              <Button variant='ghost' size='icon' className='h-8 w-8'>
+                <ChevronDown className='h-4 w-4' />
+              </Button>
             </div>
-            <div className='hidden sm:block'>
-              <div className='text-sm font-medium'>ConstructBMS</div>
-              <div className='text-xs text-muted-foreground'>Organization</div>
-            </div>
-            <Button variant='ghost' size='icon' className='h-8 w-8'>
-              <ChevronDown className='h-4 w-4' />
-            </Button>
+
+            {orgDropdownOpen && (
+              <div className='absolute top-full right-0 mt-2 w-64 bg-popover border rounded-md shadow-lg z-50'>
+                <div className='p-2'>
+                  <div className='text-xs font-medium text-muted-foreground px-2 py-1'>
+                    Switch Organization
+                  </div>
+                  {orgs.map(org => (
+                    <button
+                      key={org.id}
+                      onClick={() => {
+                        setOrg(org.id);
+                        setOrgDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-2 py-2 rounded-md hover:bg-accent flex items-center space-x-2 ${
+                        currentOrgId === org.id ? 'bg-accent' : ''
+                      }`}
+                    >
+                      <div className='h-6 w-6 rounded-full bg-primary flex items-center justify-center'>
+                        <span className='text-xs font-medium text-primary-foreground'>
+                          {org.name.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <div className='text-sm font-medium'>{org.name}</div>
+                        <div className='text-xs text-muted-foreground'>
+                          {org.slug}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Notifications */}

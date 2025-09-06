@@ -33,6 +33,15 @@ A modern, responsive frontend application built with React, TypeScript, and Tail
 - **UI Guards**: Conditional rendering of UI elements
 - **Caching**: Performance-optimized permission evaluation
 
+### Settings & Configuration
+
+- **Organization Switcher**: Multi-org support with dropdown in topbar
+- **Appearance Settings**: Theme toggle and accent color picker
+- **Feature Flags**: Enable/disable features with audience controls
+- **General Settings**: Organization profile, timezone, currency, locale
+- **Integrations**: Email, storage, and webhook configuration stubs
+- **Developer Tools**: Environment info, package versions, build details
+
 ## 📁 Project Structure
 
 ```
@@ -177,6 +186,52 @@ function ProjectActions({ projectId }) {
     <UIGuard resource='projects' action='update' scope='project' scopeId={projectId}>
       <button>Edit Project</button>
     </UIGuard>
+  );
+}
+```
+
+### Feature Flags Usage
+
+```tsx
+import { useFeatureFlag } from '../app/store/featureFlags.store';
+
+// In a component
+function MyComponent() {
+  const chatEnabled = useFeatureFlag('chat');
+  const portalEnabled = useFeatureFlag('portal', { roles: ['admin'] });
+
+  return (
+    <div>
+      {chatEnabled && <ChatWidget />}
+      {portalEnabled && <PortalLink />}
+    </div>
+  );
+}
+
+// In navigation (automatically handled by Sidebar)
+const navigationItems = [
+  { id: 'chat', label: 'Chat', href: '/chat', flag: 'chat' },
+  // Item will be hidden if flag is disabled
+];
+```
+
+### Organization Switcher
+
+```tsx
+import { useOrgStore } from '../app/store/auth/org.store';
+
+function OrgSwitcher() {
+  const { currentOrgId, orgs, setOrg, getCurrentOrg } = useOrgStore();
+  const currentOrg = getCurrentOrg();
+
+  return (
+    <select value={currentOrgId} onChange={e => setOrg(e.target.value)}>
+      {orgs.map(org => (
+        <option key={org.id} value={org.id}>
+          {org.name}
+        </option>
+      ))}
+    </select>
   );
 }
 ```

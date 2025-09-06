@@ -74,9 +74,10 @@ Development is organized into focused prompts that target specific areas:
 
 #### Prompt 003: Settings
 
-- **Target**: `frontend/src/modules/settings/`
-- **Focus**: User preferences, application configuration
-- **Deliverables**: Settings UI, configuration management
+- **Target**: `frontend/src/modules/settings/` + `frontend/src/app/store/`
+- **Focus**: Settings skeleton, org switcher, appearance, feature flags, integrations
+- **Deliverables**: Settings UI, org switcher, feature flags system, appearance controls, developer
+  tools
 
 ### Entry Point Strategy
 
@@ -128,6 +129,8 @@ Lightweight state management for client-side state:
 - `theme.store.ts` - Theme management with persistence
 - `sidebar.store.ts` - Sidebar state with collapse functionality
 - `permissions.store.ts` - Permission rules and matrix management
+- `org.store.ts` - Organization switching and management
+- `featureFlags.store.ts` - Feature flag management with audience controls
 
 ### React Query
 
@@ -257,6 +260,49 @@ Server state management and caching:
 - **RBAC + ABAC**: Role-based and attribute-based access control
 - **Permission Matrix**: Visual permission management interface
 - **Scope-based Access**: Global, organization, project, and user-level permissions
+
+## ⚙️ Settings & Configuration
+
+### Settings Architecture
+
+The settings system provides comprehensive configuration management:
+
+- **Tabbed Interface**: Organized settings sections with left navigation
+- **Persistent Storage**: Settings saved to localStorage with Zustand
+- **Real-time Updates**: Changes applied immediately across the application
+- **Extensible Design**: Easy to add new settings sections
+
+### Organization Management
+
+- **Multi-org Support**: Switch between organizations via topbar dropdown
+- **Organization Store**: Zustand store with localStorage persistence
+- **Visual Indicators**: Organization avatars and names
+- **Context Awareness**: Settings and permissions scoped to current organization
+
+### Feature Flags System
+
+Granular control over feature availability:
+
+- **Flag Registry**: Centralized flag definitions with TypeScript types
+- **Audience Controls**: All users, admins only, beta users
+- **Sidebar Integration**: Navigation items automatically hidden when disabled
+- **Runtime Evaluation**: Flags checked in real-time with context support
+
+### Appearance Configuration
+
+- **Theme System**: Light, dark, and system theme support
+- **Accent Colors**: Five preset colors with CSS custom property updates
+- **Persistent Preferences**: Theme and color choices saved across sessions
+- **Instant Application**: Changes applied immediately without page refresh
+
+### Integration Stubs
+
+Placeholder configurations for external services:
+
+- **Email**: SMTP configuration and testing
+- **Storage**: File storage bucket settings
+- **Webhooks**: Endpoint configuration and security
+- **Developer Tools**: Environment information and debugging
 
 ## 🚀 Deployment
 
