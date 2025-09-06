@@ -15,7 +15,6 @@ import {
   Users,
   Workflow,
 } from 'lucide-react';
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';

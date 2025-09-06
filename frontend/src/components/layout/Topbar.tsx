@@ -9,8 +9,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useThemeStore } from '../../app/store/ui/theme.store';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
+import { Button, Input } from '../ui';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();
