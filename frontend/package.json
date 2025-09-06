@@ -12,7 +12,10 @@
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests specified\" && exit 0",
     "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write ."
+    "prettier:fix": "prettier --write .",
+    "clean": "rm -rf dist .eslintcache node_modules/.vite",
+    "dev:clean": "pnpm clean && pnpm dev",
+    "kill-ports": "lsof -ti:5173,5174 | xargs kill -9 2>/dev/null || true"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
