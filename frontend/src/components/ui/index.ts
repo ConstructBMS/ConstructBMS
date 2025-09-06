@@ -1,8 +1,8 @@
-export { Button } from './Button';
-export { Card } from './Card';
-export { Input } from './Input';
-export { Switch } from './Switch';
-export { Dialog } from './Dialog';
-export { Tabs } from './Tabs';
-export { Table } from './Table';
-export { Badge } from './Badge';
+export { Button } from './button';
+export { Card } from './card';
+export { Input } from './input';
+export { Switch } from './switch';
+export { Dialog } from './dialog';
+export { Tabs } from './tabs';
+export { Table } from './table';
+export { Badge } from './badge';

@@ -19,7 +19,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';
-import { Button } from '../ui/Button';
+import { Button } from '../ui';
 
 const navigationItems = [
   {

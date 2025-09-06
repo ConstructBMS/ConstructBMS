@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import type { GuardProps, Resource, Action, Scope } from '../types/permissions';
+import type { Action, GuardProps, Resource, Scope } from '../types/permissions';
 import { useCan } from './hooks';
 
 // ============================================================================
