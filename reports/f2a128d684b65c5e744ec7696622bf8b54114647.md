@@ -1,0 +1,28 @@
+## Build summary — f2a128d684b65c5e744ec7696622bf8b54114647
+
+**Branch:** main
+**Author:** Napwood Construction Ltd <napwoodconstruction@users.noreply.github.com>
+**Commit message:** chore(ci): fix auto-summary workflow for reliable reports
+
+- set contents/issues write permissions at job level
+- configure git user and safe.directory
+- ensure reports/* created and committed on each push
+- add artifact upload and fallback auto-commit action
+- document summary location
+
+### Changed files
+ - A	.github/workflows/auto-summary.yml
+ - M	.gitignore
+ - M	DEVELOPMENT_GUIDE.md
+ - M	frontend/src/modules/dashboard/DashboardPage.tsx
+ - M	frontend/src/modules/estimates/EstimatesPage.tsx
+ - M	frontend/src/modules/projects/ProjectsPage.tsx
+
+### Shortstat
+ 6 files changed, 136 insertions(+), 3 deletions(-)
+
+### By top-level directory
+ -       1 .github
+ -       1 .gitignore
+ -       1 DEVELOPMENT_GUIDE.md
+ -       3 frontend
