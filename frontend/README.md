@@ -21,9 +21,17 @@ A modern, responsive frontend application built with React, TypeScript, and Tail
 
 ### State Management
 
-- **Zustand Stores**: Lightweight state management for theme and sidebar
+- **Zustand Stores**: Lightweight state management for theme, sidebar, and permissions
 - **React Query**: Server state management and caching
-- **Persistent Storage**: Theme and sidebar preferences saved to localStorage
+- **Persistent Storage**: Theme, sidebar, and permission preferences saved to localStorage
+
+### Permissions System
+
+- **RBAC + ABAC**: Role-Based and Attribute-Based Access Control
+- **Permission Matrix**: Visual interface for managing permissions
+- **Route Guards**: Automatic route protection based on permissions
+- **UI Guards**: Conditional rendering of UI elements
+- **Caching**: Performance-optimized permission evaluation
 
 ## 📁 Project Structure
 
@@ -39,10 +47,15 @@ frontend/src/
 │   └── ui/               # Base UI primitives
 ├── lib/                  # Shared utilities
 │   ├── utils/            # Utility functions
-│   └── types/            # TypeScript types
+│   ├── types/            # TypeScript types
+│   └── permissions/      # Permission system
+│       ├── evaluator.ts  # Core permission evaluation
+│       ├── hooks.tsx     # React hooks for permissions
+│       └── Guard.tsx     # Route and UI guards
 ├── modules/              # Feature modules
 │   ├── dashboard/        # Dashboard module
 │   ├── projects/         # Project management
+│   ├── permissions/      # Permission management
 │   ├── settings/         # Settings module
 │   └── ...               # Other modules
 └── pages/                # Page components
@@ -107,6 +120,13 @@ Themes are managed through Zustand and persist across sessions.
 - `Table` - Data tables
 - `Badge` - Status indicators
 
+### Permission Components
+
+- `Guard` - General permission guard
+- `RouteGuard` - Route protection with redirect
+- `UIGuard` - UI element protection
+- `ButtonGuard` - Button state management
+
 ### Usage
 
 ```tsx
@@ -122,6 +142,41 @@ function MyComponent() {
         <Button variant='default'>Click me</Button>
       </CardContent>
     </Card>
+  );
+}
+```
+
+### Permission Usage
+
+```tsx
+import { useCan, RouteGuard, UIGuard } from '@/lib/permissions';
+
+// Check permission in component
+function ProjectList() {
+  const { can, isLoading } = useCan({
+    resource: 'projects',
+    action: 'read',
+  });
+
+  if (!can) return <div>Access denied</div>;
+  return <div>Project list</div>;
+}
+
+// Protect routes
+function App() {
+  return (
+    <RouteGuard resource='projects' action='read' redirectTo='/unauthorized'>
+      <ProjectsPage />
+    </RouteGuard>
+  );
+}
+
+// Protect UI elements
+function ProjectActions({ projectId }) {
+  return (
+    <UIGuard resource='projects' action='update' scope='project' scopeId={projectId}>
+      <button>Edit Project</button>
+    </UIGuard>
   );
 }
 ```

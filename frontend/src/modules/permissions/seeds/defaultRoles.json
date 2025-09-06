@@ -1,0 +1,174 @@
+{
+  "roles": [
+    {
+      "id": "super-admin",
+      "name": "SuperAdmin",
+      "description": "Full system access with all permissions. Can manage all aspects of the system including user roles and permissions.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "admin",
+      "name": "Admin",
+      "description": "Administrative access to most system features. Can manage users, projects, and organizational settings.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "manager",
+      "name": "Manager",
+      "description": "Project and team management capabilities. Can oversee projects, manage team members, and access reporting features.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "staff",
+      "name": "Staff",
+      "description": "Standard employee access. Can work on assigned projects, create documents, and collaborate with team members.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "contractor",
+      "name": "Contractor",
+      "description": "Limited access for external contractors. Can view assigned projects and submit deliverables.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "client",
+      "name": "Client",
+      "description": "Read-only access for clients. Can view project progress, documents, and communicate with the team.",
+      "isSystem": true,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "defaultPermissions": {
+    "super-admin": {
+      "dashboard": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "projects": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "programme": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "contacts": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "documents": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "workflows": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "pipeline": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "estimates": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "purchase-orders": {
+        "read": "allow",
+        "create": "allow",
+        "update": "allow",
+        "delete": "allow",
+        "manage": "allow"
+      },
+      "notes": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "chat": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "portal": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "settings": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "users": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "roles": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "permissions": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" }
+    },
+    "admin": {
+      "dashboard": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "allow" },
+      "projects": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "programme": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "contacts": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "documents": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "workflows": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "pipeline": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "estimates": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "purchase-orders": {
+        "read": "allow",
+        "create": "allow",
+        "update": "allow",
+        "delete": "allow",
+        "manage": "allow"
+      },
+      "notes": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "chat": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "portal": { "read": "allow", "create": "allow", "update": "allow", "delete": "allow", "manage": "allow" },
+      "settings": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "allow" },
+      "users": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "allow" },
+      "roles": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "permissions": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" }
+    },
+    "manager": {
+      "dashboard": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "projects": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "allow" },
+      "programme": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "allow" },
+      "contacts": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "documents": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "workflows": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "pipeline": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "estimates": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "purchase-orders": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "notes": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "chat": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "portal": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "settings": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "users": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "roles": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "permissions": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" }
+    },
+    "staff": {
+      "dashboard": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "projects": { "read": "allow", "create": "deny", "update": "allow", "delete": "deny", "manage": "deny" },
+      "programme": { "read": "allow", "create": "deny", "update": "allow", "delete": "deny", "manage": "deny" },
+      "contacts": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "documents": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "workflows": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "pipeline": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "estimates": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "purchase-orders": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "notes": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "chat": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "portal": { "read": "allow", "create": "allow", "update": "allow", "delete": "deny", "manage": "deny" },
+      "settings": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "users": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "roles": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "permissions": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" }
+    },
+    "contractor": {
+      "dashboard": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "projects": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "programme": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "contacts": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "documents": { "read": "allow", "create": "allow", "update": "deny", "delete": "deny", "manage": "deny" },
+      "workflows": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "pipeline": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "estimates": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "purchase-orders": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "notes": { "read": "allow", "create": "allow", "update": "deny", "delete": "deny", "manage": "deny" },
+      "chat": { "read": "allow", "create": "allow", "update": "deny", "delete": "deny", "manage": "deny" },
+      "portal": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "settings": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "users": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "roles": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "permissions": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" }
+    },
+    "client": {
+      "dashboard": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "projects": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "programme": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "contacts": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "documents": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "workflows": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "pipeline": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "estimates": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "purchase-orders": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "notes": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "chat": { "read": "allow", "create": "allow", "update": "deny", "delete": "deny", "manage": "deny" },
+      "portal": { "read": "allow", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "settings": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "users": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "roles": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" },
+      "permissions": { "read": "deny", "create": "deny", "update": "deny", "delete": "deny", "manage": "deny" }
+    }
+  }
+}

@@ -38,10 +38,12 @@ ConstructBMS/
 │   │   │   └── ui/          # Base UI primitives
 │   │   ├── lib/             # Shared utilities
 │   │   │   ├── utils/       # Utility functions
-│   │   │   └── types/       # TypeScript types
+│   │   │   ├── types/       # TypeScript types
+│   │   │   └── permissions/ # Permission system
 │   │   ├── modules/         # Feature modules
 │   │   │   ├── dashboard/   # Dashboard module
 │   │   │   ├── projects/    # Project management
+│   │   │   ├── permissions/ # Permission management
 │   │   │   ├── settings/    # Settings module
 │   │   │   └── ...          # Other modules
 │   │   └── pages/           # Page components
@@ -64,11 +66,11 @@ Development is organized into focused prompts that target specific areas:
 - **Focus**: Core application structure, routing, theme system
 - **Deliverables**: AppShell, routing, theme provider, UI primitives
 
-#### Prompt 002: Permissions
+#### Prompt 002: Permissions v0 (RBAC + ABAC)
 
-- **Target**: `frontend/src/lib/` + `frontend/src/modules/permissions/`
-- **Focus**: Role-based access control, permission checking
-- **Deliverables**: Permission system, RBAC components
+- **Target**: `frontend/src/lib/permissions/` + `frontend/src/modules/permissions/`
+- **Focus**: Role-based and attribute-based access control, permission matrix UI
+- **Deliverables**: Permission evaluator, hooks, guards, matrix editor, SQL migration
 
 #### Prompt 003: Settings
 
@@ -125,6 +127,7 @@ Lightweight state management for client-side state:
 
 - `theme.store.ts` - Theme management with persistence
 - `sidebar.store.ts` - Sidebar state with collapse functionality
+- `permissions.store.ts` - Permission rules and matrix management
 
 ### React Query
 
@@ -245,12 +248,15 @@ Server state management and caching:
 - **Content Security Policy**: Strict CSP headers
 - **Input Validation**: Client-side validation
 
-### Authentication
+### Authentication & Authorization
 
 - **JWT Tokens**: Secure token-based authentication
 - **Token Refresh**: Automatic token refresh
-- **Route Protection**: Protected route components
+- **Route Protection**: Protected route components with permission guards
 - **Session Management**: Secure session handling
+- **RBAC + ABAC**: Role-based and attribute-based access control
+- **Permission Matrix**: Visual permission management interface
+- **Scope-based Access**: Global, organization, project, and user-level permissions
 
 ## 🚀 Deployment
 
