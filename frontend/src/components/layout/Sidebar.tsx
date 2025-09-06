@@ -1,25 +1,25 @@
+import {
+  Calculator,
+  ChevronLeft,
+  ChevronRight,
+  FileStack,
+  FileText,
+  FolderOpen,
+  GanttChart,
+  Globe,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  ShoppingCart,
+  TrendingUp,
+  Users,
+  Workflow,
+} from 'lucide-react';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils/cn';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { Button } from '../ui/Button';
-import {
-  LayoutDashboard,
-  FileText,
-  MessageSquare,
-  Globe,
-  Users,
-  FolderOpen,
-  GanttChart,
-  FileStack,
-  Workflow,
-  TrendingUp,
-  Calculator,
-  ShoppingCart,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
 
 const navigationItems = [
   {

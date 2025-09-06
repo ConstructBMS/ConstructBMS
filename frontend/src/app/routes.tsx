@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 
 // Lazy load all pages
 const DashboardPage = lazy(() => import('../modules/dashboard/DashboardPage'));
