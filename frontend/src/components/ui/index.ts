@@ -1,6 +1,13 @@
 export { Badge } from './badge';
 export { Button } from './button';
-export { Card } from './card';
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from './card';
 export { Dialog } from './dialog';
 export { Input } from './input';
 export { Switch } from './switch';

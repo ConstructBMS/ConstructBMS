@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../components/ui/Card';
+} from '../../components/ui';
 
 export default function EstimatesPage() {
   return (

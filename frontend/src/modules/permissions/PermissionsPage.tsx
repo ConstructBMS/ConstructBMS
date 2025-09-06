@@ -17,31 +17,27 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Page } from '../../components/layout/Page';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
 import {
+  Badge,
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../components/ui/Card';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../../components/ui/Dialog';
-import { Input } from '../../components/ui/Input';
-import {
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../components/ui/Select';
+} from '../../components/ui';
 import type {
   Action,
   PermissionDecision,
