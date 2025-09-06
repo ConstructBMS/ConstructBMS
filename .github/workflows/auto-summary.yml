@@ -1,0 +1,122 @@
+name: Auto Summary
+
+on:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  summarize:
+    name: Generate Build Summary
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Generate summary markdown
+        id: gen
+        shell: bash
+        run: |
+          mkdir -p reports
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          AUTHOR="$(git log -1 --pretty='%an <%ae>')"
+          MSG="$(git log -1 --pretty=%B | tr -d '\r')"
+          PROMPT_ID="$(echo "$MSG" | grep -oiE 'prompt[-_ ]?[0-9]+' | head -n1 || true)"
+
+          {
+            echo "## Build summary — $GITHUB_SHA"
+            echo
+            echo "**Branch:** $BRANCH"
+            echo "**Author:** $AUTHOR"
+            echo "**Commit message:** $MSG"
+            [ -n "$PROMPT_ID" ] && echo "**Prompt tag:** $PROMPT_ID"
+            echo
+            echo "### Changed files"
+            git diff --name-status HEAD^ HEAD | sed 's/^/ - /' || echo " - (no diff found)"
+            echo
+            echo "### Shortstat"
+            git diff --shortstat HEAD^ HEAD || echo "(n/a)"
+            echo
+            echo "### By top-level directory"
+            git diff --name-only HEAD^ HEAD | awk -F/ '{print $1}' | sort | uniq -c | sed 's/^/ - /' || echo " - (n/a)"
+          } > summary.md
+
+          cp summary.md "reports/${GITHUB_SHA}.md"
+          cp summary.md reports/LATEST.md
+
+          # Escape for issue comment
+          BODY="$(cat summary.md)"
+          BODY="${BODY//'%'/'%25'}"
+          BODY="${BODY//$'\n'/'%0A'}"
+          BODY="${BODY//$'\r'/'%0D'}"
+          echo "body=$BODY" >> "$GITHUB_OUTPUT"
+
+      - name: Commit reports (git)
+        run: |
+          git add reports/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(reports): add summary for ${GITHUB_SHA}"
+            git push
+          else
+            echo "No changes to commit in reports/"
+          fi
+
+      # Fallback in case direct git push is blocked by branch protections
+      - name: Commit reports (fallback action)
+        if: ${{ failure() }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore(reports): add summary for ${{ github.sha }}'
+          file_pattern: reports/**
+
+      - name: Post to Automated Build Summaries issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: ['automated-build-summaries']
+            });
+
+            if (issues.length === 0) {
+              console.log('No Automated Build Summaries issue found');
+              return;
+            }
+
+            const issue = issues[0];
+            const body = `${{ steps.gen.outputs.body }}`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: body
+            });
+
+      - name: Upload summary artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.sha }}
+          path: |
+            summary.md
+            reports/LATEST.md
+            reports/${{ github.sha }}.md

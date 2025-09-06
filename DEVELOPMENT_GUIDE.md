@@ -268,6 +268,16 @@ NODE_ENV=production pnpm build
 - **Testing**: Unit and integration tests
 - **Building**: Production builds
 - **Deployment**: Automated deployments
+- **Auto Summary**: Build summaries posted to `reports/LATEST.md` and GitHub issues
+
+### Build Summaries
+
+On each push to `main` or `develop`, the CI automatically generates and commits build summaries:
+
+- **Location**: `reports/LATEST.md` (latest summary) and `reports/<commit-sha>.md` (historical)
+- **Content**: Branch, author, commit message, changed files, and statistics
+- **GitHub Issue**: Posted to the "Automated Build Summaries" issue for team visibility
+- **Artifacts**: Uploaded as GitHub Actions artifacts for download
 
 ### Quality Gates
 
