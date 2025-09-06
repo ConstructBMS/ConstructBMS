@@ -9,6 +9,8 @@ export default tseslint.config(
     ignores: [
       'node_modules/',
       'dist/',
+      'backend/dist/',
+      'frontend/dist/',
       'build/',
       '.out/',
       '.vercel/',
