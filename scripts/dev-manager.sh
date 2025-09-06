@@ -29,26 +29,26 @@ clean_cache() {
 # Function to start development servers
 start_dev() {
     echo -e "${YELLOW}Starting development servers...${NC}"
-    
+
     # Kill any existing processes
     kill_ports
-    
+
     # Clean cache
     clean_cache
-    
+
     # Start backend in background
     echo -e "${GREEN}Starting backend on port 5174...${NC}"
     cd backend && pnpm dev &
     BACKEND_PID=$!
-    
+
     # Wait a moment for backend to start
     sleep 2
-    
+
     # Start frontend
     echo -e "${GREEN}Starting frontend on port 5173...${NC}"
     cd ../frontend && pnpm dev &
     FRONTEND_PID=$!
-    
+
     # Function to cleanup on exit
     cleanup() {
         echo -e "\n${YELLOW}Shutting down servers...${NC}"
@@ -58,15 +58,15 @@ start_dev() {
         echo -e "${GREEN}Servers stopped${NC}"
         exit 0
     }
-    
+
     # Set up signal handlers
     trap cleanup SIGINT SIGTERM
-    
+
     echo -e "${GREEN}Development servers started successfully!${NC}"
     echo -e "${GREEN}Frontend: http://localhost:5173${NC}"
     echo -e "${GREEN}Backend: http://localhost:5174${NC}"
     echo -e "${YELLOW}Press Ctrl+C to stop all servers${NC}"
-    
+
     # Wait for processes
     wait
 }
@@ -74,24 +74,24 @@ start_dev() {
 # Function to run quality checks
 quality_check() {
     echo -e "${YELLOW}Running quality checks...${NC}"
-    
+
     # Frontend checks
     echo -e "${GREEN}Running frontend linting...${NC}"
     cd frontend && pnpm lint
-    
+
     echo -e "${GREEN}Running frontend typecheck...${NC}"
     pnpm typecheck
-    
+
     echo -e "${GREEN}Running frontend build...${NC}"
     pnpm build
-    
+
     # Backend checks
     echo -e "${GREEN}Running backend linting...${NC}"
     cd ../backend && pnpm lint
-    
+
     echo -e "${GREEN}Running backend typecheck...${NC}"
     pnpm typecheck
-    
+
     echo -e "${GREEN}All quality checks passed!${NC}"
 }
 
