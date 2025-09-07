@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Guard } from '../lib/permissions/Guard';
 
 // Lazy load all pages
 const DashboardPage = lazy(() => import('../modules/dashboard/DashboardPage'));
@@ -48,7 +49,14 @@ export function AppRoutes() {
         <Route path='/notes' element={<NotesPage />} />
         <Route path='/chat' element={<ChatPage />} />
         <Route path='/portal' element={<PortalPage />} />
-        <Route path='/contacts' element={<ContactsPage />} />
+        <Route
+          path='/contacts'
+          element={
+            <Guard resource='contacts' action='read'>
+              <ContactsPage />
+            </Guard>
+          }
+        />
 
         {/* Projects */}
         <Route path='/projects' element={<ProjectsPage />} />

@@ -43,7 +43,13 @@ const navigationItems = [
     href: '/portal',
     flag: 'portal' as const,
   },
-  { id: 'contacts', label: 'Contacts', icon: Users, href: '/contacts' },
+  {
+    id: 'contacts',
+    label: 'Contacts',
+    icon: Users,
+    href: '/contacts',
+    flag: 'contacts' as const,
+  },
   {
     id: 'projects',
     label: 'Projects',

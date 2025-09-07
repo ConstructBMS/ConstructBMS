@@ -8,8 +8,16 @@ export {
   CardHeader,
   CardTitle,
 } from './card';
-export { Dialog } from './dialog';
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from './dialog';
 export { Input } from './input';
+export { Label } from './label';
 export { Switch } from './switch';
 export { Table } from './table';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
+export { Textarea } from './textarea';

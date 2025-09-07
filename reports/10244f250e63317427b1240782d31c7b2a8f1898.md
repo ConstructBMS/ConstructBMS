@@ -1,14 +1,16 @@
 ## Build summary — 10244f250e63317427b1240782d31c7b2a8f1898
 
-**Branch:** main
-**Author:** Napwood Construction Ltd <napwoodconstruction@users.noreply.github.com>
+**Branch:** main **Author:** Napwood Construction Ltd <napwoodconstruction@users.noreply.github.com>
 **Commit message:** fix: update dev-manager script permissions
 
 ### Changed files
- - M	scripts/dev-manager.sh
+
+- M scripts/dev-manager.sh
 
 ### Shortstat
- 1 file changed, 15 insertions(+), 15 deletions(-)
+
+1 file changed, 15 insertions(+), 15 deletions(-)
 
 ### By top-level directory
- -       1 scripts
+
+-       1 scripts

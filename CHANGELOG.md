@@ -42,6 +42,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Integrations Stubs**: Email, storage, and webhook configuration placeholders
 - **Developer Tools**: Environment info, package versions, and build details
 - **Sidebar Gating**: Navigation items hidden based on feature flag settings
+- **Contacts Module**: Complete contact and company management system
+- **Contact Management**: Add, edit, and manage individual contacts with full CRUD operations
+- **Company Management**: Store and organize company information with relationship mapping
+- **List/Grid Views**: Toggle between table and card layouts for contact display
+- **Search & Filter**: Find contacts by name, email, phone, or tags with real-time filtering
+- **Tag System**: Categorize contacts and companies with color-coded tags
+- **Custom Fields**: JSON-based custom field support for extensible data storage
+- **Company Relations**: Link contacts to companies with foreign key relationships
+- **Form Validation**: Comprehensive form validation and error handling in modal forms
+- **Zustand Store**: Persistent contact and company state management with localStorage
+- **SQL Migration**: Database schema for contacts and companies with proper indexing
+- **Minimal Tests**: Unit tests for store operations, persistence, and search functionality
 
 ### Changed
 

@@ -42,6 +42,17 @@ A modern, responsive frontend application built with React, TypeScript, and Tail
 - **Integrations**: Email, storage, and webhook configuration stubs
 - **Developer Tools**: Environment info, package versions, build details
 
+### Contacts & Companies
+
+- **Contact Management**: Add, edit, and manage individual contacts
+- **Company Management**: Store and organize company information
+- **List/Grid Views**: Toggle between table and card layouts
+- **Search & Filter**: Find contacts by name, email, phone, or tags
+- **Tag System**: Categorize contacts with color-coded tags
+- **Custom Fields**: JSON-based custom field support
+- **Company Relations**: Link contacts to companies
+- **Form Validation**: Comprehensive form validation and error handling
+
 ## 📁 Project Structure
 
 ```

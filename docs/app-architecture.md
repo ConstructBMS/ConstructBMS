@@ -304,6 +304,45 @@ Placeholder configurations for external services:
 - **Webhooks**: Endpoint configuration and security
 - **Developer Tools**: Environment information and debugging
 
+## 👥 Contacts & Companies
+
+### Data Management
+
+The contacts module provides comprehensive contact and company management:
+
+- **Dual Entity Support**: Separate handling for individual contacts and companies
+- **Relationship Mapping**: Contacts can be linked to companies via foreign keys
+- **Flexible Data Model**: Support for custom fields via JSONB storage
+- **Tag System**: Categorization with array-based tag storage
+
+### Store Architecture
+
+Zustand-based state management with persistence:
+
+- **CRUD Operations**: Complete create, read, update, delete functionality
+- **Search Capabilities**: Full-text search across names, emails, phones, and tags
+- **Local Storage**: Automatic persistence to localStorage
+- **Type Safety**: Full TypeScript support with strict interfaces
+
+### UI Components
+
+Modular component architecture:
+
+- **ContactsPage**: Main orchestrator with view mode toggles
+- **ContactsList**: Table view with sortable columns and actions
+- **ContactsGrid**: Card view with compact information display
+- **ContactForm**: Modal form with tabbed interface and validation
+
+### Database Schema
+
+PostgreSQL-based persistence with:
+
+- **UUID Primary Keys**: Globally unique identifiers
+- **JSONB Custom Fields**: Flexible schema for additional data
+- **Array Tags**: PostgreSQL array support for efficient tagging
+- **Foreign Key Relations**: Proper referential integrity
+- **Performance Indexes**: Optimized for search and filtering
+
 ## 🚀 Deployment
 
 ### Build Process
