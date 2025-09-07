@@ -7,6 +7,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Projects Module**: Resolved infinite re-render loop in ProjectsPage component by using useCallback for setFilters
+- **Projects Module**: Added missing imports for contacts store in ProjectsFilters and ProjectForm components
+- **Projects Module**: Created formatters utility functions for currency, date, and status formatting
+- **Projects Module**: Fixed all linting and TypeScript errors in the restored Projects Module
+
 ### Added
 
 - **AppShell**: Complete application shell with responsive sidebar and topbar
