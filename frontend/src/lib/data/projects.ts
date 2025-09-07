@@ -3,8 +3,18 @@ import type { Project, ProjectFormData } from '../types/projects';
 export class ProjectsDAL {
   private static baseUrl = '/api/projects';
 
+  private static getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem('authToken');
+    return {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
   static async listProjects(orgId: string): Promise<Project[]> {
-    const response = await fetch(`${this.baseUrl}?orgId=${orgId}`);
+    const response = await fetch(`${this.baseUrl}?orgId=${orgId}`, {
+      headers: this.getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch projects');
     }
@@ -12,7 +22,9 @@ export class ProjectsDAL {
   }
 
   static async getProject(id: string): Promise<Project> {
-    const response = await fetch(`${this.baseUrl}/${id}`);
+    const response = await fetch(`${this.baseUrl}/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch project');
     }
@@ -27,9 +39,7 @@ export class ProjectsDAL {
 
     const response = await fetch(url, {
       method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(project),
     });
 
@@ -43,6 +53,7 @@ export class ProjectsDAL {
   static async deleteProject(id: string): Promise<void> {
     const response = await fetch(`${this.baseUrl}/${id}`, {
       method: 'DELETE',
+      headers: this.getAuthHeaders(),
     });
 
     if (!response.ok) {

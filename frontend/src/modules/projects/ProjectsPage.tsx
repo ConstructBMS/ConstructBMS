@@ -52,13 +52,9 @@ export function ProjectsPage() {
   }, [currentOrgId, canView, loadProjects]);
 
   // Update search filter when search query changes
-  const updateSearchFilter = useCallback(() => {
+  useEffect(() => {
     setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
   }, [searchQuery, setFilters]);
-
-  useEffect(() => {
-    updateSearchFilter();
-  }, [updateSearchFilter]);
 
   const handleCreateProject = () => {
     setEditingProject(null);

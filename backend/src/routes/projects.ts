@@ -17,6 +17,7 @@ router.get(
     query('limit').optional().isInt({ min: 1, max: 100 }),
     query('status').optional().isIn(Object.values(ProjectStatus)),
     query('search').optional().isString(),
+    query('orgId').optional().isString(),
   ],
   async (req: Request, res: Response) => {
     try {
@@ -34,6 +35,7 @@ router.get(
       const offset = (page - 1) * limit;
       const status = req.query.status as string;
       const search = req.query.search as string;
+      const orgId = req.query.orgId as string;
 
       let query = supabase.from('projects').select(
         `
@@ -46,6 +48,11 @@ router.get(
       `,
         { count: 'exact' }
       );
+
+      // Apply org filter if provided
+      if (orgId) {
+        query = query.eq('org_id', orgId);
+      }
 
       // Apply filters
       if (status) {
@@ -73,18 +80,8 @@ router.get(
 
       const totalPages = Math.ceil((count || 0) / limit);
 
-      res.json({
-        success: true,
-        data: {
-          projects,
-          pagination: {
-            page,
-            limit,
-            total: count || 0,
-            totalPages,
-          },
-        },
-      });
+      // Return projects array directly for frontend compatibility
+      res.json(projects || []);
     } catch (error) {
       log('Get projects error:', error);
       res.status(500).json({
@@ -124,10 +121,7 @@ router.get('/:id', authenticateToken, async (req: Request, res: Response) => {
       });
     }
 
-    res.json({
-      success: true,
-      data: project,
-    });
+    res.json(project);
   } catch (error) {
     log('Get project error:', error);
     res.status(500).json({
@@ -187,7 +181,7 @@ router.post(
           start_date: startDate,
           end_date: endDate,
           budget,
-          status: ProjectStatus.PLANNING,
+          status: ProjectStatus.PLANNED,
         })
         .select()
         .single();
@@ -200,11 +194,7 @@ router.post(
         });
       }
 
-      res.status(201).json({
-        success: true,
-        message: 'Project created successfully',
-        data: project,
-      });
+      res.status(201).json(project);
     } catch (error) {
       log('Create project error:', error);
       res.status(500).json({
@@ -276,11 +266,7 @@ router.put(
         });
       }
 
-      res.json({
-        success: true,
-        message: 'Project updated successfully',
-        data: project,
-      });
+      res.json(project);
     } catch (error) {
       log('Update project error:', error);
       res.status(500).json({
@@ -310,10 +296,7 @@ router.delete(
         });
       }
 
-      res.json({
-        success: true,
-        message: 'Project deleted successfully',
-      });
+      res.status(204).send();
     } catch (error) {
       log('Delete project error:', error);
       res.status(500).json({
