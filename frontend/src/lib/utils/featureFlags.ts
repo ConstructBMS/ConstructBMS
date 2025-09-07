@@ -8,7 +8,8 @@ export type FlagKey =
   | 'pipeline'
   | 'estimates'
   | 'purchaseOrders'
-  | 'contacts';
+  | 'contacts'
+  | 'projects';
 
 export type Flag = {
   key: FlagKey;
@@ -32,6 +33,7 @@ export const defaultFlags: Flag[] = [
   { key: 'estimates', enabled: true, audience: 'all' },
   { key: 'purchaseOrders', enabled: true, audience: 'all' },
   { key: 'contacts', enabled: true, audience: 'all' },
+  { key: 'projects', enabled: true, audience: 'all' },
 ];
 
 // Helper function to check if a flag is enabled

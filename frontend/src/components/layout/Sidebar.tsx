@@ -16,8 +16,8 @@ import {
   Workflow,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { useFeatureFlag } from '../../app/store/featureFlags.store';
+import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';
 import { Button } from '../ui';
 
@@ -55,12 +55,14 @@ const navigationItems = [
     label: 'Projects',
     icon: FolderOpen,
     href: '/projects',
+    flag: 'projects' as const,
     children: [
       {
         id: 'projects-list',
         label: 'Projects',
         icon: FolderOpen,
         href: '/projects',
+        flag: 'projects' as const,
       },
       {
         id: 'programme',

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { Guard } from '../lib/permissions/Guard';
 
@@ -9,6 +9,9 @@ const ChatPage = lazy(() => import('../modules/chat/ChatPage'));
 const PortalPage = lazy(() => import('../modules/portal/PortalPage'));
 const ContactsPage = lazy(() => import('../modules/contacts/ContactsPage'));
 const ProjectsPage = lazy(() => import('../modules/projects/ProjectsPage'));
+const ProjectDetailPage = lazy(
+  () => import('../modules/projects/ProjectDetailPage')
+);
 const ProgrammePage = lazy(() => import('../modules/programme/ProgrammePage'));
 const DocumentsPage = lazy(() => import('../modules/documents/DocumentsPage'));
 const WorkflowsPage = lazy(() => import('../modules/workflows/WorkflowsPage'));
@@ -60,6 +63,7 @@ export function AppRoutes() {
 
         {/* Projects */}
         <Route path='/projects' element={<ProjectsPage />} />
+        <Route path='/projects/:id' element={<ProjectDetailPage />} />
         <Route path='/projects/programme' element={<ProgrammePage />} />
 
         {/* Business Modules */}

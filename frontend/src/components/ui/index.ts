@@ -11,13 +11,28 @@ export {
 export {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from './dialog';
 export { Input } from './input';
 export { Label } from './label';
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 export { Switch } from './switch';
-export { Table } from './table';
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './table';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
