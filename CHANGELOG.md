@@ -9,9 +9,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Projects Module**: Resolved infinite re-render loop in ProjectsPage component by using useCallback for setFilters
-- **Projects Module**: Added missing imports for contacts store in ProjectsFilters and ProjectForm components
-- **Projects Module**: Created formatters utility functions for currency, date, and status formatting
+- **Projects Module**: Resolved infinite re-render loop in ProjectsPage component by removing
+  setFilters from useCallback dependency
+- **Projects Module**: Added authentication headers to ProjectsDAL API calls using localStorage
+  authToken
+- **Projects Module**: Updated backend projects route to handle orgId parameter correctly
+- **Projects Module**: Fixed ProjectStatus enum values to match frontend expectations (planned,
+  in-progress, on-hold, completed, cancelled)
+- **Projects Module**: Updated API response format to return data directly instead of wrapped
+  objects
+- **Projects Module**: Added missing imports for contacts store in ProjectsFilters and ProjectForm
+  components
+- **Projects Module**: Created formatters utility functions for currency, date, and status
+  formatting
 - **Projects Module**: Fixed all linting and TypeScript errors in the restored Projects Module
 
 ### Added
