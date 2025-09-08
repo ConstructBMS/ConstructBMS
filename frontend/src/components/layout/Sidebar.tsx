@@ -1,7 +1,9 @@
 import {
   Calculator,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   FileStack,
   FileText,
   FolderOpen,
@@ -16,6 +18,7 @@ import {
   Workflow,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { useFeatureFlag } from '../../app/store/featureFlags.store';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';
@@ -114,6 +117,19 @@ const navigationItems = [
 export function Sidebar() {
   const { collapsed, toggle } = useSidebarStore();
   const location = useLocation();
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
 
   // Filter navigation items based on feature flags
   const filteredItems = navigationItems
@@ -164,43 +180,67 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className='flex-1 p-4 space-y-2'>
-        {filteredItems.map(item => (
-          <div key={item.id}>
-            <Link
-              to={item.href}
-              className={cn(
-                'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                collapsed && 'justify-center',
-                location.pathname === item.href &&
-                  'bg-accent text-accent-foreground'
-              )}
-              title={collapsed ? item.label : undefined}
-            >
-              <item.icon className='h-5 w-5 flex-shrink-0' />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
+        {filteredItems.map(item => {
+          const hasChildren = item.children && item.children.length > 0;
+          const isExpanded = expandedItems.has(item.id);
+          const isActive = location.pathname === item.href || 
+            (hasChildren && item.children?.some(child => location.pathname === child.href));
 
-            {/* Children */}
-            {item.children && !collapsed && (
-              <div className='ml-6 mt-1 space-y-1'>
-                {item.children.map(child => (
-                  <Link
-                    key={child.id}
-                    to={child.href}
-                    className={cn(
-                      'flex items-center space-x-3 px-3 py-2 rounded-md text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground',
-                      location.pathname === child.href &&
-                        'bg-accent text-accent-foreground'
-                    )}
+          return (
+            <div key={item.id}>
+              <div className='flex items-center'>
+                <Link
+                  to={item.href}
+                  className={cn(
+                    'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1',
+                    collapsed && 'justify-center',
+                    isActive && 'bg-accent text-accent-foreground'
+                  )}
+                  title={collapsed ? item.label : undefined}
+                >
+                  <item.icon className='h-5 w-5 flex-shrink-0' />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+
+                {/* Expand/Collapse Button */}
+                {hasChildren && !collapsed && (
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => toggleExpanded(item.id)}
+                    className='h-8 w-8 ml-1'
                   >
-                    <child.icon className='h-4 w-4 flex-shrink-0' />
-                    <span>{child.label}</span>
-                  </Link>
-                ))}
+                    {isExpanded ? (
+                      <ChevronUp className='h-4 w-4' />
+                    ) : (
+                      <ChevronDown className='h-4 w-4' />
+                    )}
+                  </Button>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Children */}
+              {hasChildren && !collapsed && isExpanded && (
+                <div className='ml-6 mt-1 space-y-1'>
+                  {item.children.map(child => (
+                    <Link
+                      key={child.id}
+                      to={child.href}
+                      className={cn(
+                        'flex items-center space-x-3 px-3 py-2 rounded-md text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground',
+                        location.pathname === child.href &&
+                          'bg-accent text-accent-foreground'
+                      )}
+                    >
+                      <child.icon className='h-4 w-4 flex-shrink-0' />
+                      <span>{child.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </nav>
     </div>
   );
