@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Contact, Company } from '../../lib/types/contacts';
+import { Company, Contact } from '../../lib/types/contacts';
 
 interface ContactsState {
   contacts: Contact[];
@@ -122,12 +122,21 @@ const mockCompanies: Company[] = [
 ];
 
 export const useContactsStore = create<ContactsState>()(
-  persist(
-    (set, get) => ({
-      contacts: mockContacts,
-      companies: mockCompanies,
+  // Temporarily disable persistence to debug the issue
+  // persist(
+    (set, get) => {
+      console.log('🔍 Debug - Contacts store initialized with:', {
+        contactsCount: mockContacts.length,
+        companiesCount: mockCompanies.length,
+        contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
+        companies: mockCompanies.map(c => ({ name: c.name, category: c.category }))
+      });
+      
+      return {
+        contacts: mockContacts,
+        companies: mockCompanies,
 
-      addContact: contactData => {
+        addContact: contactData => {
         const newContact: Contact = {
           ...contactData,
           id: `contact-${Date.now()}`,
@@ -216,13 +225,15 @@ export const useContactsStore = create<ContactsState>()(
             )
         );
       },
-    }),
-    {
-      name: 'contacts-storage',
-      partialize: state => ({
-        contacts: state.contacts,
-        companies: state.companies,
-      }),
-    }
-  )
+    })
+    // Temporarily disable persistence to debug the issue
+    // }),
+    // {
+    //   name: 'contacts-storage',
+    //   partialize: state => ({
+    //     contacts: state.contacts,
+    //     companies: state.companies,
+    //   }),
+    // }
+    // )
 );

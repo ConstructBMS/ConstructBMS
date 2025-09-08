@@ -1,12 +1,7 @@
 import { Building2, Grid3X3, List, Search, User } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Contact, Company, ViewMode, ContactCategory } from '../../lib/types/contacts';
-import { ContactFormData } from './ContactForm';
-import { useContactsStore } from './store';
-import { ContactsList } from './ContactsList';
-import { ContactsGrid } from './ContactsGrid';
-import { ContactForm } from './ContactForm';
+import { Page } from '../../components/layout/Page';
 import {
   Button,
   Input,
@@ -14,7 +9,16 @@ import {
   TabsList,
   TabsTrigger,
 } from '../../components/ui';
-import { Page } from '../../components/layout/Page';
+import {
+  Company,
+  Contact,
+  ContactCategory,
+  ViewMode,
+} from '../../lib/types/contacts';
+import { ContactForm, ContactFormData } from './ContactForm';
+import { ContactsGrid } from './ContactsGrid';
+import { ContactsList } from './ContactsList';
+import { useContactsStore } from './store';
 
 export function ContactsPage() {
   const {
@@ -36,7 +40,9 @@ export function ContactsPage() {
   const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
     'all'
   );
-  const [filterCategory, setFilterCategory] = useState<ContactCategory | 'all'>('all');
+  const [filterCategory, setFilterCategory] = useState<ContactCategory | 'all'>(
+    'all'
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<
     Contact | Company | undefined
@@ -45,7 +51,10 @@ export function ContactsPage() {
   // Set filter category from URL parameters
   useEffect(() => {
     const typeParam = searchParams.get('type');
-    if (typeParam && ['client', 'contractor', 'consultant'].includes(typeParam)) {
+    if (
+      typeParam &&
+      ['client', 'contractor', 'consultant'].includes(typeParam)
+    ) {
       setFilterCategory(typeParam as ContactCategory);
     } else {
       setFilterCategory('all');
@@ -54,6 +63,10 @@ export function ContactsPage() {
 
   // Filter and search logic
   const filteredContacts = useMemo(() => {
+    console.log('🔍 Debug - Total contacts:', contacts.length);
+    console.log('🔍 Debug - Filter category:', filterCategory);
+    console.log('🔍 Debug - Filter type:', filterType);
+    
     let filtered = contacts;
 
     // Filter by type (person/company)
@@ -65,27 +78,33 @@ export function ContactsPage() {
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      filtered = filtered.filter(contact => contact.category === filterCategory);
+      console.log('🔍 Debug - Filtering by category:', filterCategory);
+      filtered = filtered.filter(
+        contact => contact.category === filterCategory
+      );
+      console.log('🔍 Debug - After category filter:', filtered.length);
     }
 
     if (searchQuery) {
-      filtered = searchContacts(searchQuery).filter(
-        contact => {
-          const typeMatch = filterType === 'all' ||
-            (filterType === 'person' && contact.type === 'person') ||
-            (filterType === 'company' && contact.type === 'company');
-          
-          const categoryMatch = filterCategory === 'all' || contact.category === filterCategory;
-          
-          return typeMatch && categoryMatch;
-        }
-      );
+      filtered = searchContacts(searchQuery).filter(contact => {
+        const typeMatch =
+          filterType === 'all' ||
+          (filterType === 'person' && contact.type === 'person') ||
+          (filterType === 'company' && contact.type === 'company');
+
+        const categoryMatch =
+          filterCategory === 'all' || contact.category === filterCategory;
+
+        return typeMatch && categoryMatch;
+      });
     }
 
+    console.log('🔍 Debug - Final filtered contacts:', filtered.length);
     return filtered;
   }, [contacts, filterType, filterCategory, searchQuery, searchContacts]);
 
   const filteredCompanies = useMemo(() => {
+    console.log('🔍 Debug - Total companies:', companies.length);
     let filtered = companies;
 
     if (filterType === 'person') {
@@ -94,16 +113,22 @@ export function ContactsPage() {
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      filtered = filtered.filter(company => company.category === filterCategory);
+      console.log('🔍 Debug - Filtering companies by category:', filterCategory);
+      filtered = filtered.filter(
+        company => company.category === filterCategory
+      );
+      console.log('🔍 Debug - After company category filter:', filtered.length);
     }
 
     if (searchQuery) {
       filtered = searchCompanies(searchQuery).filter(company => {
-        const categoryMatch = filterCategory === 'all' || company.category === filterCategory;
+        const categoryMatch =
+          filterCategory === 'all' || company.category === filterCategory;
         return categoryMatch;
       });
     }
 
+    console.log('🔍 Debug - Final filtered companies:', filtered.length);
     return filtered;
   }, [companies, filterType, filterCategory, searchQuery, searchCompanies]);
 
