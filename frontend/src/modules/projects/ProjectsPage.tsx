@@ -47,14 +47,15 @@ export function ProjectsPage() {
   // Load projects on mount and when org changes
   useEffect(() => {
     if (currentOrgId && canView) {
-      loadProjects(currentOrgId);
+      // Use getState() to get a stable reference to the function
+      useProjectsStore.getState().loadProjects(currentOrgId);
     }
-  }, [currentOrgId, canView]); // Removed loadProjects from dependencies to prevent infinite loop
+  }, [currentOrgId, canView]);
 
   // Update search filter when search query changes
   useEffect(() => {
-    setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
-  }, [searchQuery]); // Removed setFilters from dependencies to prevent infinite loop
+    useProjectsStore.getState().setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
+  }, [searchQuery]);
 
   const handleCreateProject = () => {
     setEditingProject(null);
