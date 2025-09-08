@@ -1,10 +1,10 @@
-import { Router, Request, Response } from 'express';
-import { body, validationResult, query } from 'express-validator';
-import { supabase } from '../services/supabase';
+import { Request, Response, Router } from 'express';
+import { body, query, validationResult } from 'express-validator';
 import { authenticateToken, requireUser } from '../middleware/auth';
+import { supabase } from '../services/supabase';
+import { ProjectStatus } from '../types';
 
 const log = console.log;
-import { ProjectStatus } from '../types';
 
 const router = Router();
 
@@ -37,17 +37,14 @@ router.get(
       const search = req.query.search as string;
       const orgId = req.query.orgId as string;
 
-      let query = supabase.from('projects').select(
-        `
+      let query = supabase.from('projects').select(`
         *,
         clients (
           id,
           name,
           company
         )
-      `,
-        { count: 'exact' }
-      );
+      `);
 
       // Apply org filter if provided (skip if table doesn't exist yet)
       if (orgId) {
@@ -68,14 +65,19 @@ router.get(
       // Apply pagination
       query = query.range(offset, offset + limit - 1);
 
-      const { data: projects, error, count } = await query;
+      const { data: projects, error } = await query;
 
       if (error) {
         log('Error fetching projects:', error);
-        
+
         // If table doesn't exist, return mock data for demo mode
-        if (error.code === '42703' && error.message.includes('does not exist')) {
-          log('Projects table does not exist, returning mock data for demo mode');
+        if (
+          error.code === '42703' &&
+          error.message.includes('does not exist')
+        ) {
+          log(
+            'Projects table does not exist, returning mock data for demo mode'
+          );
           const mockProjects = [
             {
               id: 'proj-1',
@@ -108,14 +110,12 @@ router.get(
           ];
           return res.json(mockProjects);
         }
-        
+
         return res.status(500).json({
           success: false,
           message: 'Error fetching projects',
         });
       }
-
-      const totalPages = Math.ceil((count || 0) / limit);
 
       // Return projects array directly for frontend compatibility
       res.json(projects || []);

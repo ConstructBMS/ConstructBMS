@@ -27,6 +27,22 @@ export const authenticateToken = async (
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 
+    // In demo mode, allow requests without authentication
+    const isDemoMode =
+      process.env.DEMO_MODE === 'true' ||
+      process.env.NODE_ENV === 'development';
+
+    if (isDemoMode && !token) {
+      // Set a demo user for demo mode
+      (req as AuthRequest).user = {
+        id: 'demo-user-123',
+        email: 'demo@constructbms.com',
+        role: 'admin',
+      };
+      next();
+      return;
+    }
+
     if (!token) {
       res.status(401).json({
         success: false,

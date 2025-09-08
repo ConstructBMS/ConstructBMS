@@ -18,6 +18,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   in-progress, on-hold, completed, cancelled)
 - **Projects Module**: Updated API response format to return data directly instead of wrapped
   objects
+- **Projects Module**: Added mock data fallback when database table doesn't exist for demo mode
+- **Projects Module**: Fixed server port conflicts and ensured proper server startup
+- **Projects Module**: Installed missing Vite dependencies to resolve configuration issues
 - **Projects Module**: Added missing imports for contacts store in ProjectsFilters and ProjectForm
   components
 - **Projects Module**: Created formatters utility functions for currency, date, and status

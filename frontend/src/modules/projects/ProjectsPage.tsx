@@ -7,7 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { Page } from '../../components/layout/Page';
@@ -49,12 +49,12 @@ export function ProjectsPage() {
     if (currentOrgId && canView) {
       loadProjects(currentOrgId);
     }
-  }, [currentOrgId, canView, loadProjects]);
+  }, [currentOrgId, canView]); // Removed loadProjects from dependencies to prevent infinite loop
 
   // Update search filter when search query changes
   useEffect(() => {
     setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
-  }, [searchQuery, setFilters]);
+  }, [searchQuery]); // Removed setFilters from dependencies to prevent infinite loop
 
   const handleCreateProject = () => {
     setEditingProject(null);
