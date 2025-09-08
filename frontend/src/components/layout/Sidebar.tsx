@@ -56,24 +56,24 @@ const navigationItems = [
     flag: 'contacts' as const,
     children: [
       {
-        id: 'contacts-all',
-        label: 'All Contacts',
+        id: 'contacts-clients',
+        label: 'Clients',
         icon: Users,
-        href: '/contacts',
+        href: '/contacts?type=client',
         flag: 'contacts' as const,
       },
       {
-        id: 'contacts-people',
-        label: 'People',
+        id: 'contacts-contractors',
+        label: 'Contractors',
         icon: User,
-        href: '/contacts?type=person',
+        href: '/contacts?type=contractor',
         flag: 'contacts' as const,
       },
       {
-        id: 'contacts-companies',
-        label: 'Companies',
+        id: 'contacts-consultants',
+        label: 'Consultants',
         icon: Building2,
-        href: '/contacts?type=company',
+        href: '/contacts?type=consultant',
         flag: 'contacts' as const,
       },
     ],
@@ -156,11 +156,34 @@ export function Sidebar() {
     });
   };
 
+  // Get feature flags for all items
+  const contactsFlag = useFeatureFlag('contacts');
+  const projectsFlag = useFeatureFlag('projects');
+  const programmeFlag = useFeatureFlag('programme');
+  const chatFlag = useFeatureFlag('chat');
+  const portalFlag = useFeatureFlag('portal');
+  const documentsFlag = useFeatureFlag('documents.library');
+  const workflowsFlag = useFeatureFlag('workflows');
+  const pipelineFlag = useFeatureFlag('pipeline');
+  const estimatesFlag = useFeatureFlag('estimates');
+  const purchaseOrdersFlag = useFeatureFlag('purchaseOrders');
+
   // Filter navigation items based on feature flags
   const filteredItems = navigationItems
     .filter(item => {
       if (!item.flag) return true;
-      return useFeatureFlag(item.flag);
+      switch (item.flag) {
+        case 'contacts': return contactsFlag;
+        case 'projects': return projectsFlag;
+        case 'chat': return chatFlag;
+        case 'portal': return portalFlag;
+        case 'documents.library': return documentsFlag;
+        case 'workflows': return workflowsFlag;
+        case 'pipeline': return pipelineFlag;
+        case 'estimates': return estimatesFlag;
+        case 'purchaseOrders': return purchaseOrdersFlag;
+        default: return true;
+      }
     })
     .map(item => {
       if (item.children) {
@@ -168,7 +191,12 @@ export function Sidebar() {
           ...item,
           children: item.children.filter(child => {
             if (!child.flag) return true;
-            return useFeatureFlag(child.flag);
+            switch (child.flag) {
+              case 'contacts': return contactsFlag;
+              case 'projects': return projectsFlag;
+              case 'programme': return programmeFlag;
+              default: return true;
+            }
           }),
         };
       }
