@@ -1,4 +1,5 @@
 import {
+  Building2,
   Calculator,
   ChevronDown,
   ChevronLeft,
@@ -14,11 +15,12 @@ import {
   Settings,
   ShoppingCart,
   TrendingUp,
+  User,
   Users,
   Workflow,
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useFeatureFlag } from '../../app/store/featureFlags.store';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';
@@ -52,6 +54,29 @@ const navigationItems = [
     icon: Users,
     href: '/contacts',
     flag: 'contacts' as const,
+    children: [
+      {
+        id: 'contacts-all',
+        label: 'All Contacts',
+        icon: Users,
+        href: '/contacts',
+        flag: 'contacts' as const,
+      },
+      {
+        id: 'contacts-people',
+        label: 'People',
+        icon: User,
+        href: '/contacts?type=person',
+        flag: 'contacts' as const,
+      },
+      {
+        id: 'contacts-companies',
+        label: 'Companies',
+        icon: Building2,
+        href: '/contacts?type=company',
+        flag: 'contacts' as const,
+      },
+    ],
   },
   {
     id: 'projects',
@@ -183,8 +208,10 @@ export function Sidebar() {
         {filteredItems.map(item => {
           const hasChildren = item.children && item.children.length > 0;
           const isExpanded = expandedItems.has(item.id);
-          const isActive = location.pathname === item.href || 
-            (hasChildren && item.children?.some(child => location.pathname === child.href));
+          const isActive =
+            location.pathname === item.href ||
+            (hasChildren &&
+              item.children?.some(child => location.pathname === child.href));
 
           return (
             <div key={item.id}>
