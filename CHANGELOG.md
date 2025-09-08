@@ -10,6 +10,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - **Projects Module**: Resolved infinite re-render loop in ProjectsPage component by removing
+  Zustand functions from useEffect dependencies
+- **Projects Module**: Updated Vite proxy configuration to point to correct backend port (5174)
+- **Projects Module**: Enhanced backend auth middleware to support demo mode without authentication
+- **Projects Module**: Projects API now returns mock data in development mode
+- **Projects Module**: All projects loading issues resolved
+- **Projects Module**: Resolved infinite re-render loop in ProjectsPage component by removing
   setFilters from useCallback dependency
 - **Projects Module**: Added authentication headers to ProjectsDAL API calls using localStorage
   authToken
