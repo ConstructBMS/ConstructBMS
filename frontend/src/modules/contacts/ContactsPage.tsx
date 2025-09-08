@@ -1,6 +1,7 @@
 import { Building2, Grid3X3, List, Search, User } from 'lucide-react';
-import { useState, useMemo } from 'react';
-import { Contact, Company, ViewMode } from '../../lib/types/contacts';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Contact, Company, ViewMode, ContactCategory } from '../../lib/types/contacts';
 import { ContactFormData } from './ContactForm';
 import { useContactsStore } from './store';
 import { ContactsList } from './ContactsList';
@@ -29,37 +30,60 @@ export function ContactsPage() {
     searchCompanies,
   } = useContactsStore();
 
+  const [searchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
     'all'
   );
+  const [filterCategory, setFilterCategory] = useState<ContactCategory | 'all'>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<
     Contact | Company | undefined
   >();
 
+  // Set filter category from URL parameters
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam && ['client', 'contractor', 'consultant'].includes(typeParam)) {
+      setFilterCategory(typeParam as ContactCategory);
+    } else {
+      setFilterCategory('all');
+    }
+  }, [searchParams]);
+
   // Filter and search logic
   const filteredContacts = useMemo(() => {
     let filtered = contacts;
 
+    // Filter by type (person/company)
     if (filterType === 'person') {
       filtered = filtered.filter(contact => contact.type === 'person');
     } else if (filterType === 'company') {
       filtered = filtered.filter(contact => contact.type === 'company');
     }
 
+    // Filter by category (client/contractor/consultant)
+    if (filterCategory !== 'all') {
+      filtered = filtered.filter(contact => contact.category === filterCategory);
+    }
+
     if (searchQuery) {
       filtered = searchContacts(searchQuery).filter(
-        contact =>
-          filterType === 'all' ||
-          (filterType === 'person' && contact.type === 'person') ||
-          (filterType === 'company' && contact.type === 'company')
+        contact => {
+          const typeMatch = filterType === 'all' ||
+            (filterType === 'person' && contact.type === 'person') ||
+            (filterType === 'company' && contact.type === 'company');
+          
+          const categoryMatch = filterCategory === 'all' || contact.category === filterCategory;
+          
+          return typeMatch && categoryMatch;
+        }
       );
     }
 
     return filtered;
-  }, [contacts, filterType, searchQuery, searchContacts]);
+  }, [contacts, filterType, filterCategory, searchQuery, searchContacts]);
 
   const filteredCompanies = useMemo(() => {
     let filtered = companies;
@@ -68,12 +92,20 @@ export function ContactsPage() {
       return []; // No companies when filtering for persons
     }
 
+    // Filter by category (client/contractor/consultant)
+    if (filterCategory !== 'all') {
+      filtered = filtered.filter(company => company.category === filterCategory);
+    }
+
     if (searchQuery) {
-      filtered = searchCompanies(searchQuery);
+      filtered = searchCompanies(searchQuery).filter(company => {
+        const categoryMatch = filterCategory === 'all' || company.category === filterCategory;
+        return categoryMatch;
+      });
     }
 
     return filtered;
-  }, [companies, filterType, searchQuery, searchCompanies]);
+  }, [companies, filterType, filterCategory, searchQuery, searchCompanies]);
 
   const handleAddContact = () => {
     setEditingItem(undefined);

@@ -1,6 +1,6 @@
 import { Building2, User, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { Contact, Company, ContactType } from '../../lib/types/contacts';
+import { Contact, Company, ContactType, ContactCategory } from '../../lib/types/contacts';
 import {
   Button,
   Dialog,
@@ -26,6 +26,7 @@ interface ContactFormProps {
 
 export interface ContactFormData {
   type: ContactType;
+  category: ContactCategory;
   name: string;
   email?: string;
   phone?: string;
@@ -39,6 +40,7 @@ export interface ContactFormData {
 
 const initialFormData: ContactFormData = {
   type: 'person',
+  category: 'other',
   name: '',
   email: '',
   phone: '',
@@ -66,6 +68,7 @@ export function ContactForm({
       const isCompany = 'website' in editItem;
       setFormData({
         type: isCompany ? 'company' : editItem.type,
+        category: editItem.category || 'other',
         name: editItem.name,
         email: editItem.email || '',
         phone: editItem.phone || '',
@@ -187,6 +190,26 @@ export function ContactForm({
                     Company
                   </Button>
                 </div>
+              </div>
+
+              <div className='space-y-2'>
+                <Label htmlFor='category'>Category</Label>
+                <select
+                  id='category'
+                  value={formData.category}
+                  onChange={e =>
+                    setFormData(prev => ({
+                      ...prev,
+                      category: e.target.value as ContactCategory,
+                    }))
+                  }
+                  className='w-full p-2 border rounded-md'
+                >
+                  <option value='client'>Client</option>
+                  <option value='contractor'>Contractor</option>
+                  <option value='consultant'>Consultant</option>
+                  <option value='other'>Other</option>
+                </select>
               </div>
 
               <div className='space-y-2'>

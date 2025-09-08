@@ -1,6 +1,7 @@
 export interface Contact {
   id: string;
   type: 'person' | 'company';
+  category: 'client' | 'contractor' | 'consultant' | 'other';
   name: string;
   email?: string;
   phone?: string;
@@ -14,6 +15,7 @@ export interface Contact {
 export interface Company {
   id: string;
   name: string;
+  category: 'client' | 'contractor' | 'consultant' | 'other';
   email?: string;
   phone?: string;
   website?: string;
@@ -25,4 +27,5 @@ export interface Company {
 }
 
 export type ContactType = 'person' | 'company';
+export type ContactCategory = 'client' | 'contractor' | 'consultant' | 'other';
 export type ViewMode = 'list' | 'grid';

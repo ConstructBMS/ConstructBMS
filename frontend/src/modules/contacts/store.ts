@@ -23,6 +23,7 @@ const mockContacts: Contact[] = [
   {
     id: '1',
     type: 'person',
+    category: 'client',
     name: 'John Smith',
     email: 'john@example.com',
     phone: '+1-555-0123',
@@ -34,6 +35,7 @@ const mockContacts: Contact[] = [
   {
     id: '2',
     type: 'person',
+    category: 'consultant',
     name: 'Sarah Johnson',
     email: 'sarah@example.com',
     phone: '+1-555-0124',
@@ -44,6 +46,7 @@ const mockContacts: Contact[] = [
   {
     id: '3',
     type: 'company',
+    category: 'contractor',
     name: 'ABC Construction',
     email: 'info@abcconstruction.com',
     phone: '+1-555-0200',
@@ -53,12 +56,37 @@ const mockContacts: Contact[] = [
     tags: ['contractor', 'commercial'],
     createdAt: new Date().toISOString(),
   },
+  {
+    id: '4',
+    type: 'person',
+    category: 'contractor',
+    name: 'Mike Wilson',
+    email: 'mike@example.com',
+    phone: '+1-555-0125',
+    notes: 'Electrician with 15+ years experience.',
+    tags: ['electrician', 'licensed'],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: '5',
+    type: 'company',
+    category: 'client',
+    name: 'TechCorp Industries',
+    email: 'contact@techcorp.com',
+    phone: '+1-555-0201',
+    website: 'https://techcorp.com',
+    address: '456 Business Ave, City, State 12345',
+    notes: 'Technology company building new headquarters.',
+    tags: ['technology', 'headquarters'],
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 const mockCompanies: Company[] = [
   {
     id: 'comp-1',
     name: 'TechCorp Solutions',
+    category: 'consultant',
     email: 'contact@techcorp.com',
     phone: '+1-555-0100',
     website: 'https://techcorp.com',
@@ -70,12 +98,25 @@ const mockCompanies: Company[] = [
   {
     id: 'comp-2',
     name: 'GreenBuild Inc',
+    category: 'contractor',
     email: 'hello@greenbuild.com',
     phone: '+1-555-0200',
     website: 'https://greenbuild.com',
     address: '789 Eco St, Portland, OR 97200',
     notes: 'Sustainable construction company.',
     tags: ['sustainable', 'construction'],
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'comp-3',
+    name: 'Metro Development Group',
+    category: 'client',
+    email: 'info@metrodev.com',
+    phone: '+1-555-0300',
+    website: 'https://metrodev.com',
+    address: '321 Urban Plaza, New York, NY 10001',
+    notes: 'Real estate development company.',
+    tags: ['real-estate', 'development'],
     createdAt: new Date().toISOString(),
   },
 ];
