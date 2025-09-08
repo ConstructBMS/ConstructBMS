@@ -7,7 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { Page } from '../../components/layout/Page';
@@ -44,17 +44,33 @@ export function ProjectsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load projects on mount and when org changes
+  // Load projects on mount and when org changes - using ref to prevent loops
+  const hasLoadedRef = useRef(false);
+  const lastOrgIdRef = useRef<string | null>(null);
+  
   useEffect(() => {
-    if (currentOrgId && canView) {
-      // Use getState() to get a stable reference to the function
+    if (currentOrgId && canView && (!hasLoadedRef.current || lastOrgIdRef.current !== currentOrgId)) {
+      hasLoadedRef.current = true;
+      lastOrgIdRef.current = currentOrgId;
       useProjectsStore.getState().loadProjects(currentOrgId);
     }
   }, [currentOrgId, canView]);
 
-  // Update search filter when search query changes
+  // Update search filter when search query changes - debounced
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    useProjectsStore.getState().setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      useProjectsStore.getState().setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
+    }, 300);
+    
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
   }, [searchQuery]);
 
   const handleCreateProject = () => {

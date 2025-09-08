@@ -33,7 +33,8 @@ interface ProjectsState {
 }
 
 export const useProjectsStore = create<ProjectsState>()(
-  persist(
+  // Temporarily disable persistence to prevent re-render loops
+  // persist(
     (set, get) => ({
       projects: [],
       isLoading: false,
@@ -182,13 +183,15 @@ export const useProjectsStore = create<ProjectsState>()(
 
         return filtered;
       },
-    }),
-    {
-      name: 'projects-store',
-      partialize: state => ({
-        viewMode: state.viewMode,
-        filters: state.filters,
-      }),
-    }
-  )
+    })
+    // Temporarily disable persistence to prevent re-render loops
+    // }),
+    // {
+    //   name: 'projects-store',
+    //   partialize: state => ({
+    //     viewMode: state.viewMode,
+    //     filters: state.filters,
+    //   }),
+    // }
+  // )
 );
