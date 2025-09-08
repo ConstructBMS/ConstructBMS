@@ -120,18 +120,15 @@ const mockCompanies: Company[] = [
   },
 ];
 
-export const useContactsStore = create<ContactsState>()(
-  // Temporarily disable persistence to debug the issue
-  // persist(
-    (set, get) => {
-      console.log('🔍 Debug - Contacts store initialized with:', {
-        contactsCount: mockContacts.length,
-        companiesCount: mockCompanies.length,
-        contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
-        companies: mockCompanies.map(c => ({ name: c.name, category: c.category }))
-      });
+export const useContactsStore = create<ContactsState>()((set, get) => {
+  console.log('🔍 Debug - Contacts store initialized with:', {
+    contactsCount: mockContacts.length,
+    companiesCount: mockCompanies.length,
+    contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
+    companies: mockCompanies.map(c => ({ name: c.name, category: c.category }))
+  });
 
-      return {
+  return {
         contacts: mockContacts,
         companies: mockCompanies,
 
@@ -224,4 +221,5 @@ export const useContactsStore = create<ContactsState>()(
             )
         );
       },
-    });
+    };
+});
