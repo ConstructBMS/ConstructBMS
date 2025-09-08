@@ -13,6 +13,7 @@ import { useOrgStore } from '../../app/store/auth/org.store';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui';
 import { useCan } from '../../lib/permissions/hooks';
+import { ProjectsDAL } from '../../lib/data/projects';
 import type { Project, ProjectFormData } from '../../lib/types/projects';
 import { ProjectForm } from './ProjectForm';
 import { ProjectsFilters } from './ProjectsFilters';
@@ -32,9 +33,7 @@ export function ProjectsPage() {
     error,
     viewMode,
     filters,
-    loadProjects,
     setViewMode,
-    setFilters,
     clearError,
     getFilteredProjects,
   } = useProjectsStore();
@@ -43,16 +42,33 @@ export function ProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [localProjects, setLocalProjects] = useState<Project[]>([]);
+  const [localLoading, setLocalLoading] = useState(false);
 
   // Load projects on mount and when org changes - using ref to prevent loops
   const hasLoadedRef = useRef(false);
   const lastOrgIdRef = useRef<string | null>(null);
-  
+
   useEffect(() => {
-    if (currentOrgId && canView && (!hasLoadedRef.current || lastOrgIdRef.current !== currentOrgId)) {
+    if (
+      currentOrgId &&
+      canView &&
+      (!hasLoadedRef.current || lastOrgIdRef.current !== currentOrgId)
+    ) {
       hasLoadedRef.current = true;
       lastOrgIdRef.current = currentOrgId;
-      useProjectsStore.getState().loadProjects(currentOrgId);
+      
+      // Load projects directly without using Zustand store
+      setLocalLoading(true);
+      ProjectsDAL.listProjects(currentOrgId)
+        .then(projects => {
+          setLocalProjects(projects);
+          setLocalLoading(false);
+        })
+        .catch(error => {
+          console.error('Error loading projects:', error);
+          setLocalLoading(false);
+        });
     }
   }, [currentOrgId, canView]);
 
@@ -63,9 +79,11 @@ export function ProjectsPage() {
       clearTimeout(searchTimeoutRef.current);
     }
     searchTimeoutRef.current = setTimeout(() => {
-      useProjectsStore.getState().setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
+      useProjectsStore
+        .getState()
+        .setFilters(prevFilters => ({ ...prevFilters, search: searchQuery }));
     }, 300);
-    
+
     return () => {
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
@@ -107,7 +125,16 @@ export function ProjectsPage() {
     navigate(`/projects/${project.id}`);
   };
 
-  const filteredProjects = getFilteredProjects();
+  // Use local projects and apply simple filtering
+  const filteredProjects = localProjects.filter(project => {
+    if (!searchQuery) return true;
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      project.name.toLowerCase().includes(searchLower) ||
+      project.description?.toLowerCase().includes(searchLower) ||
+      project.tags?.some(tag => tag.toLowerCase().includes(searchLower))
+    );
+  });
 
   const viewModeButtons = [
     { mode: 'list' as ViewMode, icon: List, label: 'List' },
@@ -219,7 +246,7 @@ export function ProjectsPage() {
         )}
 
         {/* Content */}
-        {isLoading ? (
+        {localLoading ? (
           <div className='flex items-center justify-center h-64'>
             <div className='text-center'>
               <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
