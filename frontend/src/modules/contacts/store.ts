@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Company, Contact } from '../../lib/types/contacts';
 
 interface ContactsState {
@@ -131,7 +130,7 @@ export const useContactsStore = create<ContactsState>()(
         contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
         companies: mockCompanies.map(c => ({ name: c.name, category: c.category }))
       });
-      
+
       return {
         contacts: mockContacts,
         companies: mockCompanies,
@@ -225,15 +224,4 @@ export const useContactsStore = create<ContactsState>()(
             )
         );
       },
-    })
-    // Temporarily disable persistence to debug the issue
-    // }),
-    // {
-    //   name: 'contacts-storage',
-    //   partialize: state => ({
-    //     contacts: state.contacts,
-    //     companies: state.companies,
-    //   }),
-    // }
-    // )
-);
+    });
