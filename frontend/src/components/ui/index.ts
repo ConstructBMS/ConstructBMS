@@ -36,3 +36,6 @@ export {
 } from './table';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
+export { Separator } from './separator';
+export { Slider } from './slider';
+export { Toggle, toggleVariants } from './toggle';

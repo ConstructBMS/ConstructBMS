@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import {
+  Code,
+  Flag,
+  Info,
+  Layout,
+  Palette,
+  Plug,
+  Shield,
+  Users,
+} from 'lucide-react';
+import { useState } from 'react';
 import { Page } from '../../components/layout/Page';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui';
-import { General } from './sections/General';
 import { Appearance } from './sections/Appearance';
-import { FeatureFlags } from './sections/FeatureFlags';
-import { Integrations } from './sections/Integrations';
+import { CRM } from './sections/CRM';
 import { Developer } from './sections/Developer';
-import { Users, Shield, Palette, Flag, Plug, Code, Info } from 'lucide-react';
+import { FeatureFlags } from './sections/FeatureFlags';
+import { Footer } from './sections/Footer';
+import { General } from './sections/General';
+import { Integrations } from './sections/Integrations';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general');
@@ -18,6 +28,18 @@ export default function SettingsPage() {
       label: 'Appearance',
       icon: Palette,
       component: Appearance,
+    },
+    {
+      id: 'crm',
+      label: 'CRM',
+      icon: Users,
+      component: CRM,
+    },
+    {
+      id: 'footer',
+      label: 'Footer',
+      icon: Layout,
+      component: Footer,
     },
     {
       id: 'feature-flags',
@@ -57,53 +79,54 @@ export default function SettingsPage() {
     setActiveTab(tabId);
   };
 
+  const activeTabData = tabs.find(tab => tab.id === activeTab);
+  const ActiveComponent = activeTabData?.component;
+
   return (
     <Page title='Settings'>
-      <div className='flex h-full'>
-        {/* Left sticky navigation */}
-        <div className='w-64 flex-shrink-0 pr-6'>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            orientation='vertical'
-            className='w-full'
-          >
-            <TabsList className='flex flex-col h-auto w-full bg-transparent p-0'>
-              {tabs.map(tab => {
-                const Icon = tab.icon;
-                return (
-                  <TabsTrigger
-                    key={tab.id}
-                    value={tab.id}
-                    onClick={() => handleTabClick(tab.id, tab.href)}
-                    className='w-full justify-start gap-3 h-12 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground'
-                  >
-                    <Icon className='h-4 w-4' />
-                    {tab.label}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </Tabs>
+      <div className='space-y-6'>
+        <div>
+          <h2 className='text-2xl font-semibold'>Settings</h2>
+          <p className='text-muted-foreground'>
+            Configure your application settings and preferences.
+          </p>
         </div>
 
-        {/* Right content */}
-        <div className='flex-1 min-w-0'>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className='h-full'
-          >
-            {tabs.map(tab => {
-              if (!tab.component) return null;
-              const Component = tab.component;
+        {/* Tabs Navigation */}
+        <div className='border-b'>
+          <nav className='-mb-px flex space-x-8 overflow-x-auto'>
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
               return (
-                <TabsContent key={tab.id} value={tab.id} className='h-full'>
-                  <Component />
-                </TabsContent>
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id, tab.href)}
+                  className={`
+                    flex items-center space-x-2 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm
+                    ${isActive
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                    }
+                  `}
+                >
+                  <Icon className='h-4 w-4' />
+                  <span>{tab.label}</span>
+                </button>
               );
             })}
-          </Tabs>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className='mt-6'>
+          {ActiveComponent ? (
+            <ActiveComponent />
+          ) : (
+            <div className='p-8 text-center text-muted-foreground'>
+              <p>This section is coming soon.</p>
+            </div>
+          )}
         </div>
       </div>
     </Page>
