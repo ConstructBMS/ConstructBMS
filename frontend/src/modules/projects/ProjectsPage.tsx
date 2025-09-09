@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui';
-import { useCan } from '../../lib/permissions/hooks';
 import { ProjectsDAL } from '../../lib/data/projects';
+import { useCan } from '../../lib/permissions/hooks';
 import type { Project, ProjectFormData } from '../../lib/types/projects';
 import { ProjectForm } from './ProjectForm';
 import { ProjectsFilters } from './ProjectsFilters';
@@ -57,7 +57,7 @@ export function ProjectsPage() {
     ) {
       hasLoadedRef.current = true;
       lastOrgIdRef.current = currentOrgId;
-      
+
       // Load projects directly without using Zustand store
       setLocalLoading(true);
       ProjectsDAL.listProjects(currentOrgId)
