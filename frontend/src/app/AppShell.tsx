@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// Create router with future flags
+// Create router with future flags to suppress v7 warnings
 const router = createBrowserRouter(
   [
     {
