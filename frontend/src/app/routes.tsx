@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, createBrowserRouter } from 'react-router-dom';
 import { Guard } from '../lib/permissions/Guard';
 
 // Lazy load all pages
@@ -49,7 +49,112 @@ const NotFound = () => (
   </div>
 );
 
-export function AppRoutes() {
+// Export routes in v7 format
+export const AppRoutes = [
+  {
+    path: '/',
+    element: <Navigate to='/dashboard' replace />,
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardPage />,
+  },
+  {
+    path: '/notes',
+    element: <NotesPage />,
+  },
+  {
+    path: '/chat',
+    element: <ChatPage />,
+  },
+  {
+    path: '/portal',
+    element: <PortalPage />,
+  },
+  {
+    path: '/contacts',
+    element: (
+      <Guard resource='contacts' action='read'>
+        <ContactsPage />
+      </Guard>
+    ),
+  },
+  {
+    path: '/contacts/clients',
+    element: (
+      <Guard resource='contacts' action='read'>
+        <ClientsPage />
+      </Guard>
+    ),
+  },
+  {
+    path: '/contacts/contractors',
+    element: (
+      <Guard resource='contacts' action='read'>
+        <ContractorsPage />
+      </Guard>
+    ),
+  },
+  {
+    path: '/contacts/consultants',
+    element: (
+      <Guard resource='contacts' action='read'>
+        <ConsultantsPage />
+      </Guard>
+    ),
+  },
+  {
+    path: '/projects',
+    element: <ProjectsPage />,
+  },
+  {
+    path: '/projects/:id',
+    element: <ProjectDetailPage />,
+  },
+  {
+    path: '/projects/programme',
+    element: <ProgrammePage />,
+  },
+  {
+    path: '/documents',
+    element: <DocumentsPage />,
+  },
+  {
+    path: '/workflows',
+    element: <WorkflowsPage />,
+  },
+  {
+    path: '/pipeline',
+    element: <PipelinePage />,
+  },
+  {
+    path: '/estimates',
+    element: <EstimatesPage />,
+  },
+  {
+    path: '/purchase-orders',
+    element: <PurchaseOrdersPage />,
+  },
+  {
+    path: '/settings',
+    element: <SettingsPage />,
+  },
+  {
+    path: '/footer-builder',
+    element: <FooterBuilder />,
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '*',
+    element: <NotFound />,
+  },
+];
+
+// Legacy component for backward compatibility (if needed)
+export function AppRoutesComponent() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>

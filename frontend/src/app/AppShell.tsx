@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
@@ -20,25 +20,26 @@ const queryClient = new QueryClient({
   },
 });
 
+// Import routes
+import { AppRoutes } from './routes';
+
 // Create router with future flags to suppress v7 warnings
-const router = createBrowserRouter(
-  [
-    {
-      path: '*',
-      element: <AppLayout />,
-    },
-  ],
+const router = createBrowserRouter([
   {
-    future: {
-      v7_startTransition: true,
-      v7_relativeSplatPath: true,
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
-      v7_skipActionErrorRevalidation: true,
-    },
-  }
-);
+    path: '/',
+    element: <AppLayout />,
+    children: AppRoutes,
+  },
+], {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true,
+    v7_fetcherPersist: true,
+    v7_normalizeFormMethod: true,
+    v7_partialHydration: true,
+    v7_skipActionErrorRevalidation: true,
+  },
+});
 
 function AppLayout() {
   const { toggle } = useSidebarStore();
@@ -100,7 +101,7 @@ function AppLayout() {
 
         {/* Main Content */}
         <main className='col-start-2 row-start-2 overflow-auto'>
-          <AppRoutes />
+          <Outlet />
         </main>
       </div>
     </div>
