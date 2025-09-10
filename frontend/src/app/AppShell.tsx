@@ -5,6 +5,7 @@ import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import Footer from '../components/layout/Footer';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
+import { AuthProvider } from '../contexts/AuthContext';
 import type { KeyboardShortcut } from '../lib/types/core';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { AppRoutes } from './routes';
@@ -112,9 +113,11 @@ export function AppShell() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
