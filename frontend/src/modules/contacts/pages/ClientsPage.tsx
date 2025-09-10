@@ -1,10 +1,18 @@
 import { Page } from '../../../components/layout/Page';
-import { useContactsStore } from '../store';
-import { ContactsList } from '../ContactsList';
 import { ContactsGrid } from '../ContactsGrid';
+import { ContactsList } from '../ContactsList';
+import { useContactsStore } from '../store';
 
 export default function ClientsPage() {
-  const { viewMode, contacts, companies, updateContact, updateCompany, removeContact, removeCompany } = useContactsStore();
+  const {
+    viewMode,
+    contacts,
+    companies,
+    updateContact,
+    updateCompany,
+    removeContact,
+    removeCompany,
+  } = useContactsStore();
 
   // Filter for clients only
   const clientContacts = contacts.filter(
@@ -53,15 +61,15 @@ export default function ClientsPage() {
         ) : (
           <div className='space-y-4'>
             {viewMode === 'list' ? (
-              <ContactsList 
-                contacts={clientContacts} 
+              <ContactsList
+                contacts={clientContacts}
                 companies={clientCompanies}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
             ) : (
-              <ContactsGrid 
-                contacts={clientContacts} 
+              <ContactsGrid
+                contacts={clientContacts}
                 companies={clientCompanies}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

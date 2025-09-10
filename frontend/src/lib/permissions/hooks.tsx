@@ -6,6 +6,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import type {
   Action,
   PermissionContext,
@@ -16,7 +17,6 @@ import type {
   UseCanResult,
 } from '../types/permissions';
 import { createPermissionContext, defaultEvaluator } from './evaluator';
-import { useAuth } from '../../contexts/AuthContext';
 
 // ============================================================================
 // Core useCan Hook
@@ -266,19 +266,16 @@ export function useCanAll(
  */
 export function usePermissionContext(): PermissionContext {
   const { user } = useAuth();
-  
+
   return useMemo(() => {
     if (user) {
-      return createPermissionContext(
-        user.id,
-        {
-          role: user.app_metadata?.role || 'user',
-          email: user.email,
-          name: user.user_metadata?.name,
-        }
-      );
+      return createPermissionContext(user.id, {
+        role: user.app_metadata?.role || 'user',
+        email: user.email,
+        name: user.user_metadata?.name,
+      });
     }
-    
+
     // No user - anonymous context
     return createPermissionContext('anonymous', {});
   }, [user]);
