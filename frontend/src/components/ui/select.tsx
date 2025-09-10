@@ -87,7 +87,7 @@ const SelectTrigger: React.FC<SelectTriggerProps> = ({
     <button
       type='button'
       onClick={() => setIsOpen?.(!isOpen)}
-      className={`flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 hover:border-gray-400 ${className}`}
+      className={`flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 hover:border-input/80 ${className}`}
     >
       {children}
       <svg
@@ -142,7 +142,7 @@ const SelectContent: React.FC<SelectContentProps> = ({
 
   return (
     <div
-      className={`absolute top-full left-0 right-0 z-50 mt-1 min-w-[8rem] overflow-hidden rounded-md border border-gray-300 bg-white shadow-lg ${className}`}
+      className={`absolute top-full left-0 right-0 z-50 mt-1 min-w-[8rem] overflow-hidden rounded-md border border-input bg-popover shadow-lg ${className}`}
     >
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === SelectItem) {
@@ -171,7 +171,7 @@ const SelectItem: React.FC<SelectItemProps> = ({
 }) => {
   return (
     <div
-      className={`relative flex w-full cursor-pointer select-none items-center rounded-sm py-2 px-3 text-sm outline-none hover:bg-gray-100 focus:bg-gray-100 ${className}`}
+      className={`relative flex w-full cursor-pointer select-none items-center rounded-sm py-2 px-3 text-sm text-popover-foreground outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${className}`}
       onClick={() => handleSelect?.(value)}
     >
       {children}

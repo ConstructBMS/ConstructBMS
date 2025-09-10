@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: email.split('@')[0],
         },
         app_metadata: {
-          role: 'admin',
+          role: 'super_admin',
         },
       };
       setUser(demoUser);
