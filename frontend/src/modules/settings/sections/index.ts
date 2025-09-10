@@ -6,3 +6,5 @@ export { Developer } from './Developer';
 export { About } from './About';
 export { CRM } from './CRM';
 export { Footer } from './Footer';
+export { Permissions } from './Permissions';
+export { UsersAndRoles } from './UsersAndRoles';

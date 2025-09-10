@@ -19,6 +19,8 @@ import {
   Footer,
   General,
   Integrations,
+  Permissions,
+  UsersAndRoles,
 } from './sections';
 
 export default function SettingsPage() {
@@ -54,13 +56,13 @@ export default function SettingsPage() {
       id: 'users-roles',
       label: 'Users & Roles',
       icon: Users,
-      component: null,
+      component: UsersAndRoles,
     },
     {
       id: 'permissions',
       label: 'Permissions',
       icon: Shield,
-      component: null,
+      component: Permissions,
     },
     {
       id: 'integrations',
