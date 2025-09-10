@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Select component dark mode - fixed dropdown text visibility using CSS variables instead of hardcoded colors
 - Superadmin permissions - fixed demo mode role to enable full access to contacts pages
 - Contacts access - resolved permission guards blocking content display
+- React Router v7 upgrade - converted to data router API to eliminate future flag warnings
 
 ### Added
 - Footer component with responsive design and dark mode support
