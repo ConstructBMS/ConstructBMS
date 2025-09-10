@@ -1,9 +1,11 @@
 import { create } from 'zustand';
-import { Company, Contact } from '../../lib/types/contacts';
+import { Company, Contact, ViewMode } from '../../lib/types/contacts';
 
 interface ContactsState {
   contacts: Contact[];
   companies: Company[];
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
   addContact: (contact: Omit<Contact, 'id' | 'createdAt'>) => void;
   updateContact: (id: string, updates: Partial<Contact>) => void;
   removeContact: (id: string) => void;
@@ -131,6 +133,8 @@ export const useContactsStore = create<ContactsState>()((set, get) => {
   return {
     contacts: mockContacts,
     companies: mockCompanies,
+    viewMode: 'list' as ViewMode,
+    setViewMode: (mode: ViewMode) => set({ viewMode: mode }),
 
     addContact: contactData => {
       const newContact: Contact = {

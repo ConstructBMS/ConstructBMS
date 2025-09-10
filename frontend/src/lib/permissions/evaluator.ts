@@ -124,6 +124,17 @@ export class PermissionEvaluator {
     resource: Resource,
     action: Action
   ): PermissionEvaluation {
+    // Super admin bypass - if user has superadmin role, allow everything
+    if (context.userAttributes?.role === 'super_admin' || context.userAttributes?.role === 'superadmin') {
+      return {
+        decision: 'allow',
+        reason: 'Super admin has full access',
+        matchedRules: [],
+        abacResults: [],
+        evaluatedAt: new Date().toISOString(),
+      };
+    }
+
     const applicableRules = this.getApplicableRules(context, resource, action);
 
     if (applicableRules.length === 0) {

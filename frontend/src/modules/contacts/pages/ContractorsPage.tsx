@@ -4,7 +4,7 @@ import { ContactsList } from '../ContactsList';
 import { ContactsGrid } from '../ContactsGrid';
 
 export default function ContractorsPage() {
-  const { viewMode, contacts, companies } = useContactsStore();
+  const { viewMode, contacts, companies, updateContact, updateCompany, removeContact, removeCompany } = useContactsStore();
 
   // Filter for contractors only
   const contractorContacts = contacts.filter(
@@ -15,6 +15,20 @@ export default function ContractorsPage() {
   );
 
   const allContractors = [...contractorContacts, ...contractorCompanies];
+
+  const handleEdit = (item: any) => {
+    console.log('Edit item:', item);
+    // TODO: Implement edit functionality
+  };
+
+  const handleDelete = (id: string, type: 'contact' | 'company') => {
+    console.log('Delete item:', id, type);
+    if (type === 'contact') {
+      removeContact(id);
+    } else {
+      removeCompany(id);
+    }
+  };
 
   return (
     <Page title='Contractors'>
@@ -39,9 +53,19 @@ export default function ContractorsPage() {
         ) : (
           <div className='space-y-4'>
             {viewMode === 'list' ? (
-              <ContactsList contacts={allContractors} />
+              <ContactsList 
+                contacts={contractorContacts} 
+                companies={contractorCompanies}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ) : (
-              <ContactsGrid contacts={allContractors} />
+              <ContactsGrid 
+                contacts={contractorContacts} 
+                companies={contractorCompanies}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             )}
           </div>
         )}

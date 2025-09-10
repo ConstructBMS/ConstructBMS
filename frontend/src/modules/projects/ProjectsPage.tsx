@@ -70,7 +70,9 @@ export function ProjectsPage() {
           setLocalLoading(false);
           // Show a user-friendly error message
           if (error.message.includes('org_id does not exist')) {
-            console.warn('Projects table may need migration - org_id column not found');
+            console.warn(
+              'Projects table may need migration - org_id column not found'
+            );
           }
         });
     }

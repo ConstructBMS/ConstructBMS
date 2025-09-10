@@ -28,6 +28,7 @@ const PurchaseOrdersPage = lazy(
   () => import('../modules/purchaseOrders/PurchaseOrdersPage')
 );
 const SettingsPage = lazy(() => import('../modules/settings/SettingsPage'));
+const FooterBuilder = lazy(() => import('../pages/FooterBuilder'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -106,6 +107,7 @@ export function AppRoutes() {
 
         {/* Settings */}
         <Route path='/settings' element={<SettingsPage />} />
+        <Route path='/footer-builder' element={<FooterBuilder />} />
 
         {/* 404 - Catch all */}
         <Route path='*' element={<NotFound />} />

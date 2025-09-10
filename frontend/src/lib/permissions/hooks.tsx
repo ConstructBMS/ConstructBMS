@@ -16,6 +16,7 @@ import type {
   UseCanResult,
 } from '../types/permissions';
 import { createPermissionContext, defaultEvaluator } from './evaluator';
+import { useAuth } from '../../contexts/AuthContext';
 
 // ============================================================================
 // Core useCan Hook
@@ -34,6 +35,7 @@ export function useCan(options: UseCanOptions): UseCanResult {
     skipCache = false,
   } = options;
 
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [evaluation, setEvaluation] = useState<PermissionEvaluation | null>(
@@ -53,9 +55,23 @@ export function useCan(options: UseCanOptions): UseCanResult {
       } as PermissionContext;
     }
 
-    // Default context - in a real app, this would come from auth context
-    return createPermissionContext('current-user', {}, scope, scopeId);
-  }, [contextOverride, scope, scopeId]);
+    // Use actual authenticated user context
+    if (user) {
+      return createPermissionContext(
+        user.id,
+        {
+          role: user.app_metadata?.role || 'user',
+          email: user.email,
+          name: user.user_metadata?.name,
+        },
+        scope,
+        scopeId
+      );
+    }
+
+    // No user - anonymous context
+    return createPermissionContext('anonymous', {}, scope, scopeId);
+  }, [contextOverride, scope, scopeId, user]);
 
   // Evaluate permission
   const evaluatePermission = useCallback(async () => {
@@ -249,14 +265,23 @@ export function useCanAll(
  * Hook for getting current user's permission context
  */
 export function usePermissionContext(): PermissionContext {
+  const { user } = useAuth();
+  
   return useMemo(() => {
-    // In a real implementation, this would come from auth context
-    return createPermissionContext('current-user', {
-      role: 'admin', // This would come from user data
-      department: 'engineering',
-      level: 'senior',
-    });
-  }, []);
+    if (user) {
+      return createPermissionContext(
+        user.id,
+        {
+          role: user.app_metadata?.role || 'user',
+          email: user.email,
+          name: user.user_metadata?.name,
+        }
+      );
+    }
+    
+    // No user - anonymous context
+    return createPermissionContext('anonymous', {});
+  }, [user]);
 }
 
 /**

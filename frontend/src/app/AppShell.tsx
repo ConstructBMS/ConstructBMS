@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from './providers/ThemeProvider';
-import { useSidebarStore } from './store/ui/sidebar.store';
+import { useEffect } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
+import Footer from '../components/layout/Footer';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
-import Footer from '../components/layout/Footer';
-import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
-import { AppRoutes } from './routes';
 import type { KeyboardShortcut } from '../lib/types/core';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { AppRoutes } from './routes';
+import { useSidebarStore } from './store/ui/sidebar.store';
 
 // Create a client
 const queryClient = new QueryClient({
