@@ -11,14 +11,14 @@ import {
 import { useState } from 'react';
 import { Page } from '../../components/layout/Page';
 import {
-  General,
-  Appearance,
-  FeatureFlags,
-  Integrations,
-  Developer,
   About,
+  Appearance,
   CRM,
+  Developer,
+  FeatureFlags,
   Footer,
+  General,
+  Integrations,
 } from './sections';
 
 export default function SettingsPage() {
