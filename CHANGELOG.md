@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - Footer rendering in main content area - removed footer from main content to fix contacts pages
 - Settings 404 errors - fixed Permissions and Users & Roles tabs navigation issues
 - Switch component warnings - fixed onCheckedChange prop handling and controlled component warnings
+- Feature Flags UI - removed checkboxes, kept only toggles, fixed dropdown text visibility
+- Switch component - converted from checkbox-based to proper button-based toggle component
 
 ### Added
 - Footer component with responsive design and dark mode support
@@ -24,6 +26,17 @@ All notable changes to this project will be documented in this file.
 - Vitest testing setup with jsdom environment
 - Supabase DAL for projects with proper error handling
 - Settings sections barrel export for cleaner imports
+- **Enterprise-Grade Permissions System** - comprehensive permissions management
+- **Custom Roles Management** - create, edit, duplicate, and manage custom roles
+- **Advanced User Management** - user creation, role assignment, custom permissions
+- **Granular Access Control** - resource-specific permissions with conditions
+- **Permission Matrix** - visual representation of roles vs permissions
+- **Audit Logging** - track all permission changes and access attempts
+- **File/Folder Permissions** - granular file access control with specific sections
+- **Permission Inheritance** - role inheritance and permission cascading
+- **Custom Permission Logic** - conditional permissions with complex rules
+- **Avatar Component** - user avatar display with fallback initials
+- **Comprehensive Settings Pages** - Permissions and Users & Roles sections
 
 ### Changed
 - Updated AppShell to use createBrowserRouter with future flags
