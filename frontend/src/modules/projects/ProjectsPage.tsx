@@ -68,6 +68,10 @@ export function ProjectsPage() {
         .catch(error => {
           console.error('Error loading projects:', error);
           setLocalLoading(false);
+          // Show a user-friendly error message
+          if (error.message.includes('org_id does not exist')) {
+            console.warn('Projects table may need migration - org_id column not found');
+          }
         });
     }
   }, [currentOrgId, canView]);

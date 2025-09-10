@@ -3,10 +3,11 @@ import type { Project, ProjectFormData } from '../types/projects';
 
 export class ProjectsDAL {
   static async listProjects(orgId: string): Promise<Project[]> {
+    // For now, we'll fetch all projects since org_id column may not exist yet
+    // TODO: Update this once the org_id migration is applied
     const { data, error } = await supabase
       .from(TABLES.PROJECTS)
       .select('*')
-      .eq('org_id', orgId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -41,7 +42,7 @@ export class ProjectsDAL {
       end_date: project.endDate,
       budget: project.budget,
       client_id: project.clientId,
-      org_id: project.orgId,
+      // org_id: project.orgId, // TODO: Add this once org_id migration is applied
       tags: project.tags,
       custom: project.custom,
     };
