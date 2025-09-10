@@ -55,14 +55,12 @@ export default function SettingsPage() {
       label: 'Users & Roles',
       icon: Users,
       component: null,
-      href: '/users',
     },
     {
       id: 'permissions',
       label: 'Permissions',
       icon: Shield,
       component: null,
-      href: '/permissions',
     },
     {
       id: 'integrations',

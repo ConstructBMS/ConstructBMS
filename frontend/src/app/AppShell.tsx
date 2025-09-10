@@ -102,7 +102,6 @@ function AppLayout() {
         {/* Main Content */}
         <main className='col-start-2 row-start-2 overflow-auto'>
           <AppRoutes />
-          <Footer />
         </main>
       </div>
     </div>
