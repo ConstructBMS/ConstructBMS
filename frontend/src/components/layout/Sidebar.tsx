@@ -173,16 +173,26 @@ export function Sidebar() {
     .filter(item => {
       if (!item.flag) return true;
       switch (item.flag) {
-        case 'contacts': return contactsFlag;
-        case 'projects': return projectsFlag;
-        case 'chat': return chatFlag;
-        case 'portal': return portalFlag;
-        case 'documents.library': return documentsFlag;
-        case 'workflows': return workflowsFlag;
-        case 'pipeline': return pipelineFlag;
-        case 'estimates': return estimatesFlag;
-        case 'purchaseOrders': return purchaseOrdersFlag;
-        default: return true;
+        case 'contacts':
+          return contactsFlag;
+        case 'projects':
+          return projectsFlag;
+        case 'chat':
+          return chatFlag;
+        case 'portal':
+          return portalFlag;
+        case 'documents.library':
+          return documentsFlag;
+        case 'workflows':
+          return workflowsFlag;
+        case 'pipeline':
+          return pipelineFlag;
+        case 'estimates':
+          return estimatesFlag;
+        case 'purchaseOrders':
+          return purchaseOrdersFlag;
+        default:
+          return true;
       }
     })
     .map(item => {
@@ -192,10 +202,14 @@ export function Sidebar() {
           children: item.children.filter(child => {
             if (!child.flag) return true;
             switch (child.flag) {
-              case 'contacts': return contactsFlag;
-              case 'projects': return projectsFlag;
-              case 'programme': return programmeFlag;
-              default: return true;
+              case 'contacts':
+                return contactsFlag;
+              case 'projects':
+                return projectsFlag;
+              case 'programme':
+                return programmeFlag;
+              default:
+                return true;
             }
           }),
         };

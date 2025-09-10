@@ -8,6 +8,13 @@ const NotesPage = lazy(() => import('../modules/notes/NotesPage'));
 const ChatPage = lazy(() => import('../modules/chat/ChatPage'));
 const PortalPage = lazy(() => import('../modules/portal/PortalPage'));
 const ContactsPage = lazy(() => import('../modules/contacts/ContactsPage'));
+const ClientsPage = lazy(() => import('../modules/contacts/pages/ClientsPage'));
+const ContractorsPage = lazy(
+  () => import('../modules/contacts/pages/ContractorsPage')
+);
+const ConsultantsPage = lazy(
+  () => import('../modules/contacts/pages/ConsultantsPage')
+);
 const ProjectsPage = lazy(() => import('../modules/projects/ProjectsPage'));
 const ProjectDetailPage = lazy(
   () => import('../modules/projects/ProjectDetailPage')
@@ -57,6 +64,30 @@ export function AppRoutes() {
           element={
             <Guard resource='contacts' action='read'>
               <ContactsPage />
+            </Guard>
+          }
+        />
+        <Route
+          path='/contacts/clients'
+          element={
+            <Guard resource='contacts' action='read'>
+              <ClientsPage />
+            </Guard>
+          }
+        />
+        <Route
+          path='/contacts/contractors'
+          element={
+            <Guard resource='contacts' action='read'>
+              <ContractorsPage />
+            </Guard>
+          }
+        />
+        <Route
+          path='/contacts/consultants'
+          element={
+            <Guard resource='contacts' action='read'>
+              <ConsultantsPage />
             </Guard>
           }
         />

@@ -1,6 +1,11 @@
 import { Building2, User, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { Contact, Company, ContactType, ContactCategory } from '../../lib/types/contacts';
+import {
+  Contact,
+  Company,
+  ContactType,
+  ContactCategory,
+} from '../../lib/types/contacts';
 import {
   Button,
   Dialog,

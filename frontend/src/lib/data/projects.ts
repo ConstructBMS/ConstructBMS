@@ -1,63 +1,89 @@
+import { supabase, TABLES } from '../../services/supabase';
 import type { Project, ProjectFormData } from '../types/projects';
 
 export class ProjectsDAL {
-  private static baseUrl = '/api/projects';
-
-  private static getAuthHeaders(): HeadersInit {
-    const token = localStorage.getItem('authToken');
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
-
   static async listProjects(orgId: string): Promise<Project[]> {
-    const response = await fetch(`${this.baseUrl}?orgId=${orgId}`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch projects');
+    const { data, error } = await supabase
+      .from(TABLES.PROJECTS)
+      .select('*')
+      .eq('org_id', orgId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch projects: ${error.message}`);
     }
-    return response.json();
+
+    return data || [];
   }
 
   static async getProject(id: string): Promise<Project> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch project');
+    const { data, error } = await supabase
+      .from(TABLES.PROJECTS)
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to fetch project: ${error.message}`);
     }
-    return response.json();
+
+    return data;
   }
 
   static async upsertProject(
     project: ProjectFormData & { id?: string; orgId: string }
   ): Promise<Project> {
-    const url = project.id ? `${this.baseUrl}/${project.id}` : this.baseUrl;
-    const method = project.id ? 'PUT' : 'POST';
+    const projectData = {
+      name: project.name,
+      description: project.description,
+      status: project.status,
+      start_date: project.startDate,
+      end_date: project.endDate,
+      budget: project.budget,
+      client_id: project.clientId,
+      org_id: project.orgId,
+      tags: project.tags,
+      custom: project.custom,
+    };
 
-    const response = await fetch(url, {
-      method,
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(project),
-    });
+    if (project.id) {
+      // Update existing project
+      const { data, error } = await supabase
+        .from(TABLES.PROJECTS)
+        .update(projectData)
+        .eq('id', project.id)
+        .select()
+        .single();
 
-    if (!response.ok) {
-      throw new Error(`Failed to ${project.id ? 'update' : 'create'} project`);
+      if (error) {
+        throw new Error(`Failed to update project: ${error.message}`);
+      }
+
+      return data;
+    } else {
+      // Create new project
+      const { data, error } = await supabase
+        .from(TABLES.PROJECTS)
+        .insert(projectData)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create project: ${error.message}`);
+      }
+
+      return data;
     }
-
-    return response.json();
   }
 
   static async deleteProject(id: string): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders(),
-    });
+    const { error } = await supabase
+      .from(TABLES.PROJECTS)
+      .delete()
+      .eq('id', id);
 
-    if (!response.ok) {
-      throw new Error('Failed to delete project');
+    if (error) {
+      throw new Error(`Failed to delete project: ${error.message}`);
     }
   }
 }

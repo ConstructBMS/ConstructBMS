@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Settings page import crash - fixed missing sections and created barrel index.ts
+- Projects page 401 errors - replaced /api calls with Supabase DAL
+- Missing footer component - added global footer to AppShell
+- Contacts variants not rendering - created Clients/Contractors/Consultants pages with proper filtering
+- React Router v7 future flags warnings - updated to use createBrowserRouter with future flags
+- Error boundary missing - added ErrorBoundary component with fallback UI
+- localStorage usage audit - identified remaining usage for future cleanup
+
+### Added
+- Footer component with responsive design and dark mode support
+- Contact variant pages: ClientsPage, ContractorsPage, ConsultantsPage
+- ErrorBoundary component with custom fallback support
+- Route smoke tests, DAL tests, contacts filter tests, and error boundary tests
+- Vitest testing setup with jsdom environment
+- Supabase DAL for projects with proper error handling
+- Settings sections barrel export for cleaner imports
+
+### Changed
+- Updated AppShell to use createBrowserRouter with future flags
+- Projects DAL now uses Supabase instead of /api endpoints
+- Settings page now uses barrel imports for better maintainability
+- Router structure updated to support React Router v7 compatibility
+
+### Technical
+- Added comprehensive test suite with vitest
+- Improved error handling with ErrorBoundary
+- Better separation of concerns with DAL pattern
+- Enhanced type safety with proper TypeScript configurations
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 

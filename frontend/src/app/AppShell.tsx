@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { useSidebarStore } from './store/ui/sidebar.store';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
+import Footer from '../components/layout/Footer';
+import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { AppRoutes } from './routes';
 import type { KeyboardShortcut } from '../lib/types/core';
 
@@ -18,7 +20,23 @@ const queryClient = new QueryClient({
   },
 });
 
-export function AppShell() {
+// Create router with future flags
+const router = createBrowserRouter(
+  [
+    {
+      path: '*',
+      element: <AppLayout />,
+    },
+  ],
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
+  }
+);
+
+function AppLayout() {
   const { toggle } = useSidebarStore();
 
   // Keyboard shortcuts
@@ -64,29 +82,36 @@ export function AppShell() {
   }, [shortcuts]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <BrowserRouter>
-          <div className='min-h-screen bg-background'>
-            <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] h-screen'>
-              {/* Sidebar */}
-              <div className='row-span-2'>
-                <Sidebar />
-              </div>
+    <div className='min-h-screen bg-background'>
+      <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] h-screen'>
+        {/* Sidebar */}
+        <div className='row-span-2'>
+          <Sidebar />
+        </div>
 
-              {/* Topbar */}
-              <div className='col-start-2'>
-                <Topbar />
-              </div>
+        {/* Topbar */}
+        <div className='col-start-2'>
+          <Topbar />
+        </div>
 
-              {/* Main Content */}
-              <main className='col-start-2 row-start-2 overflow-auto'>
-                <AppRoutes />
-              </main>
-            </div>
-          </div>
-        </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+        {/* Main Content */}
+        <main className='col-start-2 row-start-2 overflow-auto'>
+          <AppRoutes />
+          <Footer />
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export function AppShell() {
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

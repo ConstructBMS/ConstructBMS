@@ -125,101 +125,95 @@ export const useContactsStore = create<ContactsState>()((set, get) => {
     contactsCount: mockContacts.length,
     companiesCount: mockCompanies.length,
     contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
-    companies: mockCompanies.map(c => ({ name: c.name, category: c.category }))
+    companies: mockCompanies.map(c => ({ name: c.name, category: c.category })),
   });
 
   return {
-        contacts: mockContacts,
-        companies: mockCompanies,
+    contacts: mockContacts,
+    companies: mockCompanies,
 
-        addContact: contactData => {
-        const newContact: Contact = {
-          ...contactData,
-          id: `contact-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
-        set(state => ({
-          contacts: [...state.contacts, newContact],
-        }));
-      },
+    addContact: contactData => {
+      const newContact: Contact = {
+        ...contactData,
+        id: `contact-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+      };
+      set(state => ({
+        contacts: [...state.contacts, newContact],
+      }));
+    },
 
-      updateContact: (id, updates) => {
-        set(state => ({
-          contacts: state.contacts.map(contact =>
-            contact.id === id ? { ...contact, ...updates } : contact
-          ),
-        }));
-      },
+    updateContact: (id, updates) => {
+      set(state => ({
+        contacts: state.contacts.map(contact =>
+          contact.id === id ? { ...contact, ...updates } : contact
+        ),
+      }));
+    },
 
-      removeContact: id => {
-        set(state => ({
-          contacts: state.contacts.filter(contact => contact.id !== id),
-        }));
-      },
+    removeContact: id => {
+      set(state => ({
+        contacts: state.contacts.filter(contact => contact.id !== id),
+      }));
+    },
 
-      addCompany: companyData => {
-        const newCompany: Company = {
-          ...companyData,
-          id: `comp-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
-        set(state => ({
-          companies: [...state.companies, newCompany],
-        }));
-      },
+    addCompany: companyData => {
+      const newCompany: Company = {
+        ...companyData,
+        id: `comp-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+      };
+      set(state => ({
+        companies: [...state.companies, newCompany],
+      }));
+    },
 
-      updateCompany: (id, updates) => {
-        set(state => ({
-          companies: state.companies.map(company =>
-            company.id === id ? { ...company, ...updates } : company
-          ),
-        }));
-      },
+    updateCompany: (id, updates) => {
+      set(state => ({
+        companies: state.companies.map(company =>
+          company.id === id ? { ...company, ...updates } : company
+        ),
+      }));
+    },
 
-      removeCompany: id => {
-        set(state => ({
-          companies: state.companies.filter(company => company.id !== id),
-        }));
-      },
+    removeCompany: id => {
+      set(state => ({
+        companies: state.companies.filter(company => company.id !== id),
+      }));
+    },
 
-      getContact: id => {
-        return get().contacts.find(contact => contact.id === id);
-      },
+    getContact: id => {
+      return get().contacts.find(contact => contact.id === id);
+    },
 
-      getCompany: id => {
-        return get().companies.find(company => company.id === id);
-      },
+    getCompany: id => {
+      return get().companies.find(company => company.id === id);
+    },
 
-      getContactsByCompany: companyId => {
-        return get().contacts.filter(
-          contact => contact.companyId === companyId
-        );
-      },
+    getContactsByCompany: companyId => {
+      return get().contacts.filter(contact => contact.companyId === companyId);
+    },
 
-      searchContacts: query => {
-        const lowercaseQuery = query.toLowerCase();
-        return get().contacts.filter(
-          contact =>
-            contact.name.toLowerCase().includes(lowercaseQuery) ||
-            contact.email?.toLowerCase().includes(lowercaseQuery) ||
-            contact.phone?.includes(query) ||
-            contact.tags?.some(tag =>
-              tag.toLowerCase().includes(lowercaseQuery)
-            )
-        );
-      },
+    searchContacts: query => {
+      const lowercaseQuery = query.toLowerCase();
+      return get().contacts.filter(
+        contact =>
+          contact.name.toLowerCase().includes(lowercaseQuery) ||
+          contact.email?.toLowerCase().includes(lowercaseQuery) ||
+          contact.phone?.includes(query) ||
+          contact.tags?.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+      );
+    },
 
-      searchCompanies: query => {
-        const lowercaseQuery = query.toLowerCase();
-        return get().companies.filter(
-          company =>
-            company.name.toLowerCase().includes(lowercaseQuery) ||
-            company.email?.toLowerCase().includes(lowercaseQuery) ||
-            company.phone?.includes(query) ||
-            company.tags?.some(tag =>
-              tag.toLowerCase().includes(lowercaseQuery)
-            )
-        );
-      },
-    };
+    searchCompanies: query => {
+      const lowercaseQuery = query.toLowerCase();
+      return get().companies.filter(
+        company =>
+          company.name.toLowerCase().includes(lowercaseQuery) ||
+          company.email?.toLowerCase().includes(lowercaseQuery) ||
+          company.phone?.includes(query) ||
+          company.tags?.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+      );
+    },
+  };
 });

@@ -66,7 +66,7 @@ export function ContactsPage() {
     console.log('🔍 Debug - Total contacts:', contacts.length);
     console.log('🔍 Debug - Filter category:', filterCategory);
     console.log('🔍 Debug - Filter type:', filterType);
-    
+
     let filtered = contacts;
 
     // Filter by type (person/company)
@@ -113,7 +113,10 @@ export function ContactsPage() {
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      console.log('🔍 Debug - Filtering companies by category:', filterCategory);
+      console.log(
+        '🔍 Debug - Filtering companies by category:',
+        filterCategory
+      );
       filtered = filtered.filter(
         company => company.category === filterCategory
       );

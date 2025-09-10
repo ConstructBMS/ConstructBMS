@@ -35,163 +35,153 @@ interface ProjectsState {
 export const useProjectsStore = create<ProjectsState>()(
   // Temporarily disable persistence to prevent re-render loops
   // persist(
-    (set, get) => ({
-      projects: [],
-      isLoading: false,
-      error: null,
-      viewMode: 'list',
-      filters: {},
-      selectedProject: null,
+  (set, get) => ({
+    projects: [],
+    isLoading: false,
+    error: null,
+    viewMode: 'list',
+    filters: {},
+    selectedProject: null,
 
-      loadProjects: async (orgId: string) => {
-        set({ isLoading: true, error: null });
-        try {
-          const projects = await ProjectsDAL.listProjects(orgId);
-          set({ projects, isLoading: false });
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to load projects',
-            isLoading: false,
-          });
-        }
-      },
+    loadProjects: async (orgId: string) => {
+      set({ isLoading: true, error: null });
+      try {
+        const projects = await ProjectsDAL.listProjects(orgId);
+        set({ projects, isLoading: false });
+      } catch (error) {
+        set({
+          error:
+            error instanceof Error ? error.message : 'Failed to load projects',
+          isLoading: false,
+        });
+      }
+    },
 
-      createProject: async (projectData: ProjectFormData, orgId: string) => {
-        try {
-          const newProject = await ProjectsDAL.upsertProject({
-            ...projectData,
-            orgId,
-          });
-          set(state => ({
-            projects: [...state.projects, newProject],
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to create project',
-          });
-          throw error;
-        }
-      },
+    createProject: async (projectData: ProjectFormData, orgId: string) => {
+      try {
+        const newProject = await ProjectsDAL.upsertProject({
+          ...projectData,
+          orgId,
+        });
+        set(state => ({
+          projects: [...state.projects, newProject],
+        }));
+      } catch (error) {
+        set({
+          error:
+            error instanceof Error ? error.message : 'Failed to create project',
+        });
+        throw error;
+      }
+    },
 
-      updateProject: async (
-        id: string,
-        projectData: ProjectFormData,
-        orgId: string
-      ) => {
-        try {
-          const updatedProject = await ProjectsDAL.upsertProject({
-            ...projectData,
-            id,
-            orgId,
-          });
-          set(state => ({
-            projects: state.projects.map(p =>
-              p.id === id ? updatedProject : p
-            ),
-            selectedProject:
-              state.selectedProject?.id === id
-                ? updatedProject
-                : state.selectedProject,
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to update project',
-          });
-          throw error;
-        }
-      },
+    updateProject: async (
+      id: string,
+      projectData: ProjectFormData,
+      orgId: string
+    ) => {
+      try {
+        const updatedProject = await ProjectsDAL.upsertProject({
+          ...projectData,
+          id,
+          orgId,
+        });
+        set(state => ({
+          projects: state.projects.map(p => (p.id === id ? updatedProject : p)),
+          selectedProject:
+            state.selectedProject?.id === id
+              ? updatedProject
+              : state.selectedProject,
+        }));
+      } catch (error) {
+        set({
+          error:
+            error instanceof Error ? error.message : 'Failed to update project',
+        });
+        throw error;
+      }
+    },
 
-      deleteProject: async (id: string) => {
-        try {
-          await ProjectsDAL.deleteProject(id);
-          set(state => ({
-            projects: state.projects.filter(p => p.id !== id),
-            selectedProject:
-              state.selectedProject?.id === id ? null : state.selectedProject,
-          }));
-        } catch (error) {
-          set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to delete project',
-          });
-          throw error;
-        }
-      },
+    deleteProject: async (id: string) => {
+      try {
+        await ProjectsDAL.deleteProject(id);
+        set(state => ({
+          projects: state.projects.filter(p => p.id !== id),
+          selectedProject:
+            state.selectedProject?.id === id ? null : state.selectedProject,
+        }));
+      } catch (error) {
+        set({
+          error:
+            error instanceof Error ? error.message : 'Failed to delete project',
+        });
+        throw error;
+      }
+    },
 
-      selectProject: (project: Project | null) => {
-        set({ selectedProject: project });
-      },
+    selectProject: (project: Project | null) => {
+      set({ selectedProject: project });
+    },
 
-      setViewMode: (mode: ViewMode) => {
-        set({ viewMode: mode });
-      },
+    setViewMode: (mode: ViewMode) => {
+      set({ viewMode: mode });
+    },
 
-      setFilters: (filters: ProjectFilters) => {
-        set({ filters });
-      },
+    setFilters: (filters: ProjectFilters) => {
+      set({ filters });
+    },
 
-      clearError: () => {
-        set({ error: null });
-      },
+    clearError: () => {
+      set({ error: null });
+    },
 
-      getFilteredProjects: () => {
-        const { projects, filters } = get();
-        let filtered = [...projects];
+    getFilteredProjects: () => {
+      const { projects, filters } = get();
+      let filtered = [...projects];
 
-        // Search filter
-        if (filters.search) {
-          const searchLower = filters.search.toLowerCase();
-          filtered = filtered.filter(
-            project =>
-              project.name.toLowerCase().includes(searchLower) ||
-              project.description?.toLowerCase().includes(searchLower) ||
-              project.tags?.some(tag => tag.toLowerCase().includes(searchLower))
-          );
-        }
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        filtered = filtered.filter(
+          project =>
+            project.name.toLowerCase().includes(searchLower) ||
+            project.description?.toLowerCase().includes(searchLower) ||
+            project.tags?.some(tag => tag.toLowerCase().includes(searchLower))
+        );
+      }
 
-        // Status filter
-        if (filters.status && filters.status.length > 0) {
-          filtered = filtered.filter(project =>
-            filters.status!.includes(project.status)
-          );
-        }
+      // Status filter
+      if (filters.status && filters.status.length > 0) {
+        filtered = filtered.filter(project =>
+          filters.status!.includes(project.status)
+        );
+      }
 
-        // Tags filter
-        if (filters.tags && filters.tags.length > 0) {
-          filtered = filtered.filter(project =>
-            project.tags?.some(tag => filters.tags!.includes(tag))
-          );
-        }
+      // Tags filter
+      if (filters.tags && filters.tags.length > 0) {
+        filtered = filtered.filter(project =>
+          project.tags?.some(tag => filters.tags!.includes(tag))
+        );
+      }
 
-        // Client filter
-        if (filters.clientId) {
-          filtered = filtered.filter(
-            project => project.clientId === filters.clientId
-          );
-        }
+      // Client filter
+      if (filters.clientId) {
+        filtered = filtered.filter(
+          project => project.clientId === filters.clientId
+        );
+      }
 
-        return filtered;
-      },
-    })
-    // Temporarily disable persistence to prevent re-render loops
-    // }),
-    // {
-    //   name: 'projects-store',
-    //   partialize: state => ({
-    //     viewMode: state.viewMode,
-    //     filters: state.filters,
-    //   }),
-    // }
+      return filtered;
+    },
+  })
+  // Temporarily disable persistence to prevent re-render loops
+  // }),
+  // {
+  //   name: 'projects-store',
+  //   partialize: state => ({
+  //     viewMode: state.viewMode,
+  //     filters: state.filters,
+  //   }),
+  // }
   // )
 );

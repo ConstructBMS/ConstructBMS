@@ -10,13 +10,16 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Page } from '../../components/layout/Page';
-import { Appearance } from './sections/Appearance';
-import { CRM } from './sections/CRM';
-import { Developer } from './sections/Developer';
-import { FeatureFlags } from './sections/FeatureFlags';
-import { Footer } from './sections/Footer';
-import { General } from './sections/General';
-import { Integrations } from './sections/Integrations';
+import {
+  General,
+  Appearance,
+  FeatureFlags,
+  Integrations,
+  Developer,
+  About,
+  CRM,
+  Footer,
+} from './sections';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general');
@@ -68,7 +71,7 @@ export default function SettingsPage() {
       component: Integrations,
     },
     { id: 'developer', label: 'Developer', icon: Code, component: Developer },
-    { id: 'about', label: 'About', icon: Info, component: null },
+    { id: 'about', label: 'About', icon: Info, component: About },
   ];
 
   const handleTabClick = (tabId: string, href?: string) => {
@@ -95,7 +98,7 @@ export default function SettingsPage() {
         {/* Tabs Navigation */}
         <div className='border-b'>
           <nav className='-mb-px flex space-x-8 overflow-x-auto'>
-            {tabs.map((tab) => {
+            {tabs.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
@@ -104,9 +107,10 @@ export default function SettingsPage() {
                   onClick={() => handleTabClick(tab.id, tab.href)}
                   className={`
                     flex items-center space-x-2 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm
-                    ${isActive
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                    ${
+                      isActive
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
                     }
                   `}
                 >
