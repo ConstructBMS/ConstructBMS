@@ -5,6 +5,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Switch,
 } from '../../../components/ui';
 import { FlagKey } from '../../../lib/utils/featureFlags';
@@ -86,23 +91,27 @@ export function FeatureFlags() {
                 </div>
               </div>
               <div className='flex items-center gap-2'>
-                <select
+                <Select
                   value={flag.audience || 'all'}
-                  onChange={e =>
+                  onValueChange={(value) =>
                     handleAudienceChange(
                       flag.key,
-                      e.target.value as 'all' | 'admins' | 'beta'
+                      value as 'all' | 'admins' | 'beta'
                     )
                   }
-                  className='text-sm border rounded px-2 py-1'
                   disabled={!flag.enabled}
                 >
-                  {audienceOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className='w-32'>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {audienceOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           ))}

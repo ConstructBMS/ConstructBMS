@@ -7,35 +7,43 @@ export interface SwitchProps
   onCheckedChange?: (checked: boolean) => void;
 }
 
-const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, label, onCheckedChange, ...props }, ref) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (onCheckedChange) {
-        onCheckedChange(e.target.checked);
+const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
+  ({ className, label, onCheckedChange, checked, disabled, ...props }, ref) => {
+    const handleClick = () => {
+      if (onCheckedChange && !disabled) {
+        onCheckedChange(!checked);
       }
     };
 
     return (
-      <label className='flex items-center space-x-2'>
-        <input
-          type='checkbox'
+      <div className='flex items-center space-x-2'>
+        <button
+          type='button'
+          role='switch'
+          aria-checked={checked}
+          disabled={disabled}
+          onClick={handleClick}
           className={cn(
-            'peer h-6 w-11 shrink-0 rounded-full border border-input bg-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
+            checked ? 'bg-primary' : 'bg-input',
             className
           )}
           ref={ref}
-          onChange={handleChange}
           {...props}
-        />
-        <div className='peer h-6 w-11 rounded-full border border-input bg-background transition-colors peer-checked:bg-primary peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background peer-disabled:cursor-not-allowed peer-disabled:opacity-50 peer-checked:border-primary'>
-          <div className='pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform peer-checked:translate-x-5 peer-checked:border-primary' />
-        </div>
+        >
+          <span
+            className={cn(
+              'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-lg ring-0 transition duration-200 ease-in-out',
+              checked ? 'translate-x-5' : 'translate-x-0'
+            )}
+          />
+        </button>
         {label && (
           <span className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
             {label}
           </span>
         )}
-      </label>
+      </div>
     );
   }
 );
