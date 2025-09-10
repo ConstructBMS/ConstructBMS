@@ -34,6 +34,14 @@ export function ContactsPage() {
     searchCompanies,
   } = useContactsStore();
 
+  // Debug logging
+  console.log('🔍 ContactsPage Debug:', {
+    totalContacts: contacts.length,
+    totalCompanies: companies.length,
+    contacts: contacts.map(c => ({ name: c.name, category: c.category })),
+    companies: companies.map(c => ({ name: c.name, category: c.category })),
+  });
+
   const [searchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');

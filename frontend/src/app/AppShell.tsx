@@ -6,7 +6,7 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
 import { AuthProvider } from '../contexts/AuthContext';
 import type { KeyboardShortcut } from '../lib/types/core';
-import { ThemeProvider } from './providers/ThemeProvider';
+import { ThemeProvider } from '../contexts/ThemeContext.tsx';
 import { AppRoutes } from './routes';
 import { useSidebarStore } from './store/ui/sidebar.store';
 

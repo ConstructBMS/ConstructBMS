@@ -14,6 +14,14 @@ export default function ClientsPage() {
     removeCompany,
   } = useContactsStore();
 
+  // Debug logging
+  console.log('🔍 ClientsPage Debug:', {
+    totalContacts: contacts.length,
+    totalCompanies: companies.length,
+    contacts: contacts.map(c => ({ name: c.name, category: c.category })),
+    companies: companies.map(c => ({ name: c.name, category: c.category })),
+  });
+
   // Filter for clients only
   const clientContacts = contacts.filter(
     contact => contact.category === 'client'
@@ -23,6 +31,12 @@ export default function ClientsPage() {
   );
 
   const allClients = [...clientContacts, ...clientCompanies];
+
+  console.log('🔍 Filtered Clients:', {
+    clientContacts: clientContacts.length,
+    clientCompanies: clientCompanies.length,
+    allClients: allClients.length,
+  });
 
   const handleEdit = (item: any) => {
     console.log('Edit item:', item);
