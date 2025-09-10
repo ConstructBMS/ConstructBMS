@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file.
 - Switch component warnings - fixed onCheckedChange prop handling and controlled component warnings
 - Feature Flags UI - removed checkboxes, kept only toggles, fixed dropdown text visibility
 - Switch component - converted from checkbox-based to proper button-based toggle component
+- Select component dark mode - fixed dropdown text visibility using CSS variables instead of hardcoded colors
+- Superadmin permissions - fixed demo mode role to enable full access to contacts pages
+- Contacts access - resolved permission guards blocking content display
 
 ### Added
 - Footer component with responsive design and dark mode support
