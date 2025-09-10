@@ -1,36 +1,32 @@
 /**
  * Users & Roles Management Section
- * 
+ *
  * Advanced user management with role assignment, custom permissions,
  * and granular access control.
  */
 
 import {
-  Building2,
   ChevronDown,
   ChevronRight,
-  Copy,
   Edit,
   Eye,
-  Filter,
-  MoreHorizontal,
   Plus,
   Search,
+  Settings,
   Shield,
   Trash2,
-  User,
   UserCheck,
-  Users,
   UserPlus,
   UserX,
-  Settings,
-  Clock,
-  Globe,
-  Lock,
+  Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useEnterprisePermissionsStore } from '../../../app/store/enterprise-permissions.store';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
   Button,
   Card,
   CardContent,
@@ -47,12 +43,11 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
 } from '../../../components/ui';
-import type { CustomRole, EnterpriseUser } from '../../../lib/types/enterprise-permissions';
+import type {
+  CustomRole,
+  EnterpriseUser,
+} from '../../../lib/types/enterprise-permissions';
 
 export function UsersAndRoles() {
   const {
@@ -79,7 +74,9 @@ export function UsersAndRoles() {
   } = useEnterprisePermissionsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'verified' | 'unverified'>('all');
+  const [filterStatus, setFilterStatus] = useState<
+    'all' | 'active' | 'inactive' | 'verified' | 'unverified'
+  >('all');
   const [filterRole, setFilterRole] = useState<string>('all');
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
   const [expandedRoles, setExpandedRoles] = useState<Set<string>>(new Set());
@@ -88,27 +85,31 @@ export function UsersAndRoles() {
   const userSummary = getUserSummary();
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = filterStatus === 'all' ||
-                         (filterStatus === 'active' && user.isActive) ||
-                         (filterStatus === 'inactive' && !user.isActive) ||
-                         (filterStatus === 'verified' && user.isVerified) ||
-                         (filterStatus === 'unverified' && !user.isVerified);
-    
-    const matchesRole = filterRole === 'all' ||
-                       user.primaryRole === filterRole ||
-                       user.additionalRoles.includes(filterRole);
-    
+    const matchesSearch =
+      user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      filterStatus === 'all' ||
+      (filterStatus === 'active' && user.isActive) ||
+      (filterStatus === 'inactive' && !user.isActive) ||
+      (filterStatus === 'verified' && user.isVerified) ||
+      (filterStatus === 'unverified' && !user.isVerified);
+
+    const matchesRole =
+      filterRole === 'all' ||
+      user.primaryRole === filterRole ||
+      user.additionalRoles.includes(filterRole);
+
     return matchesSearch && matchesStatus && matchesRole;
   });
 
   const filteredRoles = roles.filter(role => {
-    const matchesSearch = role.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         role.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      role.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      role.description?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -196,7 +197,10 @@ export function UsersAndRoles() {
     }
   };
 
-  const handleToggleUserVerification = async (userId: string, isVerified: boolean) => {
+  const handleToggleUserVerification = async (
+    userId: string,
+    isVerified: boolean
+  ) => {
     try {
       await updateUser(userId, { isVerified });
     } catch (error) {
@@ -221,7 +225,8 @@ export function UsersAndRoles() {
         <div>
           <h2 className='text-2xl font-semibold'>Users & Roles</h2>
           <p className='text-muted-foreground'>
-            Manage users, assign roles, and configure granular access permissions.
+            Manage users, assign roles, and configure granular access
+            permissions.
           </p>
         </div>
         <div className='flex items-center gap-2'>
@@ -260,11 +265,15 @@ export function UsersAndRoles() {
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Verified Users</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              Verified Users
+            </CardTitle>
             <UserCheck className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>{userSummary.verifiedUsers}</div>
+            <div className='text-2xl font-bold'>
+              {userSummary.verifiedUsers}
+            </div>
             <p className='text-xs text-muted-foreground'>
               {userSummary.totalUsers - userSummary.verifiedUsers} pending
             </p>
@@ -273,11 +282,15 @@ export function UsersAndRoles() {
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Custom Permissions</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              Custom Permissions
+            </CardTitle>
             <Settings className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>{userSummary.usersWithCustomPermissions}</div>
+            <div className='text-2xl font-bold'>
+              {userSummary.usersWithCustomPermissions}
+            </div>
             <p className='text-xs text-muted-foreground'>
               users with custom access
             </p>
@@ -316,11 +329,14 @@ export function UsersAndRoles() {
                 <Input
                   placeholder='Search users...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className='pl-10 w-64'
                 />
               </div>
-              <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
+              <Select
+                value={filterStatus}
+                onValueChange={(value: any) => setFilterStatus(value)}
+              >
                 <SelectTrigger className='w-32'>
                   <SelectValue />
                 </SelectTrigger>
@@ -332,13 +348,16 @@ export function UsersAndRoles() {
                   <SelectItem value='unverified'>Unverified</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={filterRole} onValueChange={(value: any) => setFilterRole(value)}>
+              <Select
+                value={filterRole}
+                onValueChange={(value: any) => setFilterRole(value)}
+              >
                 <SelectTrigger className='w-40'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='all'>All Roles</SelectItem>
-                  {roles.map((role) => (
+                  {roles.map(role => (
                     <SelectItem key={role.id} value={role.id}>
                       {role.displayName}
                     </SelectItem>
@@ -346,19 +365,27 @@ export function UsersAndRoles() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleCreateUser} className='flex items-center gap-2'>
+            <Button
+              onClick={handleCreateUser}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Create User
             </Button>
           </div>
 
           <div className='space-y-2'>
-            {filteredUsers.map((user) => {
+            {filteredUsers.map(user => {
               const userRoles = getUserRoles(user);
-              const primaryRole = roles.find(role => role.id === user.primaryRole);
+              const primaryRole = roles.find(
+                role => role.id === user.primaryRole
+              );
 
               return (
-                <Card key={user.id} className='cursor-pointer hover:shadow-md transition-shadow'>
+                <Card
+                  key={user.id}
+                  className='cursor-pointer hover:shadow-md transition-shadow'
+                >
                   <CardHeader className='pb-3'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-3'>
@@ -374,19 +401,27 @@ export function UsersAndRoles() {
                         </button>
                         <Avatar className='h-10 w-10'>
                           <AvatarImage src={user.avatar} />
-                          <AvatarFallback>{getUserInitials(user)}</AvatarFallback>
+                          <AvatarFallback>
+                            {getUserInitials(user)}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
                           <h3 className='font-medium'>{user.displayName}</h3>
-                          <p className='text-sm text-muted-foreground'>{user.email}</p>
+                          <p className='text-sm text-muted-foreground'>
+                            {user.email}
+                          </p>
                         </div>
                       </div>
                       <div className='flex items-center gap-2'>
                         <div className='flex items-center gap-1'>
-                          <Badge variant={user.isActive ? 'default' : 'secondary'}>
+                          <Badge
+                            variant={user.isActive ? 'default' : 'secondary'}
+                          >
                             {user.isActive ? 'Active' : 'Inactive'}
                           </Badge>
-                          <Badge variant={user.isVerified ? 'default' : 'outline'}>
+                          <Badge
+                            variant={user.isVerified ? 'default' : 'outline'}
+                          >
                             {user.isVerified ? 'Verified' : 'Unverified'}
                           </Badge>
                         </div>
@@ -401,9 +436,15 @@ export function UsersAndRoles() {
                           <Button
                             variant='ghost'
                             size='sm'
-                            onClick={() => handleToggleUserStatus(user.id, !user.isActive)}
+                            onClick={() =>
+                              handleToggleUserStatus(user.id, !user.isActive)
+                            }
                           >
-                            {user.isActive ? <UserX className='h-4 w-4' /> : <UserCheck className='h-4 w-4' />}
+                            {user.isActive ? (
+                              <UserX className='h-4 w-4' />
+                            ) : (
+                              <UserCheck className='h-4 w-4' />
+                            )}
                           </Button>
                           <Button
                             variant='ghost'
@@ -416,7 +457,7 @@ export function UsersAndRoles() {
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   {expandedUsers.has(user.id) && (
                     <CardContent className='pt-0'>
                       <div className='space-y-4'>
@@ -424,67 +465,102 @@ export function UsersAndRoles() {
                           <h4 className='font-medium mb-2'>Role Information</h4>
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div>
-                              <label className='text-sm font-medium text-muted-foreground'>Primary Role</label>
+                              <label className='text-sm font-medium text-muted-foreground'>
+                                Primary Role
+                              </label>
                               <div className='flex items-center gap-2 mt-1'>
                                 {primaryRole && (
                                   <>
                                     <div
                                       className='w-3 h-3 rounded-full'
-                                      style={{ backgroundColor: primaryRole.color }}
+                                      style={{
+                                        backgroundColor: primaryRole.color,
+                                      }}
                                     />
-                                    <span className='text-sm'>{primaryRole.displayName}</span>
+                                    <span className='text-sm'>
+                                      {primaryRole.displayName}
+                                    </span>
                                   </>
                                 )}
                               </div>
                             </div>
                             <div>
-                              <label className='text-sm font-medium text-muted-foreground'>Additional Roles</label>
+                              <label className='text-sm font-medium text-muted-foreground'>
+                                Additional Roles
+                              </label>
                               <div className='flex flex-wrap gap-1 mt-1'>
-                                {user.additionalRoles.map((roleId) => {
+                                {user.additionalRoles.map(roleId => {
                                   const role = roles.find(r => r.id === roleId);
                                   return role ? (
-                                    <Badge key={roleId} variant='outline' className='text-xs'>
+                                    <Badge
+                                      key={roleId}
+                                      variant='outline'
+                                      className='text-xs'
+                                    >
                                       {role.displayName}
                                     </Badge>
                                   ) : null;
                                 })}
                                 {user.additionalRoles.length === 0 && (
-                                  <span className='text-sm text-muted-foreground'>None</span>
+                                  <span className='text-sm text-muted-foreground'>
+                                    None
+                                  </span>
                                 )}
                               </div>
                             </div>
                           </div>
                         </div>
-                        
+
                         <div>
                           <h4 className='font-medium mb-2'>User Details</h4>
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
                             <div>
-                              <span className='text-muted-foreground'>Created:</span>
-                              <span className='ml-2'>{new Date(user.createdAt).toLocaleDateString()}</span>
-                            </div>
-                            <div>
-                              <span className='text-muted-foreground'>Last Login:</span>
+                              <span className='text-muted-foreground'>
+                                Created:
+                              </span>
                               <span className='ml-2'>
-                                {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
+                                {new Date(user.createdAt).toLocaleDateString()}
                               </span>
                             </div>
                             <div>
-                              <span className='text-muted-foreground'>Custom Permissions:</span>
-                              <span className='ml-2'>{user.customPermissions.length}</span>
+                              <span className='text-muted-foreground'>
+                                Last Login:
+                              </span>
+                              <span className='ml-2'>
+                                {user.lastLoginAt
+                                  ? new Date(
+                                      user.lastLoginAt
+                                    ).toLocaleDateString()
+                                  : 'Never'}
+                              </span>
                             </div>
                             <div>
-                              <span className='text-muted-foreground'>Restrictions:</span>
-                              <span className='ml-2'>{user.restrictions.length}</span>
+                              <span className='text-muted-foreground'>
+                                Custom Permissions:
+                              </span>
+                              <span className='ml-2'>
+                                {user.customPermissions.length}
+                              </span>
+                            </div>
+                            <div>
+                              <span className='text-muted-foreground'>
+                                Restrictions:
+                              </span>
+                              <span className='ml-2'>
+                                {user.restrictions.length}
+                              </span>
                             </div>
                           </div>
                         </div>
 
                         {user.customPermissions.length > 0 && (
                           <div>
-                            <h4 className='font-medium mb-2'>Custom Permissions ({user.customPermissions.length})</h4>
+                            <h4 className='font-medium mb-2'>
+                              Custom Permissions (
+                              {user.customPermissions.length})
+                            </h4>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                              {user.customPermissions.map((permission) => (
+                              {user.customPermissions.map(permission => (
                                 <div
                                   key={permission.id}
                                   className='flex items-center justify-between p-2 bg-muted rounded'
@@ -493,13 +569,26 @@ export function UsersAndRoles() {
                                     {permission.resource}.{permission.action}
                                   </span>
                                   <div className='flex items-center gap-2'>
-                                    <Badge variant={permission.granted ? 'default' : 'destructive'}>
-                                      {permission.granted ? 'Granted' : 'Denied'}
+                                    <Badge
+                                      variant={
+                                        permission.granted
+                                          ? 'default'
+                                          : 'destructive'
+                                      }
+                                    >
+                                      {permission.granted
+                                        ? 'Granted'
+                                        : 'Denied'}
                                     </Badge>
                                     <Button
                                       variant='ghost'
                                       size='sm'
-                                      onClick={() => removeCustomPermission(user.id, permission.id)}
+                                      onClick={() =>
+                                        removeCustomPermission(
+                                          user.id,
+                                          permission.id
+                                        )
+                                      }
                                     >
                                       <Trash2 className='h-3 w-3' />
                                     </Button>
@@ -526,24 +615,32 @@ export function UsersAndRoles() {
               <Input
                 placeholder='Search roles...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className='pl-10 w-64'
               />
             </div>
-            <Button onClick={handleCreateRole} className='flex items-center gap-2'>
+            <Button
+              onClick={handleCreateRole}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Create Role
             </Button>
           </div>
 
           <div className='space-y-2'>
-            {filteredRoles.map((role) => {
-              const usersWithRole = users.filter(user => 
-                user.primaryRole === role.id || user.additionalRoles.includes(role.id)
+            {filteredRoles.map(role => {
+              const usersWithRole = users.filter(
+                user =>
+                  user.primaryRole === role.id ||
+                  user.additionalRoles.includes(role.id)
               );
 
               return (
-                <Card key={role.id} className='cursor-pointer hover:shadow-md transition-shadow'>
+                <Card
+                  key={role.id}
+                  className='cursor-pointer hover:shadow-md transition-shadow'
+                >
                   <CardHeader className='pb-3'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-3'>
@@ -564,12 +661,16 @@ export function UsersAndRoles() {
                           />
                           <div>
                             <h3 className='font-medium'>{role.displayName}</h3>
-                            <p className='text-sm text-muted-foreground'>{role.description}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {role.description}
+                            </p>
                           </div>
                         </div>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <Badge variant={role.isSystem ? 'default' : 'secondary'}>
+                        <Badge
+                          variant={role.isSystem ? 'default' : 'secondary'}
+                        >
                           {role.isSystem ? 'System' : 'Custom'}
                         </Badge>
                         <Badge variant='outline'>
@@ -586,7 +687,9 @@ export function UsersAndRoles() {
                           <Button
                             variant='ghost'
                             size='sm'
-                            onClick={() => {/* TODO: Edit role */}}
+                            onClick={() => {
+                              /* TODO: Edit role */
+                            }}
                           >
                             <Edit className='h-4 w-4' />
                           </Button>
@@ -594,14 +697,16 @@ export function UsersAndRoles() {
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   {expandedRoles.has(role.id) && (
                     <CardContent className='pt-0'>
                       <div className='space-y-4'>
                         <div>
-                          <h4 className='font-medium mb-2'>Permissions ({role.permissions.length})</h4>
+                          <h4 className='font-medium mb-2'>
+                            Permissions ({role.permissions.length})
+                          </h4>
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                            {role.permissions.map((permission) => (
+                            {role.permissions.map(permission => (
                               <div
                                 key={permission.id}
                                 className='flex items-center justify-between p-2 bg-muted rounded'
@@ -609,25 +714,42 @@ export function UsersAndRoles() {
                                 <span className='text-sm'>
                                   {permission.resource}.{permission.action}
                                 </span>
-                                <Badge variant={permission.granted ? 'default' : 'destructive'}>
+                                <Badge
+                                  variant={
+                                    permission.granted
+                                      ? 'default'
+                                      : 'destructive'
+                                  }
+                                >
                                   {permission.granted ? 'Granted' : 'Denied'}
                                 </Badge>
                               </div>
                             ))}
                           </div>
                         </div>
-                        
+
                         <div>
-                          <h4 className='font-medium mb-2'>Users with this Role ({usersWithRole.length})</h4>
+                          <h4 className='font-medium mb-2'>
+                            Users with this Role ({usersWithRole.length})
+                          </h4>
                           <div className='flex flex-wrap gap-2'>
-                            {usersWithRole.map((user) => (
-                              <div key={user.id} className='flex items-center gap-2 p-2 bg-muted rounded'>
+                            {usersWithRole.map(user => (
+                              <div
+                                key={user.id}
+                                className='flex items-center gap-2 p-2 bg-muted rounded'
+                              >
                                 <Avatar className='h-6 w-6'>
-                                  <AvatarFallback className='text-xs'>{getUserInitials(user)}</AvatarFallback>
+                                  <AvatarFallback className='text-xs'>
+                                    {getUserInitials(user)}
+                                  </AvatarFallback>
                                 </Avatar>
-                                <span className='text-sm'>{user.displayName}</span>
+                                <span className='text-sm'>
+                                  {user.displayName}
+                                </span>
                                 {user.primaryRole === role.id && (
-                                  <Badge variant='outline' className='text-xs'>Primary</Badge>
+                                  <Badge variant='outline' className='text-xs'>
+                                    Primary
+                                  </Badge>
                                 )}
                               </div>
                             ))}
@@ -655,7 +777,10 @@ export function UsersAndRoles() {
               <div className='text-center py-8 text-muted-foreground'>
                 <Users className='h-12 w-12 mx-auto mb-4 opacity-50' />
                 <p>Role assignment management coming soon...</p>
-                <p className='text-sm'>This will provide a comprehensive interface for managing role assignments.</p>
+                <p className='text-sm'>
+                  This will provide a comprehensive interface for managing role
+                  assignments.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -667,14 +792,18 @@ export function UsersAndRoles() {
             <CardHeader>
               <CardTitle>Custom Permissions</CardTitle>
               <CardDescription>
-                Manage custom permissions and access overrides for specific users.
+                Manage custom permissions and access overrides for specific
+                users.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className='text-center py-8 text-muted-foreground'>
                 <Settings className='h-12 w-12 mx-auto mb-4 opacity-50' />
                 <p>Custom permissions management coming soon...</p>
-                <p className='text-sm'>This will allow granular permission overrides for individual users.</p>
+                <p className='text-sm'>
+                  This will allow granular permission overrides for individual
+                  users.
+                </p>
               </div>
             </CardContent>
           </Card>

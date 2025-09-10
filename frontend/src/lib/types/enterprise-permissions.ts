@@ -1,6 +1,6 @@
 /**
  * Enterprise-Grade Permissions System Types
- * 
+ *
  * This file defines the comprehensive types for a fully customizable,
  * granular permissions system with custom roles, logic-based rules,
  * and enterprise-level access control.
@@ -10,27 +10,73 @@
 // CORE PERMISSION TYPES
 // ============================================================================
 
-export type PermissionAction = 
-  | 'create' | 'read' | 'update' | 'delete'
-  | 'view' | 'edit' | 'manage' | 'admin'
-  | 'approve' | 'reject' | 'publish' | 'archive'
-  | 'download' | 'upload' | 'share' | 'export'
-  | 'import' | 'backup' | 'restore' | 'audit';
+export type PermissionAction =
+  | 'create'
+  | 'read'
+  | 'update'
+  | 'delete'
+  | 'view'
+  | 'edit'
+  | 'manage'
+  | 'admin'
+  | 'approve'
+  | 'reject'
+  | 'publish'
+  | 'archive'
+  | 'download'
+  | 'upload'
+  | 'share'
+  | 'export'
+  | 'import'
+  | 'backup'
+  | 'restore'
+  | 'audit';
 
-export type PermissionResource = 
-  | 'users' | 'roles' | 'permissions' | 'organizations'
-  | 'projects' | 'contacts' | 'documents' | 'files'
-  | 'estimates' | 'invoices' | 'purchase_orders' | 'workflows'
-  | 'settings' | 'reports' | 'analytics' | 'integrations'
-  | 'notifications' | 'audit_logs' | 'backups' | 'system';
+export type PermissionResource =
+  | 'users'
+  | 'roles'
+  | 'permissions'
+  | 'organizations'
+  | 'projects'
+  | 'contacts'
+  | 'documents'
+  | 'files'
+  | 'estimates'
+  | 'invoices'
+  | 'purchase_orders'
+  | 'workflows'
+  | 'settings'
+  | 'reports'
+  | 'analytics'
+  | 'integrations'
+  | 'notifications'
+  | 'audit_logs'
+  | 'backups'
+  | 'system';
 
-export type PermissionScope = 'global' | 'organization' | 'project' | 'user' | 'resource';
+export type PermissionScope =
+  | 'global'
+  | 'organization'
+  | 'project'
+  | 'user'
+  | 'resource';
 
-export type PermissionCondition = 
-  | 'equals' | 'not_equals' | 'contains' | 'not_contains'
-  | 'starts_with' | 'ends_with' | 'greater_than' | 'less_than'
-  | 'in' | 'not_in' | 'is_null' | 'is_not_null'
-  | 'regex' | 'date_range' | 'time_range';
+export type PermissionCondition =
+  | 'equals'
+  | 'not_equals'
+  | 'contains'
+  | 'not_contains'
+  | 'starts_with'
+  | 'ends_with'
+  | 'greater_than'
+  | 'less_than'
+  | 'in'
+  | 'not_in'
+  | 'is_null'
+  | 'is_not_null'
+  | 'regex'
+  | 'date_range'
+  | 'time_range';
 
 // ============================================================================
 // PERMISSION RULE TYPES
@@ -103,7 +149,12 @@ export interface RolePermission {
 
 export interface RoleRestriction {
   id: string;
-  type: 'time_based' | 'ip_based' | 'device_based' | 'location_based' | 'custom';
+  type:
+    | 'time_based'
+    | 'ip_based'
+    | 'device_based'
+    | 'location_based'
+    | 'custom';
   name: string;
   description?: string;
   conditions: LogicCondition[];
@@ -149,7 +200,12 @@ export interface UserCustomPermission {
 
 export interface UserRestriction {
   id: string;
-  type: 'time_based' | 'ip_based' | 'device_based' | 'location_based' | 'custom';
+  type:
+    | 'time_based'
+    | 'ip_based'
+    | 'device_based'
+    | 'location_based'
+    | 'custom';
   name: string;
   description?: string;
   conditions: LogicCondition[];
@@ -237,14 +293,33 @@ export interface FolderAccessPermission {
   grantedAt: string;
 }
 
-export type FileAction = 
-  | 'view' | 'download' | 'upload' | 'edit' | 'delete'
-  | 'share' | 'move' | 'copy' | 'rename' | 'archive'
-  | 'restore' | 'version_control' | 'comment' | 'approve';
+export type FileAction =
+  | 'view'
+  | 'download'
+  | 'upload'
+  | 'edit'
+  | 'delete'
+  | 'share'
+  | 'move'
+  | 'copy'
+  | 'rename'
+  | 'archive'
+  | 'restore'
+  | 'version_control'
+  | 'comment'
+  | 'approve';
 
 export interface FileCondition {
   id: string;
-  field: 'file_type' | 'file_size' | 'file_name' | 'file_path' | 'created_date' | 'modified_date' | 'owner' | 'tags';
+  field:
+    | 'file_type'
+    | 'file_size'
+    | 'file_name'
+    | 'file_path'
+    | 'created_date'
+    | 'modified_date'
+    | 'owner'
+    | 'tags';
   operator: PermissionCondition;
   value: any;
   logicalOperator?: 'AND' | 'OR' | 'NOT';
@@ -427,7 +502,12 @@ export interface PermissionRuleForm {
 // UTILITY TYPES
 // ============================================================================
 
-export type PermissionStatus = 'granted' | 'denied' | 'conditional' | 'expired' | 'restricted';
+export type PermissionStatus =
+  | 'granted'
+  | 'denied'
+  | 'conditional'
+  | 'expired'
+  | 'restricted';
 
 export interface PermissionSummary {
   totalPermissions: number;

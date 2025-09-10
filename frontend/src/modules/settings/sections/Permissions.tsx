@@ -1,19 +1,15 @@
 /**
  * Enterprise Permissions Management Section
- * 
+ *
  * Comprehensive permissions management with custom roles, granular permissions,
  * and enterprise-grade access control.
  */
 
 import {
-  Building2,
   ChevronDown,
   ChevronRight,
   Copy,
-  Edit,
   Eye,
-  Filter,
-  MoreHorizontal,
   Plus,
   Search,
   Shield,
@@ -42,7 +38,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '../../../components/ui';
-import type { CustomRole, EnterpriseUser } from '../../../lib/types/enterprise-permissions';
+import type { CustomRole } from '../../../lib/types/enterprise-permissions';
 
 export function Permissions() {
   const {
@@ -73,7 +69,9 @@ export function Permissions() {
   } = useEnterprisePermissionsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'system' | 'custom'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'system' | 'custom'>(
+    'all'
+  );
   const [expandedRoles, setExpandedRoles] = useState<Set<string>>(new Set());
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
 
@@ -82,17 +80,20 @@ export function Permissions() {
   const permissionSummary = getPermissionSummary();
 
   const filteredRoles = roles.filter(role => {
-    const matchesSearch = role.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         role.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = filterType === 'all' || 
-                         (filterType === 'system' && role.isSystem) ||
-                         (filterType === 'custom' && !role.isSystem);
+    const matchesSearch =
+      role.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      role.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter =
+      filterType === 'all' ||
+      (filterType === 'system' && role.isSystem) ||
+      (filterType === 'custom' && !role.isSystem);
     return matchesSearch && matchesFilter;
   });
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -184,7 +185,8 @@ export function Permissions() {
         <div>
           <h2 className='text-2xl font-semibold'>Enterprise Permissions</h2>
           <p className='text-muted-foreground'>
-            Manage roles, users, and granular permissions with enterprise-grade access control.
+            Manage roles, users, and granular permissions with enterprise-grade
+            access control.
           </p>
         </div>
         <div className='flex items-center gap-2'>
@@ -222,7 +224,8 @@ export function Permissions() {
           <CardContent>
             <div className='text-2xl font-bold'>{userSummary.totalUsers}</div>
             <p className='text-xs text-muted-foreground'>
-              {userSummary.activeUsers} active, {userSummary.verifiedUsers} verified
+              {userSummary.activeUsers} active, {userSummary.verifiedUsers}{' '}
+              verified
             </p>
           </CardContent>
         </Card>
@@ -233,9 +236,12 @@ export function Permissions() {
             <Shield className='h-4 w-4 text-muted-foreground' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>{permissionSummary.totalPermissions}</div>
+            <div className='text-2xl font-bold'>
+              {permissionSummary.totalPermissions}
+            </div>
             <p className='text-xs text-muted-foreground'>
-              {permissionSummary.grantedPermissions} granted, {permissionSummary.deniedPermissions} denied
+              {permissionSummary.grantedPermissions} granted,{' '}
+              {permissionSummary.deniedPermissions} denied
             </p>
           </CardContent>
         </Card>
@@ -259,11 +265,14 @@ export function Permissions() {
                 <Input
                   placeholder='Search roles...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className='pl-10 w-64'
                 />
               </div>
-              <Select value={filterType} onValueChange={(value: any) => setFilterType(value)}>
+              <Select
+                value={filterType}
+                onValueChange={(value: any) => setFilterType(value)}
+              >
                 <SelectTrigger className='w-32'>
                   <SelectValue />
                 </SelectTrigger>
@@ -274,15 +283,21 @@ export function Permissions() {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleCreateRole} className='flex items-center gap-2'>
+            <Button
+              onClick={handleCreateRole}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Create Role
             </Button>
           </div>
 
           <div className='space-y-2'>
-            {filteredRoles.map((role) => (
-              <Card key={role.id} className='cursor-pointer hover:shadow-md transition-shadow'>
+            {filteredRoles.map(role => (
+              <Card
+                key={role.id}
+                className='cursor-pointer hover:shadow-md transition-shadow'
+              >
                 <CardHeader className='pb-3'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
@@ -303,16 +318,20 @@ export function Permissions() {
                         />
                         <div>
                           <h3 className='font-medium'>{role.displayName}</h3>
-                          <p className='text-sm text-muted-foreground'>{role.description}</p>
+                          <p className='text-sm text-muted-foreground'>
+                            {role.description}
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className='flex items-center gap-2'>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        role.isSystem 
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                          : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          role.isSystem
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        }`}
+                      >
                         {role.isSystem ? 'System' : 'Custom'}
                       </span>
                       <div className='flex items-center gap-1'>
@@ -343,14 +362,16 @@ export function Permissions() {
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 {expandedRoles.has(role.id) && (
                   <CardContent className='pt-0'>
                     <div className='space-y-4'>
                       <div>
-                        <h4 className='font-medium mb-2'>Permissions ({role.permissions.length})</h4>
+                        <h4 className='font-medium mb-2'>
+                          Permissions ({role.permissions.length})
+                        </h4>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                          {role.permissions.map((permission) => (
+                          {role.permissions.map(permission => (
                             <div
                               key={permission.id}
                               className='flex items-center justify-between p-2 bg-muted rounded'
@@ -358,24 +379,28 @@ export function Permissions() {
                               <span className='text-sm'>
                                 {permission.resource}.{permission.action}
                               </span>
-                              <span className={`text-xs px-2 py-1 rounded ${
-                                permission.granted
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                              }`}>
+                              <span
+                                className={`text-xs px-2 py-1 rounded ${
+                                  permission.granted
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                }`}
+                              >
                                 {permission.granted ? 'Granted' : 'Denied'}
                               </span>
                             </div>
                           ))}
                         </div>
                       </div>
-                      
+
                       {role.inheritance && role.inheritance.length > 0 && (
                         <div>
                           <h4 className='font-medium mb-2'>Inherits From</h4>
                           <div className='flex flex-wrap gap-2'>
-                            {role.inheritance.map((inheritedRoleId) => {
-                              const inheritedRole = roles.find(r => r.id === inheritedRoleId);
+                            {role.inheritance.map(inheritedRoleId => {
+                              const inheritedRole = roles.find(
+                                r => r.id === inheritedRoleId
+                              );
                               return inheritedRole ? (
                                 <span
                                   key={inheritedRoleId}
@@ -404,24 +429,30 @@ export function Permissions() {
               <Input
                 placeholder='Search users...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className='pl-10 w-64'
               />
             </div>
-            <Button onClick={handleCreateUser} className='flex items-center gap-2'>
+            <Button
+              onClick={handleCreateUser}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Create User
             </Button>
           </div>
 
           <div className='space-y-2'>
-            {filteredUsers.map((user) => {
+            {filteredUsers.map(user => {
               const userRoles = [user.primaryRole, ...user.additionalRoles]
                 .map(roleId => roles.find(role => role.id === roleId))
                 .filter(Boolean) as CustomRole[];
 
               return (
-                <Card key={user.id} className='cursor-pointer hover:shadow-md transition-shadow'>
+                <Card
+                  key={user.id}
+                  className='cursor-pointer hover:shadow-md transition-shadow'
+                >
                   <CardHeader className='pb-3'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-3'>
@@ -438,21 +469,26 @@ export function Permissions() {
                         <div className='flex items-center gap-3'>
                           <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center'>
                             <span className='text-sm font-medium text-primary-foreground'>
-                              {user.firstName[0]}{user.lastName[0]}
+                              {user.firstName[0]}
+                              {user.lastName[0]}
                             </span>
                           </div>
                           <div>
                             <h3 className='font-medium'>{user.displayName}</h3>
-                            <p className='text-sm text-muted-foreground'>{user.email}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {user.email}
+                            </p>
                           </div>
                         </div>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          user.isActive
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        }`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            user.isActive
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                          }`}
+                        >
                           {user.isActive ? 'Active' : 'Inactive'}
                         </span>
                         <div className='flex items-center gap-1'>
@@ -474,21 +510,23 @@ export function Permissions() {
                       </div>
                     </div>
                   </CardHeader>
-                  
+
                   {expandedUsers.has(user.id) && (
                     <CardContent className='pt-0'>
                       <div className='space-y-4'>
                         <div>
-                          <h4 className='font-medium mb-2'>Roles ({userRoles.length})</h4>
+                          <h4 className='font-medium mb-2'>
+                            Roles ({userRoles.length})
+                          </h4>
                           <div className='flex flex-wrap gap-2'>
-                            {userRoles.map((role) => (
+                            {userRoles.map(role => (
                               <span
                                 key={role.id}
                                 className='px-2 py-1 text-xs rounded-full flex items-center gap-1'
-                                style={{ 
+                                style={{
                                   backgroundColor: `${role.color}20`,
                                   color: role.color,
-                                  border: `1px solid ${role.color}40`
+                                  border: `1px solid ${role.color}40`,
                                 }}
                               >
                                 {role.displayName}
@@ -499,12 +537,15 @@ export function Permissions() {
                             ))}
                           </div>
                         </div>
-                        
+
                         {user.customPermissions.length > 0 && (
                           <div>
-                            <h4 className='font-medium mb-2'>Custom Permissions ({user.customPermissions.length})</h4>
+                            <h4 className='font-medium mb-2'>
+                              Custom Permissions (
+                              {user.customPermissions.length})
+                            </h4>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                              {user.customPermissions.map((permission) => (
+                              {user.customPermissions.map(permission => (
                                 <div
                                   key={permission.id}
                                   className='flex items-center justify-between p-2 bg-muted rounded'
@@ -512,11 +553,13 @@ export function Permissions() {
                                   <span className='text-sm'>
                                     {permission.resource}.{permission.action}
                                   </span>
-                                  <span className={`text-xs px-2 py-1 rounded ${
-                                    permission.granted
-                                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                  }`}>
+                                  <span
+                                    className={`text-xs px-2 py-1 rounded ${
+                                      permission.granted
+                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                    }`}
+                                  >
                                     {permission.granted ? 'Granted' : 'Denied'}
                                   </span>
                                 </div>
@@ -539,14 +582,17 @@ export function Permissions() {
             <CardHeader>
               <CardTitle>Permission Matrix</CardTitle>
               <CardDescription>
-                Visual representation of roles and their permissions across all resources.
+                Visual representation of roles and their permissions across all
+                resources.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className='text-center py-8 text-muted-foreground'>
                 <Shield className='h-12 w-12 mx-auto mb-4 opacity-50' />
                 <p>Permission Matrix view coming soon...</p>
-                <p className='text-sm'>This will show a comprehensive grid of roles vs permissions.</p>
+                <p className='text-sm'>
+                  This will show a comprehensive grid of roles vs permissions.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -565,7 +611,9 @@ export function Permissions() {
               <div className='text-center py-8 text-muted-foreground'>
                 <UserCheck className='h-12 w-12 mx-auto mb-4 opacity-50' />
                 <p>Audit logging coming soon...</p>
-                <p className='text-sm'>This will show detailed logs of all permission changes.</p>
+                <p className='text-sm'>
+                  This will show detailed logs of all permission changes.
+                </p>
               </div>
             </CardContent>
           </Card>
