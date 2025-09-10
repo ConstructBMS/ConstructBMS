@@ -9,9 +9,12 @@ All notable changes to this project will be documented in this file.
 - Projects page 401 errors - replaced /api calls with Supabase DAL
 - Missing footer component - added global footer to AppShell
 - Contacts variants not rendering - created Clients/Contractors/Consultants pages with proper filtering
-- React Router v7 future flags warnings - updated to use createBrowserRouter with future flags
+- React Router v7 future flags warnings - updated to React Router 7.8.2 to resolve all warnings
 - Error boundary missing - added ErrorBoundary component with fallback UI
 - localStorage usage audit - identified remaining usage for future cleanup
+- Footer rendering in main content area - removed footer from main content to fix contacts pages
+- Settings 404 errors - fixed Permissions and Users & Roles tabs navigation issues
+- Switch component warnings - fixed onCheckedChange prop handling and controlled component warnings
 
 ### Added
 - Footer component with responsive design and dark mode support
