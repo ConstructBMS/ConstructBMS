@@ -5,12 +5,12 @@ import {
   Moon,
   Search,
   Sun,
-  User,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { Button, Input } from '../ui';
+import { UserMenu } from './UserMenu';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();
@@ -162,20 +162,7 @@ export function Topbar() {
           </Button>
 
           {/* User Menu */}
-          <div className='flex items-center space-x-2'>
-            <div className='h-8 w-8 rounded-full bg-muted flex items-center justify-center'>
-              <User className='h-4 w-4' />
-            </div>
-            <div className='hidden sm:block'>
-              <div className='text-sm font-medium'>Admin User</div>
-              <div className='text-xs text-muted-foreground'>
-                admin@constructbms.com
-              </div>
-            </div>
-            <Button variant='ghost' size='icon' className='h-8 w-8'>
-              <ChevronDown className='h-4 w-4' />
-            </Button>
-          </div>
+          <UserMenu />
         </div>
       </div>
     </header>
