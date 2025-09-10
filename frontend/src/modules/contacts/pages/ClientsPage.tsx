@@ -65,12 +65,28 @@ export default function ClientsPage() {
           </div>
         </div>
 
+        {/* Debug Info */}
+        <div className='mb-4 p-4 bg-muted rounded-lg'>
+          <h3 className='font-medium mb-2'>Debug Information:</h3>
+          <p>Total Contacts: {contacts.length}</p>
+          <p>Total Companies: {companies.length}</p>
+          <p>Client Contacts: {clientContacts.length}</p>
+          <p>Client Companies: {clientCompanies.length}</p>
+          <p>All Clients: {allClients.length}</p>
+          <p>View Mode: {viewMode}</p>
+        </div>
+
         {allClients.length === 0 ? (
           <div className='text-center py-12'>
             <p className='text-muted-foreground'>No clients found.</p>
             <p className='text-sm text-muted-foreground mt-2'>
               Add your first client to get started.
             </p>
+            <div className='mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
+              <p className='text-sm text-yellow-800'>
+                <strong>Debug:</strong> If you see this message, the contacts store might be empty or the filtering is not working correctly.
+              </p>
+            </div>
           </div>
         ) : (
           <div className='space-y-4'>

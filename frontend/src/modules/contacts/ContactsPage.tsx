@@ -278,6 +278,20 @@ export function ContactsPage() {
           </div>
         </div>
 
+        {/* Debug Info */}
+        <div className='mb-4 p-4 bg-muted rounded-lg'>
+          <h3 className='font-medium mb-2'>Debug Information:</h3>
+          <p>Total Contacts: {contacts.length}</p>
+          <p>Total Companies: {companies.length}</p>
+          <p>Filtered Contacts: {filteredContacts.length}</p>
+          <p>Filtered Companies: {filteredCompanies.length}</p>
+          <p>Total Items: {totalItems}</p>
+          <p>Search Query: "{searchQuery}"</p>
+          <p>Filter Type: {filterType}</p>
+          <p>Filter Category: {filterCategory}</p>
+          <p>View Mode: {viewMode}</p>
+        </div>
+
         {/* Results count */}
         <div className='text-sm text-muted-foreground'>
           {totalItems} {totalItems === 1 ? 'item' : 'items'} found
