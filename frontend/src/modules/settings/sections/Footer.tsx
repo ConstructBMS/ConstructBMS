@@ -1,5 +1,5 @@
 import { useFooterStore } from '../../../app/store/ui/footer.store';
-import { Button } from '../../../components/ui';
+import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '../../../components/ui';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
@@ -35,24 +35,26 @@ export function Footer() {
           <div className='space-y-3'>
             <div className='flex items-center justify-between'>
               <span className='text-sm'>Show Copyright</span>
-              <input
-                type='checkbox'
+              <Switch
                 checked={config.showCopyright}
-                onChange={(e) => updateConfig({ showCopyright: e.target.checked })}
-                className='rounded'
+                onCheckedChange={(checked) => updateConfig({ showCopyright: checked })}
               />
             </div>
             <div className='flex items-center justify-between'>
               <span className='text-sm'>Columns</span>
-              <select
-                value={config.columns}
-                onChange={(e) => updateConfig({ columns: parseInt(e.target.value) as 2 | 3 | 4 })}
-                className='rounded border px-2 py-1'
+              <Select
+                value={config.columns.toString()}
+                onValueChange={(value) => updateConfig({ columns: parseInt(value) as 2 | 3 | 4 })}
               >
-                <option value={2}>2 Columns</option>
-                <option value={3}>3 Columns</option>
-                <option value={4}>4 Columns</option>
-              </select>
+                <SelectTrigger className='w-[120px]'>
+                  <SelectValue placeholder='Select columns' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='2'>2 Columns</SelectItem>
+                  <SelectItem value='3'>3 Columns</SelectItem>
+                  <SelectItem value='4'>4 Columns</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
