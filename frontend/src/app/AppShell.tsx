@@ -21,24 +21,6 @@ const queryClient = new QueryClient({
 });
 
 
-// Create router with future flags to suppress v7 warnings
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <AppLayout />,
-    children: AppRoutes,
-  },
-], {
-  future: {
-    v7_startTransition: true,
-    v7_relativeSplatPath: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-    v7_skipActionErrorRevalidation: true,
-  },
-});
-
 function AppLayout() {
   const { toggle } = useSidebarStore();
 
@@ -107,6 +89,24 @@ function AppLayout() {
 }
 
 export function AppShell() {
+  // Create router with future flags to suppress v7 warnings
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <AppLayout />,
+      children: AppRoutes,
+    },
+  ], {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  });
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
