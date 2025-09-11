@@ -20,7 +20,7 @@ import { ContactsGrid } from './ContactsGrid';
 import { ContactsList } from './ContactsList';
 import { useContactsStore } from './store';
 
-export function ContactsPage() {
+function ContactsPage() {
   const {
     contacts,
     companies,
@@ -326,3 +326,5 @@ export function ContactsPage() {
     </Page>
   );
 }
+
+export default ContactsPage;
