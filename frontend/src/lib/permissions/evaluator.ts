@@ -392,14 +392,27 @@ export class PermissionEvaluator {
     resource: Resource,
     action: Action
   ): string {
+    // Safely stringify the context, handling any non-serializable values
     const contextKey = JSON.stringify({
       userId: context.userId,
       scope: context.scope,
       scopeId: context.scopeId,
       userAttributes: context.userAttributes,
+    }, (key, value) => {
+      // Handle non-serializable values
+      if (typeof value === 'object' && value !== null) {
+        return '[Object]';
+      }
+      return value;
     });
 
-    return `perm:${btoa(contextKey)}:${resource}:${action}`;
+    // Use a safer encoding method
+    try {
+      return `perm:${btoa(contextKey)}:${resource}:${action}`;
+    } catch (error) {
+      // Fallback to a simpler key if btoa fails
+      return `perm:${context.userId}:${context.scope}:${context.scopeId || 'global'}:${resource}:${action}`;
+    }
   }
 
   /**

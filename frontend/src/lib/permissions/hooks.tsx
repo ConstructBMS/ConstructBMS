@@ -61,8 +61,8 @@ export function useCan(options: UseCanOptions): UseCanResult {
         user.id,
         {
           role: user.app_metadata?.role || 'user',
-          email: user.email,
-          name: user.user_metadata?.name,
+          email: user.email || '',
+          name: user.user_metadata?.name || '',
         },
         scope,
         scopeId
@@ -79,6 +79,14 @@ export function useCan(options: UseCanOptions): UseCanResult {
       setIsLoading(true);
       setError(null);
 
+      // Debug logging
+      console.log('🔍 Permission evaluation debug:', {
+        resource,
+        action,
+        permissionContext,
+        userAttributes: permissionContext.userAttributes,
+      });
+
       // In a real implementation, this might be async (API call)
       // For now, we'll use the synchronous evaluator
       const result = defaultEvaluator.evaluate(
@@ -88,6 +96,7 @@ export function useCan(options: UseCanOptions): UseCanResult {
       );
       setEvaluation(result);
     } catch (err) {
+      console.error('❌ Permission evaluation error:', err);
       setError(
         err instanceof Error ? err.message : 'Permission evaluation failed'
       );
