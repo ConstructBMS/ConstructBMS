@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, startTransition } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { Sidebar } from '../components/layout/Sidebar';
@@ -104,6 +104,9 @@ const router = createBrowserRouter([
     v7_partialHydration: true,
     v7_skipActionErrorRevalidation: true,
   },
+  // Additional configuration to ensure future flags are applied
+  basename: '',
+  window: undefined,
 });
 
 export function AppShell() {
