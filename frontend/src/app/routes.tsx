@@ -38,6 +38,13 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Wrapper component for lazy-loaded routes
+const LazyRoute = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LoadingSpinner />}>
+    {children}
+  </Suspense>
+);
+
 // 404 component
 const NotFound = () => (
   <div className='flex flex-col items-center justify-center h-64 space-y-4'>
@@ -57,95 +64,163 @@ export const AppRoutes = [
   },
   {
     path: '/dashboard',
-    element: <DashboardPage />,
+    element: (
+      <LazyRoute>
+        <DashboardPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/notes',
-    element: <NotesPage />,
+    element: (
+      <LazyRoute>
+        <NotesPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/chat',
-    element: <ChatPage />,
+    element: (
+      <LazyRoute>
+        <ChatPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/portal',
-    element: <PortalPage />,
+    element: (
+      <LazyRoute>
+        <PortalPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/contacts',
     element: (
-      <Guard resource='contacts' action='read'>
-        <ContactsPage />
-      </Guard>
+      <LazyRoute>
+        <Guard resource='contacts' action='read'>
+          <ContactsPage />
+        </Guard>
+      </LazyRoute>
     ),
   },
   {
     path: '/contacts/clients',
     element: (
-      <Guard resource='contacts' action='read'>
-        <ClientsPage />
-      </Guard>
+      <LazyRoute>
+        <Guard resource='contacts' action='read'>
+          <ClientsPage />
+        </Guard>
+      </LazyRoute>
     ),
   },
   {
     path: '/contacts/contractors',
     element: (
-      <Guard resource='contacts' action='read'>
-        <ContractorsPage />
-      </Guard>
+      <LazyRoute>
+        <Guard resource='contacts' action='read'>
+          <ContractorsPage />
+        </Guard>
+      </LazyRoute>
     ),
   },
   {
     path: '/contacts/consultants',
     element: (
-      <Guard resource='contacts' action='read'>
-        <ConsultantsPage />
-      </Guard>
+      <LazyRoute>
+        <Guard resource='contacts' action='read'>
+          <ConsultantsPage />
+        </Guard>
+      </LazyRoute>
     ),
   },
   {
     path: '/projects',
-    element: <ProjectsPage />,
+    element: (
+      <LazyRoute>
+        <ProjectsPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/projects/:id',
-    element: <ProjectDetailPage />,
+    element: (
+      <LazyRoute>
+        <ProjectDetailPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/projects/programme',
-    element: <ProgrammePage />,
+    element: (
+      <LazyRoute>
+        <ProgrammePage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/documents',
-    element: <DocumentsPage />,
+    element: (
+      <LazyRoute>
+        <DocumentsPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/workflows',
-    element: <WorkflowsPage />,
+    element: (
+      <LazyRoute>
+        <WorkflowsPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/pipeline',
-    element: <PipelinePage />,
+    element: (
+      <LazyRoute>
+        <PipelinePage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/estimates',
-    element: <EstimatesPage />,
+    element: (
+      <LazyRoute>
+        <EstimatesPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/purchase-orders',
-    element: <PurchaseOrdersPage />,
+    element: (
+      <LazyRoute>
+        <PurchaseOrdersPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/settings',
-    element: <SettingsPage />,
+    element: (
+      <LazyRoute>
+        <SettingsPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '/footer-builder',
-    element: <FooterBuilder />,
+    element: (
+      <LazyRoute>
+        <FooterBuilder />
+      </LazyRoute>
+    ),
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <LazyRoute>
+        <LoginPage />
+      </LazyRoute>
+    ),
   },
   {
     path: '*',
