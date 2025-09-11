@@ -7,6 +7,7 @@ import { Topbar } from '../components/layout/Topbar';
 import { AuthProvider } from '../contexts/AuthContext';
 import type { KeyboardShortcut } from '../lib/types/core';
 import { ThemeProvider } from '../contexts/ThemeContext.tsx';
+import { loadDefaultRoles } from '../modules/permissions/store';
 import { AppRoutes } from './routes';
 import { useSidebarStore } from './store/ui/sidebar.store';
 
@@ -110,6 +111,13 @@ const router = createBrowserRouter([
 });
 
 export function AppShell() {
+  // Initialize default permission rules on app startup
+  useEffect(() => {
+    loadDefaultRoles().catch(error => {
+      console.error('Failed to load default permission roles:', error);
+    });
+  }, []);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
