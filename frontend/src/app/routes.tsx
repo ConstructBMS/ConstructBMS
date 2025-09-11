@@ -98,9 +98,7 @@ export const AppRoutes = [
     path: '/contacts',
     element: (
       <LazyRoute>
-        <Guard resource='contacts' action='read'>
-          <ContactsPage />
-        </Guard>
+        <ContactsPage />
       </LazyRoute>
     ),
   },
@@ -108,9 +106,7 @@ export const AppRoutes = [
     path: '/contacts/clients',
     element: (
       <LazyRoute>
-        <Guard resource='contacts' action='read'>
-          <ClientsPage />
-        </Guard>
+        <ClientsPage />
       </LazyRoute>
     ),
   },
@@ -118,9 +114,7 @@ export const AppRoutes = [
     path: '/contacts/contractors',
     element: (
       <LazyRoute>
-        <Guard resource='contacts' action='read'>
-          <ContractorsPage />
-        </Guard>
+        <ContractorsPage />
       </LazyRoute>
     ),
   },
@@ -128,9 +122,7 @@ export const AppRoutes = [
     path: '/contacts/consultants',
     element: (
       <LazyRoute>
-        <Guard resource='contacts' action='read'>
-          <ConsultantsPage />
-        </Guard>
+        <ConsultantsPage />
       </LazyRoute>
     ),
   },
