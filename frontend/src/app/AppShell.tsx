@@ -20,8 +20,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Import routes
-import { AppRoutes } from './routes';
 
 // Create router with future flags to suppress v7 warnings
 const router = createBrowserRouter([
