@@ -35,6 +35,21 @@ export function ContactsList({
     return company?.name;
   };
 
+  // Early return if no items
+  if (allItems.length === 0) {
+    console.log('🔍 ContactsList: No items to render');
+    return (
+      <div className='rounded-md border p-8 text-center'>
+        <p className='text-muted-foreground'>No contacts or companies found.</p>
+        <p className='text-sm text-muted-foreground mt-2'>
+          Try adjusting your filters or add some contacts.
+        </p>
+      </div>
+    );
+  }
+
+  console.log('🔍 ContactsList: Rendering', allItems.length, 'items');
+
   return (
     <div className='rounded-md border'>
       <div className='overflow-x-auto'>

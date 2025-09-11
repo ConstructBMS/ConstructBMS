@@ -35,6 +35,21 @@ export function ContactsGrid({
     return company?.name;
   };
 
+  // Early return if no items
+  if (allItems.length === 0) {
+    console.log('🔍 ContactsGrid: No items to render');
+    return (
+      <div className='rounded-md border p-8 text-center'>
+        <p className='text-muted-foreground'>No contacts or companies found.</p>
+        <p className='text-sm text-muted-foreground mt-2'>
+          Try adjusting your filters or add some contacts.
+        </p>
+      </div>
+    );
+  }
+
+  console.log('🔍 ContactsGrid: Rendering', allItems.length, 'items');
+
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
       {allItems.map(item => (

@@ -77,16 +77,15 @@ export function ContactsPage() {
 
     let filtered = contacts;
 
-    // Filter by type (person/company)
-    if (filterType === 'person') {
-      filtered = filtered.filter(contact => contact.type === 'person');
-    } else if (filterType === 'company') {
-      filtered = filtered.filter(contact => contact.type === 'company');
+    // Filter by type (person/company) - contacts are always 'person' type
+    if (filterType === 'company') {
+      filtered = []; // No contacts when filtering for companies
     }
+    // If filterType is 'person' or 'all', keep all contacts (they're all persons)
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      console.log('🔍 Debug - Filtering by category:', filterCategory);
+      console.log('🔍 Debug - Filtering contacts by category:', filterCategory);
       filtered = filtered.filter(
         contact => contact.category === filterCategory
       );
@@ -95,11 +94,7 @@ export function ContactsPage() {
 
     if (searchQuery) {
       filtered = searchContacts(searchQuery).filter(contact => {
-        const typeMatch =
-          filterType === 'all' ||
-          (filterType === 'person' && contact.type === 'person') ||
-          (filterType === 'company' && contact.type === 'company');
-
+        const typeMatch = filterType === 'all' || filterType === 'person';
         const categoryMatch =
           filterCategory === 'all' || contact.category === filterCategory;
 
@@ -115,9 +110,11 @@ export function ContactsPage() {
     console.log('🔍 Debug - Total companies:', companies.length);
     let filtered = companies;
 
+    // Filter by type (person/company) - companies are always 'company' type
     if (filterType === 'person') {
       return []; // No companies when filtering for persons
     }
+    // If filterType is 'company' or 'all', keep all companies (they're all companies)
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
@@ -133,9 +130,10 @@ export function ContactsPage() {
 
     if (searchQuery) {
       filtered = searchCompanies(searchQuery).filter(company => {
+        const typeMatch = filterType === 'all' || filterType === 'company';
         const categoryMatch =
           filterCategory === 'all' || company.category === filterCategory;
-        return categoryMatch;
+        return typeMatch && categoryMatch;
       });
     }
 
