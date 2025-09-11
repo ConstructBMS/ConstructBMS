@@ -25,8 +25,8 @@ import { ProjectsList } from './views/ProjectsList';
 export function ProjectsPage() {
   const navigate = useNavigate();
   const { currentOrgId } = useOrgStore();
-  const canView = useCan('view', 'projects');
-  const canCreate = useCan('create', 'projects');
+  const canView = useCan({ resource: 'projects', action: 'read' });
+  const canCreate = useCan({ resource: 'projects', action: 'create' });
 
   const {
     isLoading,

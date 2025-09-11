@@ -21,7 +21,7 @@ import { useProjectsStore } from './store';
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const canEdit = useCan('edit', 'projects');
+  const canEdit = useCan({ resource: 'projects', action: 'update' });
 
   const { projects, selectProject } = useProjectsStore();
   const [project, setProject] = useState<Project | null>(null);
