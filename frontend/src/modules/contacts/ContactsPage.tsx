@@ -34,7 +34,6 @@ function ContactsPage() {
     searchCompanies,
   } = useContactsStore();
 
-
   const [searchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');
@@ -268,7 +267,6 @@ function ContactsPage() {
             </div>
           </div>
         </div>
-
 
         {/* Results count */}
         <div className='text-sm text-muted-foreground'>

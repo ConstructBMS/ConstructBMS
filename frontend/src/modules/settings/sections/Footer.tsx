@@ -1,9 +1,17 @@
-import { useFooterStore } from '../../../app/store/ui/footer.store';
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '../../../components/ui';
 import { Link } from 'react-router-dom';
+import { useFooterStore } from '../../../app/store/ui/footer.store';
 import Footer from '../../../components/Footer';
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+} from '../../../components/ui';
 
-export function Footer() {
+export function FooterSettings() {
   const { config, updateConfig, resetConfig } = useFooterStore();
 
   return (
@@ -19,7 +27,8 @@ export function Footer() {
         <div className='p-4 border rounded-lg bg-card'>
           <h4 className='font-medium mb-2'>Footer Configuration</h4>
           <p className='text-sm text-muted-foreground mb-4'>
-            Current footer has {config.columns} columns with {config.widgets.length} widgets.
+            Current footer has {config.columns} columns with{' '}
+            {config.widgets.length} widgets.
           </p>
           <div className='flex gap-2'>
             <Button asChild>
@@ -38,14 +47,18 @@ export function Footer() {
               <span className='text-sm'>Show Copyright</span>
               <Switch
                 checked={config.showCopyright}
-                onCheckedChange={(checked) => updateConfig({ showCopyright: checked })}
+                onCheckedChange={checked =>
+                  updateConfig({ showCopyright: checked })
+                }
               />
             </div>
             <div className='flex items-center justify-between'>
               <span className='text-sm'>Columns</span>
               <Select
                 value={config.columns.toString()}
-                onValueChange={(value) => updateConfig({ columns: parseInt(value) as 2 | 3 | 4 })}
+                onValueChange={value =>
+                  updateConfig({ columns: parseInt(value) as 2 | 3 | 4 })
+                }
               >
                 <SelectTrigger className='w-[120px]'>
                   <SelectValue placeholder='Select columns' />
@@ -66,7 +79,10 @@ export function Footer() {
             <div className='p-2 bg-muted text-xs text-muted-foreground border-b'>
               Live Preview
             </div>
-            <div className='scale-75 origin-top-left transform-gpu' style={{ width: '133.33%' }}>
+            <div
+              className='scale-75 origin-top-left transform-gpu'
+              style={{ width: '133.33%' }}
+            >
               <Footer config={config} />
             </div>
           </div>

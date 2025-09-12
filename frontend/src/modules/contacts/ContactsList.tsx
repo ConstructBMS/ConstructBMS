@@ -1,6 +1,6 @@
 import { Building2, Mail, Phone, User } from 'lucide-react';
-import { Contact, Company } from '../../lib/types/contacts';
 import { Badge } from '../../components/ui';
+import { Company, Contact } from '../../lib/types/contacts';
 
 interface ContactsListProps {
   contacts: Contact[];
@@ -26,7 +26,6 @@ export function ContactsList({
     ...contacts.map(contact => ({ ...contact, itemType: 'contact' as const })),
     ...companies.map(company => ({ ...company, itemType: 'company' as const })),
   ].sort((a, b) => a.name.localeCompare(b.name));
-
 
   const getCompanyName = (companyId?: string) => {
     if (!companyId) return null;

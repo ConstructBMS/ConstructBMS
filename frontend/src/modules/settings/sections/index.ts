@@ -1,10 +1,10 @@
-export { General } from './General';
-export { Appearance } from './Appearance';
-export { FeatureFlags } from './FeatureFlags';
-export { Integrations } from './Integrations';
-export { Developer } from './Developer';
 export { About } from './About';
+export { Appearance } from './Appearance';
 export { CRM } from './CRM';
-export { Footer } from './Footer';
+export { Developer } from './Developer';
+export { FeatureFlags } from './FeatureFlags';
+export { FooterSettings as Footer } from './Footer';
+export { General } from './General';
+export { Integrations } from './Integrations';
 export { Permissions } from './Permissions';
 export { UsersAndRoles } from './UsersAndRoles';
