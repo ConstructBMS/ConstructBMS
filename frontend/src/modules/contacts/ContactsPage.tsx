@@ -1,6 +1,6 @@
-import { Building2, Grid3X3, List, Search, User } from 'lucide-react';
+import { Building2, Grid3X3, List, Search, User, Users, Briefcase, UserCheck, ArrowRight } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import {
   Button,
@@ -8,6 +8,11 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '../../components/ui';
 import {
   Company,
@@ -185,15 +190,35 @@ function ContactsPage() {
 
   const totalItems = filteredContacts.length + filteredCompanies.length;
 
+  // Calculate statistics for CRM dashboard
+  const stats = useMemo(() => {
+    const clientContacts = contacts.filter(c => c.category === 'client').length;
+    const clientCompanies = companies.filter(c => c.category === 'client').length;
+    const contractorContacts = contacts.filter(c => c.category === 'contractor').length;
+    const contractorCompanies = companies.filter(c => c.category === 'contractor').length;
+    const consultantContacts = contacts.filter(c => c.category === 'consultant').length;
+    const consultantCompanies = companies.filter(c => c.category === 'consultant').length;
+    const otherContacts = contacts.filter(c => !['client', 'contractor', 'consultant'].includes(c.category)).length;
+    const otherCompanies = companies.filter(c => !['client', 'contractor', 'consultant'].includes(c.category)).length;
+
+    return {
+      clients: clientContacts + clientCompanies,
+      contractors: contractorContacts + contractorCompanies,
+      consultants: consultantContacts + consultantCompanies,
+      others: otherContacts + otherCompanies,
+      total: contacts.length + companies.length
+    };
+  }, [contacts, companies]);
+
   return (
-    <Page title='Contacts'>
+    <Page title='CRM Manager'>
       <div className='space-y-6'>
         {/* Header with actions */}
         <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-semibold'>Contacts & Companies</h1>
+            <h1 className='text-2xl font-semibold'>CRM Manager</h1>
             <p className='text-muted-foreground'>
-              Manage your contacts and company information
+              Comprehensive contact and relationship management system
             </p>
           </div>
           <div className='flex gap-2'>
@@ -215,82 +240,238 @@ function ContactsPage() {
           </div>
         </div>
 
-        {/* Toolbar */}
-        <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
-          <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
-            {/* Search */}
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-              <Input
-                placeholder='Search contacts and companies...'
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className='pl-10 w-64'
-              />
-            </div>
+        {/* CRM Dashboard Cards */}
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Clients
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <div className='text-2xl font-bold'>{stats.clients}</div>
+                <Link to='/contacts/clients' className='text-primary hover:text-primary/80'>
+                  <ArrowRight className='h-4 w-4' />
+                </Link>
+              </div>
+              <CardDescription className='text-xs'>
+                Customer relationships
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-            {/* Filter */}
-            <Tabs
-              value={filterType}
-              onValueChange={value =>
-                setFilterType(value as 'all' | 'person' | 'company')
-              }
-            >
-              <TabsList>
-                <TabsTrigger value='all'>All</TabsTrigger>
-                <TabsTrigger value='person'>People</TabsTrigger>
-                <TabsTrigger value='company'>Companies</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Contractors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <div className='text-2xl font-bold'>{stats.contractors}</div>
+                <Link to='/contacts/contractors' className='text-primary hover:text-primary/80'>
+                  <ArrowRight className='h-4 w-4' />
+                </Link>
+              </div>
+              <CardDescription className='text-xs'>
+                Service providers
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          {/* View Mode Toggle */}
-          <div className='flex items-center gap-2'>
-            <span className='text-sm text-muted-foreground'>View:</span>
-            <div className='flex border rounded-md'>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size='sm'
-                onClick={() => setViewMode('list')}
-                className='rounded-r-none'
-              >
-                <List className='h-4 w-4' />
-              </Button>
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size='sm'
-                onClick={() => setViewMode('grid')}
-                className='rounded-l-none'
-              >
-                <Grid3X3 className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
+          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Consultants
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <div className='text-2xl font-bold'>{stats.consultants}</div>
+                <Link to='/contacts/consultants' className='text-primary hover:text-primary/80'>
+                  <ArrowRight className='h-4 w-4' />
+                </Link>
+              </div>
+              <CardDescription className='text-xs'>
+                Expert advisors
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Others
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center justify-between'>
+                <div className='text-2xl font-bold'>{stats.others}</div>
+                <div className='text-muted-foreground'>
+                  <Users className='h-4 w-4' />
+                </div>
+              </div>
+              <CardDescription className='text-xs'>
+                Additional contacts
+              </CardDescription>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Results count */}
-        <div className='text-sm text-muted-foreground'>
-          {totalItems} {totalItems === 1 ? 'item' : 'items'} found
-          {searchQuery && ` for "${searchQuery}"`}
-          {filterType !== 'all' && ` (${filterType}s only)`}
+        {/* Quick Actions */}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <Link to='/contacts/clients'>
+            <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium flex items-center gap-2'>
+                  <UserCheck className='h-4 w-4 text-blue-500' />
+                  Client Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className='text-xs'>
+                  Manage client relationships, projects, and communications
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to='/contacts/contractors'>
+            <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-green-500'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium flex items-center gap-2'>
+                  <Briefcase className='h-4 w-4 text-green-500' />
+                  Contractor Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className='text-xs'>
+                  Track contractor services, certifications, and performance
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to='/contacts/consultants'>
+            <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-purple-500'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium flex items-center gap-2'>
+                  <Users className='h-4 w-4 text-purple-500' />
+                  Consultant Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className='text-xs'>
+                  Manage consultant expertise, availability, and assignments
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
-        {/* Content */}
-        {viewMode === 'list' ? (
-          <ContactsList
-            contacts={filteredContacts}
-            companies={filteredCompanies}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ) : (
-          <ContactsGrid
-            contacts={filteredContacts}
-            companies={filteredCompanies}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        )}
+        {/* All Contacts Overview */}
+        <div className='space-y-4'>
+          <div className='flex items-center justify-between'>
+            <h2 className='text-lg font-semibold'>All Contacts Overview</h2>
+            <div className='text-sm text-muted-foreground'>
+              Total: {stats.total} contacts and companies
+            </div>
+          </div>
+
+          {/* Toolbar */}
+          <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
+            <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
+              {/* Search */}
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                <Input
+                  placeholder='Search all contacts and companies...'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='pl-10 w-64'
+                />
+              </div>
+
+              {/* Filter */}
+              <Tabs
+                value={filterType}
+                onValueChange={value =>
+                  setFilterType(value as 'all' | 'person' | 'company')
+                }
+              >
+                <TabsList>
+                  <TabsTrigger value='all'>All</TabsTrigger>
+                  <TabsTrigger value='person'>People</TabsTrigger>
+                  <TabsTrigger value='company'>Companies</TabsTrigger>
+                </TabsList>
+              </Tabs>
+
+              {/* Category Filter */}
+              <Tabs
+                value={filterCategory}
+                onValueChange={value =>
+                  setFilterCategory(value as ContactCategory | 'all')
+                }
+              >
+                <TabsList>
+                  <TabsTrigger value='all'>All Categories</TabsTrigger>
+                  <TabsTrigger value='client'>Clients</TabsTrigger>
+                  <TabsTrigger value='contractor'>Contractors</TabsTrigger>
+                  <TabsTrigger value='consultant'>Consultants</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className='flex items-center gap-2'>
+              <span className='text-sm text-muted-foreground'>View:</span>
+              <div className='flex border rounded-md'>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size='sm'
+                  onClick={() => setViewMode('list')}
+                  className='rounded-r-none'
+                >
+                  <List className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size='sm'
+                  onClick={() => setViewMode('grid')}
+                  className='rounded-l-none'
+                >
+                  <Grid3X3 className='h-4 w-4' />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Results count */}
+          <div className='text-sm text-muted-foreground'>
+            {totalItems} {totalItems === 1 ? 'item' : 'items'} found
+            {searchQuery && ` for "${searchQuery}"`}
+            {filterType !== 'all' && ` (${filterType}s only)`}
+            {filterCategory !== 'all' && ` (${filterCategory}s only)`}
+          </div>
+
+          {/* Content */}
+          {viewMode === 'list' ? (
+            <ContactsList
+              contacts={filteredContacts}
+              companies={filteredCompanies}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <ContactsGrid
+              contacts={filteredContacts}
+              companies={filteredCompanies}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        </div>
 
         {/* Form Modal */}
         <ContactForm
