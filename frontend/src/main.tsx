@@ -5,8 +5,12 @@ import App from './App.tsx';
 
 // Force scroll to top before React renders
 window.scrollTo(0, 0);
-document.documentElement.scrollTop = 0;
-document.body.scrollTop = 0;
+if (document.documentElement) {
+  document.documentElement.scrollTop = 0;
+}
+if (document.body) {
+  document.body.scrollTop = 0;
+}
 
 // Disable scroll restoration
 if ('scrollRestoration' in history) {

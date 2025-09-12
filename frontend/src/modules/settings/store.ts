@@ -6,7 +6,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { CRMSettings, defaultCRMSettings } from '../../lib/types/crm';
+import type { CRMSettings } from '../../lib/types/crm';
+import { defaultCRMSettings } from '../../lib/types/crm';
 
 interface SettingsState {
   // CRM Settings

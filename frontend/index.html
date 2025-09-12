@@ -10,9 +10,23 @@
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
       }
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      
+      // Wait for DOM to be ready before setting scroll position
+      function setScrollToTop() {
+        window.scrollTo(0, 0);
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+        if (document.body) {
+          document.body.scrollTop = 0;
+        }
+      }
+      
+      // Set scroll position immediately and when DOM is ready
+      setScrollToTop();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setScrollToTop);
+      }
     </script>
   </head>
   <body>
