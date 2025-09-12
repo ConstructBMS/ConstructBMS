@@ -6,8 +6,10 @@ import {
   Search,
   Shield,
   Wrench,
+  ArrowLeft,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
   Button,
@@ -138,6 +140,15 @@ export default function ContractorsPage() {
         {/* Header */}
         <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
           <div>
+            <div className='flex items-center gap-2 mb-2'>
+              <Link 
+                to='/contacts' 
+                className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-1'
+              >
+                <ArrowLeft className='h-3 w-3' />
+                Back to CRM Manager
+              </Link>
+            </div>
             <h1 className='text-2xl font-semibold'>Contractor Management</h1>
             <p className='text-muted-foreground'>
               Track contractor services, certifications, and performance
@@ -155,7 +166,7 @@ export default function ContractorsPage() {
         </div>
 
         {/* Contractor Statistics */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
@@ -190,22 +201,6 @@ export default function ContractorsPage() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Certified Contractors
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>
-                {contractorStats.certified}
-              </div>
-              <CardDescription className='text-xs'>
-                Licensed & certified
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground'>
                 Average Rating
               </CardTitle>
             </CardHeader>
@@ -213,51 +208,6 @@ export default function ContractorsPage() {
               <div className='text-2xl font-bold text-yellow-600'>4.6/5</div>
               <CardDescription className='text-xs'>
                 Performance score
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Wrench className='h-4 w-4 text-green-500' />
-                Assign Work
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Assign projects and tasks to contractors
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Shield className='h-4 w-4 text-blue-500' />
-                Check Certifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Verify licenses and certifications
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Award className='h-4 w-4 text-purple-500' />
-                Performance Reviews
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Review contractor performance and ratings
               </CardDescription>
             </CardContent>
           </Card>

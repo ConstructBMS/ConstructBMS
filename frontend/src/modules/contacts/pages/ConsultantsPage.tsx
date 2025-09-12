@@ -6,8 +6,10 @@ import {
   List,
   Plus,
   Search,
+  ArrowLeft,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
   Button,
@@ -138,6 +140,15 @@ export default function ConsultantsPage() {
         {/* Header */}
         <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
           <div>
+            <div className='flex items-center gap-2 mb-2'>
+              <Link 
+                to='/contacts' 
+                className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-1'
+              >
+                <ArrowLeft className='h-3 w-3' />
+                Back to CRM Manager
+              </Link>
+            </div>
             <h1 className='text-2xl font-semibold'>Consultant Management</h1>
             <p className='text-muted-foreground'>
               Manage consultant expertise, availability, and assignments
@@ -155,7 +166,7 @@ export default function ConsultantsPage() {
         </div>
 
         {/* Consultant Statistics */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
@@ -190,22 +201,6 @@ export default function ConsultantsPage() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Expert Consultants
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>
-                {consultantStats.expert}
-              </div>
-              <CardDescription className='text-xs'>
-                Senior level expertise
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground'>
                 Average Rating
               </CardTitle>
             </CardHeader>
@@ -213,51 +208,6 @@ export default function ConsultantsPage() {
               <div className='text-2xl font-bold text-yellow-600'>4.9/5</div>
               <CardDescription className='text-xs'>
                 Expertise score
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Lightbulb className='h-4 w-4 text-yellow-500' />
-                Request Consultation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Request expert advice and consultation services
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <BookOpen className='h-4 w-4 text-blue-500' />
-                View Expertise
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Browse consultant specializations and skills
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Award className='h-4 w-4 text-purple-500' />
-                Track Performance
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Monitor consultant performance and feedback
               </CardDescription>
             </CardContent>
           </Card>

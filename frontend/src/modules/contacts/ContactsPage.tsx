@@ -370,44 +370,73 @@ function ContactsPage() {
           </Link>
         </div>
 
-        {/* All Contacts Overview */}
-        <div className='space-y-4'>
+        {/* Comprehensive CRM Manager */}
+        <div className='space-y-6'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-lg font-semibold'>All Contacts Overview</h2>
+            <h2 className='text-lg font-semibold'>Comprehensive Contact Management</h2>
             <div className='text-sm text-muted-foreground'>
-              Total: {stats.total} contacts and companies
+              Total: {stats.total} contacts and companies across all categories
             </div>
           </div>
 
-          {/* Toolbar */}
-          <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
-            <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
-              {/* Search */}
-              <div className='relative'>
-                <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                <Input
-                  placeholder='Search all contacts and companies...'
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className='pl-10 w-64'
-                />
+          {/* Advanced Toolbar */}
+          <div className='space-y-4'>
+            {/* Search and Primary Filters */}
+            <div className='flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between'>
+              <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
+                {/* Search */}
+                <div className='relative'>
+                  <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                  <Input
+                    placeholder='Search all contacts and companies...'
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className='pl-10 w-64'
+                  />
+                </div>
+
+                {/* Type Filter */}
+                <Tabs
+                  value={filterType}
+                  onValueChange={value =>
+                    setFilterType(value as 'all' | 'person' | 'company')
+                  }
+                >
+                  <TabsList>
+                    <TabsTrigger value='all'>All Types</TabsTrigger>
+                    <TabsTrigger value='person'>People</TabsTrigger>
+                    <TabsTrigger value='company'>Companies</TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </div>
 
-              {/* Filter */}
-              <Tabs
-                value={filterType}
-                onValueChange={value =>
-                  setFilterType(value as 'all' | 'person' | 'company')
-                }
-              >
-                <TabsList>
-                  <TabsTrigger value='all'>All</TabsTrigger>
-                  <TabsTrigger value='person'>People</TabsTrigger>
-                  <TabsTrigger value='company'>Companies</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              {/* View Mode Toggle */}
+              <div className='flex items-center gap-2'>
+                <span className='text-sm text-muted-foreground'>View:</span>
+                <div className='flex border rounded-md'>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
+                    size='sm'
+                    onClick={() => setViewMode('list')}
+                    className='rounded-r-none'
+                  >
+                    <List className='h-4 w-4' />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size='sm'
+                    onClick={() => setViewMode('grid')}
+                    className='rounded-l-none'
+                  >
+                    <Grid3X3 className='h-4 w-4' />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-              {/* Category Filter */}
+            {/* Category Filter */}
+            <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
+              <span className='text-sm font-medium text-muted-foreground'>Filter by Category:</span>
               <Tabs
                 value={filterCategory}
                 onValueChange={value =>
@@ -416,60 +445,74 @@ function ContactsPage() {
               >
                 <TabsList>
                   <TabsTrigger value='all'>All Categories</TabsTrigger>
-                  <TabsTrigger value='client'>Clients</TabsTrigger>
-                  <TabsTrigger value='contractor'>Contractors</TabsTrigger>
-                  <TabsTrigger value='consultant'>Consultants</TabsTrigger>
+                  <TabsTrigger value='client'>Clients ({stats.clients})</TabsTrigger>
+                  <TabsTrigger value='contractor'>Contractors ({stats.contractors})</TabsTrigger>
+                  <TabsTrigger value='consultant'>Consultants ({stats.consultants})</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
+          </div>
 
-            {/* View Mode Toggle */}
-            <div className='flex items-center gap-2'>
-              <span className='text-sm text-muted-foreground'>View:</span>
-              <div className='flex border rounded-md'>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  size='sm'
-                  onClick={() => setViewMode('list')}
-                  className='rounded-r-none'
-                >
-                  <List className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                  size='sm'
-                  onClick={() => setViewMode('grid')}
-                  className='rounded-l-none'
-                >
-                  <Grid3X3 className='h-4 w-4' />
-                </Button>
-              </div>
+          {/* Results Summary */}
+          <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 bg-muted/50 rounded-lg'>
+            <div className='text-sm text-muted-foreground'>
+              <strong>{totalItems}</strong> {totalItems === 1 ? 'item' : 'items'} found
+              {searchQuery && ` for "${searchQuery}"`}
+              {filterType !== 'all' && ` (${filterType}s only)`}
+              {filterCategory !== 'all' && ` (${filterCategory}s only)`}
+            </div>
+            <div className='flex gap-2 text-xs text-muted-foreground'>
+              <span>Clients: {stats.clients}</span>
+              <span>•</span>
+              <span>Contractors: {stats.contractors}</span>
+              <span>•</span>
+              <span>Consultants: {stats.consultants}</span>
+              <span>•</span>
+              <span>Others: {stats.others}</span>
             </div>
           </div>
 
-          {/* Results count */}
-          <div className='text-sm text-muted-foreground'>
-            {totalItems} {totalItems === 1 ? 'item' : 'items'} found
-            {searchQuery && ` for "${searchQuery}"`}
-            {filterType !== 'all' && ` (${filterType}s only)`}
-            {filterCategory !== 'all' && ` (${filterCategory}s only)`}
-          </div>
-
           {/* Content */}
-          {viewMode === 'list' ? (
-            <ContactsList
-              contacts={filteredContacts}
-              companies={filteredCompanies}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+          {totalItems === 0 ? (
+            <div className='text-center py-12'>
+              <Users className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+              <p className='text-muted-foreground'>No contacts found.</p>
+              <p className='text-sm text-muted-foreground mt-2'>
+                {searchQuery || filterCategory !== 'all' || filterType !== 'all'
+                  ? 'Try adjusting your search criteria or filters.'
+                  : 'Add your first contact to get started.'}
+              </p>
+              {!searchQuery && filterCategory === 'all' && filterType === 'all' && (
+                <div className='flex gap-2 justify-center mt-4'>
+                  <Button onClick={handleAddContact} className='flex items-center gap-2'>
+                    <User className='h-4 w-4' />
+                    Add Contact
+                  </Button>
+                  <Button onClick={handleAddCompany} variant='outline' className='flex items-center gap-2'>
+                    <Building2 className='h-4 w-4' />
+                    Add Company
+                  </Button>
+                </div>
+              )}
+            </div>
           ) : (
-            <ContactsGrid
-              contacts={filteredContacts}
-              companies={filteredCompanies}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <div className='space-y-4'>
+              {viewMode === 'list' ? (
+                <ContactsList
+                  contacts={filteredContacts}
+                  companies={filteredCompanies}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ) : (
+                <ContactsGrid
+                  contacts={filteredContacts}
+                  companies={filteredCompanies}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
+            </div>
           )}
         </div>
 
