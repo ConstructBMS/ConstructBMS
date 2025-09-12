@@ -137,20 +137,45 @@ export function AppShell() {
 
   // Ensure page starts at top on refresh
   useEffect(() => {
-    // Scroll to top on initial load
+    // Disable browser scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Force scroll to top immediately
     window.scrollTo(0, 0);
-
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
     // Also scroll to top when the page becomes visible (handles refresh)
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
       }
     };
-
+    
+    // Handle page load events
+    const handlePageLoad = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    
+    // Handle beforeunload to prevent scroll position saving
+    const handleBeforeUnload = () => {
+      window.scrollTo(0, 0);
+    };
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
+    window.addEventListener('load', handlePageLoad);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('load', handlePageLoad);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
