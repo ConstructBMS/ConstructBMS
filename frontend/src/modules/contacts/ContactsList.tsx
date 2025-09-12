@@ -27,7 +27,6 @@ export function ContactsList({
     ...companies.map(company => ({ ...company, itemType: 'company' as const })),
   ].sort((a, b) => a.name.localeCompare(b.name));
 
-  console.log('🔍 ContactsList allItems:', allItems.length, allItems.map(item => ({ name: item.name, itemType: item.itemType })));
 
   const getCompanyName = (companyId?: string) => {
     if (!companyId) return null;

@@ -144,13 +144,6 @@ const mockCompanies: Company[] = [
 ];
 
 export const useContactsStore = create<ContactsState>()((set, get) => {
-  console.log('🔍 Debug - Contacts store initialized with:', {
-    contactsCount: mockContacts.length,
-    companiesCount: mockCompanies.length,
-    contacts: mockContacts.map(c => ({ name: c.name, category: c.category })),
-    companies: mockCompanies.map(c => ({ name: c.name, category: c.category })),
-  });
-
   return {
     contacts: mockContacts,
     companies: mockCompanies,
