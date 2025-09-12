@@ -27,6 +27,11 @@ function AppLayout() {
   const { toggle } = useSidebarStore();
   const { config: footerConfig } = useFooterStore();
 
+  // Ensure scroll position is at top when layout mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Keyboard shortcuts
   const shortcuts: KeyboardShortcut[] = [
     {
@@ -128,6 +133,25 @@ export function AppShell() {
     loadDefaultRoles().catch(error => {
       console.error('Failed to load default permission roles:', error);
     });
+  }, []);
+
+  // Ensure page starts at top on refresh
+  useEffect(() => {
+    // Scroll to top on initial load
+    window.scrollTo(0, 0);
+    
+    // Also scroll to top when the page becomes visible (handles refresh)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        window.scrollTo(0, 0);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (
