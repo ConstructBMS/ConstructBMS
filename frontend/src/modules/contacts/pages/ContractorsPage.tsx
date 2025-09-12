@@ -1,13 +1,4 @@
-import {
-  Award,
-  Grid3X3,
-  List,
-  Plus,
-  Search,
-  Shield,
-  Wrench,
-  ArrowLeft,
-} from 'lucide-react';
+import { ArrowLeft, Grid3X3, List, Plus, Search, Wrench } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
@@ -141,8 +132,8 @@ export default function ContractorsPage() {
         <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
           <div>
             <div className='flex items-center gap-2 mb-2'>
-              <Link 
-                to='/contacts' 
+              <Link
+                to='/contacts'
                 className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-1'
               >
                 <ArrowLeft className='h-3 w-3' />
