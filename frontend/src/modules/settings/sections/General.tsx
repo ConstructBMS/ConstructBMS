@@ -44,6 +44,7 @@ export function General() {
             <select
               id='timezone'
               className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+              defaultValue='Europe/London'
             >
               <option value='UTC'>UTC</option>
               <option value='America/New_York'>Eastern Time</option>
@@ -63,6 +64,7 @@ export function General() {
             <select
               id='currency'
               className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+              defaultValue='GBP'
             >
               <option value='USD'>USD - US Dollar</option>
               <option value='EUR'>EUR - Euro</option>
@@ -79,6 +81,7 @@ export function General() {
             <select
               id='locale'
               className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+              defaultValue='en-GB'
             >
               <option value='en-US'>English (US)</option>
               <option value='en-GB'>English (UK)</option>
