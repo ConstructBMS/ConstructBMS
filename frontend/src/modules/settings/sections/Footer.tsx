@@ -1,6 +1,7 @@
 import { useFooterStore } from '../../../app/store/ui/footer.store';
 import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Switch } from '../../../components/ui';
 import { Link } from 'react-router-dom';
+import Footer from '../../../components/Footer';
 
 export function Footer() {
   const { config, updateConfig, resetConfig } = useFooterStore();
@@ -60,13 +61,14 @@ export function Footer() {
         </div>
 
         <div className='p-4 border rounded-lg bg-card'>
-          <h4 className='font-medium mb-2'>Current Widgets</h4>
-          <div className='space-y-2'>
-            {config.widgets.map((widget) => (
-              <div key={widget.id} className='text-sm p-2 bg-muted rounded'>
-                <strong>{widget.title}</strong> ({widget.type})
-              </div>
-            ))}
+          <h4 className='font-medium mb-4'>Footer Preview</h4>
+          <div className='border rounded-lg overflow-hidden bg-background'>
+            <div className='p-2 bg-muted text-xs text-muted-foreground border-b'>
+              Live Preview
+            </div>
+            <div className='scale-75 origin-top-left transform-gpu' style={{ width: '133.33%' }}>
+              <Footer config={config} />
+            </div>
           </div>
         </div>
       </div>

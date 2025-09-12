@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, startTransition } from 'react';
+import { useEffect } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { Sidebar } from '../components/layout/Sidebar';
@@ -10,6 +10,8 @@ import { ThemeProvider } from '../contexts/ThemeContext.tsx';
 import { loadDefaultRoles } from '../modules/permissions/store';
 import { AppRoutes } from './routes';
 import { useSidebarStore } from './store/ui/sidebar.store';
+import { useFooterStore } from './store/ui/footer.store';
+import Footer from '../components/Footer';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -24,6 +26,7 @@ const queryClient = new QueryClient({
 
 function AppLayout() {
   const { toggle } = useSidebarStore();
+  const { config: footerConfig } = useFooterStore();
 
   // Keyboard shortcuts
   const shortcuts: KeyboardShortcut[] = [
@@ -68,8 +71,8 @@ function AppLayout() {
   }, [shortcuts]);
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] h-screen'>
+    <div className='min-h-screen bg-background flex flex-col'>
+      <div className='flex-1 grid grid-cols-[auto_1fr] grid-rows-[auto_1fr]'>
         {/* Sidebar */}
         <div className='row-span-2'>
           <Sidebar />
@@ -85,6 +88,13 @@ function AppLayout() {
           <Outlet />
         </main>
       </div>
+      
+      {/* Footer */}
+      {footerConfig && (
+        <div className='flex-shrink-0'>
+          <Footer config={footerConfig} />
+        </div>
+      )}
     </div>
   );
 }
