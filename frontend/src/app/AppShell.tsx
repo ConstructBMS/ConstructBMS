@@ -139,16 +139,16 @@ export function AppShell() {
   useEffect(() => {
     // Scroll to top on initial load
     window.scrollTo(0, 0);
-    
+
     // Also scroll to top when the page becomes visible (handles refresh)
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         window.scrollTo(0, 0);
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
