@@ -1,17 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Footer from '../components/Footer';
 import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
 import { AuthProvider } from '../contexts/AuthContext';
-import type { KeyboardShortcut } from '../lib/types/core';
 import { ThemeProvider } from '../contexts/ThemeContext.tsx';
+import type { KeyboardShortcut } from '../lib/types/core';
 import { loadDefaultRoles } from '../modules/permissions/store';
 import { AppRoutes } from './routes';
-import { useSidebarStore } from './store/ui/sidebar.store';
 import { useFooterStore } from './store/ui/footer.store';
-import Footer from '../components/Footer';
+import { useSidebarStore } from './store/ui/sidebar.store';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -22,7 +22,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 
 function AppLayout() {
   const { toggle } = useSidebarStore();
@@ -88,7 +87,7 @@ function AppLayout() {
           <Outlet />
         </main>
       </div>
-      
+
       {/* Footer */}
       {footerConfig && (
         <div className='flex-shrink-0'>
@@ -100,25 +99,28 @@ function AppLayout() {
 }
 
 // Create router with future flags to suppress v7 warnings
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <AppLayout />,
+      children: AppRoutes,
+    },
+  ],
   {
-    path: '/',
-    element: <AppLayout />,
-    children: AppRoutes,
-  },
-], {
-  future: {
-    v7_startTransition: true,
-    v7_relativeSplatPath: true,
-    v7_fetcherPersist: true,
-    v7_normalizeFormMethod: true,
-    v7_partialHydration: true,
-    v7_skipActionErrorRevalidation: true,
-  },
-  // Additional configuration to ensure future flags are applied
-  basename: '',
-  window: undefined,
-});
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+    // Additional configuration to ensure future flags are applied
+    basename: '',
+    window: undefined,
+  }
+);
 
 export function AppShell() {
   // Initialize default permission rules on app startup
