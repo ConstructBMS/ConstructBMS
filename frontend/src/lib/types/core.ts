@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
  * Core type definitions for the ConstructBMS application
  */
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 
 export interface User {
   id: string;

@@ -1,4 +1,4 @@
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useThemeStore } from '../../../app/store/ui/theme.store';
 import {
@@ -53,7 +53,6 @@ export function Appearance() {
   const themeOptions = [
     { value: 'light', label: 'Light', icon: Sun },
     { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'system', label: 'System', icon: Monitor },
   ];
 
   return (

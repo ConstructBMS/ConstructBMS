@@ -1,7 +1,6 @@
 import {
   Bell,
   ChevronDown,
-  Monitor,
   Moon,
   Search,
   Sun,
@@ -46,16 +45,8 @@ export function Topbar() {
   }, []);
 
   const getThemeIcon = () => {
-    switch (theme) {
-      case 'light':
-        return <Sun className='h-4 w-4' />;
-      case 'dark':
-        return <Moon className='h-4 w-4' />;
-      case 'system':
-        return <Monitor className='h-4 w-4' />;
-      default:
-        return <Monitor className='h-4 w-4' />;
-    }
+    // Only show sun for light theme, moon for dark theme
+    return theme === 'light' ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />;
   };
 
   return (

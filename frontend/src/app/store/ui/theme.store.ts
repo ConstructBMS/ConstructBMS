@@ -8,24 +8,14 @@ interface ThemeState {
   toggleTheme: () => void;
 }
 
-const getSystemTheme = (): 'light' | 'dark' => {
-  if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
-};
-
 const getEffectiveTheme = (theme: Theme): 'light' | 'dark' => {
-  if (theme === 'system') {
-    return getSystemTheme();
-  }
   return theme;
 };
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'system',
+      theme: 'light',
       setTheme: (theme: Theme) => {
         set({ theme });
         const effectiveTheme = getEffectiveTheme(theme);
@@ -36,8 +26,8 @@ export const useThemeStore = create<ThemeState>()(
       },
       toggleTheme: () => {
         const { theme } = get();
-        const newTheme: Theme =
-          theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+        // Only toggle between light and dark, skip system
+        const newTheme: Theme = theme === 'light' ? 'dark' : 'light';
         get().setTheme(newTheme);
       },
     }),
@@ -56,18 +46,3 @@ export const useThemeStore = create<ThemeState>()(
   )
 );
 
-// Listen for system theme changes
-if (typeof window !== 'undefined') {
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => {
-      const { theme } = useThemeStore.getState();
-      if (theme === 'system') {
-        const effectiveTheme = getEffectiveTheme(theme);
-        document.documentElement.classList.toggle(
-          'dark',
-          effectiveTheme === 'dark'
-        );
-      }
-    });
-}
