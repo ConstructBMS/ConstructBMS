@@ -1,6 +1,6 @@
 /**
  * CRM Types
- * 
+ *
  * Comprehensive type definitions for Customer Relationship Management
  */
 
@@ -225,7 +225,11 @@ export interface Workflow {
 export interface Trigger {
   id: string;
   name: string;
-  type: 'contact_created' | 'lead_status_changed' | 'email_received' | 'task_completed';
+  type:
+    | 'contact_created'
+    | 'lead_status_changed'
+    | 'email_received'
+    | 'task_completed';
   config: Record<string, any>;
 }
 
@@ -247,7 +251,13 @@ export const defaultCRMSettings: CRMSettings = {
   contactManagement: {
     autoAssignContacts: false,
     duplicateDetection: true,
-    contactCategories: ['client', 'contractor', 'consultant', 'prospect', 'vendor'],
+    contactCategories: [
+      'client',
+      'contractor',
+      'consultant',
+      'prospect',
+      'vendor',
+    ],
     customFields: [],
     defaultContactType: 'person',
     requireEmail: false,
@@ -256,18 +266,96 @@ export const defaultCRMSettings: CRMSettings = {
   leadManagement: {
     leadScoring: false,
     leadSources: [
-      { id: '1', name: 'Website', description: 'Website inquiries', isActive: true, color: '#3b82f6' },
-      { id: '2', name: 'Referral', description: 'Customer referrals', isActive: true, color: '#10b981' },
-      { id: '3', name: 'Cold Call', description: 'Cold calling', isActive: true, color: '#f59e0b' },
-      { id: '4', name: 'Email', description: 'Email campaigns', isActive: true, color: '#8b5cf6' },
+      {
+        id: '1',
+        name: 'Website',
+        description: 'Website inquiries',
+        isActive: true,
+        color: '#3b82f6',
+      },
+      {
+        id: '2',
+        name: 'Referral',
+        description: 'Customer referrals',
+        isActive: true,
+        color: '#10b981',
+      },
+      {
+        id: '3',
+        name: 'Cold Call',
+        description: 'Cold calling',
+        isActive: true,
+        color: '#f59e0b',
+      },
+      {
+        id: '4',
+        name: 'Email',
+        description: 'Email campaigns',
+        isActive: true,
+        color: '#8b5cf6',
+      },
     ],
     leadStatuses: [
-      { id: '1', name: 'New', description: 'Newly created lead', isActive: true, isWon: false, isLost: false, color: '#6b7280', order: 1 },
-      { id: '2', name: 'Qualified', description: 'Qualified lead', isActive: true, isWon: false, isLost: false, color: '#3b82f6', order: 2 },
-      { id: '3', name: 'Proposal', description: 'Proposal sent', isActive: true, isWon: false, isLost: false, color: '#f59e0b', order: 3 },
-      { id: '4', name: 'Negotiation', description: 'In negotiation', isActive: true, isWon: false, isLost: false, color: '#8b5cf6', order: 4 },
-      { id: '5', name: 'Won', description: 'Deal won', isActive: true, isWon: true, isLost: false, color: '#10b981', order: 5 },
-      { id: '6', name: 'Lost', description: 'Deal lost', isActive: true, isWon: false, isLost: true, color: '#ef4444', order: 6 },
+      {
+        id: '1',
+        name: 'New',
+        description: 'Newly created lead',
+        isActive: true,
+        isWon: false,
+        isLost: false,
+        color: '#6b7280',
+        order: 1,
+      },
+      {
+        id: '2',
+        name: 'Qualified',
+        description: 'Qualified lead',
+        isActive: true,
+        isWon: false,
+        isLost: false,
+        color: '#3b82f6',
+        order: 2,
+      },
+      {
+        id: '3',
+        name: 'Proposal',
+        description: 'Proposal sent',
+        isActive: true,
+        isWon: false,
+        isLost: false,
+        color: '#f59e0b',
+        order: 3,
+      },
+      {
+        id: '4',
+        name: 'Negotiation',
+        description: 'In negotiation',
+        isActive: true,
+        isWon: false,
+        isLost: false,
+        color: '#8b5cf6',
+        order: 4,
+      },
+      {
+        id: '5',
+        name: 'Won',
+        description: 'Deal won',
+        isActive: true,
+        isWon: true,
+        isLost: false,
+        color: '#10b981',
+        order: 5,
+      },
+      {
+        id: '6',
+        name: 'Lost',
+        description: 'Deal lost',
+        isActive: true,
+        isWon: false,
+        isLost: true,
+        color: '#ef4444',
+        order: 6,
+      },
     ],
     autoLeadAssignment: false,
     leadConversionRules: [],
@@ -276,12 +364,72 @@ export const defaultCRMSettings: CRMSettings = {
   },
   pipelineManagement: {
     stages: [
-      { id: '1', name: 'Lead', description: 'Initial lead', order: 1, isActive: true, color: '#6b7280', probability: 10, isWon: false, isLost: false },
-      { id: '2', name: 'Qualified', description: 'Qualified lead', order: 2, isActive: true, color: '#3b82f6', probability: 25, isWon: false, isLost: false },
-      { id: '3', name: 'Proposal', description: 'Proposal sent', order: 3, isActive: true, color: '#f59e0b', probability: 50, isWon: false, isLost: false },
-      { id: '4', name: 'Negotiation', description: 'In negotiation', order: 4, isActive: true, color: '#8b5cf6', probability: 75, isWon: false, isLost: false },
-      { id: '5', name: 'Closed Won', description: 'Deal won', order: 5, isActive: true, color: '#10b981', probability: 100, isWon: true, isLost: false },
-      { id: '6', name: 'Closed Lost', description: 'Deal lost', order: 6, isActive: true, color: '#ef4444', probability: 0, isWon: false, isLost: true },
+      {
+        id: '1',
+        name: 'Lead',
+        description: 'Initial lead',
+        order: 1,
+        isActive: true,
+        color: '#6b7280',
+        probability: 10,
+        isWon: false,
+        isLost: false,
+      },
+      {
+        id: '2',
+        name: 'Qualified',
+        description: 'Qualified lead',
+        order: 2,
+        isActive: true,
+        color: '#3b82f6',
+        probability: 25,
+        isWon: false,
+        isLost: false,
+      },
+      {
+        id: '3',
+        name: 'Proposal',
+        description: 'Proposal sent',
+        order: 3,
+        isActive: true,
+        color: '#f59e0b',
+        probability: 50,
+        isWon: false,
+        isLost: false,
+      },
+      {
+        id: '4',
+        name: 'Negotiation',
+        description: 'In negotiation',
+        order: 4,
+        isActive: true,
+        color: '#8b5cf6',
+        probability: 75,
+        isWon: false,
+        isLost: false,
+      },
+      {
+        id: '5',
+        name: 'Closed Won',
+        description: 'Deal won',
+        order: 5,
+        isActive: true,
+        color: '#10b981',
+        probability: 100,
+        isWon: true,
+        isLost: false,
+      },
+      {
+        id: '6',
+        name: 'Closed Lost',
+        description: 'Deal lost',
+        order: 6,
+        isActive: true,
+        color: '#ef4444',
+        probability: 0,
+        isWon: false,
+        isLost: true,
+      },
     ],
     stageColors: {},
     autoAdvanceStages: false,
@@ -310,8 +458,24 @@ export const defaultCRMSettings: CRMSettings = {
     dashboardWidgets: [],
     reportSchedules: [],
     kpiTracking: [
-      { id: '1', name: 'Monthly Revenue', metric: 'revenue', target: 100000, current: 0, period: 'monthly', isActive: true },
-      { id: '2', name: 'Lead Conversion Rate', metric: 'conversion_rate', target: 25, current: 0, period: 'monthly', isActive: true },
+      {
+        id: '1',
+        name: 'Monthly Revenue',
+        metric: 'revenue',
+        target: 100000,
+        current: 0,
+        period: 'monthly',
+        isActive: true,
+      },
+      {
+        id: '2',
+        name: 'Lead Conversion Rate',
+        metric: 'conversion_rate',
+        target: 25,
+        current: 0,
+        period: 'monthly',
+        isActive: true,
+      },
     ],
     dataRetention: 2555, // 7 years
     exportFormats: ['pdf', 'excel', 'csv'],

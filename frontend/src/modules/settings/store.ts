@@ -1,6 +1,6 @@
 /**
  * Settings Store
- * 
+ *
  * Zustand store for managing application settings including CRM configuration
  */
 
@@ -11,50 +11,50 @@ import type { CRMSettings, defaultCRMSettings } from '../../lib/types/crm';
 interface SettingsState {
   // CRM Settings
   crmSettings: CRMSettings;
-  
+
   // Loading States
   isLoading: boolean;
   isSaving: boolean;
-  
+
   // Error States
   error: string | null;
-  
+
   // Actions
   updateCRMSettings: (updates: Partial<CRMSettings>) => void;
   resetCRMSettings: () => void;
   saveCRMSettings: () => Promise<void>;
   loadCRMSettings: () => Promise<void>;
-  
+
   // Contact Management Actions
   addCustomField: (field: any) => void;
   updateCustomField: (id: string, updates: any) => void;
   removeCustomField: (id: string) => void;
-  
+
   // Lead Management Actions
   addLeadSource: (source: any) => void;
   updateLeadSource: (id: string, updates: any) => void;
   removeLeadSource: (id: string) => void;
-  
+
   addLeadStatus: (status: any) => void;
   updateLeadStatus: (id: string, updates: any) => void;
   removeLeadStatus: (id: string) => void;
-  
+
   // Pipeline Management Actions
   addPipelineStage: (stage: any) => void;
   updatePipelineStage: (id: string, updates: any) => void;
   removePipelineStage: (id: string) => void;
   reorderPipelineStages: (stages: any[]) => void;
-  
+
   // Communication Actions
   addEmailTemplate: (template: any) => void;
   updateEmailTemplate: (id: string, updates: any) => void;
   removeEmailTemplate: (id: string) => void;
-  
+
   // Integration Actions
   updateEmailProvider: (provider: any) => void;
   updateCalendarProvider: (provider: any) => void;
   updatePhoneSystem: (system: any) => void;
-  
+
   // Utility Actions
   clearError: () => void;
 }
@@ -69,8 +69,8 @@ export const useSettingsStore = create<SettingsState>()(
       error: null,
 
       // Main Actions
-      updateCRMSettings: (updates) => {
-        set((state) => ({
+      updateCRMSettings: updates => {
+        set(state => ({
           crmSettings: { ...state.crmSettings, ...updates },
         }));
       },
@@ -86,9 +86,12 @@ export const useSettingsStore = create<SettingsState>()(
           await new Promise(resolve => setTimeout(resolve, 1000));
           set({ isSaving: false });
         } catch (error) {
-          set({ 
-            isSaving: false, 
-            error: error instanceof Error ? error.message : 'Failed to save CRM settings' 
+          set({
+            isSaving: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : 'Failed to save CRM settings',
           });
         }
       },
@@ -100,132 +103,155 @@ export const useSettingsStore = create<SettingsState>()(
           await new Promise(resolve => setTimeout(resolve, 500));
           set({ isLoading: false });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Failed to load CRM settings' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : 'Failed to load CRM settings',
           });
         }
       },
 
       // Contact Management Actions
-      addCustomField: (field) => {
-        set((state) => ({
+      addCustomField: field => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             contactManagement: {
               ...state.crmSettings.contactManagement,
-              customFields: [...state.crmSettings.contactManagement.customFields, field],
+              customFields: [
+                ...state.crmSettings.contactManagement.customFields,
+                field,
+              ],
             },
           },
         }));
       },
 
       updateCustomField: (id, updates) => {
-        set((state) => ({
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             contactManagement: {
               ...state.crmSettings.contactManagement,
-              customFields: state.crmSettings.contactManagement.customFields.map(field =>
-                field.id === id ? { ...field, ...updates } : field
-              ),
+              customFields:
+                state.crmSettings.contactManagement.customFields.map(field =>
+                  field.id === id ? { ...field, ...updates } : field
+                ),
             },
           },
         }));
       },
 
-      removeCustomField: (id) => {
-        set((state) => ({
+      removeCustomField: id => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             contactManagement: {
               ...state.crmSettings.contactManagement,
-              customFields: state.crmSettings.contactManagement.customFields.filter(field => field.id !== id),
+              customFields:
+                state.crmSettings.contactManagement.customFields.filter(
+                  field => field.id !== id
+                ),
             },
           },
         }));
       },
 
       // Lead Management Actions
-      addLeadSource: (source) => {
-        set((state) => ({
+      addLeadSource: source => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadSources: [...state.crmSettings.leadManagement.leadSources, source],
+              leadSources: [
+                ...state.crmSettings.leadManagement.leadSources,
+                source,
+              ],
             },
           },
         }));
       },
 
       updateLeadSource: (id, updates) => {
-        set((state) => ({
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadSources: state.crmSettings.leadManagement.leadSources.map(source =>
-                source.id === id ? { ...source, ...updates } : source
+              leadSources: state.crmSettings.leadManagement.leadSources.map(
+                source =>
+                  source.id === id ? { ...source, ...updates } : source
               ),
             },
           },
         }));
       },
 
-      removeLeadSource: (id) => {
-        set((state) => ({
+      removeLeadSource: id => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadSources: state.crmSettings.leadManagement.leadSources.filter(source => source.id !== id),
+              leadSources: state.crmSettings.leadManagement.leadSources.filter(
+                source => source.id !== id
+              ),
             },
           },
         }));
       },
 
-      addLeadStatus: (status) => {
-        set((state) => ({
+      addLeadStatus: status => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadStatuses: [...state.crmSettings.leadManagement.leadStatuses, status],
+              leadStatuses: [
+                ...state.crmSettings.leadManagement.leadStatuses,
+                status,
+              ],
             },
           },
         }));
       },
 
       updateLeadStatus: (id, updates) => {
-        set((state) => ({
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadStatuses: state.crmSettings.leadManagement.leadStatuses.map(status =>
-                status.id === id ? { ...status, ...updates } : status
+              leadStatuses: state.crmSettings.leadManagement.leadStatuses.map(
+                status =>
+                  status.id === id ? { ...status, ...updates } : status
               ),
             },
           },
         }));
       },
 
-      removeLeadStatus: (id) => {
-        set((state) => ({
+      removeLeadStatus: id => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             leadManagement: {
               ...state.crmSettings.leadManagement,
-              leadStatuses: state.crmSettings.leadManagement.leadStatuses.filter(status => status.id !== id),
+              leadStatuses:
+                state.crmSettings.leadManagement.leadStatuses.filter(
+                  status => status.id !== id
+                ),
             },
           },
         }));
       },
 
       // Pipeline Management Actions
-      addPipelineStage: (stage) => {
-        set((state) => ({
+      addPipelineStage: stage => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             pipelineManagement: {
@@ -237,7 +263,7 @@ export const useSettingsStore = create<SettingsState>()(
       },
 
       updatePipelineStage: (id, updates) => {
-        set((state) => ({
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             pipelineManagement: {
@@ -250,20 +276,22 @@ export const useSettingsStore = create<SettingsState>()(
         }));
       },
 
-      removePipelineStage: (id) => {
-        set((state) => ({
+      removePipelineStage: id => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             pipelineManagement: {
               ...state.crmSettings.pipelineManagement,
-              stages: state.crmSettings.pipelineManagement.stages.filter(stage => stage.id !== id),
+              stages: state.crmSettings.pipelineManagement.stages.filter(
+                stage => stage.id !== id
+              ),
             },
           },
         }));
       },
 
-      reorderPipelineStages: (stages) => {
-        set((state) => ({
+      reorderPipelineStages: stages => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             pipelineManagement: {
@@ -275,47 +303,54 @@ export const useSettingsStore = create<SettingsState>()(
       },
 
       // Communication Actions
-      addEmailTemplate: (template) => {
-        set((state) => ({
+      addEmailTemplate: template => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             communication: {
               ...state.crmSettings.communication,
-              emailTemplates: [...state.crmSettings.communication.emailTemplates, template],
+              emailTemplates: [
+                ...state.crmSettings.communication.emailTemplates,
+                template,
+              ],
             },
           },
         }));
       },
 
       updateEmailTemplate: (id, updates) => {
-        set((state) => ({
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             communication: {
               ...state.crmSettings.communication,
-              emailTemplates: state.crmSettings.communication.emailTemplates.map(template =>
-                template.id === id ? { ...template, ...updates } : template
-              ),
+              emailTemplates:
+                state.crmSettings.communication.emailTemplates.map(template =>
+                  template.id === id ? { ...template, ...updates } : template
+                ),
             },
           },
         }));
       },
 
-      removeEmailTemplate: (id) => {
-        set((state) => ({
+      removeEmailTemplate: id => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             communication: {
               ...state.crmSettings.communication,
-              emailTemplates: state.crmSettings.communication.emailTemplates.filter(template => template.id !== id),
+              emailTemplates:
+                state.crmSettings.communication.emailTemplates.filter(
+                  template => template.id !== id
+                ),
             },
           },
         }));
       },
 
       // Integration Actions
-      updateEmailProvider: (provider) => {
-        set((state) => ({
+      updateEmailProvider: provider => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             integrations: {
@@ -326,8 +361,8 @@ export const useSettingsStore = create<SettingsState>()(
         }));
       },
 
-      updateCalendarProvider: (provider) => {
-        set((state) => ({
+      updateCalendarProvider: provider => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             integrations: {
@@ -338,8 +373,8 @@ export const useSettingsStore = create<SettingsState>()(
         }));
       },
 
-      updatePhoneSystem: (system) => {
-        set((state) => ({
+      updatePhoneSystem: system => {
+        set(state => ({
           crmSettings: {
             ...state.crmSettings,
             integrations: {
@@ -357,7 +392,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'constructbms-settings',
-      partialize: (state) => ({ crmSettings: state.crmSettings }),
+      partialize: state => ({ crmSettings: state.crmSettings }),
     }
   )
 );
