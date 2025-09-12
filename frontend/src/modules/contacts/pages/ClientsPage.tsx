@@ -1,7 +1,27 @@
-import { Building2, Grid3X3, List, Search, User, Plus, TrendingUp, DollarSign, Calendar, Phone, Mail } from 'lucide-react';
+import {
+  Calendar,
+  Grid3X3,
+  List,
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  User,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Page } from '../../../components/layout/Page';
-import { Button, Input, Tabs, TabsList, TabsTrigger, Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '../../../components/ui';
 import { ContactsGrid } from '../ContactsGrid';
 import { ContactsList } from '../ContactsList';
 import { useContactsStore } from '../store';
@@ -21,7 +41,9 @@ export default function ClientsPage() {
   } = useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
+    'all'
+  );
 
   // Filter for clients only
   const clientContacts = contacts.filter(
@@ -34,37 +56,39 @@ export default function ClientsPage() {
   // Apply search and type filters
   const filteredClientContacts = useMemo(() => {
     let filtered = clientContacts;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        contact =>
+          contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'company') {
       return [];
     }
-    
+
     return filtered;
   }, [clientContacts, searchQuery, filterType]);
 
   const filteredClientCompanies = useMemo(() => {
     let filtered = clientCompanies;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(company =>
-        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        company =>
+          company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'person') {
       return [];
     }
-    
+
     return filtered;
   }, [clientCompanies, searchQuery, filterType]);
 
@@ -75,13 +99,13 @@ export default function ClientsPage() {
     const totalClients = clientContacts.length + clientCompanies.length;
     const activeClients = totalClients; // For now, assume all are active
     const recentClients = totalClients; // For now, assume all are recent
-    
+
     return {
       total: totalClients,
       active: activeClients,
       recent: recentClients,
       contacts: clientContacts.length,
-      companies: clientCompanies.length
+      companies: clientCompanies.length,
     };
   }, [clientContacts, clientCompanies]);
 
@@ -117,7 +141,10 @@ export default function ClientsPage() {
             </p>
           </div>
           <div className='flex gap-2'>
-            <Button onClick={handleAddClient} className='flex items-center gap-2'>
+            <Button
+              onClick={handleAddClient}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Add Client
             </Button>
@@ -135,7 +162,8 @@ export default function ClientsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{clientStats.total}</div>
               <CardDescription className='text-xs'>
-                {clientStats.contacts} contacts, {clientStats.companies} companies
+                {clientStats.contacts} contacts, {clientStats.companies}{' '}
+                companies
               </CardDescription>
             </CardContent>
           </Card>
@@ -147,7 +175,9 @@ export default function ClientsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-green-600'>{clientStats.active}</div>
+              <div className='text-2xl font-bold text-green-600'>
+                {clientStats.active}
+              </div>
               <CardDescription className='text-xs'>
                 Currently engaged
               </CardDescription>
@@ -161,7 +191,9 @@ export default function ClientsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>{clientStats.recent}</div>
+              <div className='text-2xl font-bold text-blue-600'>
+                {clientStats.recent}
+              </div>
               <CardDescription className='text-xs'>
                 Added this month
               </CardDescription>
@@ -296,7 +328,9 @@ export default function ClientsPage() {
               <User className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
               <p className='text-muted-foreground'>No clients found.</p>
               <p className='text-sm text-muted-foreground mt-2'>
-                {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first client to get started.'}
+                {searchQuery
+                  ? 'Try adjusting your search criteria.'
+                  : 'Add your first client to get started.'}
               </p>
               {!searchQuery && (
                 <Button onClick={handleAddClient} className='mt-4'>

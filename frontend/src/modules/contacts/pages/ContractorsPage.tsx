@@ -1,7 +1,26 @@
-import { Building2, Grid3X3, List, Search, User, Plus, Wrench, Shield, Award, Calendar, Phone, Mail } from 'lucide-react';
+import {
+  Award,
+  Grid3X3,
+  List,
+  Plus,
+  Search,
+  Shield,
+  Wrench,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Page } from '../../../components/layout/Page';
-import { Button, Input, Tabs, TabsList, TabsTrigger, Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '../../../components/ui';
 import { ContactsGrid } from '../ContactsGrid';
 import { ContactsList } from '../ContactsList';
 import { useContactsStore } from '../store';
@@ -21,7 +40,9 @@ export default function ContractorsPage() {
   } = useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
+    'all'
+  );
 
   // Filter for contractors only
   const contractorContacts = contacts.filter(
@@ -34,54 +55,60 @@ export default function ContractorsPage() {
   // Apply search and type filters
   const filteredContractorContacts = useMemo(() => {
     let filtered = contractorContacts;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        contact =>
+          contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'company') {
       return [];
     }
-    
+
     return filtered;
   }, [contractorContacts, searchQuery, filterType]);
 
   const filteredContractorCompanies = useMemo(() => {
     let filtered = contractorCompanies;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(company =>
-        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        company =>
+          company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'person') {
       return [];
     }
-    
+
     return filtered;
   }, [contractorCompanies, searchQuery, filterType]);
 
-  const allContractors = [...filteredContractorContacts, ...filteredContractorCompanies];
+  const allContractors = [
+    ...filteredContractorContacts,
+    ...filteredContractorCompanies,
+  ];
 
   // Calculate contractor statistics
   const contractorStats = useMemo(() => {
-    const totalContractors = contractorContacts.length + contractorCompanies.length;
+    const totalContractors =
+      contractorContacts.length + contractorCompanies.length;
     const activeContractors = totalContractors; // For now, assume all are active
     const certifiedContractors = totalContractors; // For now, assume all are certified
-    
+
     return {
       total: totalContractors,
       active: activeContractors,
       certified: certifiedContractors,
       contacts: contractorContacts.length,
-      companies: contractorCompanies.length
+      companies: contractorCompanies.length,
     };
   }, [contractorContacts, contractorCompanies]);
 
@@ -117,7 +144,10 @@ export default function ContractorsPage() {
             </p>
           </div>
           <div className='flex gap-2'>
-            <Button onClick={handleAddContractor} className='flex items-center gap-2'>
+            <Button
+              onClick={handleAddContractor}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Add Contractor
             </Button>
@@ -135,7 +165,8 @@ export default function ContractorsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{contractorStats.total}</div>
               <CardDescription className='text-xs'>
-                {contractorStats.contacts} contacts, {contractorStats.companies} companies
+                {contractorStats.contacts} contacts, {contractorStats.companies}{' '}
+                companies
               </CardDescription>
             </CardContent>
           </Card>
@@ -147,7 +178,9 @@ export default function ContractorsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-green-600'>{contractorStats.active}</div>
+              <div className='text-2xl font-bold text-green-600'>
+                {contractorStats.active}
+              </div>
               <CardDescription className='text-xs'>
                 Currently available
               </CardDescription>
@@ -161,7 +194,9 @@ export default function ContractorsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>{contractorStats.certified}</div>
+              <div className='text-2xl font-bold text-blue-600'>
+                {contractorStats.certified}
+              </div>
               <CardDescription className='text-xs'>
                 Licensed & certified
               </CardDescription>
@@ -296,7 +331,9 @@ export default function ContractorsPage() {
               <Wrench className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
               <p className='text-muted-foreground'>No contractors found.</p>
               <p className='text-sm text-muted-foreground mt-2'>
-                {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first contractor to get started.'}
+                {searchQuery
+                  ? 'Try adjusting your search criteria.'
+                  : 'Add your first contractor to get started.'}
               </p>
               {!searchQuery && (
                 <Button onClick={handleAddContractor} className='mt-4'>

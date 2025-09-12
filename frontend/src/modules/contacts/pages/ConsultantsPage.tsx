@@ -1,7 +1,26 @@
-import { Building2, Grid3X3, List, Search, User, Plus, Lightbulb, BookOpen, Award, Calendar, Phone, Mail } from 'lucide-react';
+import {
+  Award,
+  BookOpen,
+  Grid3X3,
+  Lightbulb,
+  List,
+  Plus,
+  Search,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Page } from '../../../components/layout/Page';
-import { Button, Input, Tabs, TabsList, TabsTrigger, Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '../../../components/ui';
 import { ContactsGrid } from '../ContactsGrid';
 import { ContactsList } from '../ContactsList';
 import { useContactsStore } from '../store';
@@ -21,7 +40,9 @@ export default function ConsultantsPage() {
   } = useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
+    'all'
+  );
 
   // Filter for consultants only
   const consultantContacts = contacts.filter(
@@ -34,54 +55,60 @@ export default function ConsultantsPage() {
   // Apply search and type filters
   const filteredConsultantContacts = useMemo(() => {
     let filtered = consultantContacts;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(contact =>
-        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        contact =>
+          contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contact.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'company') {
       return [];
     }
-    
+
     return filtered;
   }, [consultantContacts, searchQuery, filterType]);
 
   const filteredConsultantCompanies = useMemo(() => {
     let filtered = consultantCompanies;
-    
+
     if (searchQuery) {
-      filtered = filtered.filter(company =>
-        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        company =>
+          company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          company.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     if (filterType === 'person') {
       return [];
     }
-    
+
     return filtered;
   }, [consultantCompanies, searchQuery, filterType]);
 
-  const allConsultants = [...filteredConsultantContacts, ...filteredConsultantCompanies];
+  const allConsultants = [
+    ...filteredConsultantContacts,
+    ...filteredConsultantCompanies,
+  ];
 
   // Calculate consultant statistics
   const consultantStats = useMemo(() => {
-    const totalConsultants = consultantContacts.length + consultantCompanies.length;
+    const totalConsultants =
+      consultantContacts.length + consultantCompanies.length;
     const activeConsultants = totalConsultants; // For now, assume all are active
     const expertConsultants = totalConsultants; // For now, assume all are experts
-    
+
     return {
       total: totalConsultants,
       active: activeConsultants,
       expert: expertConsultants,
       contacts: consultantContacts.length,
-      companies: consultantCompanies.length
+      companies: consultantCompanies.length,
     };
   }, [consultantContacts, consultantCompanies]);
 
@@ -117,7 +144,10 @@ export default function ConsultantsPage() {
             </p>
           </div>
           <div className='flex gap-2'>
-            <Button onClick={handleAddConsultant} className='flex items-center gap-2'>
+            <Button
+              onClick={handleAddConsultant}
+              className='flex items-center gap-2'
+            >
               <Plus className='h-4 w-4' />
               Add Consultant
             </Button>
@@ -135,7 +165,8 @@ export default function ConsultantsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{consultantStats.total}</div>
               <CardDescription className='text-xs'>
-                {consultantStats.contacts} contacts, {consultantStats.companies} companies
+                {consultantStats.contacts} contacts, {consultantStats.companies}{' '}
+                companies
               </CardDescription>
             </CardContent>
           </Card>
@@ -147,7 +178,9 @@ export default function ConsultantsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-green-600'>{consultantStats.active}</div>
+              <div className='text-2xl font-bold text-green-600'>
+                {consultantStats.active}
+              </div>
               <CardDescription className='text-xs'>
                 Currently available
               </CardDescription>
@@ -161,7 +194,9 @@ export default function ConsultantsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>{consultantStats.expert}</div>
+              <div className='text-2xl font-bold text-blue-600'>
+                {consultantStats.expert}
+              </div>
               <CardDescription className='text-xs'>
                 Senior level expertise
               </CardDescription>
@@ -296,7 +331,9 @@ export default function ConsultantsPage() {
               <Lightbulb className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
               <p className='text-muted-foreground'>No consultants found.</p>
               <p className='text-sm text-muted-foreground mt-2'>
-                {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first consultant to get started.'}
+                {searchQuery
+                  ? 'Try adjusting your search criteria.'
+                  : 'Add your first consultant to get started.'}
               </p>
               {!searchQuery && (
                 <Button onClick={handleAddConsultant} className='mt-4'>
