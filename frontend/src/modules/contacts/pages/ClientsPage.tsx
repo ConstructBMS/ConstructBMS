@@ -1,27 +1,27 @@
-import { 
-  ArrowLeft, 
-  Plus, 
-  Search, 
-  User, 
-  Building2, 
-  Phone, 
-  Mail, 
+import {
+  ArrowLeft,
   Calendar,
-  DollarSign,
-  TrendingUp,
-  Star,
   Clock,
+  DollarSign,
   FileText,
+  Mail,
   MessageSquare,
-  CheckCircle,
-  AlertCircle,
+  Phone,
+  Plus,
+  Search,
+  Star,
+  TrendingUp,
+  User,
   Users,
-  Briefcase
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
   Button,
   Card,
   CardContent,
@@ -29,10 +29,6 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
 } from '../../../components/ui';
 import { useContactsStore } from '../store';
 
@@ -64,7 +60,7 @@ export default function ClientsPage() {
   // Apply search filters
   const filteredClients = useMemo(() => {
     const allClients = [...clientContacts, ...clientCompanies];
-    
+
     if (searchQuery) {
       return allClients.filter(
         client =>
@@ -73,7 +69,7 @@ export default function ClientsPage() {
           client.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     return allClients;
   }, [clientContacts, clientCompanies, searchQuery]);
 
@@ -105,7 +101,7 @@ export default function ClientsPage() {
       lastContact: '2024-01-15',
       satisfaction: 4.8,
       projects: 3,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '2',
@@ -118,7 +114,7 @@ export default function ClientsPage() {
       lastContact: '2024-01-12',
       satisfaction: 4.9,
       projects: 2,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '3',
@@ -131,8 +127,8 @@ export default function ClientsPage() {
       lastContact: '2024-01-10',
       satisfaction: 4.6,
       projects: 1,
-      type: 'company'
-    }
+      type: 'company',
+    },
   ];
 
   const handleEdit = (item: any) => {
@@ -172,7 +168,8 @@ export default function ClientsPage() {
             </div>
             <h1 className='text-2xl font-semibold'>Client Management</h1>
             <p className='text-muted-foreground'>
-              Manage client relationships, track projects, and monitor satisfaction
+              Manage client relationships, track projects, and monitor
+              satisfaction
             </p>
           </div>
           <div className='flex gap-2'>
@@ -198,7 +195,8 @@ export default function ClientsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{clientStats.total}</div>
               <CardDescription className='text-xs'>
-                {clientStats.contacts} contacts, {clientStats.companies} companies
+                {clientStats.contacts} contacts, {clientStats.companies}{' '}
+                companies
               </CardDescription>
             </CardContent>
           </Card>
@@ -327,21 +325,37 @@ export default function ClientsPage() {
 
           {/* Client Cards */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {mockClientData.map((client) => (
-              <Card key={client.id} className='hover:shadow-md transition-shadow cursor-pointer'>
+            {mockClientData.map(client => (
+              <Card
+                key={client.id}
+                className='hover:shadow-md transition-shadow cursor-pointer'
+              >
                 <CardHeader className='pb-3'>
                   <div className='flex items-center gap-3'>
                     <Avatar className='h-10 w-10'>
-                      <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`} />
+                      <AvatarImage
+                        src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
+                      />
                       <AvatarFallback>
-                        {client.name.split(' ').map(n => n[0]).join('')}
+                        {client.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div className='flex-1'>
-                      <CardTitle className='text-sm font-medium'>{client.name}</CardTitle>
-                      <CardDescription className='text-xs'>{client.company}</CardDescription>
+                      <CardTitle className='text-sm font-medium'>
+                        {client.name}
+                      </CardTitle>
+                      <CardDescription className='text-xs'>
+                        {client.company}
+                      </CardDescription>
                     </div>
-                    <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        client.status === 'active' ? 'default' : 'secondary'
+                      }
+                    >
                       {client.status}
                     </Badge>
                   </div>
@@ -355,26 +369,32 @@ export default function ClientsPage() {
                     <Mail className='h-3 w-3' />
                     {client.email}
                   </div>
-                  
+
                   <div className='grid grid-cols-2 gap-2 pt-2 border-t'>
                     <div className='text-center'>
                       <div className='text-sm font-semibold text-green-600'>
                         £{client.projectValue.toLocaleString()}
                       </div>
-                      <div className='text-xs text-muted-foreground'>Project Value</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Project Value
+                      </div>
                     </div>
                     <div className='text-center'>
                       <div className='text-sm font-semibold text-blue-600'>
                         {client.projects}
                       </div>
-                      <div className='text-xs text-muted-foreground'>Projects</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Projects
+                      </div>
                     </div>
                   </div>
 
                   <div className='flex items-center justify-between pt-2 border-t'>
                     <div className='flex items-center gap-1'>
                       <Star className='h-3 w-3 text-yellow-500 fill-current' />
-                      <span className='text-xs font-medium'>{client.satisfaction}</span>
+                      <span className='text-xs font-medium'>
+                        {client.satisfaction}
+                      </span>
                     </div>
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                       <Clock className='h-3 w-3' />
@@ -383,11 +403,19 @@ export default function ClientsPage() {
                   </div>
 
                   <div className='flex gap-1 pt-2'>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <MessageSquare className='h-3 w-3 mr-1' />
                       Message
                     </Button>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <Calendar className='h-3 w-3 mr-1' />
                       Meeting
                     </Button>

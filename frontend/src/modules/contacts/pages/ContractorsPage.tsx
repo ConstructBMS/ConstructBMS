@@ -1,28 +1,27 @@
-import { 
-  ArrowLeft, 
-  Plus, 
-  Search, 
-  Wrench, 
-  Shield, 
-  Award, 
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  HardHat,
-  Truck,
+import {
+  ArrowLeft,
+  Award,
   FileCheck,
-  Phone,
+  HardHat,
   Mail,
-  Calendar,
+  Phone,
+  Plus,
+  Search,
+  Shield,
   Star,
-  Users,
   TrendingUp,
-  DollarSign
+  Truck,
+  Users,
+  Wrench,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
   Button,
   Card,
   CardContent,
@@ -30,10 +29,6 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Progress,
 } from '../../../components/ui';
 import { useContactsStore } from '../store';
@@ -53,7 +48,9 @@ export default function ContractorsPage() {
   } = useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedContractor, setSelectedContractor] = useState<string | null>(null);
+  const [selectedContractor, setSelectedContractor] = useState<string | null>(
+    null
+  );
 
   // Filter for contractors only
   const contractorContacts = contacts.filter(
@@ -66,7 +63,7 @@ export default function ContractorsPage() {
   // Apply search filters
   const filteredContractors = useMemo(() => {
     const allContractors = [...contractorContacts, ...contractorCompanies];
-    
+
     if (searchQuery) {
       return allContractors.filter(
         contractor =>
@@ -75,13 +72,14 @@ export default function ContractorsPage() {
           contractor.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     return allContractors;
   }, [contractorContacts, contractorCompanies, searchQuery]);
 
   // Calculate contractor statistics
   const contractorStats = useMemo(() => {
-    const totalContractors = contractorContacts.length + contractorCompanies.length;
+    const totalContractors =
+      contractorContacts.length + contractorCompanies.length;
     const activeContractors = totalContractors; // For now, assume all are active
     const certifiedContractors = Math.floor(totalContractors * 0.8); // 80% certified
     const totalCapacity = totalContractors * 100; // Mock capacity
@@ -112,7 +110,7 @@ export default function ContractorsPage() {
       currentProjects: 2,
       capacity: 85,
       hourlyRate: 45,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '2',
@@ -128,7 +126,7 @@ export default function ContractorsPage() {
       currentProjects: 3,
       capacity: 95,
       hourlyRate: 55,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '3',
@@ -144,8 +142,8 @@ export default function ContractorsPage() {
       currentProjects: 1,
       capacity: 70,
       hourlyRate: 65,
-      type: 'company'
-    }
+      type: 'company',
+    },
   ];
 
   const handleEdit = (item: any) => {
@@ -185,7 +183,8 @@ export default function ContractorsPage() {
             </div>
             <h1 className='text-2xl font-semibold'>Contractor Management</h1>
             <p className='text-muted-foreground'>
-              Manage contractor workforce, track certifications, and monitor performance
+              Manage contractor workforce, track certifications, and monitor
+              performance
             </p>
           </div>
           <div className='flex gap-2'>
@@ -211,7 +210,8 @@ export default function ContractorsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{contractorStats.total}</div>
               <CardDescription className='text-xs'>
-                {contractorStats.contacts} individuals, {contractorStats.companies} companies
+                {contractorStats.contacts} individuals,{' '}
+                {contractorStats.companies} companies
               </CardDescription>
             </CardContent>
           </Card>
@@ -342,21 +342,39 @@ export default function ContractorsPage() {
 
           {/* Contractor Cards */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {mockContractorData.map((contractor) => (
-              <Card key={contractor.id} className='hover:shadow-md transition-shadow cursor-pointer'>
+            {mockContractorData.map(contractor => (
+              <Card
+                key={contractor.id}
+                className='hover:shadow-md transition-shadow cursor-pointer'
+              >
                 <CardHeader className='pb-3'>
                   <div className='flex items-center gap-3'>
                     <Avatar className='h-10 w-10'>
-                      <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${contractor.name}`} />
+                      <AvatarImage
+                        src={`https://api.dicebear.com/7.x/initials/svg?seed=${contractor.name}`}
+                      />
                       <AvatarFallback>
-                        {contractor.name.split(' ').map(n => n[0]).join('')}
+                        {contractor.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div className='flex-1'>
-                      <CardTitle className='text-sm font-medium'>{contractor.name}</CardTitle>
-                      <CardDescription className='text-xs'>{contractor.company}</CardDescription>
+                      <CardTitle className='text-sm font-medium'>
+                        {contractor.name}
+                      </CardTitle>
+                      <CardDescription className='text-xs'>
+                        {contractor.company}
+                      </CardDescription>
                     </div>
-                    <Badge variant={contractor.status === 'available' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        contractor.status === 'available'
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
                       {contractor.status}
                     </Badge>
                   </div>
@@ -370,13 +388,19 @@ export default function ContractorsPage() {
                     <Mail className='h-3 w-3' />
                     {contractor.email}
                   </div>
-                  
+
                   {/* Specialties */}
                   <div className='space-y-1'>
-                    <div className='text-xs font-medium text-muted-foreground'>Specialties:</div>
+                    <div className='text-xs font-medium text-muted-foreground'>
+                      Specialties:
+                    </div>
                     <div className='flex flex-wrap gap-1'>
                       {contractor.specialties.map((specialty, index) => (
-                        <Badge key={index} variant='outline' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='outline'
+                          className='text-xs'
+                        >
                           {specialty}
                         </Badge>
                       ))}
@@ -385,10 +409,16 @@ export default function ContractorsPage() {
 
                   {/* Certifications */}
                   <div className='space-y-1'>
-                    <div className='text-xs font-medium text-muted-foreground'>Certifications:</div>
+                    <div className='text-xs font-medium text-muted-foreground'>
+                      Certifications:
+                    </div>
                     <div className='flex flex-wrap gap-1'>
                       {contractor.certifications.map((cert, index) => (
-                        <Badge key={index} variant='secondary' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='secondary'
+                          className='text-xs'
+                        >
                           <Shield className='h-2 w-2 mr-1' />
                           {cert}
                         </Badge>
@@ -402,7 +432,9 @@ export default function ContractorsPage() {
                       <div className='text-sm font-semibold text-green-600'>
                         {contractor.projectsCompleted}
                       </div>
-                      <div className='text-xs text-muted-foreground'>Completed</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Completed
+                      </div>
                     </div>
                     <div className='text-center'>
                       <div className='text-sm font-semibold text-blue-600'>
@@ -416,7 +448,9 @@ export default function ContractorsPage() {
                   <div className='space-y-1'>
                     <div className='flex items-center justify-between text-xs'>
                       <span className='text-muted-foreground'>Capacity</span>
-                      <span className='font-medium'>{contractor.capacity}%</span>
+                      <span className='font-medium'>
+                        {contractor.capacity}%
+                      </span>
                     </div>
                     <Progress value={contractor.capacity} className='h-1' />
                   </div>
@@ -425,7 +459,9 @@ export default function ContractorsPage() {
                   <div className='flex items-center justify-between pt-2 border-t'>
                     <div className='flex items-center gap-1'>
                       <Star className='h-3 w-3 text-yellow-500 fill-current' />
-                      <span className='text-xs font-medium'>{contractor.rating}</span>
+                      <span className='text-xs font-medium'>
+                        {contractor.rating}
+                      </span>
                     </div>
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                       <HardHat className='h-3 w-3' />
@@ -434,11 +470,19 @@ export default function ContractorsPage() {
                   </div>
 
                   <div className='flex gap-1 pt-2'>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <Phone className='h-3 w-3 mr-1' />
                       Call
                     </Button>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <FileCheck className='h-3 w-3 mr-1' />
                       Assign
                     </Button>

@@ -1,30 +1,29 @@
-import { 
-  ArrowLeft, 
-  Plus, 
-  Search, 
-  Lightbulb, 
-  BookOpen, 
-  Award, 
-  Clock,
-  CheckCircle,
-  AlertCircle,
+import {
+  ArrowLeft,
+  Award,
+  BookOpen,
   Brain,
-  Target,
+  Calendar,
+  DollarSign,
+  Lightbulb,
+  Mail,
   MessageSquare,
   Phone,
-  Mail,
-  Calendar,
+  Plus,
+  Presentation,
+  Search,
   Star,
+  Target,
   Users,
-  TrendingUp,
-  DollarSign,
-  FileText,
-  Presentation
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
   Button,
   Card,
   CardContent,
@@ -32,10 +31,6 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Progress,
 } from '../../../components/ui';
 import { useContactsStore } from '../store';
@@ -55,7 +50,9 @@ export default function ConsultantsPage() {
   } = useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedConsultant, setSelectedConsultant] = useState<string | null>(null);
+  const [selectedConsultant, setSelectedConsultant] = useState<string | null>(
+    null
+  );
 
   // Filter for consultants only
   const consultantContacts = contacts.filter(
@@ -68,7 +65,7 @@ export default function ConsultantsPage() {
   // Apply search filters
   const filteredConsultants = useMemo(() => {
     const allConsultants = [...consultantContacts, ...consultantCompanies];
-    
+
     if (searchQuery) {
       return allConsultants.filter(
         consultant =>
@@ -77,13 +74,14 @@ export default function ConsultantsPage() {
           consultant.phone?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     return allConsultants;
   }, [consultantContacts, consultantCompanies, searchQuery]);
 
   // Calculate consultant statistics
   const consultantStats = useMemo(() => {
-    const totalConsultants = consultantContacts.length + consultantCompanies.length;
+    const totalConsultants =
+      consultantContacts.length + consultantCompanies.length;
     const activeConsultants = totalConsultants; // For now, assume all are active
     const expertConsultants = Math.floor(totalConsultants * 0.9); // 90% experts
     const totalRevenue = totalConsultants * 75000; // Mock revenue
@@ -114,7 +112,7 @@ export default function ConsultantsPage() {
       currentProjects: 1,
       hourlyRate: 150,
       availability: 80,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '2',
@@ -130,7 +128,7 @@ export default function ConsultantsPage() {
       currentProjects: 2,
       hourlyRate: 125,
       availability: 60,
-      type: 'person'
+      type: 'person',
     },
     {
       id: '3',
@@ -146,8 +144,8 @@ export default function ConsultantsPage() {
       currentProjects: 1,
       hourlyRate: 200,
       availability: 90,
-      type: 'company'
-    }
+      type: 'company',
+    },
   ];
 
   const handleEdit = (item: any) => {
@@ -187,7 +185,8 @@ export default function ConsultantsPage() {
             </div>
             <h1 className='text-2xl font-semibold'>Consultant Management</h1>
             <p className='text-muted-foreground'>
-              Manage expert consultants, track expertise, and monitor project performance
+              Manage expert consultants, track expertise, and monitor project
+              performance
             </p>
           </div>
           <div className='flex gap-2'>
@@ -213,7 +212,8 @@ export default function ConsultantsPage() {
             <CardContent>
               <div className='text-2xl font-bold'>{consultantStats.total}</div>
               <CardDescription className='text-xs'>
-                {consultantStats.contacts} individuals, {consultantStats.companies} firms
+                {consultantStats.contacts} individuals,{' '}
+                {consultantStats.companies} firms
               </CardDescription>
             </CardContent>
           </Card>
@@ -344,21 +344,39 @@ export default function ConsultantsPage() {
 
           {/* Consultant Cards */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {mockConsultantData.map((consultant) => (
-              <Card key={consultant.id} className='hover:shadow-md transition-shadow cursor-pointer'>
+            {mockConsultantData.map(consultant => (
+              <Card
+                key={consultant.id}
+                className='hover:shadow-md transition-shadow cursor-pointer'
+              >
                 <CardHeader className='pb-3'>
                   <div className='flex items-center gap-3'>
                     <Avatar className='h-10 w-10'>
-                      <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${consultant.name}`} />
+                      <AvatarImage
+                        src={`https://api.dicebear.com/7.x/initials/svg?seed=${consultant.name}`}
+                      />
                       <AvatarFallback>
-                        {consultant.name.split(' ').map(n => n[0]).join('')}
+                        {consultant.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')}
                       </AvatarFallback>
                     </Avatar>
                     <div className='flex-1'>
-                      <CardTitle className='text-sm font-medium'>{consultant.name}</CardTitle>
-                      <CardDescription className='text-xs'>{consultant.company}</CardDescription>
+                      <CardTitle className='text-sm font-medium'>
+                        {consultant.name}
+                      </CardTitle>
+                      <CardDescription className='text-xs'>
+                        {consultant.company}
+                      </CardDescription>
                     </div>
-                    <Badge variant={consultant.status === 'available' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        consultant.status === 'available'
+                          ? 'default'
+                          : 'secondary'
+                      }
+                    >
                       {consultant.status}
                     </Badge>
                   </div>
@@ -372,13 +390,19 @@ export default function ConsultantsPage() {
                     <Mail className='h-3 w-3' />
                     {consultant.email}
                   </div>
-                  
+
                   {/* Expertise Areas */}
                   <div className='space-y-1'>
-                    <div className='text-xs font-medium text-muted-foreground'>Expertise:</div>
+                    <div className='text-xs font-medium text-muted-foreground'>
+                      Expertise:
+                    </div>
                     <div className='flex flex-wrap gap-1'>
                       {consultant.expertise.map((area, index) => (
-                        <Badge key={index} variant='outline' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='outline'
+                          className='text-xs'
+                        >
                           {area}
                         </Badge>
                       ))}
@@ -387,10 +411,16 @@ export default function ConsultantsPage() {
 
                   {/* Qualifications */}
                   <div className='space-y-1'>
-                    <div className='text-xs font-medium text-muted-foreground'>Qualifications:</div>
+                    <div className='text-xs font-medium text-muted-foreground'>
+                      Qualifications:
+                    </div>
                     <div className='flex flex-wrap gap-1'>
                       {consultant.qualifications.map((qual, index) => (
-                        <Badge key={index} variant='secondary' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='secondary'
+                          className='text-xs'
+                        >
                           <Award className='h-2 w-2 mr-1' />
                           {qual}
                         </Badge>
@@ -404,7 +434,9 @@ export default function ConsultantsPage() {
                       <div className='text-sm font-semibold text-green-600'>
                         {consultant.projectsCompleted}
                       </div>
-                      <div className='text-xs text-muted-foreground'>Completed</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Completed
+                      </div>
                     </div>
                     <div className='text-center'>
                       <div className='text-sm font-semibold text-blue-600'>
@@ -417,8 +449,12 @@ export default function ConsultantsPage() {
                   {/* Availability */}
                   <div className='space-y-1'>
                     <div className='flex items-center justify-between text-xs'>
-                      <span className='text-muted-foreground'>Availability</span>
-                      <span className='font-medium'>{consultant.availability}%</span>
+                      <span className='text-muted-foreground'>
+                        Availability
+                      </span>
+                      <span className='font-medium'>
+                        {consultant.availability}%
+                      </span>
                     </div>
                     <Progress value={consultant.availability} className='h-1' />
                   </div>
@@ -427,7 +463,9 @@ export default function ConsultantsPage() {
                   <div className='flex items-center justify-between pt-2 border-t'>
                     <div className='flex items-center gap-1'>
                       <Star className='h-3 w-3 text-yellow-500 fill-current' />
-                      <span className='text-xs font-medium'>{consultant.rating}</span>
+                      <span className='text-xs font-medium'>
+                        {consultant.rating}
+                      </span>
                     </div>
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                       <Target className='h-3 w-3' />
@@ -436,11 +474,19 @@ export default function ConsultantsPage() {
                   </div>
 
                   <div className='flex gap-1 pt-2'>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <MessageSquare className='h-3 w-3 mr-1' />
                       Consult
                     </Button>
-                    <Button size='sm' variant='outline' className='flex-1 text-xs'>
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      className='flex-1 text-xs'
+                    >
                       <Calendar className='h-3 w-3 mr-1' />
                       Book
                     </Button>
