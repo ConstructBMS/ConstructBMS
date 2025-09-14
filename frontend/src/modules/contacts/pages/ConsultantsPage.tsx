@@ -13,6 +13,8 @@ import {
   Search,
   Star,
   Target,
+  Calendar,
+  BookOpen,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -25,9 +27,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Input,
 } from '../../../components/ui';
 import { useContactsStore } from '../store';
@@ -104,7 +103,7 @@ export default function ConsultantsPage() {
   return (
     <Page title='Consultant Management'>
       <div className='min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-950 dark:to-indigo-900'>
-        <div className='space-y-8 p-6'>
+        <div className='space-y-6 p-6'>
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
@@ -121,7 +120,7 @@ export default function ConsultantsPage() {
                 Expert Network
               </h1>
               <p className='text-purple-700 dark:text-purple-300 mt-2'>
-                Your trusted consultants and their specialized expertise
+                Manage your expert consultants and specialized knowledge
               </p>
             </div>
             <Button
@@ -205,10 +204,10 @@ export default function ConsultantsPage() {
             </CardContent>
           </Card>
 
-          {/* Expert Network Grid */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {/* Expert Network List */}
+          <div className='space-y-4'>
             {filteredConsultants.length === 0 ? (
-              <div className='col-span-full text-center py-16'>
+              <div className='text-center py-16'>
                 <div className='p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-purple-200 dark:border-purple-700'>
                   <div className='p-4 bg-purple-100 dark:bg-purple-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <Lightbulb className='h-10 w-10 text-purple-600 dark:text-purple-400' />
@@ -236,186 +235,149 @@ export default function ConsultantsPage() {
               filteredConsultants.map(consultant => (
                 <Card
                   key={consultant.id}
-                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 hover:scale-105'
+                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700 hover:shadow-lg transition-all duration-300'
                 >
-                  <CardHeader className='pb-4'>
-                    <div className='flex items-center gap-4'>
-                      <Avatar className='h-16 w-16 border-2 border-purple-200 dark:border-purple-700'>
+                  <CardContent className='p-6'>
+                    <div className='flex items-start gap-6'>
+                      <Avatar className='h-20 w-20 border-2 border-purple-200 dark:border-purple-700'>
                         <AvatarImage
                           src={`https://api.dicebear.com/7.x/initials/svg?seed=${consultant.name}`}
                         />
-                        <AvatarFallback className='bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-lg font-semibold'>
+                        <AvatarFallback className='bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xl font-semibold'>
                           {consultant.name
                             .split(' ')
                             .map(n => n[0])
                             .join('')}
                         </AvatarFallback>
                       </Avatar>
-                        <div className='flex-1'>
-                          <CardTitle className='text-lg text-purple-900 dark:text-purple-100'>
-                            {consultant.name}
-                          </CardTitle>
-                          <CardDescription className='text-purple-700 dark:text-purple-300'>
-                            {'companyName' in consultant ? consultant.name : 'Individual Consultant'}
-                          </CardDescription>
-                          <div className='flex gap-2 mt-2'>
-                            <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
-                              <CheckCircle className='h-3 w-3 mr-1' />
-                              Available
-                            </Badge>
-                            <Badge
-                              variant='outline'
-                              className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
-                            >
-                              {'companyName' in consultant ? 'Company' : 'Individual'}
-                            </Badge>
+                      
+                      <div className='flex-1 space-y-4'>
+                        <div className='flex items-start justify-between'>
+                          <div>
+                            <h3 className='text-xl font-bold text-purple-900 dark:text-purple-100'>
+                              {consultant.name}
+                            </h3>
+                            <p className='text-purple-700 dark:text-purple-300'>
+                              {'companyName' in consultant ? consultant.name : 'Individual Consultant'}
+                            </p>
+                            <div className='flex gap-2 mt-2'>
+                              <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                                <CheckCircle className='h-3 w-3 mr-1' />
+                                Available
+                              </Badge>
+                              <Badge
+                                variant='outline'
+                                className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                              >
+                                {'companyName' in consultant ? 'Company' : 'Individual'}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className='text-right'>
+                            <div className='text-2xl font-bold text-green-600 dark:text-green-400'>
+                              £{Math.floor(Math.random() * 100 + 100)}/hr
+                            </div>
+                            <div className='flex items-center gap-1 mt-1'>
+                              <Star className='h-4 w-4 text-yellow-500 fill-current' />
+                              <span className='text-sm font-medium text-purple-900 dark:text-purple-100'>
+                                {(Math.random() * 2 + 3).toFixed(1)}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
-                        <Phone className='h-4 w-4' />
-                        {consultant.phone || 'No phone'}
-                      </div>
-                      <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
-                        <Mail className='h-4 w-4' />
-                        {consultant.email || 'No email'}
-                      </div>
-                      <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
-                        <MapPin className='h-4 w-4' />
-                        {'address' in consultant ? (consultant.address || 'No address') : 'No address'}
-                      </div>
-                    </div>
 
-                    {/* Expertise Areas */}
-                    <div className='space-y-2'>
-                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>
-                        Expertise:
-                      </div>
-                      <div className='flex flex-wrap gap-1'>
-                        {['Project Management', 'Strategic Planning', 'Risk Assessment'].map(
-                          (area: string, index: number) => (
-                            <Badge
-                              key={index}
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                          <div className='space-y-3'>
+                            <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
+                              <Phone className='h-4 w-4' />
+                              {consultant.phone || 'No phone'}
+                            </div>
+                            <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
+                              <Mail className='h-4 w-4' />
+                              {consultant.email || 'No email'}
+                            </div>
+                            <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
+                              <MapPin className='h-4 w-4' />
+                              {'address' in consultant ? (consultant.address || 'No address') : 'No address'}
+                            </div>
+                          </div>
+
+                          <div className='space-y-3'>
+                            <div>
+                              <div className='text-xs font-medium text-purple-700 dark:text-purple-300 mb-2'>
+                                Expertise:
+                              </div>
+                              <div className='flex flex-wrap gap-1'>
+                                {['Project Management', 'Strategic Planning', 'Risk Assessment'].map(
+                                  (area: string, index: number) => (
+                                    <Badge
+                                      key={index}
+                                      variant='outline'
+                                      className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                                    >
+                                      {area}
+                                    </Badge>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                            <div>
+                              <div className='text-xs font-medium text-purple-700 dark:text-purple-300 mb-2'>
+                                Qualifications:
+                              </div>
+                              <div className='flex flex-wrap gap-1'>
+                                {['MBA', 'PMP', 'PRINCE2'].map(
+                                  (qual: string, index: number) => (
+                                    <Badge
+                                      key={index}
+                                      variant='secondary'
+                                      className='text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                    >
+                                      <Award className='h-2 w-2 mr-1' />
+                                      {qual}
+                                    </Badge>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='flex items-center justify-between pt-4 border-t border-purple-200 dark:border-purple-700'>
+                          <div className='flex items-center gap-6 text-sm text-purple-700 dark:text-purple-300'>
+                            <div className='flex items-center gap-1'>
+                              <BookOpen className='h-4 w-4' />
+                              {Math.floor(Math.random() * 30 + 10)} projects
+                            </div>
+                            <div className='flex items-center gap-1'>
+                              <Calendar className='h-4 w-4' />
+                              {Math.floor(Math.random() * 14 + 1)} days available
+                            </div>
+                            <div className='flex items-center gap-1'>
+                              <Target className='h-4 w-4' />
+                              {Math.floor(Math.random() * 3 + 1)} active
+                            </div>
+                          </div>
+                          <div className='flex gap-2'>
+                            <Button
+                              size='sm'
+                              className='bg-purple-600 hover:bg-purple-700 text-white'
+                              onClick={() => handleEdit(consultant)}
+                            >
+                              <Briefcase className='h-3 w-3 mr-1' />
+                              Consult
+                            </Button>
+                            <Button
+                              size='sm'
                               variant='outline'
-                              className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                              className='border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900'
+                              onClick={() => handleDelete(consultant.id, 'companyName' in consultant ? 'company' : 'contact')}
                             >
-                              {area}
-                            </Badge>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Qualifications */}
-                    <div className='space-y-2'>
-                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>
-                        Qualifications:
-                      </div>
-                      <div className='flex flex-wrap gap-1'>
-                        {['MBA', 'PMP', 'PRINCE2'].map(
-                          (qual: string, index: number) => (
-                            <Badge
-                              key={index}
-                              variant='secondary'
-                              className='text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                            >
-                              <Award className='h-2 w-2 mr-1' />
-                              {qual}
-                            </Badge>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    <div className='grid grid-cols-2 gap-4 pt-4 border-t border-purple-200 dark:border-purple-700'>
-                      <div className='text-center'>
-                        <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                          {Math.floor(Math.random() * 30 + 10)}
-                        </div>
-                        <div className='text-xs text-purple-700 dark:text-purple-300'>
-                          Completed
+                              Remove
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <div className='text-center'>
-                        <div className='text-lg font-bold text-purple-600 dark:text-purple-400'>
-                          £{Math.floor(Math.random() * 100 + 100)}/hr
-                        </div>
-                        <div className='text-xs text-purple-700 dark:text-purple-300'>
-                          Rate
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Availability */}
-                    <div className='space-y-1'>
-                      <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>
-                          Availability
-                        </span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>
-                          {Math.floor(Math.random() * 40 + 60)}%
-                        </span>
-                      </div>
-                      <div className='w-full bg-purple-100 dark:bg-purple-900 rounded-full h-2'>
-                        <div
-                          className='bg-purple-600 h-2 rounded-full transition-all duration-300'
-                          style={{ width: `${Math.floor(Math.random() * 40 + 60)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div className='space-y-2 pt-2 border-t border-purple-200 dark:border-purple-700'>
-                      <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>
-                          Next Available
-                        </span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>
-                          {Math.floor(Math.random() * 14 + 1)} days
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>
-                          Specializations
-                        </span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>
-                          Construction, Infrastructure
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center justify-between pt-2'>
-                      <div className='flex items-center gap-1'>
-                        <Star className='h-4 w-4 text-yellow-500 fill-current' />
-                        <span className='text-sm font-medium text-purple-900 dark:text-purple-100'>
-                          {(Math.random() * 2 + 3).toFixed(1)}
-                        </span>
-                      </div>
-                      <div className='flex items-center gap-1 text-xs text-purple-700 dark:text-purple-300'>
-                        <Target className='h-3 w-3' />
-                        {Math.floor(Math.random() * 3 + 1)} active
-                      </div>
-                    </div>
-
-                    <div className='flex gap-2 pt-4'>
-                      <Button
-                        size='sm'
-                        className='flex-1 bg-purple-600 hover:bg-purple-700 text-white'
-                        onClick={() => handleEdit(consultant)}
-                      >
-                        <Briefcase className='h-3 w-3 mr-1' />
-                        Consult
-                      </Button>
-                      <Button
-                        size='sm'
-                        variant='outline'
-                        className='flex-1 border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900'
-                        onClick={() => handleDelete(consultant.id, 'companyName' in consultant ? 'company' : 'contact')}
-                      >
-                        Remove
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>

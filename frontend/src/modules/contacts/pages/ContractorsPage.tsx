@@ -13,6 +13,8 @@ import {
   Tool,
   Wrench,
   Zap,
+  Calendar,
+  User,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -104,7 +106,7 @@ export default function ContractorsPage() {
   return (
     <Page title='Contractor Management'>
       <div className='min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950 dark:to-red-900'>
-        <div className='space-y-8 p-6'>
+        <div className='space-y-6 p-6'>
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
@@ -121,7 +123,7 @@ export default function ContractorsPage() {
                 Contractor Workforce
               </h1>
               <p className='text-orange-700 dark:text-orange-300 mt-2'>
-                Your skilled contractors and their specialized services
+                Manage your skilled contractors and workforce capacity
               </p>
             </div>
             <Button
@@ -251,26 +253,26 @@ export default function ContractorsPage() {
                             .join('')}
                         </AvatarFallback>
                       </Avatar>
-                        <div className='flex-1'>
-                          <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>
-                            {contractor.name}
-                          </CardTitle>
-                          <CardDescription className='text-orange-700 dark:text-orange-300'>
-                            {'companyName' in contractor ? contractor.name : 'Individual Contractor'}
-                          </CardDescription>
-                          <div className='flex gap-2 mt-2'>
-                            <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
-                              <CheckCircle className='h-3 w-3 mr-1' />
-                              Available
-                            </Badge>
-                            <Badge
-                              variant='outline'
-                              className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
-                            >
-                              {'companyName' in contractor ? 'Company' : 'Individual'}
-                            </Badge>
-                          </div>
+                      <div className='flex-1'>
+                        <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>
+                          {contractor.name}
+                        </CardTitle>
+                        <CardDescription className='text-orange-700 dark:text-orange-300'>
+                          {'companyName' in contractor ? contractor.name : 'Individual Contractor'}
+                        </CardDescription>
+                        <div className='flex gap-2 mt-2'>
+                          <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                            <CheckCircle className='h-3 w-3 mr-1' />
+                            Available
+                          </Badge>
+                          <Badge
+                            variant='outline'
+                            className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
+                          >
+                            {'companyName' in contractor ? 'Company' : 'Individual'}
+                          </Badge>
                         </div>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className='space-y-4'>

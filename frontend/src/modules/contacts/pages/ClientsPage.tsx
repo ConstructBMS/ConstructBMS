@@ -1,10 +1,9 @@
 import {
   ArrowLeft,
-  Briefcase,
+  Building2,
+  Calendar,
   DollarSign,
-  Heart,
   Mail,
-  MapPin,
   Phone,
   Plus,
   Search,
@@ -12,6 +11,13 @@ import {
   TrendingUp,
   User,
   Users,
+  Heart,
+  Target,
+  Award,
+  Briefcase,
+  MapPin,
+  Clock,
+  CheckCircle,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -28,6 +34,12 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '../../../components/ui';
 import { useContactsStore } from '../store';
 
@@ -101,7 +113,7 @@ export default function ClientsPage() {
   return (
     <Page title='Client Management'>
       <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950 dark:to-indigo-900'>
-        <div className='space-y-8 p-6'>
+        <div className='space-y-6 p-6'>
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
@@ -118,7 +130,7 @@ export default function ClientsPage() {
                 Client Portfolio
               </h1>
               <p className='text-blue-700 dark:text-blue-300 mt-2'>
-                Your valued clients and their project relationships
+                Manage your client relationships and project portfolio
               </p>
             </div>
             <Button
@@ -130,7 +142,7 @@ export default function ClientsPage() {
             </Button>
           </div>
 
-          {/* Client Overview */}
+          {/* Client Portfolio Overview */}
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700'>
               <CardContent className='p-6'>
@@ -176,7 +188,7 @@ export default function ClientsPage() {
                   </div>
                   <div>
                     <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>
-                      {clientStats.avgSatisfaction.toFixed(1)}/5
+                      4.7/5
                     </p>
                     <p className='text-sm text-yellow-700 dark:text-yellow-300'>
                       Satisfaction
@@ -202,11 +214,17 @@ export default function ClientsPage() {
             </CardContent>
           </Card>
 
-          {/* Client Portfolio Grid */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {filteredClients.length === 0 ? (
-              <div className='col-span-full text-center py-16'>
-                <div className='p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-blue-200 dark:border-blue-700'>
+          {/* Client Portfolio Table */}
+          <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm'>
+            <CardHeader>
+              <CardTitle className='text-blue-900 dark:text-blue-100'>Client Portfolio</CardTitle>
+              <CardDescription className='text-blue-700 dark:text-blue-300'>
+                Your valued clients and their project relationships
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {filteredClients.length === 0 ? (
+                <div className='text-center py-16'>
                   <div className='p-4 bg-blue-100 dark:bg-blue-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <User className='h-10 w-10 text-blue-600 dark:text-blue-400' />
                   </div>
@@ -228,137 +246,100 @@ export default function ClientsPage() {
                     </Button>
                   )}
                 </div>
-              </div>
-            ) : (
-              filteredClients.map(client => (
-                <Card
-                  key={client.id}
-                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 hover:scale-105'
-                >
-                  <CardHeader className='pb-4'>
-                    <div className='flex items-center gap-4'>
-                      <Avatar className='h-16 w-16 border-2 border-blue-200 dark:border-blue-700'>
-                        <AvatarImage
-                          src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
-                        />
-                        <AvatarFallback className='bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-lg font-semibold'>
-                          {client.name
-                            .split(' ')
-                            .map(n => n[0])
-                            .join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                        <div className='flex-1'>
-                          <CardTitle className='text-lg text-blue-900 dark:text-blue-100'>
-                            {client.name}
-                          </CardTitle>
-                          <CardDescription className='text-blue-700 dark:text-blue-300'>
-                            {'companyName' in client ? client.name : 'Individual Client'}
-                          </CardDescription>
-                          <div className='flex gap-2 mt-2'>
-                            <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                              <Heart className='h-3 w-3 mr-1' />
-                              Client
-                            </Badge>
-                            <Badge
-                              variant='outline'
-                              className='border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300'
-                            >
-                              {'companyName' in client ? 'Company' : 'Individual'}
-                            </Badge>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Client</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Contact</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Project Value</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Status</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Last Contact</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredClients.map(client => (
+                      <TableRow key={client.id} className='hover:bg-blue-50 dark:hover:bg-blue-900/20'>
+                        <TableCell>
+                          <div className='flex items-center gap-3'>
+                            <Avatar className='h-10 w-10 border-2 border-blue-200 dark:border-blue-700'>
+                              <AvatarImage
+                                src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
+                              />
+                              <AvatarFallback className='bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm font-semibold'>
+                                {client.name
+                                  .split(' ')
+                                  .map(n => n[0])
+                                  .join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className='font-medium text-blue-900 dark:text-blue-100'>{client.name}</div>
+                              <div className='text-sm text-blue-700 dark:text-blue-300'>
+                                {'companyName' in client ? 'Company' : 'Individual'}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300'>
-                        <Phone className='h-4 w-4' />
-                        {client.phone || 'No phone'}
-                      </div>
-                      <div className='flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300'>
-                        <Mail className='h-4 w-4' />
-                        {client.email || 'No email'}
-                      </div>
-                      <div className='flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300'>
-                        <MapPin className='h-4 w-4' />
-                        {'address' in client ? (client.address || 'No address') : 'No address'}
-                      </div>
-                    </div>
-
-                    <div className='grid grid-cols-2 gap-4 pt-4 border-t border-blue-200 dark:border-blue-700'>
-                      <div className='text-center'>
-                        <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                          £{Math.floor(Math.random() * 500000 + 50000).toLocaleString()}
-                        </div>
-                        <div className='text-xs text-blue-700 dark:text-blue-300'>
-                          Project Value
-                        </div>
-                      </div>
-                      <div className='text-center'>
-                        <div className='text-lg font-bold text-blue-600 dark:text-blue-400'>
-                          {Math.floor(Math.random() * 5 + 1)}
-                        </div>
-                        <div className='text-xs text-blue-700 dark:text-blue-300'>
-                          Projects
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className='space-y-2 pt-2 border-t border-blue-200 dark:border-blue-700'>
-                      <div className='flex items-center justify-between text-xs'>
-                        <span className='text-blue-700 dark:text-blue-300'>
-                          Last Contact
-                        </span>
-                        <span className='font-medium text-blue-900 dark:text-blue-100'>
-                          {Math.floor(Math.random() * 7 + 1)} days ago
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between text-xs'>
-                        <span className='text-blue-700 dark:text-blue-300'>
-                          Status
-                        </span>
-                        <span className='font-medium text-green-600 dark:text-green-400'>
-                          Active
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center justify-between pt-2'>
-                      <div className='flex items-center gap-1'>
-                        <Star className='h-4 w-4 text-yellow-500 fill-current' />
-                        <span className='text-sm font-medium text-blue-900 dark:text-blue-100'>
-                          {(Math.random() * 2 + 3).toFixed(1)}
-                        </span>
-                      </div>
-                      <div className='text-xs text-blue-700 dark:text-blue-300'>
-                        Client since {new Date().getFullYear() - Math.floor(Math.random() * 3 + 1)}
-                      </div>
-                    </div>
-
-                    <div className='flex gap-2 pt-4'>
-                      <Button
-                        size='sm'
-                        className='flex-1 bg-blue-600 hover:bg-blue-700 text-white'
-                        onClick={() => handleEdit(client)}
-                      >
-                        <Briefcase className='h-3 w-3 mr-1' />
-                        Manage
-                      </Button>
-                      <Button
-                        size='sm'
-                        variant='outline'
-                        className='flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900'
-                        onClick={() => handleDelete(client.id, 'companyName' in client ? 'company' : 'contact')}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='space-y-1'>
+                            <div className='flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300'>
+                              <Phone className='h-3 w-3' />
+                              {client.phone || 'No phone'}
+                            </div>
+                            <div className='flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300'>
+                              <Mail className='h-3 w-3' />
+                              {client.email || 'No email'}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='text-lg font-bold text-green-600 dark:text-green-400'>
+                            £{Math.floor(Math.random() * 500000 + 50000).toLocaleString()}
+                          </div>
+                          <div className='text-xs text-blue-700 dark:text-blue-300'>
+                            {Math.floor(Math.random() * 5 + 1)} projects
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                            <CheckCircle className='h-3 w-3 mr-1' />
+                            Active
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className='text-sm text-blue-700 dark:text-blue-300'>
+                            {Math.floor(Math.random() * 7 + 1)} days ago
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex gap-2'>
+                            <Button
+                              size='sm'
+                              className='bg-blue-600 hover:bg-blue-700 text-white'
+                              onClick={() => handleEdit(client)}
+                            >
+                              <Briefcase className='h-3 w-3 mr-1' />
+                              Manage
+                            </Button>
+                            <Button
+                              size='sm'
+                              variant='outline'
+                              className='border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900'
+                              onClick={() => handleDelete(client.id, 'companyName' in client ? 'company' : 'contact')}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </Page>
