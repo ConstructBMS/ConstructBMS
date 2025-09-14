@@ -68,10 +68,6 @@ function ContactsPage() {
 
   // Filter and search logic
   const filteredContacts = useMemo(() => {
-    console.log('🔍 Debug - Total contacts:', contacts.length);
-    console.log('🔍 Debug - Filter category:', filterCategory);
-    console.log('🔍 Debug - Filter type:', filterType);
-
     let filtered = contacts;
 
     // Filter by type (person/company) - contacts are always 'person' type
@@ -82,11 +78,9 @@ function ContactsPage() {
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      console.log('🔍 Debug - Filtering contacts by category:', filterCategory);
       filtered = filtered.filter(
         contact => contact.category === filterCategory
       );
-      console.log('🔍 Debug - After category filter:', filtered.length);
     }
 
     if (searchQuery) {
@@ -99,12 +93,10 @@ function ContactsPage() {
       });
     }
 
-    console.log('🔍 Debug - Final filtered contacts:', filtered.length);
     return filtered;
   }, [contacts, filterType, filterCategory, searchQuery, searchContacts]);
 
   const filteredCompanies = useMemo(() => {
-    console.log('🔍 Debug - Total companies:', companies.length);
     let filtered = companies;
 
     // Filter by type (person/company) - companies are always 'company' type
@@ -115,14 +107,9 @@ function ContactsPage() {
 
     // Filter by category (client/contractor/consultant)
     if (filterCategory !== 'all') {
-      console.log(
-        '🔍 Debug - Filtering companies by category:',
-        filterCategory
-      );
       filtered = filtered.filter(
         company => company.category === filterCategory
       );
-      console.log('🔍 Debug - After company category filter:', filtered.length);
     }
 
     if (searchQuery) {
@@ -134,7 +121,6 @@ function ContactsPage() {
       });
     }
 
-    console.log('🔍 Debug - Final filtered companies:', filtered.length);
     return filtered;
   }, [companies, filterType, filterCategory, searchQuery, searchCompanies]);
 

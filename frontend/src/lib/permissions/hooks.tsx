@@ -79,13 +79,6 @@ export function useCan(options: UseCanOptions): UseCanResult {
       setIsLoading(true);
       setError(null);
 
-      // Debug logging
-      console.log('🔍 Permission evaluation debug:', {
-        resource,
-        action,
-        permissionContext,
-        userAttributes: permissionContext.userAttributes,
-      });
 
       // In a real implementation, this might be async (API call)
       // For now, we'll use the synchronous evaluator

@@ -15,12 +15,6 @@ export function ContactsList({
   onEdit,
   onDelete,
 }: ContactsListProps) {
-  console.log('🔍 ContactsList Debug:', {
-    contactsCount: contacts.length,
-    companiesCount: companies.length,
-    contacts: contacts.map(c => ({ name: c.name, category: c.category })),
-    companies: companies.map(c => ({ name: c.name, category: c.category })),
-  });
 
   const allItems = [
     ...contacts.map(contact => ({ ...contact, itemType: 'contact' as const })),
@@ -35,7 +29,6 @@ export function ContactsList({
 
   // Early return if no items
   if (allItems.length === 0) {
-    console.log('🔍 ContactsList: No items to render');
     return (
       <div className='rounded-md border p-8 text-center'>
         <p className='text-muted-foreground'>No contacts or companies found.</p>
@@ -45,8 +38,6 @@ export function ContactsList({
       </div>
     );
   }
-
-  console.log('🔍 ContactsList: Rendering', allItems.length, 'items');
 
   return (
     <div className='rounded-md border'>
