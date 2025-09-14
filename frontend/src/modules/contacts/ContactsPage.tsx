@@ -63,18 +63,7 @@ function ContactsPage() {
     Contact | Company | undefined
   >();
 
-  // Set filter category from URL parameters
-  useEffect(() => {
-    const typeParam = searchParams.get('type');
-    if (
-      typeParam &&
-      ['client', 'contractor', 'consultant'].includes(typeParam)
-    ) {
-      setFilterCategory(typeParam as ContactCategory);
-    } else {
-      setFilterCategory('all');
-    }
-  }, [searchParams]);
+  // No URL parameter filtering needed - using separate routes now
 
   // Filter and search logic
   const filteredContacts = useMemo(() => {
@@ -261,10 +250,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.clients}</div>
-                <Link
-                  to='/contacts?type=client'
-                  className='text-primary hover:text-primary/80'
-                >
+                 <Link
+                   to='/contacts/clients'
+                   className='text-primary hover:text-primary/80'
+                 >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -283,10 +272,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.contractors}</div>
-                <Link
-                  to='/contacts?type=contractor'
-                  className='text-primary hover:text-primary/80'
-                >
+                 <Link
+                   to='/contacts/contractors'
+                   className='text-primary hover:text-primary/80'
+                 >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -305,10 +294,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.consultants}</div>
-                <Link
-                  to='/contacts?type=consultant'
-                  className='text-primary hover:text-primary/80'
-                >
+                 <Link
+                   to='/contacts/consultants'
+                   className='text-primary hover:text-primary/80'
+                 >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -340,7 +329,7 @@ function ContactsPage() {
 
         {/* Quick Actions */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <Link to='/contacts?type=client'>
+          <Link to='/contacts/clients'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -356,7 +345,7 @@ function ContactsPage() {
             </Card>
           </Link>
 
-          <Link to='/contacts?type=contractor'>
+          <Link to='/contacts/contractors'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-green-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -372,7 +361,7 @@ function ContactsPage() {
             </Card>
           </Link>
 
-          <Link to='/contacts?type=consultant'>
+          <Link to='/contacts/consultants'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-purple-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -491,11 +480,6 @@ function ContactsPage() {
                   <span className='text-sm font-medium text-blue-900 dark:text-blue-100'>
                     Showing {filterCategory}s only
                   </span>
-                  {process.env.NODE_ENV === 'development' && (
-                    <span className='text-xs text-blue-600 dark:text-blue-400 ml-2'>
-                      (URL: {window.location.search})
-                    </span>
-                  )}
                 </div>
                 <Link
                   to='/contacts'
