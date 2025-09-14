@@ -80,7 +80,7 @@ describe('ContactsPage', () => {
 
   it('shows all contacts by default (no URL filtering)', () => {
     renderContactsPage();
-    
+
     expect(screen.getByText('John Smith')).toBeInTheDocument();
     expect(screen.getByText('Mike Wilson')).toBeInTheDocument();
     expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
@@ -88,12 +88,12 @@ describe('ContactsPage', () => {
 
   it('has correct navigation links to contact type pages', () => {
     renderContactsPage();
-    
+
     // Check that dashboard cards link to correct routes
     const clientLink = screen.getByRole('link', { name: /clients/i });
     const contractorLink = screen.getByRole('link', { name: /contractors/i });
     const consultantLink = screen.getByRole('link', { name: /consultants/i });
-    
+
     expect(clientLink).toHaveAttribute('href', '/contacts/clients');
     expect(contractorLink).toHaveAttribute('href', '/contacts/contractors');
     expect(consultantLink).toHaveAttribute('href', '/contacts/consultants');
