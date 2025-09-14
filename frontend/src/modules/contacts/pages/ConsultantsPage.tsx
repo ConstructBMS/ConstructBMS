@@ -1,8 +1,10 @@
 import {
   ArrowLeft,
   Award,
+  BookOpen,
   Brain,
   Briefcase,
+  Calendar,
   CheckCircle,
   GraduationCap,
   Lightbulb,
@@ -13,8 +15,6 @@ import {
   Search,
   Star,
   Target,
-  Calendar,
-  BookOpen,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -32,12 +32,8 @@ import {
 import { useContactsStore } from '../store';
 
 export default function ConsultantsPage() {
-  const {
-    contacts,
-    companies,
-    removeContact,
-    removeCompany,
-  } = useContactsStore();
+  const { contacts, companies, removeContact, removeCompany } =
+    useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -67,10 +63,12 @@ export default function ConsultantsPage() {
 
   // Calculate consultant statistics from main store data
   const consultantStats = useMemo(() => {
-    const totalConsultants = consultantContacts.length + consultantCompanies.length;
+    const totalConsultants =
+      consultantContacts.length + consultantCompanies.length;
     const availableConsultants = Math.floor(totalConsultants * 0.5); // Mock 50% available
     const busyConsultants = Math.floor(totalConsultants * 0.3); // Mock 30% busy
-    const consultingConsultants = totalConsultants - availableConsultants - busyConsultants;
+    const consultingConsultants =
+      totalConsultants - availableConsultants - busyConsultants;
 
     return {
       total: totalConsultants,
@@ -250,7 +248,7 @@ export default function ConsultantsPage() {
                             .join('')}
                         </AvatarFallback>
                       </Avatar>
-                      
+
                       <div className='flex-1 space-y-4'>
                         <div className='flex items-start justify-between'>
                           <div>
@@ -258,7 +256,9 @@ export default function ConsultantsPage() {
                               {consultant.name}
                             </h3>
                             <p className='text-purple-700 dark:text-purple-300'>
-                              {'companyName' in consultant ? consultant.name : 'Individual Consultant'}
+                              {'companyName' in consultant
+                                ? consultant.name
+                                : 'Individual Consultant'}
                             </p>
                             <div className='flex gap-2 mt-2'>
                               <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
@@ -269,7 +269,9 @@ export default function ConsultantsPage() {
                                 variant='outline'
                                 className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
                               >
-                                {'companyName' in consultant ? 'Company' : 'Individual'}
+                                {'companyName' in consultant
+                                  ? 'Company'
+                                  : 'Individual'}
                               </Badge>
                             </div>
                           </div>
@@ -298,7 +300,9 @@ export default function ConsultantsPage() {
                             </div>
                             <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
                               <MapPin className='h-4 w-4' />
-                              {'address' in consultant ? (consultant.address || 'No address') : 'No address'}
+                              {'address' in consultant
+                                ? consultant.address || 'No address'
+                                : 'No address'}
                             </div>
                           </div>
 
@@ -308,17 +312,19 @@ export default function ConsultantsPage() {
                                 Expertise:
                               </div>
                               <div className='flex flex-wrap gap-1'>
-                                {['Project Management', 'Strategic Planning', 'Risk Assessment'].map(
-                                  (area: string, index: number) => (
-                                    <Badge
-                                      key={index}
-                                      variant='outline'
-                                      className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
-                                    >
-                                      {area}
-                                    </Badge>
-                                  )
-                                )}
+                                {[
+                                  'Project Management',
+                                  'Strategic Planning',
+                                  'Risk Assessment',
+                                ].map((area: string, index: number) => (
+                                  <Badge
+                                    key={index}
+                                    variant='outline'
+                                    className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                                  >
+                                    {area}
+                                  </Badge>
+                                ))}
                               </div>
                             </div>
                             <div>
@@ -351,7 +357,8 @@ export default function ConsultantsPage() {
                             </div>
                             <div className='flex items-center gap-1'>
                               <Calendar className='h-4 w-4' />
-                              {Math.floor(Math.random() * 14 + 1)} days available
+                              {Math.floor(Math.random() * 14 + 1)} days
+                              available
                             </div>
                             <div className='flex items-center gap-1'>
                               <Target className='h-4 w-4' />
@@ -371,7 +378,14 @@ export default function ConsultantsPage() {
                               size='sm'
                               variant='outline'
                               className='border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900'
-                              onClick={() => handleDelete(consultant.id, 'companyName' in consultant ? 'company' : 'contact')}
+                              onClick={() =>
+                                handleDelete(
+                                  consultant.id,
+                                  'companyName' in consultant
+                                    ? 'company'
+                                    : 'contact'
+                                )
+                              }
                             >
                               Remove
                             </Button>
