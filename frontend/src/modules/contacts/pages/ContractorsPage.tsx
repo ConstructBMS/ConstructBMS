@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  Briefcase,
   CheckCircle,
   Clock,
   HardHat,
