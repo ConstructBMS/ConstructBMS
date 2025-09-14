@@ -101,11 +101,6 @@ export default function ContractorsPage() {
     <Page title='Contractor Management'>
       <div className='min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950 dark:to-red-900'>
         <div className='space-y-6 p-6'>
-          {/* Temporary Test Banner */}
-          <div className='bg-orange-500 text-white p-4 rounded-lg text-center font-bold text-xl'>
-            🚀 NEW CARD LAYOUT - ContractorsPage Updated! 🚀
-          </div>
-
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
