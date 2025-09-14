@@ -183,135 +183,10 @@ export default function ClientsPage() {
           </div>
         </div>
 
-        {/* Client KPIs */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
-                <Users className='h-4 w-4' />
-                Total Clients
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>{clientStats.total}</div>
-              <CardDescription className='text-xs'>
-                {clientStats.contacts} contacts, {clientStats.companies}{' '}
-                companies
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
-                <DollarSign className='h-4 w-4' />
-                Total Value
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-green-600'>
-                £{clientStats.totalValue.toLocaleString()}
-              </div>
-              <CardDescription className='text-xs'>
-                Active project value
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
-                <Star className='h-4 w-4' />
-                Satisfaction
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-yellow-600'>4.8/5</div>
-              <CardDescription className='text-xs'>
-                Average client rating
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
-                <TrendingUp className='h-4 w-4' />
-                Growth
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>+12%</div>
-              <CardDescription className='text-xs'>
-                This quarter
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-          <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Phone className='h-4 w-4 text-blue-500' />
-                Call Client
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Make direct calls to clients
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-green-500'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Mail className='h-4 w-4 text-green-500' />
-                Send Update
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Send project updates via email
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-purple-500'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <Calendar className='h-4 w-4 text-purple-500' />
-                Schedule Meeting
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Book client meetings
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-orange-500'>
-            <CardHeader className='pb-2'>
-              <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                <FileText className='h-4 w-4 text-orange-500' />
-                Generate Report
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className='text-xs'>
-                Create client reports
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Client Portfolio */}
+        {/* Client Directory */}
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-lg font-semibold'>Client Portfolio</h2>
+            <h2 className='text-lg font-semibold'>Client Directory</h2>
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
               <Input
@@ -323,125 +198,92 @@ export default function ClientsPage() {
             </div>
           </div>
 
-          {/* Client Cards */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {mockClientData.map(client => (
-              <Card
-                key={client.id}
-                className='hover:shadow-md transition-shadow cursor-pointer'
-              >
-                <CardHeader className='pb-3'>
-                  <div className='flex items-center gap-3'>
-                    <Avatar className='h-10 w-10'>
-                      <AvatarImage
-                        src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
-                      />
-                      <AvatarFallback>
-                        {client.name
-                          .split(' ')
-                          .map(n => n[0])
-                          .join('')}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className='flex-1'>
-                      <CardTitle className='text-sm font-medium'>
-                        {client.name}
-                      </CardTitle>
-                      <CardDescription className='text-xs'>
-                        {client.company}
-                      </CardDescription>
-                    </div>
-                    <Badge
-                      variant={
-                        client.status === 'active' ? 'default' : 'secondary'
-                      }
-                    >
-                      {client.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className='space-y-3'>
-                  <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                    <Phone className='h-3 w-3' />
-                    {client.phone}
-                  </div>
-                  <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-                    <Mail className='h-3 w-3' />
-                    {client.email}
-                  </div>
+          {/* Client List */}
+          <div className='space-y-4'>
+            {filteredClients.length === 0 ? (
+              <div className='text-center py-12'>
+                <User className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                <p className='text-muted-foreground'>No clients found.</p>
+                <p className='text-sm text-muted-foreground mt-2'>
+                  {searchQuery
+                    ? 'Try adjusting your search criteria.'
+                    : 'Add your first client to get started.'}
+                </p>
+                {!searchQuery && (
+                  <Button onClick={handleAddClient} className='mt-4'>
+                    <Plus className='h-4 w-4 mr-2' />
+                    Add First Client
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                {filteredClients.map(client => (
+                  <Card
+                    key={client.id}
+                    className='hover:shadow-md transition-shadow cursor-pointer'
+                  >
+                    <CardHeader className='pb-3'>
+                      <div className='flex items-center gap-3'>
+                        <Avatar className='h-10 w-10'>
+                          <AvatarImage
+                            src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
+                          />
+                          <AvatarFallback>
+                            {client.name
+                              .split(' ')
+                              .map(n => n[0])
+                              .join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className='flex-1'>
+                          <CardTitle className='text-sm font-medium'>
+                            {client.name}
+                          </CardTitle>
+                          <CardDescription className='text-xs'>
+                            {client.company}
+                          </CardDescription>
+                        </div>
+                        <Badge variant='default'>
+                          Client
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className='space-y-3'>
+                      <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                        <Phone className='h-3 w-3' />
+                        {client.phone}
+                      </div>
+                      <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                        <Mail className='h-3 w-3' />
+                        {client.email}
+                      </div>
 
-                  <div className='grid grid-cols-2 gap-2 pt-2 border-t'>
-                    <div className='text-center'>
-                      <div className='text-sm font-semibold text-green-600'>
-                        £{client.projectValue.toLocaleString()}
+                      <div className='flex gap-1 pt-2'>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          className='flex-1 text-xs'
+                          onClick={() => handleEdit(client)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          className='flex-1 text-xs'
+                          onClick={() => handleDelete(client.id, client.type as 'contact' | 'company')}
+                        >
+                          Delete
+                        </Button>
                       </div>
-                      <div className='text-xs text-muted-foreground'>
-                        Project Value
-                      </div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='text-sm font-semibold text-blue-600'>
-                        {client.projects}
-                      </div>
-                      <div className='text-xs text-muted-foreground'>
-                        Projects
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='flex items-center justify-between pt-2 border-t'>
-                    <div className='flex items-center gap-1'>
-                      <Star className='h-3 w-3 text-yellow-500 fill-current' />
-                      <span className='text-xs font-medium'>
-                        {client.satisfaction}
-                      </span>
-                    </div>
-                    <div className='flex items-center gap-1 text-xs text-muted-foreground'>
-                      <Clock className='h-3 w-3' />
-                      {client.lastContact}
-                    </div>
-                  </div>
-
-                  <div className='flex gap-1 pt-2'>
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      className='flex-1 text-xs'
-                    >
-                      <MessageSquare className='h-3 w-3 mr-1' />
-                      Message
-                    </Button>
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      className='flex-1 text-xs'
-                    >
-                      <Calendar className='h-3 w-3 mr-1' />
-                      Meeting
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
 
-          {mockClientData.length === 0 && (
-            <div className='text-center py-12'>
-              <User className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-              <p className='text-muted-foreground'>No clients found.</p>
-              <p className='text-sm text-muted-foreground mt-2'>
-                {searchQuery
-                  ? 'Try adjusting your search criteria.'
-                  : 'Add your first client to get started.'}
-              </p>
-              {!searchQuery && (
-                <Button onClick={handleAddClient} className='mt-4'>
-                  <Plus className='h-4 w-4 mr-2' />
-                  Add First Client
-                </Button>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </Page>
