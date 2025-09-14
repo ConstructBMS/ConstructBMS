@@ -12,8 +12,10 @@ import {
   Target,
   GraduationCap,
   Briefcase,
+  MapPin,
+  CheckCircle,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
@@ -29,129 +31,116 @@ import {
   CardTitle,
   Input,
 } from '../../../components/ui';
-import { useContactsStore } from '../store';
 
 export default function ConsultantsPage() {
-  const {
-    contacts,
-    companies,
-    removeContact,
-    removeCompany,
-  } = useContactsStore();
-
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter for consultants only
-  const consultantContacts = contacts.filter(
-    contact => contact.category === 'consultant'
-  );
-  const consultantCompanies = companies.filter(
-    company => company.category === 'consultant'
-  );
-
-  // Apply search filters
-  const filteredConsultants = useMemo(() => {
-    const allConsultants = [...consultantContacts, ...consultantCompanies];
-
-    if (searchQuery) {
-      return allConsultants.filter(
-        consultant =>
-          consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          consultant.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          consultant.phone?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return allConsultants;
-  }, [consultantContacts, consultantCompanies, searchQuery]);
-
-  // Calculate consultant statistics
-  const consultantStats = useMemo(() => {
-    const totalConsultants =
-      consultantContacts.length + consultantCompanies.length;
-    const activeConsultants = totalConsultants; // For now, assume all are active
-    const expertConsultants = Math.floor(totalConsultants * 0.9); // 90% experts
-    const totalRevenue = totalConsultants * 75000; // Mock revenue
-
-    return {
-      total: totalConsultants,
-      active: activeConsultants,
-      expert: expertConsultants,
-      totalRevenue,
-      contacts: consultantContacts.length,
-      companies: consultantCompanies.length,
-    };
-  }, [consultantContacts, consultantCompanies]);
-
-  // Mock consultant data for demonstration
-  const mockConsultantData = [
+  // Independent consultant data - not connected to main contacts store
+  const consultants = [
     {
       id: '1',
-      name: 'Dr. Emma Richardson',
-      company: 'Richardson Advisory',
-      email: 'emma@richardsonadvisory.com',
-      phone: '+44 20 1111 2222',
+      name: 'Dr. Alexandra Chen',
+      company: 'Chen Consulting Group',
+      phone: '+44 20 7123 4567',
+      email: 'alexandra@chenconsulting.co.uk',
+      location: 'London, UK',
       status: 'available',
-      expertise: ['Strategic Planning', 'Business Development'],
-      qualifications: ['MBA', 'PhD Business'],
-      rating: 4.9,
-      projectsCompleted: 67,
-      currentProjects: 1,
+      expertise: ['Project Management', 'Strategic Planning', 'Risk Assessment'],
+      qualifications: ['MBA', 'PMP', 'PRINCE2'],
+      projectsCompleted: 23,
       hourlyRate: 150,
       availability: 80,
-      type: 'person',
+      rating: 4.9,
+      currentProjects: 2,
+      experience: '12 years',
+      specializations: ['Construction', 'Infrastructure'],
+      nextAvailable: 'This week',
     },
     {
       id: '2',
-      name: 'James Mitchell',
-      company: 'Mitchell Consulting Group',
-      email: 'james@mitchellconsulting.co.uk',
-      phone: '+44 20 3333 4444',
+      name: 'Marcus Thompson',
+      company: 'Thompson Advisory',
+      phone: '+44 20 7654 3210',
+      email: 'marcus@thompsonadvisory.co.uk',
+      location: 'Manchester, UK',
       status: 'busy',
-      expertise: ['Operations', 'Process Improvement'],
-      qualifications: ['CIMA', 'Six Sigma Black Belt'],
-      rating: 4.8,
-      projectsCompleted: 89,
-      currentProjects: 2,
+      expertise: ['Financial Analysis', 'Cost Management', 'Budget Planning'],
+      qualifications: ['CPA', 'CFA', 'ACCA'],
+      projectsCompleted: 18,
       hourlyRate: 125,
       availability: 60,
-      type: 'person',
+      rating: 4.7,
+      currentProjects: 3,
+      experience: '10 years',
+      specializations: ['Finance', 'Accounting'],
+      nextAvailable: '2 weeks',
     },
     {
       id: '3',
-      name: 'Strategic Solutions Ltd',
-      company: 'Strategic Solutions Ltd',
-      email: 'info@strategicsolutions.co.uk',
-      phone: '+44 20 5555 6666',
+      name: 'Dr. Sarah Williams',
+      company: 'Williams Engineering Consultancy',
+      phone: '+44 20 9876 5432',
+      email: 'sarah@williamsengineering.co.uk',
+      location: 'Birmingham, UK',
       status: 'available',
-      expertise: ['Digital Transformation', 'Change Management'],
-      qualifications: ['PMP', 'Agile Certified'],
-      rating: 4.7,
-      projectsCompleted: 156,
-      currentProjects: 1,
+      expertise: ['Structural Engineering', 'Design Review', 'Compliance'],
+      qualifications: ['PhD Engineering', 'CEng', 'MIStructE'],
+      projectsCompleted: 31,
       hourlyRate: 200,
       availability: 90,
-      type: 'company',
+      rating: 4.8,
+      currentProjects: 1,
+      experience: '15 years',
+      specializations: ['Engineering', 'Design'],
+      nextAvailable: 'Next week',
+    },
+    {
+      id: '4',
+      name: 'James Rodriguez',
+      company: 'Rodriguez Legal Advisory',
+      phone: '+44 20 5555 1234',
+      email: 'james@rodriguezlegal.co.uk',
+      location: 'Leeds, UK',
+      status: 'consulting',
+      expertise: ['Contract Law', 'Compliance', 'Risk Management'],
+      qualifications: ['LLB', 'LLM', 'Solicitor'],
+      projectsCompleted: 15,
+      hourlyRate: 180,
+      availability: 70,
+      rating: 4.6,
+      currentProjects: 4,
+      experience: '8 years',
+      specializations: ['Legal', 'Compliance'],
+      nextAvailable: '3 weeks',
     },
   ];
 
-  const handleEdit = (item: any) => {
-    console.log('Edit item:', item);
-    // TODO: Implement edit functionality
+  const filteredConsultants = consultants.filter(consultant =>
+    consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    consultant.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    consultant.expertise.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const consultantStats = {
+    total: consultants.length,
+    available: consultants.filter(c => c.status === 'available').length,
+    busy: consultants.filter(c => c.status === 'busy').length,
+    consulting: consultants.filter(c => c.status === 'consulting').length,
+    avgRating: consultants.reduce((sum, consultant) => sum + consultant.rating, 0) / consultants.length,
+    avgRate: consultants.reduce((sum, consultant) => sum + consultant.hourlyRate, 0) / consultants.length,
   };
 
-  const handleDelete = (id: string, type: 'contact' | 'company') => {
+  const handleEdit = (consultant: any) => {
+    console.log('Edit consultant:', consultant);
+  };
+
+  const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this consultant?')) {
-      if (type === 'contact') {
-        removeContact(id);
-      } else {
-        removeCompany(id);
-      }
+      console.log('Delete consultant:', id);
     }
   };
 
   const handleAddConsultant = () => {
-    // TODO: Open add consultant form
     console.log('Add new consultant');
   };
 
@@ -208,8 +197,8 @@ export default function ConsultantsPage() {
                     <Brain className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>{consultantStats.expert}</p>
-                    <p className='text-sm text-blue-700 dark:text-blue-300'>Expert Level</p>
+                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>{consultantStats.available}</p>
+                    <p className='text-sm text-blue-700 dark:text-blue-300'>Available</p>
                   </div>
                 </div>
               </CardContent>
@@ -222,8 +211,8 @@ export default function ConsultantsPage() {
                     <DollarSign className='h-6 w-6 text-green-600 dark:text-green-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>£{consultantStats.totalRevenue.toLocaleString()}</p>
-                    <p className='text-sm text-green-700 dark:text-green-300'>Total Revenue</p>
+                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>£{consultantStats.avgRate.toFixed(0)}/hr</p>
+                    <p className='text-sm text-green-700 dark:text-green-300'>Avg Rate</p>
                   </div>
                 </div>
               </CardContent>
@@ -236,7 +225,7 @@ export default function ConsultantsPage() {
                     <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>4.8/5</p>
+                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>{consultantStats.avgRating.toFixed(1)}/5</p>
                     <p className='text-sm text-yellow-700 dark:text-yellow-300'>Rating</p>
                   </div>
                 </div>
@@ -275,7 +264,7 @@ export default function ConsultantsPage() {
                   <div className='p-4 bg-purple-100 dark:bg-purple-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <Lightbulb className='h-10 w-10 text-purple-600 dark:text-purple-400' />
                   </div>
-                  <h3 className='text-xl font-semibold text-purple-900 dark:text-purple-100 mb-2'>No Consultants Yet</h3>
+                  <h3 className='text-xl font-semibold text-purple-900 dark:text-purple-100 mb-2'>No Consultants Found</h3>
                   <p className='text-purple-700 dark:text-purple-300 mb-6'>
                     {searchQuery ? 'No consultants match your search criteria.' : 'Build your expert network by adding specialized consultants.'}
                   </p>
@@ -291,7 +280,7 @@ export default function ConsultantsPage() {
                 </div>
               </div>
             ) : (
-              mockConsultantData.map(consultant => (
+              filteredConsultants.map(consultant => (
                 <Card key={consultant.id} className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 hover:scale-105'>
                   <CardHeader className='pb-4'>
                     <div className='flex items-center gap-4'>
@@ -309,10 +298,19 @@ export default function ConsultantsPage() {
                       <div className='flex-1'>
                         <CardTitle className='text-lg text-purple-900 dark:text-purple-100'>{consultant.name}</CardTitle>
                         <CardDescription className='text-purple-700 dark:text-purple-300'>{consultant.company}</CardDescription>
-                        <Badge className='mt-2 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'>
-                          <Brain className='h-3 w-3 mr-1' />
-                          Expert Consultant
-                        </Badge>
+                        <div className='flex gap-2 mt-2'>
+                          <Badge className={`${
+                            consultant.status === 'available' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                            consultant.status === 'busy' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          }`}>
+                            <CheckCircle className='h-3 w-3 mr-1' />
+                            {consultant.status}
+                          </Badge>
+                          <Badge variant='outline' className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'>
+                            {consultant.experience}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                   </CardHeader>
@@ -325,6 +323,10 @@ export default function ConsultantsPage() {
                       <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
                         <Mail className='h-4 w-4' />
                         {consultant.email}
+                      </div>
+                      <div className='flex items-center gap-2 text-sm text-purple-700 dark:text-purple-300'>
+                        <MapPin className='h-4 w-4' />
+                        {consultant.location}
                       </div>
                     </div>
 
@@ -382,6 +384,17 @@ export default function ConsultantsPage() {
                       </div>
                     </div>
 
+                    <div className='space-y-2 pt-2 border-t border-purple-200 dark:border-purple-700'>
+                      <div className='flex items-center justify-between text-xs'>
+                        <span className='text-purple-700 dark:text-purple-300'>Next Available</span>
+                        <span className='font-medium text-purple-900 dark:text-purple-100'>{consultant.nextAvailable}</span>
+                      </div>
+                      <div className='flex items-center justify-between text-xs'>
+                        <span className='text-purple-700 dark:text-purple-300'>Specializations</span>
+                        <span className='font-medium text-purple-900 dark:text-purple-100'>{consultant.specializations.join(', ')}</span>
+                      </div>
+                    </div>
+
                     <div className='flex items-center justify-between pt-2'>
                       <div className='flex items-center gap-1'>
                         <Star className='h-4 w-4 text-yellow-500 fill-current' />
@@ -406,7 +419,7 @@ export default function ConsultantsPage() {
                         size='sm'
                         variant='outline'
                         className='flex-1 border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-700 dark:text-purple-300 dark:hover:bg-purple-900'
-                        onClick={() => handleDelete(consultant.id, consultant.type as 'contact' | 'company')}
+                        onClick={() => handleDelete(consultant.id)}
                       >
                         Remove
                       </Button>
