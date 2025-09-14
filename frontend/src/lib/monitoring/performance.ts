@@ -1,6 +1,6 @@
 /**
  * Performance Monitoring and Development Analytics
- * 
+ *
  * This module provides performance tracking and development insights
  * to help identify bottlenecks and improve user experience.
  */
@@ -37,14 +37,14 @@ class PerformanceMonitor {
 
     // Track Core Web Vitals
     this.trackWebVitals();
-    
+
     // Track custom metrics
     this.trackCustomMetrics();
   }
 
   private trackWebVitals() {
     // Track Largest Contentful Paint (LCP)
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
       this.recordMetric('LCP', lastEntry.startTime, {
@@ -54,9 +54,9 @@ class PerformanceMonitor {
     }).observe({ entryTypes: ['largest-contentful-paint'] });
 
     // Track First Input Delay (FID)
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         this.recordMetric('FID', entry.processingStart - entry.startTime, {
           eventType: entry.name,
         });
@@ -65,9 +65,9 @@ class PerformanceMonitor {
 
     // Track Cumulative Layout Shift (CLS)
     let clsValue = 0;
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         if (!entry.hadRecentInput) {
           clsValue += entry.value;
         }
@@ -98,34 +98,38 @@ class PerformanceMonitor {
     window.fetch = async (...args) => {
       const startTime = performance.now();
       const url = args[0]?.toString() || 'unknown';
-      
+
       try {
         const response = await originalFetch(...args);
         const endTime = performance.now();
         const duration = endTime - startTime;
-        
+
         this.recordMetric('APIResponse', duration, {
           url,
           status: response.status,
           method: args[1]?.method || 'GET',
         });
-        
+
         return response;
       } catch (error) {
         const endTime = performance.now();
         const duration = endTime - startTime;
-        
+
         this.recordMetric('APIError', duration, {
           url,
           error: error instanceof Error ? error.message : 'Unknown error',
         });
-        
+
         throw error;
       }
     };
   }
 
-  public recordMetric(name: string, value: number, metadata?: Record<string, any>) {
+  public recordMetric(
+    name: string,
+    value: number,
+    metadata?: Record<string, any>
+  ) {
     if (!this.isEnabled) return;
 
     const metric: PerformanceMetric = {
@@ -136,10 +140,13 @@ class PerformanceMonitor {
     };
 
     this.metrics.push(metric);
-    
+
     // Log in development
-    console.log(`📊 Performance Metric: ${name} = ${value.toFixed(2)}ms`, metadata);
-    
+    console.log(
+      `📊 Performance Metric: ${name} = ${value.toFixed(2)}ms`,
+      metadata
+    );
+
     // Keep only last 100 metrics
     if (this.metrics.length > 100) {
       this.metrics = this.metrics.slice(-100);
@@ -164,8 +171,11 @@ class PerformanceMonitor {
     this.componentMetrics.set(componentName, existing);
 
     // Log slow renders
-    if (renderTime > 16) { // More than one frame
-      console.warn(`🐌 Slow render: ${componentName} took ${renderTime.toFixed(2)}ms`);
+    if (renderTime > 16) {
+      // More than one frame
+      console.warn(
+        `🐌 Slow render: ${componentName} took ${renderTime.toFixed(2)}ms`
+      );
     }
   }
 
@@ -179,7 +189,7 @@ class PerformanceMonitor {
 
   public getSlowComponents(threshold: number = 16): ComponentPerformance[] {
     return this.getComponentMetrics().filter(
-      (metric) => metric.renderTime > threshold
+      metric => metric.renderTime > threshold
     );
   }
 
@@ -194,20 +204,23 @@ class PerformanceMonitor {
 
 📊 Core Metrics:
 ${metrics
-  .filter((m) => ['LCP', 'FID', 'CLS', 'PageLoad'].includes(m.name))
-  .map((m) => `  ${m.name}: ${m.value.toFixed(2)}ms`)
+  .filter(m => ['LCP', 'FID', 'CLS', 'PageLoad'].includes(m.name))
+  .map(m => `  ${m.name}: ${m.value.toFixed(2)}ms`)
   .join('\n')}
 
 🐌 Slow Components (${slowComponents.length}):
 ${slowComponents
-  .map((c) => `  ${c.componentName}: ${c.renderTime.toFixed(2)}ms (${c.updateCount} updates)`)
+  .map(
+    c =>
+      `  ${c.componentName}: ${c.renderTime.toFixed(2)}ms (${c.updateCount} updates)`
+  )
   .join('\n')}
 
 📈 API Performance:
 ${metrics
-  .filter((m) => m.name === 'APIResponse')
+  .filter(m => m.name === 'APIResponse')
   .slice(-10)
-  .map((m) => `  ${m.metadata?.url}: ${m.value.toFixed(2)}ms`)
+  .map(m => `  ${m.metadata?.url}: ${m.value.toFixed(2)}ms`)
   .join('\n')}
 `;
 
@@ -215,11 +228,15 @@ ${metrics
   }
 
   public exportMetrics(): string {
-    return JSON.stringify({
-      metrics: this.getMetrics(),
-      components: this.getComponentMetrics(),
-      timestamp: Date.now(),
-    }, null, 2);
+    return JSON.stringify(
+      {
+        metrics: this.getMetrics(),
+        components: this.getComponentMetrics(),
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    );
   }
 }
 
@@ -229,7 +246,7 @@ export const performanceMonitor = new PerformanceMonitor();
 // React hook for component performance tracking
 export function usePerformanceTracking(componentName: string) {
   const startTime = performance.now();
-  
+
   React.useEffect(() => {
     const endTime = performance.now();
     const renderTime = endTime - startTime;
@@ -243,7 +260,7 @@ export async function measureAsync<T>(
   operation: () => Promise<T>
 ): Promise<T> {
   const startTime = performance.now();
-  
+
   try {
     const result = await operation();
     const endTime = performance.now();

@@ -2,7 +2,7 @@
 
 /**
  * Component Generator Script
- * 
+ *
  * Generates React components with proper TypeScript, testing, and styling setup
  * Usage: node scripts/generate-component.js ComponentName [--page] [--with-test]
  */
@@ -18,7 +18,9 @@ const withTest = args.includes('--with-test');
 
 if (!componentName) {
   console.error('❌ Please provide a component name');
-  console.log('Usage: node scripts/generate-component.js ComponentName [--page] [--with-test]');
+  console.log(
+    'Usage: node scripts/generate-component.js ComponentName [--page] [--with-test]'
+  );
   process.exit(1);
 }
 
@@ -44,10 +46,16 @@ if (!fs.existsSync(componentDir)) {
 // Generate component template
 const componentTemplate = `import React from 'react';
 ${isPage ? `import { Page } from '../layout/Page';` : ''}
-${withTest ? `import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';` : ''}
+${
+  withTest
+    ? `import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';`
+    : ''
+}
 
-${isPage ? `export default function ${componentName}() {
+${
+  isPage
+    ? `export default function ${componentName}() {
   return (
     <Page title="${componentName}">
       <div className="space-y-6">
@@ -57,7 +65,7 @@ ${isPage ? `export default function ${componentName}() {
             This is the ${componentName} page.
           </p>
         </div>
-        
+
         {/* Add your content here */}
         <div className="rounded-lg border p-6">
           <p>Start building your ${componentName} component!</p>
@@ -65,7 +73,8 @@ ${isPage ? `export default function ${componentName}() {
       </div>
     </Page>
   );
-}` : `interface ${componentName}Props {
+}`
+    : `interface ${componentName}Props {
   className?: string;
   children?: React.ReactNode;
 }
@@ -83,9 +92,12 @@ export function ${componentName}({ className, children, ...props }: ${componentN
       )}
     </div>
   );
-}`}
+}`
+}
 
-${withTest ? `
+${
+  withTest
+    ? `
 // Tests
 describe('${componentName}', () => {
   it('renders correctly', () => {
@@ -98,7 +110,9 @@ describe('${componentName}', () => {
     render(<${componentName} className={customClass} />);
     expect(screen.getByText('${componentName}').closest('div')).toHaveClass(customClass);
   });
-});` : ''}
+});`
+    : ''
+}
 `;
 
 // Generate index file
@@ -123,7 +137,7 @@ const mainIndexFile = path.join(baseDir, 'index.ts');
 if (fs.existsSync(mainIndexFile)) {
   const content = fs.readFileSync(mainIndexFile, 'utf8');
   const exportLine = `export { ${componentName} } from './${componentName}';`;
-  
+
   if (!content.includes(exportLine)) {
     fs.appendFileSync(mainIndexFile, `\n${exportLine}`);
     console.log(`✅ Updated main index: ${mainIndexFile}`);
@@ -134,10 +148,14 @@ console.log(`\n🎉 Successfully generated ${componentName} component!`);
 console.log(`\n📝 Next steps:`);
 console.log(`   1. Import and use the component in your app`);
 console.log(`   2. Add your component logic and styling`);
-console.log(`   3. ${withTest ? 'Run tests with: npm run test' : 'Add tests if needed'}`);
+console.log(
+  `   3. ${withTest ? 'Run tests with: npm run test' : 'Add tests if needed'}`
+);
 console.log(`   4. Commit your changes`);
 
 if (isPage) {
   console.log(`\n🔗 Don't forget to add the route in routes.tsx:`);
-  console.log(`   { path: '/${componentName.toLowerCase()}', element: <${componentName} /> }`);
+  console.log(
+    `   { path: '/${componentName.toLowerCase()}', element: <${componentName} /> }`
+  );
 }
