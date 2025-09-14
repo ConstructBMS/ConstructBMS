@@ -14,7 +14,7 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../../components/layout/Page';
 import {
@@ -30,119 +30,70 @@ import {
   CardTitle,
   Input,
 } from '../../../components/ui';
+import { useContactsStore } from '../store';
 
 export default function ContractorsPage() {
+  const {
+    contacts,
+    companies,
+    removeContact,
+    removeCompany,
+  } = useContactsStore();
+
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Independent contractor data - not connected to main contacts store
-  const contractors = [
-    {
-      id: '1',
-      name: 'James Mitchell',
-      company: 'Mitchell Construction',
-      phone: '+44 20 7123 4567',
-      email: 'james@mitchellconstruction.co.uk',
-      location: 'London, UK',
-      status: 'available',
-      specialties: ['Plumbing', 'Electrical', 'HVAC'],
-      certifications: ['CSCS', 'IPAF', 'CPCS'],
-      projectsCompleted: 45,
-      hourlyRate: 45,
-      capacity: 85,
-      rating: 4.7,
-      currentProjects: 2,
-      experience: '15 years',
-      insurance: 'Valid',
-      nextAvailable: 'Next week',
-    },
-    {
-      id: '2',
-      name: 'Lisa Rodriguez',
-      company: 'Rodriguez Builders',
-      phone: '+44 20 7654 3210',
-      email: 'lisa@rodriguezbuilders.co.uk',
-      location: 'Manchester, UK',
-      status: 'busy',
-      specialties: ['Carpentry', 'Flooring', 'Painting'],
-      certifications: ['CSCS', 'First Aid'],
-      projectsCompleted: 32,
-      hourlyRate: 35,
-      capacity: 95,
-      rating: 4.9,
-      currentProjects: 3,
-      experience: '12 years',
-      insurance: 'Valid',
-      nextAvailable: '2 weeks',
-    },
-    {
-      id: '3',
-      name: 'Robert Thompson',
-      company: 'Thompson Electrical',
-      phone: '+44 20 9876 5432',
-      email: 'robert@thompsonelectrical.co.uk',
-      location: 'Birmingham, UK',
-      status: 'available',
-      specialties: ['Electrical', 'Security Systems', 'Smart Home'],
-      certifications: ['CSCS', 'NICEIC', 'EAS'],
-      projectsCompleted: 67,
-      hourlyRate: 55,
-      capacity: 70,
-      rating: 4.8,
-      currentProjects: 1,
-      experience: '20 years',
-      insurance: 'Valid',
-      nextAvailable: 'This week',
-    },
-    {
-      id: '4',
-      name: 'Sarah Williams',
-      company: 'Williams Plumbing',
-      phone: '+44 20 5555 1234',
-      email: 'sarah@williamsplumbing.co.uk',
-      location: 'Leeds, UK',
-      status: 'on-site',
-      specialties: ['Plumbing', 'Heating', 'Bathroom Fitting'],
-      certifications: ['CSCS', 'Gas Safe', 'WaterSafe'],
-      projectsCompleted: 28,
-      hourlyRate: 40,
-      capacity: 90,
-      rating: 4.6,
-      currentProjects: 4,
-      experience: '8 years',
-      insurance: 'Valid',
-      nextAvailable: '3 weeks',
-    },
-  ];
-
-  const filteredContractors = contractors.filter(
-    contractor =>
-      contractor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contractor.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contractor.specialties.some(s =>
-        s.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+  // Filter for contractors only from main contacts store
+  const contractorContacts = contacts.filter(
+    contact => contact.category === 'contractor'
+  );
+  const contractorCompanies = companies.filter(
+    company => company.category === 'contractor'
   );
 
-  const contractorStats = {
-    total: contractors.length,
-    available: contractors.filter(c => c.status === 'available').length,
-    busy: contractors.filter(c => c.status === 'busy').length,
-    onSite: contractors.filter(c => c.status === 'on-site').length,
-    avgRating:
-      contractors.reduce((sum, contractor) => sum + contractor.rating, 0) /
-      contractors.length,
-    totalCapacity:
-      contractors.reduce((sum, contractor) => sum + contractor.capacity, 0) /
-      contractors.length,
-  };
+  // Combine and filter contractors
+  const filteredContractors = useMemo(() => {
+    const allContractors = [...contractorContacts, ...contractorCompanies];
+
+    if (searchQuery) {
+      return allContractors.filter(
+        contractor =>
+          contractor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contractor.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          contractor.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return allContractors;
+  }, [contractorContacts, contractorCompanies, searchQuery]);
+
+  // Calculate contractor statistics from main store data
+  const contractorStats = useMemo(() => {
+    const totalContractors = contractorContacts.length + contractorCompanies.length;
+    const availableContractors = Math.floor(totalContractors * 0.6); // Mock 60% available
+    const busyContractors = Math.floor(totalContractors * 0.3); // Mock 30% busy
+    const onSiteContractors = totalContractors - availableContractors - busyContractors;
+
+    return {
+      total: totalContractors,
+      available: availableContractors,
+      busy: busyContractors,
+      onSite: onSiteContractors,
+      avgRating: 4.7, // Mock average rating
+      totalCapacity: 85, // Mock average capacity
+    };
+  }, [contractorContacts, contractorCompanies]);
 
   const handleEdit = (contractor: any) => {
     console.log('Edit contractor:', contractor);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, type: 'contact' | 'company') => {
     if (window.confirm('Are you sure you want to delete this contractor?')) {
-      console.log('Delete contractor:', id);
+      if (type === 'contact') {
+        removeContact(id);
+      } else {
+        removeCompany(id);
+      }
     }
   };
 
@@ -326,49 +277,41 @@ export default function ContractorsPage() {
                             .join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div className='flex-1'>
-                        <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>
-                          {contractor.name}
-                        </CardTitle>
-                        <CardDescription className='text-orange-700 dark:text-orange-300'>
-                          {contractor.company}
-                        </CardDescription>
-                        <div className='flex gap-2 mt-2'>
-                          <Badge
-                            className={`${
-                              contractor.status === 'available'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                : contractor.status === 'busy'
-                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                            }`}
-                          >
-                            <CheckCircle className='h-3 w-3 mr-1' />
-                            {contractor.status}
-                          </Badge>
-                          <Badge
-                            variant='outline'
-                            className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
-                          >
-                            {contractor.experience}
-                          </Badge>
+                        <div className='flex-1'>
+                          <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>
+                            {contractor.name}
+                          </CardTitle>
+                          <CardDescription className='text-orange-700 dark:text-orange-300'>
+                            {'companyName' in contractor ? contractor.name : 'Individual Contractor'}
+                          </CardDescription>
+                          <div className='flex gap-2 mt-2'>
+                            <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                              <CheckCircle className='h-3 w-3 mr-1' />
+                              Available
+                            </Badge>
+                            <Badge
+                              variant='outline'
+                              className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
+                            >
+                              {'companyName' in contractor ? 'Company' : 'Individual'}
+                            </Badge>
+                          </div>
                         </div>
-                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className='space-y-4'>
                     <div className='space-y-2'>
                       <div className='flex items-center gap-2 text-sm text-orange-700 dark:text-orange-300'>
                         <Phone className='h-4 w-4' />
-                        {contractor.phone}
+                        {contractor.phone || 'No phone'}
                       </div>
                       <div className='flex items-center gap-2 text-sm text-orange-700 dark:text-orange-300'>
                         <Mail className='h-4 w-4' />
-                        {contractor.email}
+                        {contractor.email || 'No email'}
                       </div>
                       <div className='flex items-center gap-2 text-sm text-orange-700 dark:text-orange-300'>
                         <MapPin className='h-4 w-4' />
-                        {contractor.location}
+                        {'address' in contractor ? (contractor.address || 'No address') : 'No address'}
                       </div>
                     </div>
 
@@ -378,7 +321,7 @@ export default function ContractorsPage() {
                         Specialties:
                       </div>
                       <div className='flex flex-wrap gap-1'>
-                        {contractor.specialties.map(
+                        {['Construction', 'Renovation', 'Maintenance'].map(
                           (specialty: string, index: number) => (
                             <Badge
                               key={index}
@@ -398,7 +341,7 @@ export default function ContractorsPage() {
                         Certifications:
                       </div>
                       <div className='flex flex-wrap gap-1'>
-                        {contractor.certifications.map(
+                        {['CSCS', 'First Aid'].map(
                           (cert: string, index: number) => (
                             <Badge
                               key={index}
@@ -416,7 +359,7 @@ export default function ContractorsPage() {
                     <div className='grid grid-cols-2 gap-4 pt-4 border-t border-orange-200 dark:border-orange-700'>
                       <div className='text-center'>
                         <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                          {contractor.projectsCompleted}
+                          {Math.floor(Math.random() * 50 + 10)}
                         </div>
                         <div className='text-xs text-orange-700 dark:text-orange-300'>
                           Completed
@@ -424,7 +367,7 @@ export default function ContractorsPage() {
                       </div>
                       <div className='text-center'>
                         <div className='text-lg font-bold text-orange-600 dark:text-orange-400'>
-                          £{contractor.hourlyRate}/hr
+                          £{Math.floor(Math.random() * 30 + 25)}/hr
                         </div>
                         <div className='text-xs text-orange-700 dark:text-orange-300'>
                           Rate
@@ -439,13 +382,13 @@ export default function ContractorsPage() {
                           Capacity
                         </span>
                         <span className='font-medium text-orange-900 dark:text-orange-100'>
-                          {contractor.capacity}%
+                          {Math.floor(Math.random() * 40 + 60)}%
                         </span>
                       </div>
                       <div className='w-full bg-orange-100 dark:bg-orange-900 rounded-full h-2'>
                         <div
                           className='bg-orange-600 h-2 rounded-full transition-all duration-300'
-                          style={{ width: `${contractor.capacity}%` }}
+                          style={{ width: `${Math.floor(Math.random() * 40 + 60)}%` }}
                         ></div>
                       </div>
                     </div>
@@ -456,7 +399,7 @@ export default function ContractorsPage() {
                           Next Available
                         </span>
                         <span className='font-medium text-orange-900 dark:text-orange-100'>
-                          {contractor.nextAvailable}
+                          {Math.floor(Math.random() * 7 + 1)} days
                         </span>
                       </div>
                       <div className='flex items-center justify-between text-xs'>
@@ -464,7 +407,7 @@ export default function ContractorsPage() {
                           Insurance
                         </span>
                         <span className='font-medium text-green-600 dark:text-green-400'>
-                          {contractor.insurance}
+                          Valid
                         </span>
                       </div>
                     </div>
@@ -473,12 +416,12 @@ export default function ContractorsPage() {
                       <div className='flex items-center gap-1'>
                         <Star className='h-4 w-4 text-yellow-500 fill-current' />
                         <span className='text-sm font-medium text-orange-900 dark:text-orange-100'>
-                          {contractor.rating}
+                          {(Math.random() * 2 + 3).toFixed(1)}
                         </span>
                       </div>
                       <div className='flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300'>
                         <Clock className='h-3 w-3' />
-                        {contractor.currentProjects} active
+                        {Math.floor(Math.random() * 3 + 1)} active
                       </div>
                     </div>
 
@@ -495,7 +438,7 @@ export default function ContractorsPage() {
                         size='sm'
                         variant='outline'
                         className='flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900'
-                        onClick={() => handleDelete(contractor.id)}
+                        onClick={() => handleDelete(contractor.id, 'companyName' in contractor ? 'company' : 'contact')}
                       >
                         Remove
                       </Button>
