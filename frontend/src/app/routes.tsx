@@ -57,7 +57,7 @@ const NotFound = () => (
 );
 
 // Export routes in v7 format
-export const AppRoutes = [
+const AppRoutes = [
   {
     path: '/',
     element: <Navigate to='/dashboard' replace />,
@@ -219,6 +219,9 @@ export const AppRoutes = [
     element: <NotFound />,
   },
 ];
+
+// Export the routes
+export { AppRoutes };
 
 // Legacy component for backward compatibility (if needed)
 export function AppRoutesComponent() {

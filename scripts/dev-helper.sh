@@ -32,14 +32,14 @@ print_error() {
 # Function to check if ports are in use
 check_ports() {
     print_status "Checking port usage..."
-    
+
     if lsof -ti:5173 >/dev/null 2>&1; then
         print_warning "Port 5173 (frontend) is in use"
         lsof -ti:5173 | xargs ps -p
     else
         print_success "Port 5173 (frontend) is available"
     fi
-    
+
     if lsof -ti:5174 >/dev/null 2>&1; then
         print_warning "Port 5174 (backend) is in use"
         lsof -ti:5174 | xargs ps -p
@@ -51,12 +51,12 @@ check_ports() {
 # Function to kill processes on ports
 kill_ports() {
     print_status "Killing processes on ports 5173 and 5174..."
-    
+
     if lsof -ti:5173 >/dev/null 2>&1; then
         lsof -ti:5173 | xargs kill -9 2>/dev/null || true
         print_success "Killed processes on port 5173"
     fi
-    
+
     if lsof -ti:5174 >/dev/null 2>&1; then
         lsof -ti:5174 | xargs kill -9 2>/dev/null || true
         print_success "Killed processes on port 5174"
@@ -66,7 +66,7 @@ kill_ports() {
 # Function to clean caches
 clean_caches() {
     print_status "Cleaning caches..."
-    
+
     # Clean frontend cache
     if [ -d "frontend" ]; then
         cd frontend
@@ -74,7 +74,7 @@ clean_caches() {
         cd ..
         print_success "Cleaned frontend cache"
     fi
-    
+
     # Clean node_modules cache
     if [ -d "node_modules" ]; then
         rm -rf node_modules/.cache 2>/dev/null || true
@@ -85,7 +85,7 @@ clean_caches() {
 # Function to check dependencies
 check_deps() {
     print_status "Checking dependencies..."
-    
+
     if [ -f "package.json" ]; then
         if [ ! -d "node_modules" ]; then
             print_warning "node_modules not found, installing dependencies..."
@@ -94,7 +94,7 @@ check_deps() {
             print_success "Dependencies are installed"
         fi
     fi
-    
+
     if [ -f "frontend/package.json" ]; then
         if [ ! -d "frontend/node_modules" ]; then
             print_warning "Frontend node_modules not found, installing dependencies..."
@@ -103,7 +103,7 @@ check_deps() {
             print_success "Frontend dependencies are installed"
         fi
     fi
-    
+
     if [ -f "backend/package.json" ]; then
         if [ ! -d "backend/node_modules" ]; then
             print_warning "Backend node_modules not found, installing dependencies..."
@@ -117,13 +117,13 @@ check_deps() {
 # Function to run linting
 run_lint() {
     print_status "Running linting..."
-    
+
     if [ -f "frontend/package.json" ]; then
         cd frontend
         npm run lint 2>/dev/null || print_warning "Linting failed or not configured"
         cd ..
     fi
-    
+
     if [ -f "backend/package.json" ]; then
         cd backend
         npm run lint 2>/dev/null || print_warning "Linting failed or not configured"
@@ -134,13 +134,13 @@ run_lint() {
 # Function to run type checking
 run_typecheck() {
     print_status "Running type checking..."
-    
+
     if [ -f "frontend/package.json" ]; then
         cd frontend
         npm run typecheck 2>/dev/null || print_warning "Type checking failed or not configured"
         cd ..
     fi
-    
+
     if [ -f "backend/package.json" ]; then
         cd backend
         npm run typecheck 2>/dev/null || print_warning "Type checking failed or not configured"
@@ -151,16 +151,16 @@ run_typecheck() {
 # Function to start development servers
 start_dev() {
     print_status "Starting development servers..."
-    
+
     # Kill any existing processes
     kill_ports
-    
+
     # Clean caches
     clean_caches
-    
+
     # Check dependencies
     check_deps
-    
+
     # Start servers
     print_status "Starting servers with npm run dev..."
     npm run dev
