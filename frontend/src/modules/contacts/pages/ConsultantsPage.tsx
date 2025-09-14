@@ -4,7 +4,6 @@ import {
   Brain,
   Briefcase,
   CheckCircle,
-  DollarSign,
   GraduationCap,
   Lightbulb,
   Mail,
@@ -134,8 +133,8 @@ export default function ConsultantsPage() {
             </Button>
           </div>
 
-          {/* Expert Network Stats */}
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+          {/* Expert Network Overview */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700'>
               <CardContent className='p-6'>
                 <div className='flex items-center gap-4'>
@@ -147,7 +146,7 @@ export default function ConsultantsPage() {
                       {consultantStats.total}
                     </p>
                     <p className='text-sm text-purple-700 dark:text-purple-300'>
-                      Total Experts
+                      Total Consultants
                     </p>
                   </div>
                 </div>
@@ -166,24 +165,6 @@ export default function ConsultantsPage() {
                     </p>
                     <p className='text-sm text-blue-700 dark:text-blue-300'>
                       Available
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-green-200 dark:border-green-700'>
-              <CardContent className='p-6'>
-                <div className='flex items-center gap-4'>
-                  <div className='p-3 bg-green-100 dark:bg-green-900 rounded-full'>
-                    <DollarSign className='h-6 w-6 text-green-600 dark:text-green-400' />
-                  </div>
-                  <div>
-                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>
-                      £{consultantStats.avgRate.toFixed(0)}/hr
-                    </p>
-                    <p className='text-sm text-green-700 dark:text-green-300'>
-                      Avg Rate
                     </p>
                   </div>
                 </div>
@@ -209,25 +190,17 @@ export default function ConsultantsPage() {
             </Card>
           </div>
 
-          {/* Search and Filter */}
+          {/* Search */}
           <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm'>
             <CardContent className='p-6'>
-              <div className='flex flex-col sm:flex-row gap-4 items-center justify-between'>
-                <div className='relative flex-1 max-w-md'>
-                  <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                  <Input
-                    placeholder='Search consultants...'
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className='pl-10 bg-white dark:bg-gray-700'
-                  />
-                </div>
-                <div className='flex gap-2'>
-                  <Badge variant='outline' className='px-3 py-1'>
-                    <Lightbulb className='h-3 w-3 mr-1' />
-                    {consultantStats.total} Experts
-                  </Badge>
-                </div>
+              <div className='relative max-w-md'>
+                <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                <Input
+                  placeholder='Search consultants...'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='pl-10 bg-white dark:bg-gray-700'
+                />
               </div>
             </CardContent>
           </Card>
@@ -246,7 +219,7 @@ export default function ConsultantsPage() {
                   <p className='text-purple-700 dark:text-purple-300 mb-6'>
                     {searchQuery
                       ? 'No consultants match your search criteria.'
-                      : 'Build your expert network by adding specialized consultants.'}
+                      : 'Add your first consultant to get started.'}
                   </p>
                   {!searchQuery && (
                     <Button

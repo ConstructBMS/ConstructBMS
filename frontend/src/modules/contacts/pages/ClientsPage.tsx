@@ -130,8 +130,8 @@ export default function ClientsPage() {
             </Button>
           </div>
 
-          {/* Client Stats Overview */}
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+          {/* Client Overview */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700'>
               <CardContent className='p-6'>
                 <div className='flex items-center gap-4'>
@@ -185,45 +185,19 @@ export default function ClientsPage() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700'>
-              <CardContent className='p-6'>
-                <div className='flex items-center gap-4'>
-                  <div className='p-3 bg-purple-100 dark:bg-purple-900 rounded-full'>
-                    <TrendingUp className='h-6 w-6 text-purple-600 dark:text-purple-400' />
-                  </div>
-                  <div>
-                    <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>
-                      {clientStats.prospects}
-                    </p>
-                    <p className='text-sm text-purple-700 dark:text-purple-300'>
-                      Prospects
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
-          {/* Search and Filter */}
+          {/* Search */}
           <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm'>
             <CardContent className='p-6'>
-              <div className='flex flex-col sm:flex-row gap-4 items-center justify-between'>
-                <div className='relative flex-1 max-w-md'>
-                  <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                  <Input
-                    placeholder='Search your clients...'
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className='pl-10 bg-white dark:bg-gray-700'
-                  />
-                </div>
-                <div className='flex gap-2'>
-                  <Badge variant='outline' className='px-3 py-1'>
-                    <Heart className='h-3 w-3 mr-1' />
-                    {clientStats.total} Clients
-                  </Badge>
-                </div>
+              <div className='relative max-w-md'>
+                <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                <Input
+                  placeholder='Search clients...'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='pl-10 bg-white dark:bg-gray-700'
+                />
               </div>
             </CardContent>
           </Card>
@@ -242,7 +216,7 @@ export default function ClientsPage() {
                   <p className='text-blue-700 dark:text-blue-300 mb-6'>
                     {searchQuery
                       ? 'No clients match your search criteria.'
-                      : 'Start building your client portfolio by adding your first client.'}
+                      : 'Add your first client to get started.'}
                   </p>
                   {!searchQuery && (
                     <Button

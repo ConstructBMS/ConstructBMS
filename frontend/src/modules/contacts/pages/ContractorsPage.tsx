@@ -133,8 +133,8 @@ export default function ContractorsPage() {
             </Button>
           </div>
 
-          {/* Workforce Stats */}
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+          {/* Workforce Overview */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-orange-200 dark:border-orange-700'>
               <CardContent className='p-6'>
                 <div className='flex items-center gap-4'>
@@ -146,7 +146,7 @@ export default function ContractorsPage() {
                       {contractorStats.total}
                     </p>
                     <p className='text-sm text-orange-700 dark:text-orange-300'>
-                      Total Workforce
+                      Total Contractors
                     </p>
                   </div>
                 </div>
@@ -165,24 +165,6 @@ export default function ContractorsPage() {
                     </p>
                     <p className='text-sm text-green-700 dark:text-green-300'>
                       Available
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700'>
-              <CardContent className='p-6'>
-                <div className='flex items-center gap-4'>
-                  <div className='p-3 bg-blue-100 dark:bg-blue-900 rounded-full'>
-                    <Zap className='h-6 w-6 text-blue-600 dark:text-blue-400' />
-                  </div>
-                  <div>
-                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>
-                      {contractorStats.totalCapacity.toFixed(0)}%
-                    </p>
-                    <p className='text-sm text-blue-700 dark:text-blue-300'>
-                      Avg Capacity
                     </p>
                   </div>
                 </div>
@@ -208,25 +190,17 @@ export default function ContractorsPage() {
             </Card>
           </div>
 
-          {/* Search and Filter */}
+          {/* Search */}
           <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm'>
             <CardContent className='p-6'>
-              <div className='flex flex-col sm:flex-row gap-4 items-center justify-between'>
-                <div className='relative flex-1 max-w-md'>
-                  <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                  <Input
-                    placeholder='Search contractors...'
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className='pl-10 bg-white dark:bg-gray-700'
-                  />
-                </div>
-                <div className='flex gap-2'>
-                  <Badge variant='outline' className='px-3 py-1'>
-                    <Tool className='h-3 w-3 mr-1' />
-                    {contractorStats.total} Contractors
-                  </Badge>
-                </div>
+              <div className='relative max-w-md'>
+                <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                <Input
+                  placeholder='Search contractors...'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='pl-10 bg-white dark:bg-gray-700'
+                />
               </div>
             </CardContent>
           </Card>
@@ -245,7 +219,7 @@ export default function ContractorsPage() {
                   <p className='text-orange-700 dark:text-orange-300 mb-6'>
                     {searchQuery
                       ? 'No contractors match your search criteria.'
-                      : 'Build your contractor workforce by adding skilled professionals.'}
+                      : 'Add your first contractor to get started.'}
                   </p>
                   {!searchQuery && (
                     <Button
