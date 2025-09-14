@@ -1,25 +1,18 @@
 import {
   ArrowLeft,
-  Award,
+  CheckCircle,
+  Clock,
   HardHat,
   Mail,
+  MapPin,
   Phone,
   Plus,
   Search,
   Shield,
   Star,
-  TrendingUp,
-  Truck,
-  Users,
-  Wrench,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Zap,
   Tool,
-  Building,
-  Calendar,
-  DollarSign,
+  Wrench,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -121,10 +114,13 @@ export default function ContractorsPage() {
     },
   ];
 
-  const filteredContractors = contractors.filter(contractor =>
-    contractor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contractor.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contractor.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredContractors = contractors.filter(
+    contractor =>
+      contractor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contractor.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contractor.specialties.some(s =>
+        s.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   );
 
   const contractorStats = {
@@ -132,8 +128,12 @@ export default function ContractorsPage() {
     available: contractors.filter(c => c.status === 'available').length,
     busy: contractors.filter(c => c.status === 'busy').length,
     onSite: contractors.filter(c => c.status === 'on-site').length,
-    avgRating: contractors.reduce((sum, contractor) => sum + contractor.rating, 0) / contractors.length,
-    totalCapacity: contractors.reduce((sum, contractor) => sum + contractor.capacity, 0) / contractors.length,
+    avgRating:
+      contractors.reduce((sum, contractor) => sum + contractor.rating, 0) /
+      contractors.length,
+    totalCapacity:
+      contractors.reduce((sum, contractor) => sum + contractor.capacity, 0) /
+      contractors.length,
   };
 
   const handleEdit = (contractor: any) => {
@@ -166,7 +166,9 @@ export default function ContractorsPage() {
                   Back to CRM Manager
                 </Link>
               </div>
-              <h1 className='text-3xl font-bold text-orange-900 dark:text-orange-100'>Contractor Workforce</h1>
+              <h1 className='text-3xl font-bold text-orange-900 dark:text-orange-100'>
+                Contractor Workforce
+              </h1>
               <p className='text-orange-700 dark:text-orange-300 mt-2'>
                 Your skilled contractors and their specialized services
               </p>
@@ -189,8 +191,12 @@ export default function ContractorsPage() {
                     <HardHat className='h-6 w-6 text-orange-600 dark:text-orange-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-orange-900 dark:text-orange-100'>{contractorStats.total}</p>
-                    <p className='text-sm text-orange-700 dark:text-orange-300'>Total Workforce</p>
+                    <p className='text-2xl font-bold text-orange-900 dark:text-orange-100'>
+                      {contractorStats.total}
+                    </p>
+                    <p className='text-sm text-orange-700 dark:text-orange-300'>
+                      Total Workforce
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -203,8 +209,12 @@ export default function ContractorsPage() {
                     <Shield className='h-6 w-6 text-green-600 dark:text-green-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>{contractorStats.available}</p>
-                    <p className='text-sm text-green-700 dark:text-green-300'>Available</p>
+                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>
+                      {contractorStats.available}
+                    </p>
+                    <p className='text-sm text-green-700 dark:text-green-300'>
+                      Available
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -217,8 +227,12 @@ export default function ContractorsPage() {
                     <Zap className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>{contractorStats.totalCapacity.toFixed(0)}%</p>
-                    <p className='text-sm text-blue-700 dark:text-blue-300'>Avg Capacity</p>
+                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>
+                      {contractorStats.totalCapacity.toFixed(0)}%
+                    </p>
+                    <p className='text-sm text-blue-700 dark:text-blue-300'>
+                      Avg Capacity
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -231,8 +245,12 @@ export default function ContractorsPage() {
                     <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>{contractorStats.avgRating.toFixed(1)}/5</p>
-                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>Rating</p>
+                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>
+                      {contractorStats.avgRating.toFixed(1)}/5
+                    </p>
+                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>
+                      Rating
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -270,12 +288,16 @@ export default function ContractorsPage() {
                   <div className='p-4 bg-orange-100 dark:bg-orange-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <Wrench className='h-10 w-10 text-orange-600 dark:text-orange-400' />
                   </div>
-                  <h3 className='text-xl font-semibold text-orange-900 dark:text-orange-100 mb-2'>No Contractors Found</h3>
+                  <h3 className='text-xl font-semibold text-orange-900 dark:text-orange-100 mb-2'>
+                    No Contractors Found
+                  </h3>
                   <p className='text-orange-700 dark:text-orange-300 mb-6'>
-                    {searchQuery ? 'No contractors match your search criteria.' : 'Build your contractor workforce by adding skilled professionals.'}
+                    {searchQuery
+                      ? 'No contractors match your search criteria.'
+                      : 'Build your contractor workforce by adding skilled professionals.'}
                   </p>
                   {!searchQuery && (
-                    <Button 
+                    <Button
                       onClick={handleAddContractor}
                       className='bg-orange-600 hover:bg-orange-700 text-white'
                     >
@@ -287,7 +309,10 @@ export default function ContractorsPage() {
               </div>
             ) : (
               filteredContractors.map(contractor => (
-                <Card key={contractor.id} className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-orange-200 dark:border-orange-700 hover:shadow-xl transition-all duration-300 hover:scale-105'>
+                <Card
+                  key={contractor.id}
+                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-orange-200 dark:border-orange-700 hover:shadow-xl transition-all duration-300 hover:scale-105'
+                >
                   <CardHeader className='pb-4'>
                     <div className='flex items-center gap-4'>
                       <Avatar className='h-16 w-16 border-2 border-orange-200 dark:border-orange-700'>
@@ -302,18 +327,29 @@ export default function ContractorsPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div className='flex-1'>
-                        <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>{contractor.name}</CardTitle>
-                        <CardDescription className='text-orange-700 dark:text-orange-300'>{contractor.company}</CardDescription>
+                        <CardTitle className='text-lg text-orange-900 dark:text-orange-100'>
+                          {contractor.name}
+                        </CardTitle>
+                        <CardDescription className='text-orange-700 dark:text-orange-300'>
+                          {contractor.company}
+                        </CardDescription>
                         <div className='flex gap-2 mt-2'>
-                          <Badge className={`${
-                            contractor.status === 'available' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                            contractor.status === 'busy' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                          }`}>
+                          <Badge
+                            className={`${
+                              contractor.status === 'available'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                : contractor.status === 'busy'
+                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                            }`}
+                          >
                             <CheckCircle className='h-3 w-3 mr-1' />
                             {contractor.status}
                           </Badge>
-                          <Badge variant='outline' className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'>
+                          <Badge
+                            variant='outline'
+                            className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
+                          >
                             {contractor.experience}
                           </Badge>
                         </div>
@@ -338,26 +374,42 @@ export default function ContractorsPage() {
 
                     {/* Specialties */}
                     <div className='space-y-2'>
-                      <div className='text-xs font-medium text-orange-700 dark:text-orange-300'>Specialties:</div>
+                      <div className='text-xs font-medium text-orange-700 dark:text-orange-300'>
+                        Specialties:
+                      </div>
                       <div className='flex flex-wrap gap-1'>
-                        {contractor.specialties.map((specialty: string, index: number) => (
-                          <Badge key={index} variant='outline' className='text-xs border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'>
-                            {specialty}
-                          </Badge>
-                        ))}
+                        {contractor.specialties.map(
+                          (specialty: string, index: number) => (
+                            <Badge
+                              key={index}
+                              variant='outline'
+                              className='text-xs border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
+                            >
+                              {specialty}
+                            </Badge>
+                          )
+                        )}
                       </div>
                     </div>
 
                     {/* Certifications */}
                     <div className='space-y-2'>
-                      <div className='text-xs font-medium text-orange-700 dark:text-orange-300'>Certifications:</div>
+                      <div className='text-xs font-medium text-orange-700 dark:text-orange-300'>
+                        Certifications:
+                      </div>
                       <div className='flex flex-wrap gap-1'>
-                        {contractor.certifications.map((cert: string, index: number) => (
-                          <Badge key={index} variant='secondary' className='text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
-                            <Shield className='h-2 w-2 mr-1' />
-                            {cert}
-                          </Badge>
-                        ))}
+                        {contractor.certifications.map(
+                          (cert: string, index: number) => (
+                            <Badge
+                              key={index}
+                              variant='secondary'
+                              className='text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                            >
+                              <Shield className='h-2 w-2 mr-1' />
+                              {cert}
+                            </Badge>
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -366,25 +418,33 @@ export default function ContractorsPage() {
                         <div className='text-lg font-bold text-green-600 dark:text-green-400'>
                           {contractor.projectsCompleted}
                         </div>
-                        <div className='text-xs text-orange-700 dark:text-orange-300'>Completed</div>
+                        <div className='text-xs text-orange-700 dark:text-orange-300'>
+                          Completed
+                        </div>
                       </div>
                       <div className='text-center'>
                         <div className='text-lg font-bold text-orange-600 dark:text-orange-400'>
                           £{contractor.hourlyRate}/hr
                         </div>
-                        <div className='text-xs text-orange-700 dark:text-orange-300'>Rate</div>
+                        <div className='text-xs text-orange-700 dark:text-orange-300'>
+                          Rate
+                        </div>
                       </div>
                     </div>
 
                     {/* Capacity */}
                     <div className='space-y-1'>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-orange-700 dark:text-orange-300'>Capacity</span>
-                        <span className='font-medium text-orange-900 dark:text-orange-100'>{contractor.capacity}%</span>
+                        <span className='text-orange-700 dark:text-orange-300'>
+                          Capacity
+                        </span>
+                        <span className='font-medium text-orange-900 dark:text-orange-100'>
+                          {contractor.capacity}%
+                        </span>
                       </div>
                       <div className='w-full bg-orange-100 dark:bg-orange-900 rounded-full h-2'>
-                        <div 
-                          className='bg-orange-600 h-2 rounded-full transition-all duration-300' 
+                        <div
+                          className='bg-orange-600 h-2 rounded-full transition-all duration-300'
                           style={{ width: `${contractor.capacity}%` }}
                         ></div>
                       </div>
@@ -392,19 +452,29 @@ export default function ContractorsPage() {
 
                     <div className='space-y-2 pt-2 border-t border-orange-200 dark:border-orange-700'>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-orange-700 dark:text-orange-300'>Next Available</span>
-                        <span className='font-medium text-orange-900 dark:text-orange-100'>{contractor.nextAvailable}</span>
+                        <span className='text-orange-700 dark:text-orange-300'>
+                          Next Available
+                        </span>
+                        <span className='font-medium text-orange-900 dark:text-orange-100'>
+                          {contractor.nextAvailable}
+                        </span>
                       </div>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-orange-700 dark:text-orange-300'>Insurance</span>
-                        <span className='font-medium text-green-600 dark:text-green-400'>{contractor.insurance}</span>
+                        <span className='text-orange-700 dark:text-orange-300'>
+                          Insurance
+                        </span>
+                        <span className='font-medium text-green-600 dark:text-green-400'>
+                          {contractor.insurance}
+                        </span>
                       </div>
                     </div>
 
                     <div className='flex items-center justify-between pt-2'>
                       <div className='flex items-center gap-1'>
                         <Star className='h-4 w-4 text-yellow-500 fill-current' />
-                        <span className='text-sm font-medium text-orange-900 dark:text-orange-100'>{contractor.rating}</span>
+                        <span className='text-sm font-medium text-orange-900 dark:text-orange-100'>
+                          {contractor.rating}
+                        </span>
                       </div>
                       <div className='flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300'>
                         <Clock className='h-3 w-3' />

@@ -2,18 +2,18 @@ import {
   ArrowLeft,
   Award,
   Brain,
+  Briefcase,
+  CheckCircle,
   DollarSign,
+  GraduationCap,
   Lightbulb,
   Mail,
+  MapPin,
   Phone,
   Plus,
   Search,
   Star,
   Target,
-  GraduationCap,
-  Briefcase,
-  MapPin,
-  CheckCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -45,7 +45,11 @@ export default function ConsultantsPage() {
       email: 'alexandra@chenconsulting.co.uk',
       location: 'London, UK',
       status: 'available',
-      expertise: ['Project Management', 'Strategic Planning', 'Risk Assessment'],
+      expertise: [
+        'Project Management',
+        'Strategic Planning',
+        'Risk Assessment',
+      ],
       qualifications: ['MBA', 'PMP', 'PRINCE2'],
       projectsCompleted: 23,
       hourlyRate: 150,
@@ -115,10 +119,13 @@ export default function ConsultantsPage() {
     },
   ];
 
-  const filteredConsultants = consultants.filter(consultant =>
-    consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    consultant.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    consultant.expertise.some(e => e.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredConsultants = consultants.filter(
+    consultant =>
+      consultant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      consultant.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      consultant.expertise.some(e =>
+        e.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   );
 
   const consultantStats = {
@@ -126,8 +133,12 @@ export default function ConsultantsPage() {
     available: consultants.filter(c => c.status === 'available').length,
     busy: consultants.filter(c => c.status === 'busy').length,
     consulting: consultants.filter(c => c.status === 'consulting').length,
-    avgRating: consultants.reduce((sum, consultant) => sum + consultant.rating, 0) / consultants.length,
-    avgRate: consultants.reduce((sum, consultant) => sum + consultant.hourlyRate, 0) / consultants.length,
+    avgRating:
+      consultants.reduce((sum, consultant) => sum + consultant.rating, 0) /
+      consultants.length,
+    avgRate:
+      consultants.reduce((sum, consultant) => sum + consultant.hourlyRate, 0) /
+      consultants.length,
   };
 
   const handleEdit = (consultant: any) => {
@@ -160,7 +171,9 @@ export default function ConsultantsPage() {
                   Back to CRM Manager
                 </Link>
               </div>
-              <h1 className='text-3xl font-bold text-purple-900 dark:text-purple-100'>Expert Network</h1>
+              <h1 className='text-3xl font-bold text-purple-900 dark:text-purple-100'>
+                Expert Network
+              </h1>
               <p className='text-purple-700 dark:text-purple-300 mt-2'>
                 Your trusted consultants and their specialized expertise
               </p>
@@ -183,8 +196,12 @@ export default function ConsultantsPage() {
                     <GraduationCap className='h-6 w-6 text-purple-600 dark:text-purple-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>{consultantStats.total}</p>
-                    <p className='text-sm text-purple-700 dark:text-purple-300'>Total Experts</p>
+                    <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>
+                      {consultantStats.total}
+                    </p>
+                    <p className='text-sm text-purple-700 dark:text-purple-300'>
+                      Total Experts
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -197,8 +214,12 @@ export default function ConsultantsPage() {
                     <Brain className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>{consultantStats.available}</p>
-                    <p className='text-sm text-blue-700 dark:text-blue-300'>Available</p>
+                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>
+                      {consultantStats.available}
+                    </p>
+                    <p className='text-sm text-blue-700 dark:text-blue-300'>
+                      Available
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -211,8 +232,12 @@ export default function ConsultantsPage() {
                     <DollarSign className='h-6 w-6 text-green-600 dark:text-green-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>£{consultantStats.avgRate.toFixed(0)}/hr</p>
-                    <p className='text-sm text-green-700 dark:text-green-300'>Avg Rate</p>
+                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>
+                      £{consultantStats.avgRate.toFixed(0)}/hr
+                    </p>
+                    <p className='text-sm text-green-700 dark:text-green-300'>
+                      Avg Rate
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -225,8 +250,12 @@ export default function ConsultantsPage() {
                     <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>{consultantStats.avgRating.toFixed(1)}/5</p>
-                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>Rating</p>
+                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>
+                      {consultantStats.avgRating.toFixed(1)}/5
+                    </p>
+                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>
+                      Rating
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -264,12 +293,16 @@ export default function ConsultantsPage() {
                   <div className='p-4 bg-purple-100 dark:bg-purple-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <Lightbulb className='h-10 w-10 text-purple-600 dark:text-purple-400' />
                   </div>
-                  <h3 className='text-xl font-semibold text-purple-900 dark:text-purple-100 mb-2'>No Consultants Found</h3>
+                  <h3 className='text-xl font-semibold text-purple-900 dark:text-purple-100 mb-2'>
+                    No Consultants Found
+                  </h3>
                   <p className='text-purple-700 dark:text-purple-300 mb-6'>
-                    {searchQuery ? 'No consultants match your search criteria.' : 'Build your expert network by adding specialized consultants.'}
+                    {searchQuery
+                      ? 'No consultants match your search criteria.'
+                      : 'Build your expert network by adding specialized consultants.'}
                   </p>
                   {!searchQuery && (
-                    <Button 
+                    <Button
                       onClick={handleAddConsultant}
                       className='bg-purple-600 hover:bg-purple-700 text-white'
                     >
@@ -281,7 +314,10 @@ export default function ConsultantsPage() {
               </div>
             ) : (
               filteredConsultants.map(consultant => (
-                <Card key={consultant.id} className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 hover:scale-105'>
+                <Card
+                  key={consultant.id}
+                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 hover:scale-105'
+                >
                   <CardHeader className='pb-4'>
                     <div className='flex items-center gap-4'>
                       <Avatar className='h-16 w-16 border-2 border-purple-200 dark:border-purple-700'>
@@ -296,18 +332,29 @@ export default function ConsultantsPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div className='flex-1'>
-                        <CardTitle className='text-lg text-purple-900 dark:text-purple-100'>{consultant.name}</CardTitle>
-                        <CardDescription className='text-purple-700 dark:text-purple-300'>{consultant.company}</CardDescription>
+                        <CardTitle className='text-lg text-purple-900 dark:text-purple-100'>
+                          {consultant.name}
+                        </CardTitle>
+                        <CardDescription className='text-purple-700 dark:text-purple-300'>
+                          {consultant.company}
+                        </CardDescription>
                         <div className='flex gap-2 mt-2'>
-                          <Badge className={`${
-                            consultant.status === 'available' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                            consultant.status === 'busy' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                          }`}>
+                          <Badge
+                            className={`${
+                              consultant.status === 'available'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                : consultant.status === 'busy'
+                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                            }`}
+                          >
                             <CheckCircle className='h-3 w-3 mr-1' />
                             {consultant.status}
                           </Badge>
-                          <Badge variant='outline' className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'>
+                          <Badge
+                            variant='outline'
+                            className='border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                          >
                             {consultant.experience}
                           </Badge>
                         </div>
@@ -332,26 +379,42 @@ export default function ConsultantsPage() {
 
                     {/* Expertise Areas */}
                     <div className='space-y-2'>
-                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>Expertise:</div>
+                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>
+                        Expertise:
+                      </div>
                       <div className='flex flex-wrap gap-1'>
-                        {consultant.expertise.map((area: string, index: number) => (
-                          <Badge key={index} variant='outline' className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'>
-                            {area}
-                          </Badge>
-                        ))}
+                        {consultant.expertise.map(
+                          (area: string, index: number) => (
+                            <Badge
+                              key={index}
+                              variant='outline'
+                              className='text-xs border-purple-200 text-purple-700 dark:border-purple-700 dark:text-purple-300'
+                            >
+                              {area}
+                            </Badge>
+                          )
+                        )}
                       </div>
                     </div>
 
                     {/* Qualifications */}
                     <div className='space-y-2'>
-                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>Qualifications:</div>
+                      <div className='text-xs font-medium text-purple-700 dark:text-purple-300'>
+                        Qualifications:
+                      </div>
                       <div className='flex flex-wrap gap-1'>
-                        {consultant.qualifications.map((qual: string, index: number) => (
-                          <Badge key={index} variant='secondary' className='text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
-                            <Award className='h-2 w-2 mr-1' />
-                            {qual}
-                          </Badge>
-                        ))}
+                        {consultant.qualifications.map(
+                          (qual: string, index: number) => (
+                            <Badge
+                              key={index}
+                              variant='secondary'
+                              className='text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                            >
+                              <Award className='h-2 w-2 mr-1' />
+                              {qual}
+                            </Badge>
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -360,25 +423,33 @@ export default function ConsultantsPage() {
                         <div className='text-lg font-bold text-green-600 dark:text-green-400'>
                           {consultant.projectsCompleted}
                         </div>
-                        <div className='text-xs text-purple-700 dark:text-purple-300'>Completed</div>
+                        <div className='text-xs text-purple-700 dark:text-purple-300'>
+                          Completed
+                        </div>
                       </div>
                       <div className='text-center'>
                         <div className='text-lg font-bold text-purple-600 dark:text-purple-400'>
                           £{consultant.hourlyRate}/hr
                         </div>
-                        <div className='text-xs text-purple-700 dark:text-purple-300'>Rate</div>
+                        <div className='text-xs text-purple-700 dark:text-purple-300'>
+                          Rate
+                        </div>
                       </div>
                     </div>
 
                     {/* Availability */}
                     <div className='space-y-1'>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>Availability</span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>{consultant.availability}%</span>
+                        <span className='text-purple-700 dark:text-purple-300'>
+                          Availability
+                        </span>
+                        <span className='font-medium text-purple-900 dark:text-purple-100'>
+                          {consultant.availability}%
+                        </span>
                       </div>
                       <div className='w-full bg-purple-100 dark:bg-purple-900 rounded-full h-2'>
-                        <div 
-                          className='bg-purple-600 h-2 rounded-full transition-all duration-300' 
+                        <div
+                          className='bg-purple-600 h-2 rounded-full transition-all duration-300'
                           style={{ width: `${consultant.availability}%` }}
                         ></div>
                       </div>
@@ -386,19 +457,29 @@ export default function ConsultantsPage() {
 
                     <div className='space-y-2 pt-2 border-t border-purple-200 dark:border-purple-700'>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>Next Available</span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>{consultant.nextAvailable}</span>
+                        <span className='text-purple-700 dark:text-purple-300'>
+                          Next Available
+                        </span>
+                        <span className='font-medium text-purple-900 dark:text-purple-100'>
+                          {consultant.nextAvailable}
+                        </span>
                       </div>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-purple-700 dark:text-purple-300'>Specializations</span>
-                        <span className='font-medium text-purple-900 dark:text-purple-100'>{consultant.specializations.join(', ')}</span>
+                        <span className='text-purple-700 dark:text-purple-300'>
+                          Specializations
+                        </span>
+                        <span className='font-medium text-purple-900 dark:text-purple-100'>
+                          {consultant.specializations.join(', ')}
+                        </span>
                       </div>
                     </div>
 
                     <div className='flex items-center justify-between pt-2'>
                       <div className='flex items-center gap-1'>
                         <Star className='h-4 w-4 text-yellow-500 fill-current' />
-                        <span className='text-sm font-medium text-purple-900 dark:text-purple-100'>{consultant.rating}</span>
+                        <span className='text-sm font-medium text-purple-900 dark:text-purple-100'>
+                          {consultant.rating}
+                        </span>
                       </div>
                       <div className='flex items-center gap-1 text-xs text-purple-700 dark:text-purple-300'>
                         <Target className='h-3 w-3' />

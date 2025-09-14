@@ -1,9 +1,10 @@
 import {
   ArrowLeft,
-  Building2,
-  Calendar,
+  Briefcase,
   DollarSign,
+  Heart,
   Mail,
+  MapPin,
   Phone,
   Plus,
   Search,
@@ -11,13 +12,6 @@ import {
   TrendingUp,
   User,
   Users,
-  Heart,
-  Target,
-  Award,
-  Briefcase,
-  MapPin,
-  Clock,
-  CheckCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -111,10 +105,11 @@ export default function ClientsPage() {
     },
   ];
 
-  const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.industry.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredClients = clients.filter(
+    client =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.industry.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const clientStats = {
@@ -122,7 +117,11 @@ export default function ClientsPage() {
     active: clients.filter(c => c.status === 'active').length,
     prospects: clients.filter(c => c.status === 'prospect').length,
     totalValue: clients.reduce((sum, client) => sum + client.projectValue, 0),
-    avgSatisfaction: clients.filter(c => c.satisfaction > 0).reduce((sum, client) => sum + client.satisfaction, 0) / clients.filter(c => c.satisfaction > 0).length,
+    avgSatisfaction:
+      clients
+        .filter(c => c.satisfaction > 0)
+        .reduce((sum, client) => sum + client.satisfaction, 0) /
+      clients.filter(c => c.satisfaction > 0).length,
   };
 
   const handleEdit = (client: any) => {
@@ -155,7 +154,9 @@ export default function ClientsPage() {
                   Back to CRM Manager
                 </Link>
               </div>
-              <h1 className='text-3xl font-bold text-blue-900 dark:text-blue-100'>Client Portfolio</h1>
+              <h1 className='text-3xl font-bold text-blue-900 dark:text-blue-100'>
+                Client Portfolio
+              </h1>
               <p className='text-blue-700 dark:text-blue-300 mt-2'>
                 Your valued clients and their project relationships
               </p>
@@ -178,8 +179,12 @@ export default function ClientsPage() {
                     <Users className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>{clientStats.total}</p>
-                    <p className='text-sm text-blue-700 dark:text-blue-300'>Total Clients</p>
+                    <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>
+                      {clientStats.total}
+                    </p>
+                    <p className='text-sm text-blue-700 dark:text-blue-300'>
+                      Total Clients
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -192,8 +197,12 @@ export default function ClientsPage() {
                     <DollarSign className='h-6 w-6 text-green-600 dark:text-green-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>£{clientStats.totalValue.toLocaleString()}</p>
-                    <p className='text-sm text-green-700 dark:text-green-300'>Total Value</p>
+                    <p className='text-2xl font-bold text-green-900 dark:text-green-100'>
+                      £{clientStats.totalValue.toLocaleString()}
+                    </p>
+                    <p className='text-sm text-green-700 dark:text-green-300'>
+                      Total Value
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -206,8 +215,12 @@ export default function ClientsPage() {
                     <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>{clientStats.avgSatisfaction.toFixed(1)}/5</p>
-                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>Satisfaction</p>
+                    <p className='text-2xl font-bold text-yellow-900 dark:text-yellow-100'>
+                      {clientStats.avgSatisfaction.toFixed(1)}/5
+                    </p>
+                    <p className='text-sm text-yellow-700 dark:text-yellow-300'>
+                      Satisfaction
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -220,8 +233,12 @@ export default function ClientsPage() {
                     <TrendingUp className='h-6 w-6 text-purple-600 dark:text-purple-400' />
                   </div>
                   <div>
-                    <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>{clientStats.prospects}</p>
-                    <p className='text-sm text-purple-700 dark:text-purple-300'>Prospects</p>
+                    <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>
+                      {clientStats.prospects}
+                    </p>
+                    <p className='text-sm text-purple-700 dark:text-purple-300'>
+                      Prospects
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -259,12 +276,16 @@ export default function ClientsPage() {
                   <div className='p-4 bg-blue-100 dark:bg-blue-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
                     <User className='h-10 w-10 text-blue-600 dark:text-blue-400' />
                   </div>
-                  <h3 className='text-xl font-semibold text-blue-900 dark:text-blue-100 mb-2'>No Clients Found</h3>
+                  <h3 className='text-xl font-semibold text-blue-900 dark:text-blue-100 mb-2'>
+                    No Clients Found
+                  </h3>
                   <p className='text-blue-700 dark:text-blue-300 mb-6'>
-                    {searchQuery ? 'No clients match your search criteria.' : 'Start building your client portfolio by adding your first client.'}
+                    {searchQuery
+                      ? 'No clients match your search criteria.'
+                      : 'Start building your client portfolio by adding your first client.'}
                   </p>
                   {!searchQuery && (
-                    <Button 
+                    <Button
                       onClick={handleAddClient}
                       className='bg-blue-600 hover:bg-blue-700 text-white'
                     >
@@ -276,7 +297,10 @@ export default function ClientsPage() {
               </div>
             ) : (
               filteredClients.map(client => (
-                <Card key={client.id} className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 hover:scale-105'>
+                <Card
+                  key={client.id}
+                  className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 hover:scale-105'
+                >
                   <CardHeader className='pb-4'>
                     <div className='flex items-center gap-4'>
                       <Avatar className='h-16 w-16 border-2 border-blue-200 dark:border-blue-700'>
@@ -291,14 +315,21 @@ export default function ClientsPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div className='flex-1'>
-                        <CardTitle className='text-lg text-blue-900 dark:text-blue-100'>{client.name}</CardTitle>
-                        <CardDescription className='text-blue-700 dark:text-blue-300'>{client.company}</CardDescription>
+                        <CardTitle className='text-lg text-blue-900 dark:text-blue-100'>
+                          {client.name}
+                        </CardTitle>
+                        <CardDescription className='text-blue-700 dark:text-blue-300'>
+                          {client.company}
+                        </CardDescription>
                         <div className='flex gap-2 mt-2'>
                           <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
                             <Heart className='h-3 w-3 mr-1' />
                             {client.priority} priority
                           </Badge>
-                          <Badge variant='outline' className='border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300'>
+                          <Badge
+                            variant='outline'
+                            className='border-blue-200 text-blue-700 dark:border-blue-700 dark:text-blue-300'
+                          >
                             {client.industry}
                           </Badge>
                         </div>
@@ -326,31 +357,45 @@ export default function ClientsPage() {
                         <div className='text-lg font-bold text-green-600 dark:text-green-400'>
                           £{client.projectValue.toLocaleString()}
                         </div>
-                        <div className='text-xs text-blue-700 dark:text-blue-300'>Project Value</div>
+                        <div className='text-xs text-blue-700 dark:text-blue-300'>
+                          Project Value
+                        </div>
                       </div>
                       <div className='text-center'>
                         <div className='text-lg font-bold text-blue-600 dark:text-blue-400'>
                           {client.projects}
                         </div>
-                        <div className='text-xs text-blue-700 dark:text-blue-300'>Projects</div>
+                        <div className='text-xs text-blue-700 dark:text-blue-300'>
+                          Projects
+                        </div>
                       </div>
                     </div>
 
                     <div className='space-y-2 pt-2 border-t border-blue-200 dark:border-blue-700'>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-blue-700 dark:text-blue-300'>Last Contact</span>
-                        <span className='font-medium text-blue-900 dark:text-blue-100'>{client.lastContact}</span>
+                        <span className='text-blue-700 dark:text-blue-300'>
+                          Last Contact
+                        </span>
+                        <span className='font-medium text-blue-900 dark:text-blue-100'>
+                          {client.lastContact}
+                        </span>
                       </div>
                       <div className='flex items-center justify-between text-xs'>
-                        <span className='text-blue-700 dark:text-blue-300'>Next Meeting</span>
-                        <span className='font-medium text-blue-900 dark:text-blue-100'>{client.nextMeeting}</span>
+                        <span className='text-blue-700 dark:text-blue-300'>
+                          Next Meeting
+                        </span>
+                        <span className='font-medium text-blue-900 dark:text-blue-100'>
+                          {client.nextMeeting}
+                        </span>
                       </div>
                     </div>
 
                     <div className='flex items-center justify-between pt-2'>
                       <div className='flex items-center gap-1'>
                         <Star className='h-4 w-4 text-yellow-500 fill-current' />
-                        <span className='text-sm font-medium text-blue-900 dark:text-blue-100'>{client.satisfaction || 'N/A'}</span>
+                        <span className='text-sm font-medium text-blue-900 dark:text-blue-100'>
+                          {client.satisfaction || 'N/A'}
+                        </span>
                       </div>
                       <div className='text-xs text-blue-700 dark:text-blue-300'>
                         Budget: {client.budget}
