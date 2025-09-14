@@ -99,8 +99,7 @@ export default function ContractorsPage() {
 
   return (
     <Page title='Contractor Management'>
-      <div className='min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950 dark:to-red-900'>
-        <div className='space-y-6 p-6'>
+      <div className='space-y-6'>
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
@@ -113,16 +112,16 @@ export default function ContractorsPage() {
                   Back to CRM Manager
                 </Link>
               </div>
-              <h1 className='text-3xl font-bold text-orange-900 dark:text-orange-100'>
-                Contractor Workforce
+              <h1 className='text-2xl font-semibold'>
+                Contractor Management
               </h1>
-              <p className='text-orange-700 dark:text-orange-300 mt-2'>
+              <p className='text-muted-foreground'>
                 Manage your skilled contractors and workforce capacity
               </p>
             </div>
             <Button
               onClick={handleAddContractor}
-              className='bg-orange-600 hover:bg-orange-700 text-white flex items-center gap-2'
+              className='flex items-center gap-2'
             >
               <Plus className='h-4 w-4' />
               Add Contractor
