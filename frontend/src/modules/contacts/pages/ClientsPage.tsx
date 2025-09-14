@@ -1,23 +1,15 @@
 import {
   ArrowLeft,
-  Building2,
-  Calendar,
+  Briefcase,
+  CheckCircle,
   DollarSign,
   Mail,
   Phone,
   Plus,
   Search,
   Star,
-  TrendingUp,
   User,
   Users,
-  Heart,
-  Target,
-  Award,
-  Briefcase,
-  MapPin,
-  Clock,
-  CheckCircle,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -44,12 +36,8 @@ import {
 import { useContactsStore } from '../store';
 
 export default function ClientsPage() {
-  const {
-    contacts,
-    companies,
-    removeContact,
-    removeCompany,
-  } = useContactsStore();
+  const { contacts, companies, removeContact, removeCompany } =
+    useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -217,7 +205,9 @@ export default function ClientsPage() {
           {/* Client Portfolio Table */}
           <Card className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm'>
             <CardHeader>
-              <CardTitle className='text-blue-900 dark:text-blue-100'>Client Portfolio</CardTitle>
+              <CardTitle className='text-blue-900 dark:text-blue-100'>
+                Client Portfolio
+              </CardTitle>
               <CardDescription className='text-blue-700 dark:text-blue-300'>
                 Your valued clients and their project relationships
               </CardDescription>
@@ -250,17 +240,32 @@ export default function ClientsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Client</TableHead>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Contact</TableHead>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Project Value</TableHead>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Status</TableHead>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Last Contact</TableHead>
-                      <TableHead className='text-blue-900 dark:text-blue-100'>Actions</TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Client
+                      </TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Contact
+                      </TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Project Value
+                      </TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Status
+                      </TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Last Contact
+                      </TableHead>
+                      <TableHead className='text-blue-900 dark:text-blue-100'>
+                        Actions
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredClients.map(client => (
-                      <TableRow key={client.id} className='hover:bg-blue-50 dark:hover:bg-blue-900/20'>
+                      <TableRow
+                        key={client.id}
+                        className='hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                      >
                         <TableCell>
                           <div className='flex items-center gap-3'>
                             <Avatar className='h-10 w-10 border-2 border-blue-200 dark:border-blue-700'>
@@ -275,9 +280,13 @@ export default function ClientsPage() {
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className='font-medium text-blue-900 dark:text-blue-100'>{client.name}</div>
+                              <div className='font-medium text-blue-900 dark:text-blue-100'>
+                                {client.name}
+                              </div>
                               <div className='text-sm text-blue-700 dark:text-blue-300'>
-                                {'companyName' in client ? 'Company' : 'Individual'}
+                                {'companyName' in client
+                                  ? 'Company'
+                                  : 'Individual'}
                               </div>
                             </div>
                           </div>
@@ -296,7 +305,10 @@ export default function ClientsPage() {
                         </TableCell>
                         <TableCell>
                           <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                            £{Math.floor(Math.random() * 500000 + 50000).toLocaleString()}
+                            £
+                            {Math.floor(
+                              Math.random() * 500000 + 50000
+                            ).toLocaleString()}
                           </div>
                           <div className='text-xs text-blue-700 dark:text-blue-300'>
                             {Math.floor(Math.random() * 5 + 1)} projects
@@ -327,7 +339,14 @@ export default function ClientsPage() {
                               size='sm'
                               variant='outline'
                               className='border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900'
-                              onClick={() => handleDelete(client.id, 'companyName' in client ? 'company' : 'contact')}
+                              onClick={() =>
+                                handleDelete(
+                                  client.id,
+                                  'companyName' in client
+                                    ? 'company'
+                                    : 'contact'
+                                )
+                              }
                             >
                               Remove
                             </Button>

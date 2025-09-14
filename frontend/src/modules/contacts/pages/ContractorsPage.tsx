@@ -10,11 +10,7 @@ import {
   Search,
   Shield,
   Star,
-  Tool,
   Wrench,
-  Zap,
-  Calendar,
-  User,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -35,12 +31,8 @@ import {
 import { useContactsStore } from '../store';
 
 export default function ContractorsPage() {
-  const {
-    contacts,
-    companies,
-    removeContact,
-    removeCompany,
-  } = useContactsStore();
+  const { contacts, companies, removeContact, removeCompany } =
+    useContactsStore();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -70,10 +62,12 @@ export default function ContractorsPage() {
 
   // Calculate contractor statistics from main store data
   const contractorStats = useMemo(() => {
-    const totalContractors = contractorContacts.length + contractorCompanies.length;
+    const totalContractors =
+      contractorContacts.length + contractorCompanies.length;
     const availableContractors = Math.floor(totalContractors * 0.6); // Mock 60% available
     const busyContractors = Math.floor(totalContractors * 0.3); // Mock 30% busy
-    const onSiteContractors = totalContractors - availableContractors - busyContractors;
+    const onSiteContractors =
+      totalContractors - availableContractors - busyContractors;
 
     return {
       total: totalContractors,
@@ -107,6 +101,11 @@ export default function ContractorsPage() {
     <Page title='Contractor Management'>
       <div className='min-h-screen bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950 dark:to-red-900'>
         <div className='space-y-6 p-6'>
+          {/* Temporary Test Banner */}
+          <div className='bg-orange-500 text-white p-4 rounded-lg text-center font-bold text-xl'>
+            🚀 NEW CARD LAYOUT - ContractorsPage Updated! 🚀
+          </div>
+
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
@@ -258,7 +257,9 @@ export default function ContractorsPage() {
                           {contractor.name}
                         </CardTitle>
                         <CardDescription className='text-orange-700 dark:text-orange-300'>
-                          {'companyName' in contractor ? contractor.name : 'Individual Contractor'}
+                          {'companyName' in contractor
+                            ? contractor.name
+                            : 'Individual Contractor'}
                         </CardDescription>
                         <div className='flex gap-2 mt-2'>
                           <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
@@ -269,7 +270,9 @@ export default function ContractorsPage() {
                             variant='outline'
                             className='border-orange-200 text-orange-700 dark:border-orange-700 dark:text-orange-300'
                           >
-                            {'companyName' in contractor ? 'Company' : 'Individual'}
+                            {'companyName' in contractor
+                              ? 'Company'
+                              : 'Individual'}
                           </Badge>
                         </div>
                       </div>
@@ -287,7 +290,9 @@ export default function ContractorsPage() {
                       </div>
                       <div className='flex items-center gap-2 text-sm text-orange-700 dark:text-orange-300'>
                         <MapPin className='h-4 w-4' />
-                        {'address' in contractor ? (contractor.address || 'No address') : 'No address'}
+                        {'address' in contractor
+                          ? contractor.address || 'No address'
+                          : 'No address'}
                       </div>
                     </div>
 
@@ -364,7 +369,9 @@ export default function ContractorsPage() {
                       <div className='w-full bg-orange-100 dark:bg-orange-900 rounded-full h-2'>
                         <div
                           className='bg-orange-600 h-2 rounded-full transition-all duration-300'
-                          style={{ width: `${Math.floor(Math.random() * 40 + 60)}%` }}
+                          style={{
+                            width: `${Math.floor(Math.random() * 40 + 60)}%`,
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -414,7 +421,12 @@ export default function ContractorsPage() {
                         size='sm'
                         variant='outline'
                         className='flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-300 dark:hover:bg-orange-900'
-                        onClick={() => handleDelete(contractor.id, 'companyName' in contractor ? 'company' : 'contact')}
+                        onClick={() =>
+                          handleDelete(
+                            contractor.id,
+                            'companyName' in contractor ? 'company' : 'contact'
+                          )
+                        }
                       >
                         Remove
                       </Button>

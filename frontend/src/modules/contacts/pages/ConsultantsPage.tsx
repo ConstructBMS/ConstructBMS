@@ -102,6 +102,11 @@ export default function ConsultantsPage() {
     <Page title='Consultant Management'>
       <div className='min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-950 dark:to-indigo-900'>
         <div className='space-y-6 p-6'>
+          {/* Temporary Test Banner */}
+          <div className='bg-purple-500 text-white p-4 rounded-lg text-center font-bold text-xl'>
+            🚀 NEW LIST LAYOUT - ConsultantsPage Updated! 🚀
+          </div>
+
           {/* Header */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
             <div>
