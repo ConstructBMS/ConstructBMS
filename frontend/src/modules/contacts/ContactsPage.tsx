@@ -237,7 +237,7 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.clients}</div>
-                <Link to='/contacts/clients' className='text-primary hover:text-primary/80'>
+                <Link to='/contacts?type=client' className='text-primary hover:text-primary/80'>
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -256,7 +256,7 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.contractors}</div>
-                <Link to='/contacts/contractors' className='text-primary hover:text-primary/80'>
+                <Link to='/contacts?type=contractor' className='text-primary hover:text-primary/80'>
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -275,7 +275,7 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.consultants}</div>
-                <Link to='/contacts/consultants' className='text-primary hover:text-primary/80'>
+                <Link to='/contacts?type=consultant' className='text-primary hover:text-primary/80'>
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -307,7 +307,7 @@ function ContactsPage() {
 
         {/* Quick Actions */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <Link to='/contacts/clients'>
+          <Link to='/contacts?type=client'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -323,7 +323,7 @@ function ContactsPage() {
             </Card>
           </Link>
 
-          <Link to='/contacts/contractors'>
+          <Link to='/contacts?type=contractor'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-green-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -339,7 +339,7 @@ function ContactsPage() {
             </Card>
           </Link>
 
-          <Link to='/contacts/consultants'>
+          <Link to='/contacts?type=consultant'>
             <Card className='hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-purple-500'>
               <CardHeader className='pb-2'>
                 <CardTitle className='text-sm font-medium flex items-center gap-2'>
@@ -438,6 +438,31 @@ function ContactsPage() {
               </Tabs>
             </div>
           </div>
+
+          {/* Active Filter Indicator */}
+          {filterCategory !== 'all' && (
+            <div className='p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
+                  <span className='text-sm font-medium text-blue-900 dark:text-blue-100'>
+                    Showing {filterCategory}s only
+                  </span>
+                  {process.env.NODE_ENV === 'development' && (
+                    <span className='text-xs text-blue-600 dark:text-blue-400 ml-2'>
+                      (URL: {window.location.search})
+                    </span>
+                  )}
+                </div>
+                <Link 
+                  to='/contacts' 
+                  className='text-sm text-blue-600 dark:text-blue-400 hover:underline'
+                >
+                  View all contacts
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Results Summary */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 bg-muted/50 rounded-lg'>
