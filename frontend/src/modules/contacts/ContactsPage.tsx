@@ -1,18 +1,28 @@
-import { Building2, Grid3X3, List, Search, User, Users, Briefcase, UserCheck, ArrowRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Briefcase,
+  Building2,
+  Grid3X3,
+  List,
+  Search,
+  User,
+  UserCheck,
+  Users,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import {
   Button,
-  Input,
-  Tabs,
-  TabsList,
-  TabsTrigger,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  Input,
+  Tabs,
+  TabsList,
+  TabsTrigger,
 } from '../../components/ui';
 import {
   Company,
@@ -179,20 +189,34 @@ function ContactsPage() {
   // Calculate statistics for CRM dashboard
   const stats = useMemo(() => {
     const clientContacts = contacts.filter(c => c.category === 'client').length;
-    const clientCompanies = companies.filter(c => c.category === 'client').length;
-    const contractorContacts = contacts.filter(c => c.category === 'contractor').length;
-    const contractorCompanies = companies.filter(c => c.category === 'contractor').length;
-    const consultantContacts = contacts.filter(c => c.category === 'consultant').length;
-    const consultantCompanies = companies.filter(c => c.category === 'consultant').length;
-    const otherContacts = contacts.filter(c => !['client', 'contractor', 'consultant'].includes(c.category)).length;
-    const otherCompanies = companies.filter(c => !['client', 'contractor', 'consultant'].includes(c.category)).length;
+    const clientCompanies = companies.filter(
+      c => c.category === 'client'
+    ).length;
+    const contractorContacts = contacts.filter(
+      c => c.category === 'contractor'
+    ).length;
+    const contractorCompanies = companies.filter(
+      c => c.category === 'contractor'
+    ).length;
+    const consultantContacts = contacts.filter(
+      c => c.category === 'consultant'
+    ).length;
+    const consultantCompanies = companies.filter(
+      c => c.category === 'consultant'
+    ).length;
+    const otherContacts = contacts.filter(
+      c => !['client', 'contractor', 'consultant'].includes(c.category)
+    ).length;
+    const otherCompanies = companies.filter(
+      c => !['client', 'contractor', 'consultant'].includes(c.category)
+    ).length;
 
     return {
       clients: clientContacts + clientCompanies,
       contractors: contractorContacts + contractorCompanies,
       consultants: consultantContacts + consultantCompanies,
       others: otherContacts + otherCompanies,
-      total: contacts.length + companies.length
+      total: contacts.length + companies.length,
     };
   }, [contacts, companies]);
 
@@ -237,7 +261,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.clients}</div>
-                <Link to='/contacts?type=client' className='text-primary hover:text-primary/80'>
+                <Link
+                  to='/contacts?type=client'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -256,7 +283,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.contractors}</div>
-                <Link to='/contacts?type=contractor' className='text-primary hover:text-primary/80'>
+                <Link
+                  to='/contacts?type=contractor'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -275,7 +305,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.consultants}</div>
-                <Link to='/contacts?type=consultant' className='text-primary hover:text-primary/80'>
+                <Link
+                  to='/contacts?type=consultant'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -359,7 +392,9 @@ function ContactsPage() {
         {/* Comprehensive CRM Manager */}
         <div className='space-y-6'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-lg font-semibold'>Comprehensive Contact Management</h2>
+            <h2 className='text-lg font-semibold'>
+              Comprehensive Contact Management
+            </h2>
             <div className='text-sm text-muted-foreground'>
               Total: {stats.total} contacts and companies across all categories
             </div>
@@ -422,7 +457,9 @@ function ContactsPage() {
 
             {/* Category Filter */}
             <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center'>
-              <span className='text-sm font-medium text-muted-foreground'>Filter by Category:</span>
+              <span className='text-sm font-medium text-muted-foreground'>
+                Filter by Category:
+              </span>
               <Tabs
                 value={filterCategory}
                 onValueChange={value =>
@@ -431,9 +468,15 @@ function ContactsPage() {
               >
                 <TabsList>
                   <TabsTrigger value='all'>All Categories</TabsTrigger>
-                  <TabsTrigger value='client'>Clients ({stats.clients})</TabsTrigger>
-                  <TabsTrigger value='contractor'>Contractors ({stats.contractors})</TabsTrigger>
-                  <TabsTrigger value='consultant'>Consultants ({stats.consultants})</TabsTrigger>
+                  <TabsTrigger value='client'>
+                    Clients ({stats.clients})
+                  </TabsTrigger>
+                  <TabsTrigger value='contractor'>
+                    Contractors ({stats.contractors})
+                  </TabsTrigger>
+                  <TabsTrigger value='consultant'>
+                    Consultants ({stats.consultants})
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -454,8 +497,8 @@ function ContactsPage() {
                     </span>
                   )}
                 </div>
-                <Link 
-                  to='/contacts' 
+                <Link
+                  to='/contacts'
                   className='text-sm text-blue-600 dark:text-blue-400 hover:underline'
                 >
                   View all contacts
@@ -467,7 +510,8 @@ function ContactsPage() {
           {/* Results Summary */}
           <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-4 bg-muted/50 rounded-lg'>
             <div className='text-sm text-muted-foreground'>
-              <strong>{totalItems}</strong> {totalItems === 1 ? 'item' : 'items'} found
+              <strong>{totalItems}</strong>{' '}
+              {totalItems === 1 ? 'item' : 'items'} found
               {searchQuery && ` for "${searchQuery}"`}
               {filterType !== 'all' && ` (${filterType}s only)`}
               {filterCategory !== 'all' && ` (${filterCategory}s only)`}
@@ -493,18 +537,27 @@ function ContactsPage() {
                   ? 'Try adjusting your search criteria or filters.'
                   : 'Add your first contact to get started.'}
               </p>
-              {!searchQuery && filterCategory === 'all' && filterType === 'all' && (
-                <div className='flex gap-2 justify-center mt-4'>
-                  <Button onClick={handleAddContact} className='flex items-center gap-2'>
-                    <User className='h-4 w-4' />
-                    Add Contact
-                  </Button>
-                  <Button onClick={handleAddCompany} variant='outline' className='flex items-center gap-2'>
-                    <Building2 className='h-4 w-4' />
-                    Add Company
-                  </Button>
-                </div>
-              )}
+              {!searchQuery &&
+                filterCategory === 'all' &&
+                filterType === 'all' && (
+                  <div className='flex gap-2 justify-center mt-4'>
+                    <Button
+                      onClick={handleAddContact}
+                      className='flex items-center gap-2'
+                    >
+                      <User className='h-4 w-4' />
+                      Add Contact
+                    </Button>
+                    <Button
+                      onClick={handleAddCompany}
+                      variant='outline'
+                      className='flex items-center gap-2'
+                    >
+                      <Building2 className='h-4 w-4' />
+                      Add Company
+                    </Button>
+                  </div>
+                )}
             </div>
           ) : (
             <div className='space-y-4'>
