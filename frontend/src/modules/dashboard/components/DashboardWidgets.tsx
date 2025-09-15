@@ -1,0 +1,80 @@
+import { Dashboard, DashboardWidget } from '../store';
+import { StatsWidget } from './widgets/StatsWidget';
+import { TableWidget } from './widgets/TableWidget';
+import { ListWidget } from './widgets/ListWidget';
+import { CustomWidget } from './widgets/CustomWidget';
+
+interface DashboardWidgetsProps {
+  dashboard: Dashboard;
+}
+
+export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
+  if (!dashboard.widgets || dashboard.widgets.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="rounded-full bg-muted p-6 mb-4">
+          <svg
+            className="h-12 w-12 text-muted-foreground"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-foreground mb-2">No widgets yet</h3>
+        <p className="text-muted-foreground max-w-sm">
+          This dashboard is empty. Add some widgets to get started with your dashboard.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {dashboard.widgets.map((widget) => (
+        <WidgetRenderer key={widget.id} widget={widget} />
+      ))}
+    </div>
+  );
+}
+
+interface WidgetRendererProps {
+  widget: DashboardWidget;
+}
+
+function WidgetRenderer({ widget }: WidgetRendererProps) {
+  switch (widget.type) {
+    case 'stats':
+      return <StatsWidget widget={widget} />;
+    case 'table':
+      return <TableWidget widget={widget} />;
+    case 'list':
+      return <ListWidget widget={widget} />;
+    case 'custom':
+      return <CustomWidget widget={widget} />;
+    case 'chart':
+      return (
+        <div className="bg-card border rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">{widget.title}</h3>
+          <div className="flex items-center justify-center h-32 text-muted-foreground">
+            <p>Chart widget coming soon...</p>
+          </div>
+        </div>
+      );
+    default:
+      return (
+        <div className="bg-card border rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">{widget.title}</h3>
+          <div className="flex items-center justify-center h-32 text-muted-foreground">
+            <p>Unknown widget type</p>
+          </div>
+        </div>
+      );
+  }
+}

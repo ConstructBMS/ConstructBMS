@@ -31,7 +31,7 @@ const navigationItems = [
     id: 'dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    href: '/dashboard',
+    href: '/dashboard-home',
   },
   { id: 'notes', label: 'Notes', icon: FileText, href: '/notes' },
   {

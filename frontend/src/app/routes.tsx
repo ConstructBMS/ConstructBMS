@@ -71,6 +71,22 @@ const AppRoutes = [
     ),
   },
   {
+    path: '/dashboard-home',
+    element: (
+      <LazyRoute>
+        <DashboardPage />
+      </LazyRoute>
+    ),
+  },
+  {
+    path: '/dashboard-financial',
+    element: (
+      <LazyRoute>
+        <DashboardPage />
+      </LazyRoute>
+    ),
+  },
+  {
     path: '/notes',
     element: (
       <LazyRoute>
