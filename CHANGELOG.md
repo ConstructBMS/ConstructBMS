@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Dashboard store syntax errors - fixed missing closing brace preventing dashboard page from loading
+- Add Dashboard button visibility - removed debug code and cleaned up interface, button now functional
 - Settings page import crash - fixed missing sections and created barrel index.ts
 - Projects page 401 errors - replaced /api calls with Supabase DAL
 - Missing footer component - added global footer to AppShell
