@@ -86,7 +86,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <Page 
+    <Page
       title='Dashboard'
       actions={
         <CreateDashboardDialog>
