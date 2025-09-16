@@ -1,14 +1,8 @@
-import { Edit, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
 import { CreateDashboardDialog } from './components/CreateDashboardDialog';
 import { DashboardWidgets } from './components/DashboardWidgets';
 import { useDashboardStore } from './store';
@@ -18,7 +12,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   // const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  const { dashboards, activeDashboardId, setActiveDashboard, deleteDashboard } =
+  const { dashboards, activeDashboardId, setActiveDashboard } =
     useDashboardStore();
 
   // const activeDashboard = dashboards.find(d => d.id === activeDashboardId);
@@ -56,11 +50,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDeleteDashboard = (dashboardId: string) => {
-    if (window.confirm('Are you sure you want to delete this dashboard?')) {
-      deleteDashboard(dashboardId);
-    }
-  };
 
   return (
     <Page title='Dashboard'>
@@ -85,29 +74,6 @@ export default function DashboardPage() {
                   {dashboard.name}
                 </button>
 
-                {/* Dashboard actions dropdown */}
-                {!dashboard.isDefault && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
-                        <MoreHorizontal className='h-3 w-3' />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                      <DropdownMenuItem>
-                        <Edit className='h-4 w-4 mr-2' />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteDashboard(dashboard.id)}
-                        className='text-destructive'
-                      >
-                        <Trash2 className='h-4 w-4 mr-2' />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
               </div>
             ))}
           </div>
