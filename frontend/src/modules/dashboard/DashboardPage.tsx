@@ -85,16 +85,27 @@ export default function DashboardPage() {
     }
   };
 
+  // Debug: Log dashboard data
+  console.log('Dashboard data:', dashboards.map(d => ({ id: d.id, name: d.name, isDefault: d.isDefault })));
+
   return (
     <Page
       title='Dashboard'
       actions={
-        <CreateDashboardDialog>
-          <Button size='sm' className='gap-2 bg-blue-600 text-white hover:bg-blue-700'>
-            <Plus className='h-4 w-4' />
-            Add Dashboard
+        <div className='flex items-center space-x-2'>
+          <Button size='sm' className='bg-red-600 text-white'>
+            TEST BUTTON
           </Button>
-        </CreateDashboardDialog>
+          <CreateDashboardDialog>
+            <Button
+              size='sm'
+              className='gap-2 bg-blue-600 text-white hover:bg-blue-700'
+            >
+              <Plus className='h-4 w-4' />
+              Add Dashboard
+            </Button>
+          </CreateDashboardDialog>
+        </div>
       }
     >
       <div className='w-full'>
