@@ -55,7 +55,7 @@ export default function DashboardPage() {
     <Page title='Dashboard'>
       <div className='w-full'>
         {/* Tab Navigation */}
-        <div className='flex items-center justify-center mb-8 relative'>
+        <div className='flex items-center justify-between mb-8'>
           <div className='flex items-center space-x-6'>
             {dashboards.map(dashboard => (
               <div key={dashboard.id} className='flex items-center space-x-2'>
@@ -73,24 +73,21 @@ export default function DashboardPage() {
                 >
                   {dashboard.name}
                 </button>
-
               </div>
             ))}
           </div>
 
-          {/* Add New Dashboard Button - Positioned absolutely to the right */}
-          <div className='absolute right-0'>
-            <CreateDashboardDialog>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='text-muted-foreground hover:text-foreground'
-              >
-                <Plus className='h-4 w-4 mr-2' />
-                Add Dashboard
-              </Button>
-            </CreateDashboardDialog>
-          </div>
+          {/* Add New Dashboard Button */}
+          <CreateDashboardDialog>
+            <Button
+              variant='outline'
+              size='sm'
+              className='bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
+            >
+              <Plus className='h-4 w-4 mr-2' />
+              Add Dashboard
+            </Button>
+          </CreateDashboardDialog>
         </div>
 
         {/* Dashboard Content with Animation */}
