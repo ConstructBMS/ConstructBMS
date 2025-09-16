@@ -1,30 +1,25 @@
-import { useState, useEffect } from 'react';
+import { Edit, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
-import { Plus, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { useDashboardStore } from './store';
-import { DashboardWidgets } from './components/DashboardWidgets';
-import { CreateDashboardDialog } from './components/CreateDashboardDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
+import { CreateDashboardDialog } from './components/CreateDashboardDialog';
+import { DashboardWidgets } from './components/DashboardWidgets';
+import { useDashboardStore } from './store';
 
 export default function DashboardPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  
-  const {
-    dashboards,
-    activeDashboardId,
-    setActiveDashboard,
-    deleteDashboard,
-  } = useDashboardStore();
+
+  const { dashboards, activeDashboardId, setActiveDashboard, deleteDashboard } =
+    useDashboardStore();
 
   const activeDashboard = dashboards.find(d => d.id === activeDashboardId);
 
@@ -88,25 +83,25 @@ export default function DashboardPage() {
               >
                 {dashboard.name}
               </button>
-              
+
               {/* Dashboard actions dropdown */}
               {!dashboard.isDefault && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                      <MoreHorizontal className="h-3 w-3" />
+                    <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
+                      <MoreHorizontal className='h-3 w-3' />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align='end'>
                     <DropdownMenuItem>
-                      <Edit className="h-4 w-4 mr-2" />
+                      <Edit className='h-4 w-4 mr-2' />
                       Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => handleDeleteDashboard(dashboard.id)}
-                      className="text-destructive"
+                      className='text-destructive'
                     >
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <Trash2 className='h-4 w-4 mr-2' />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -135,9 +130,10 @@ export default function DashboardPage() {
               key={dashboard.id}
               className={`
                 transition-all duration-300 ease-in-out
-                ${activeDashboardId === dashboard.id
-                  ? 'opacity-100 translate-y-0 block'
-                  : 'opacity-0 translate-y-4 absolute inset-0 pointer-events-none'
+                ${
+                  activeDashboardId === dashboard.id
+                    ? 'opacity-100 translate-y-0 block'
+                    : 'opacity-0 translate-y-4 absolute inset-0 pointer-events-none'
                 }
               `}
             >

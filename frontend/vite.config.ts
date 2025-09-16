@@ -17,7 +17,7 @@ export default defineConfig({
   server: {
     force: true,
     hmr: {
-      overlay: false,
+      overlay: true,
     },
     proxy: {
       '/api': {
