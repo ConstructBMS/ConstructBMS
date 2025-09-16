@@ -86,7 +86,10 @@ export default function DashboardPage() {
   };
 
   // Debug: Log dashboard data
-  console.log('Dashboard data:', dashboards.map(d => ({ id: d.id, name: d.name, isDefault: d.isDefault })));
+  console.log(
+    'Dashboard data:',
+    dashboards.map(d => ({ id: d.id, name: d.name, isDefault: d.isDefault }))
+  );
 
   return (
     <Page
@@ -117,29 +120,27 @@ export default function DashboardPage() {
                 key={dashboard.id}
                 className='flex flex-col items-center group'
               >
-                {/* Edit/Delete buttons above each tab */}
-                {!dashboard.isDefault && (
-                  <div className='flex items-center space-x-1 mb-1 opacity-100 transition-opacity'>
-                    <Button
-                      size='sm'
-                      variant='ghost'
-                      onClick={() =>
-                        handleEditStart(dashboard.id, dashboard.name)
-                      }
-                      className='h-6 w-6 p-0'
-                    >
-                      <Edit2 className='h-3 w-3' />
-                    </Button>
-                    <Button
-                      size='sm'
-                      variant='ghost'
-                      onClick={() => handleDeleteDashboard(dashboard.id)}
-                      className='h-6 w-6 p-0 text-destructive hover:text-destructive'
-                    >
-                      <Trash2 className='h-3 w-3' />
-                    </Button>
-                  </div>
-                )}
+                {/* Edit/Delete buttons above each tab - Show for ALL dashboards */}
+                <div className='flex items-center space-x-1 mb-1 opacity-100 transition-opacity'>
+                  <Button
+                    size='sm'
+                    variant='ghost'
+                    onClick={() =>
+                      handleEditStart(dashboard.id, dashboard.name)
+                    }
+                    className='h-6 w-6 p-0'
+                  >
+                    <Edit2 className='h-3 w-3' />
+                  </Button>
+                  <Button
+                    size='sm'
+                    variant='ghost'
+                    onClick={() => handleDeleteDashboard(dashboard.id)}
+                    className='h-6 w-6 p-0 text-destructive hover:text-destructive'
+                  >
+                    <Trash2 className='h-3 w-3' />
+                  </Button>
+                </div>
 
                 {/* Dashboard tab */}
                 {editingDashboard === dashboard.id ? (
