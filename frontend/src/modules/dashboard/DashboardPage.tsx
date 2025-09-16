@@ -89,12 +89,17 @@ export default function DashboardPage() {
     <Page
       title='Dashboard'
       actions={
-        <CreateDashboardDialog>
-          <Button size='sm' className='gap-2'>
-            <Plus className='h-4 w-4' />
-            Add Dashboard
+        <div className='flex items-center space-x-2'>
+          <Button size='sm' className='bg-red-600 text-white'>
+            EMERGENCY TEST
           </Button>
-        </CreateDashboardDialog>
+          <CreateDashboardDialog>
+            <Button size='sm' className='gap-2'>
+              <Plus className='h-4 w-4' />
+              Add Dashboard
+            </Button>
+          </CreateDashboardDialog>
+        </div>
       }
     >
       <div className='w-full'>
