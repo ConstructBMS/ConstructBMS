@@ -89,22 +89,12 @@ export default function DashboardPage() {
     <Page
       title='Dashboard'
       actions={
-        <div className='flex items-center space-x-2'>
-          <Button size='sm' className='bg-green-600 text-white'>
-            TEST ADD BUTTON
-          </Button>
-          <Button 
-            size='sm' 
-            className='gap-2 bg-blue-600 text-white'
-            onClick={() => {
-              console.log('Add Dashboard clicked!');
-              // For now, just log - we'll add the dialog functionality back
-            }}
-          >
+        <CreateDashboardDialog>
+          <Button size='sm' className='gap-2'>
             <Plus className='h-4 w-4' />
             Add Dashboard
           </Button>
-        </div>
+        </CreateDashboardDialog>
       }
     >
       <div className='w-full'>
