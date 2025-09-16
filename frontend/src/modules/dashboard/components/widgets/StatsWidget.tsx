@@ -16,6 +16,8 @@ interface StatItem {
   value: string;
   change?: string;
   trend?: 'up' | 'down' | 'neutral';
+  color?: string;
+  icon?: string;
 }
 
 export function StatsWidget({ widget }: StatsWidgetProps) {
@@ -44,28 +46,41 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
   };
 
   return (
-    <Card>
+    <Card className='overflow-hidden'>
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
           {stats.map((stat, index) => (
-            <div key={index} className='space-y-2'>
-              <div className='flex items-center justify-between'>
-                <p className='text-sm font-medium text-muted-foreground'>
-                  {stat.label}
-                </p>
-                {stat.change && (
-                  <div
-                    className={`flex items-center space-x-1 text-xs ${getTrendColor(stat.trend)}`}
-                  >
-                    {getTrendIcon(stat.trend)}
-                    <span>{stat.change}</span>
+            <div key={index} className='relative'>
+              <div className={`p-4 rounded-lg ${stat.color || 'bg-gradient-to-r from-gray-500 to-gray-600'} text-white shadow-lg`}>
+                <div className='flex items-center justify-between mb-2'>
+                  <div className='flex items-center space-x-2'>
+                    {stat.icon && (
+                      <span className='text-lg'>{stat.icon}</span>
+                    )}
+                    <p className='text-sm font-medium opacity-90'>
+                      {stat.label}
+                    </p>
                   </div>
-                )}
+                  {stat.change && (
+                    <div
+                      className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full ${
+                        stat.trend === 'up' 
+                          ? 'bg-green-500/20 text-green-100' 
+                          : stat.trend === 'down'
+                          ? 'bg-red-500/20 text-red-100'
+                          : 'bg-gray-500/20 text-gray-100'
+                      }`}
+                    >
+                      {getTrendIcon(stat.trend)}
+                      <span>{stat.change}</span>
+                    </div>
+                  )}
+                </div>
+                <p className='text-2xl font-bold'>{stat.value}</p>
               </div>
-              <p className='text-2xl font-bold'>{stat.value}</p>
             </div>
           ))}
         </div>

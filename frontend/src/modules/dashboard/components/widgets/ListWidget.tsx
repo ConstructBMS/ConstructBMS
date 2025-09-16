@@ -12,12 +12,17 @@ interface ListWidgetProps {
 }
 
 interface ListItem {
-  id: string;
-  title: string;
+  id?: string;
+  label?: string;
+  title?: string;
   description?: string;
   status?: string;
   date?: string;
+  time?: string;
   badge?: string;
+  icon?: string;
+  color?: string;
+  type?: string;
 }
 
 export function ListWidget({ widget }: ListWidgetProps) {
@@ -45,18 +50,25 @@ export function ListWidget({ widget }: ListWidgetProps) {
       </CardHeader>
       <CardContent>
         <div className='space-y-3'>
-          {items.map(item => (
+          {items.map((item, index) => (
             <div
-              key={item.id}
-              className='flex items-start justify-between p-3 rounded-lg border bg-card'
+              key={item.id || index}
+              className='flex items-start space-x-3 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors'
             >
+              {item.icon && (
+                <div className='flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm'>
+                  {item.icon}
+                </div>
+              )}
               <div className='flex-1 min-w-0'>
-                <div className='flex items-center space-x-2 mb-1'>
-                  <h4 className='text-sm font-medium truncate'>{item.title}</h4>
-                  {item.badge && (
-                    <Badge variant='secondary' className='text-xs'>
-                      {item.badge}
-                    </Badge>
+                <div className='flex items-center justify-between mb-1'>
+                  <h4 className='text-sm font-medium truncate'>
+                    {item.label || item.title}
+                  </h4>
+                  {(item.time || item.date) && (
+                    <span className='text-xs text-muted-foreground ml-2'>
+                      {item.time || item.date}
+                    </span>
                   )}
                 </div>
                 {item.description && (
@@ -64,10 +76,15 @@ export function ListWidget({ widget }: ListWidgetProps) {
                     {item.description}
                   </p>
                 )}
-                {item.date && (
-                  <p className='text-xs text-muted-foreground mt-1'>
-                    {item.date}
-                  </p>
+                {item.type && (
+                  <div className='mt-2'>
+                    <Badge 
+                      variant='secondary' 
+                      className={`text-xs ${item.color || 'bg-gray-100 text-gray-800'}`}
+                    >
+                      {item.type}
+                    </Badge>
+                  </div>
                 )}
               </div>
               {item.status && (

@@ -15,11 +15,15 @@ interface CustomWidgetProps {
 interface CustomWidgetData {
   message?: string;
   content?: string;
+  gradient?: string;
+  icon?: string;
   actions?: Array<{
     label: string;
     action: 'navigate' | 'function';
     target?: string;
     onClick?: () => void;
+    icon?: string;
+    color?: string;
   }>;
 }
 
@@ -36,14 +40,17 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='text-lg'>{widget.title}</CardTitle>
+    <Card className='overflow-hidden'>
+      <CardHeader className={`${data.gradient ? `bg-gradient-to-r ${data.gradient} text-white` : ''}`}>
+        <CardTitle className='text-lg flex items-center space-x-2'>
+          {data.icon && <span className='text-xl'>{data.icon}</span>}
+          <span>{widget.title}</span>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className='space-y-4'>
           {data.message && (
-            <p className='text-muted-foreground leading-relaxed'>
+            <p className={`leading-relaxed ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}>
               {data.message}
             </p>
           )}
@@ -55,16 +62,21 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           )}
 
           {data.actions && data.actions.length > 0 && (
-            <div className='flex flex-wrap gap-2 pt-2'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2'>
               {data.actions.map((action, index) => (
                 <Button
                   key={index}
                   variant='outline'
                   size='sm'
                   onClick={() => handleAction(action)}
-                  className='text-xs'
+                  className={`text-xs h-auto py-3 px-4 flex items-center space-x-2 ${
+                    action.color 
+                      ? `${action.color} text-white border-0 hover:opacity-90` 
+                      : ''
+                  }`}
                 >
-                  {action.label}
+                  {action.icon && <span>{action.icon}</span>}
+                  <span>{action.label}</span>
                 </Button>
               ))}
             </div>
