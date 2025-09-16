@@ -1,6 +1,26 @@
+import {
+  BarChart3,
+  Calendar,
+  DollarSign,
+  FileText,
+  Grid,
+  Layout,
+  Palette,
+  PieChart,
+  Plus,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useState } from 'react';
-import { Plus, BarChart3, PieChart, TrendingUp, Users, DollarSign, Calendar, FileText, Settings, Grid, Layout, Palette } from 'lucide-react';
+import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -10,10 +30,13 @@ import {
 } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../../../components/ui/tabs';
 import { Textarea } from '../../../components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Badge } from '../../../components/ui/badge';
 import { useDashboardStore } from '../store';
 
 interface CreateDashboardDialogProps {
@@ -22,14 +45,54 @@ interface CreateDashboardDialogProps {
 
 // Widget types
 const WIDGET_TYPES = [
-  { id: 'stats', name: 'Statistics', icon: BarChart3, description: 'Display key metrics and numbers' },
-  { id: 'chart', name: 'Chart', icon: TrendingUp, description: 'Visual data representation' },
-  { id: 'table', name: 'Data Table', icon: Grid, description: 'Tabular data display' },
-  { id: 'list', name: 'List', icon: FileText, description: 'Simple list of items' },
-  { id: 'calendar', name: 'Calendar', icon: Calendar, description: 'Calendar view' },
-  { id: 'users', name: 'Team', icon: Users, description: 'Team member information' },
-  { id: 'financial', name: 'Financial', icon: DollarSign, description: 'Financial metrics' },
-  { id: 'pie', name: 'Pie Chart', icon: PieChart, description: 'Pie chart visualization' },
+  {
+    id: 'stats',
+    name: 'Statistics',
+    icon: BarChart3,
+    description: 'Display key metrics and numbers',
+  },
+  {
+    id: 'chart',
+    name: 'Chart',
+    icon: TrendingUp,
+    description: 'Visual data representation',
+  },
+  {
+    id: 'table',
+    name: 'Data Table',
+    icon: Grid,
+    description: 'Tabular data display',
+  },
+  {
+    id: 'list',
+    name: 'List',
+    icon: FileText,
+    description: 'Simple list of items',
+  },
+  {
+    id: 'calendar',
+    name: 'Calendar',
+    icon: Calendar,
+    description: 'Calendar view',
+  },
+  {
+    id: 'users',
+    name: 'Team',
+    icon: Users,
+    description: 'Team member information',
+  },
+  {
+    id: 'financial',
+    name: 'Financial',
+    icon: DollarSign,
+    description: 'Financial metrics',
+  },
+  {
+    id: 'pie',
+    name: 'Pie Chart',
+    icon: PieChart,
+    description: 'Pie chart visualization',
+  },
 ];
 
 // Layout templates
@@ -39,7 +102,7 @@ const LAYOUT_TEMPLATES = [
     name: 'Simple',
     description: 'Clean single column layout',
     preview: '📊',
-    layout: [{ type: 'stats', size: 'full' }]
+    layout: [{ type: 'stats', size: 'full' }],
   },
   {
     id: 'analytics',
@@ -49,8 +112,8 @@ const LAYOUT_TEMPLATES = [
     layout: [
       { type: 'stats', size: 'half' },
       { type: 'chart', size: 'half' },
-      { type: 'table', size: 'full' }
-    ]
+      { type: 'table', size: 'full' },
+    ],
   },
   {
     id: 'executive',
@@ -61,16 +124,16 @@ const LAYOUT_TEMPLATES = [
       { type: 'stats', size: 'third' },
       { type: 'stats', size: 'third' },
       { type: 'stats', size: 'third' },
-      { type: 'chart', size: 'full' }
-    ]
+      { type: 'chart', size: 'full' },
+    ],
   },
   {
     id: 'custom',
     name: 'Custom',
     description: 'Build from scratch',
     preview: '🎨',
-    layout: []
-  }
+    layout: [],
+  },
 ];
 
 export function CreateDashboardDialog({
@@ -94,7 +157,7 @@ export function CreateDashboardDialog({
     try {
       // Get the selected template
       const template = LAYOUT_TEMPLATES.find(t => t.id === selectedTemplate);
-      
+
       // Create widgets based on template or selected widgets
       let widgets = [];
       if (selectedTemplate === 'custom') {
@@ -139,9 +202,7 @@ export function CreateDashboardDialog({
     switch (widgetType) {
       case 'stats':
         return {
-          stats: [
-            { label: 'Total', value: '0', change: '+0%', trend: 'up' },
-          ],
+          stats: [{ label: 'Total', value: '0', change: '+0%', trend: 'up' }],
         };
       case 'chart':
         return {
@@ -227,12 +288,12 @@ export function CreateDashboardDialog({
 
           <TabsContent value='template' className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
-              {LAYOUT_TEMPLATES.map((template) => (
-                <Card 
+              {LAYOUT_TEMPLATES.map(template => (
+                <Card
                   key={template.id}
                   className={`cursor-pointer transition-all ${
-                    selectedTemplate === template.id 
-                      ? 'ring-2 ring-primary border-primary' 
+                    selectedTemplate === template.id
+                      ? 'ring-2 ring-primary border-primary'
                       : 'hover:border-primary/50'
                   }`}
                   onClick={() => setSelectedTemplate(template.id)}
@@ -247,7 +308,11 @@ export function CreateDashboardDialog({
                   <CardContent>
                     <div className='flex flex-wrap gap-1'>
                       {template.layout.map((item, index) => (
-                        <Badge key={index} variant='secondary' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='secondary'
+                          className='text-xs'
+                        >
                           {item.type}
                         </Badge>
                       ))}
@@ -260,21 +325,23 @@ export function CreateDashboardDialog({
 
           <TabsContent value='widgets' className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
-              {WIDGET_TYPES.map((widget) => {
+              {WIDGET_TYPES.map(widget => {
                 const Icon = widget.icon;
                 const isSelected = selectedWidgets.includes(widget.id);
-                
+
                 return (
-                  <Card 
+                  <Card
                     key={widget.id}
                     className={`cursor-pointer transition-all ${
-                      isSelected 
-                        ? 'ring-2 ring-primary border-primary' 
+                      isSelected
+                        ? 'ring-2 ring-primary border-primary'
                         : 'hover:border-primary/50'
                     }`}
                     onClick={() => {
                       if (isSelected) {
-                        setSelectedWidgets(prev => prev.filter(id => id !== widget.id));
+                        setSelectedWidgets(prev =>
+                          prev.filter(id => id !== widget.id)
+                        );
                       } else {
                         setSelectedWidgets(prev => [...prev, widget.id]);
                       }
@@ -319,10 +386,7 @@ export function CreateDashboardDialog({
           >
             Cancel
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isLoading || !name.trim()}
-          >
+          <Button onClick={handleSubmit} disabled={isLoading || !name.trim()}>
             {isLoading ? 'Creating...' : 'Create Dashboard'}
           </Button>
         </div>
