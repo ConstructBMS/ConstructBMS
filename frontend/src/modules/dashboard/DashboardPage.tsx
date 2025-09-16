@@ -66,49 +66,51 @@ export default function DashboardPage() {
     <Page title='Dashboard'>
       <div className='w-full'>
         {/* Tab Navigation */}
-        <div className='flex items-center justify-center space-x-6 mb-8'>
-          {dashboards.map(dashboard => (
-            <div key={dashboard.id} className='flex items-center space-x-2'>
-              <button
-                onClick={() => handleDashboardSelect(dashboard.id)}
-                className={`
-                  relative px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out
-                  ${
-                    activeDashboardId === dashboard.id
-                      ? 'text-foreground border-b-2 border-primary'
-                      : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground/50'
-                  }
-                  border-b-2 border-transparent
-                `}
-              >
-                {dashboard.name}
-              </button>
+        <div className='flex items-center justify-between mb-8'>
+          <div className='flex items-center space-x-6'>
+            {dashboards.map(dashboard => (
+              <div key={dashboard.id} className='flex items-center space-x-2'>
+                <button
+                  onClick={() => handleDashboardSelect(dashboard.id)}
+                  className={`
+                    relative px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out
+                    ${
+                      activeDashboardId === dashboard.id
+                        ? 'text-foreground border-b-2 border-primary'
+                        : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground/50'
+                    }
+                    border-b-2 border-transparent
+                  `}
+                >
+                  {dashboard.name}
+                </button>
 
-              {/* Dashboard actions dropdown */}
-              {!dashboard.isDefault && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
-                      <MoreHorizontal className='h-3 w-3' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem>
-                      <Edit className='h-4 w-4 mr-2' />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDeleteDashboard(dashboard.id)}
-                      className='text-destructive'
-                    >
-                      <Trash2 className='h-4 w-4 mr-2' />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          ))}
+                {/* Dashboard actions dropdown */}
+                {!dashboard.isDefault && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
+                        <MoreHorizontal className='h-3 w-3' />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align='end'>
+                      <DropdownMenuItem>
+                        <Edit className='h-4 w-4 mr-2' />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteDashboard(dashboard.id)}
+                        className='text-destructive'
+                      >
+                        <Trash2 className='h-4 w-4 mr-2' />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            ))}
+          </div>
 
           {/* Add New Dashboard Button */}
           <CreateDashboardDialog>
