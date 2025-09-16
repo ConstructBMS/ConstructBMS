@@ -93,12 +93,17 @@ export default function DashboardPage() {
           <Button size='sm' className='bg-green-600 text-white'>
             TEST ADD BUTTON
           </Button>
-          <CreateDashboardDialog>
-            <Button size='sm' className='gap-2 bg-blue-600 text-white'>
-              <Plus className='h-4 w-4' />
-              Add Dashboard
-            </Button>
-          </CreateDashboardDialog>
+          <Button 
+            size='sm' 
+            className='gap-2 bg-blue-600 text-white'
+            onClick={() => {
+              console.log('Add Dashboard clicked!');
+              // For now, just log - we'll add the dialog functionality back
+            }}
+          >
+            <Plus className='h-4 w-4' />
+            Add Dashboard
+          </Button>
         </div>
       }
     >
