@@ -27,6 +27,11 @@ export interface DialogDescriptionProps
   children: React.ReactNode;
 }
 
+export interface DialogTriggerProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+
 const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
   if (!open) return null;
 
@@ -103,4 +108,20 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = 'DialogDescription';
 
-export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription };
+const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
+  ({ className, children, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={cn(
+        'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+);
+DialogTrigger.displayName = 'DialogTrigger';
+
+export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger };
