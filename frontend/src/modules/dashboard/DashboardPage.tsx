@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui/button';
@@ -49,7 +49,6 @@ export default function DashboardPage() {
       navigate(targetUrl);
     }
   };
-
 
   return (
     <Page title='Dashboard'>
