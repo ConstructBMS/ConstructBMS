@@ -56,6 +56,8 @@ const createDefaultDashboard = (): Dashboard => ({
           { label: 'Create Estimate', action: 'navigate', target: '/estimates' },
           { label: 'View Reports', action: 'navigate', target: '/reports' },
         ],
+        gradient: 'from-blue-600 to-purple-600',
+        icon: '🏗️',
       },
     },
     {
@@ -64,14 +66,37 @@ const createDefaultDashboard = (): Dashboard => ({
       title: 'Business Overview',
       data: {
         stats: [
-          { label: 'Active Projects', value: '12', change: '+2', trend: 'up' },
-          { label: 'Total Contacts', value: '156', change: '+8', trend: 'up' },
-          { label: 'Pending Tasks', value: '23', change: '-5', trend: 'down' },
+          { 
+            label: 'Active Projects', 
+            value: '12', 
+            change: '+2', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+            icon: '🏗️'
+          },
+          { 
+            label: 'Total Contacts', 
+            value: '156', 
+            change: '+8', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-green-500 to-green-600',
+            icon: '👥'
+          },
+          { 
+            label: 'Pending Tasks', 
+            value: '23', 
+            change: '-5', 
+            trend: 'down',
+            color: 'bg-gradient-to-r from-orange-500 to-orange-600',
+            icon: '📋'
+          },
           {
             label: 'This Month Revenue',
             value: '$45,230',
             change: '+12%',
             trend: 'up',
+            color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+            icon: '💰'
           },
         ],
       },
@@ -83,10 +108,10 @@ const createDefaultDashboard = (): Dashboard => ({
       data: {
         type: 'pie',
         data: [
-          { label: 'Planning', value: 3, color: '#3b82f6' },
-          { label: 'In Progress', value: 7, color: '#f59e0b' },
-          { label: 'Review', value: 2, color: '#8b5cf6' },
-          { label: 'Completed', value: 8, color: '#10b981' },
+          { label: 'Planning', value: 3, color: '#3b82f6', gradient: 'from-blue-400 to-blue-600' },
+          { label: 'In Progress', value: 7, color: '#f59e0b', gradient: 'from-yellow-400 to-orange-500' },
+          { label: 'Review', value: 2, color: '#8b5cf6', gradient: 'from-purple-400 to-purple-600' },
+          { label: 'Completed', value: 8, color: '#10b981', gradient: 'from-green-400 to-green-600' },
         ],
       },
     },
@@ -96,11 +121,41 @@ const createDefaultDashboard = (): Dashboard => ({
       title: 'Recent Activities',
       data: {
         items: [
-          { label: 'New project "Office Building" created', time: '2 hours ago', type: 'project' },
-          { label: 'Contact "ABC Construction" added', time: '4 hours ago', type: 'contact' },
-          { label: 'Task "Site Survey" completed', time: '6 hours ago', type: 'task' },
-          { label: 'Invoice #INV-2024-001 sent', time: '1 day ago', type: 'invoice' },
-          { label: 'Estimate for "Warehouse Project" approved', time: '2 days ago', type: 'estimate' },
+          { 
+            label: 'New project "Office Building" created', 
+            time: '2 hours ago', 
+            type: 'project',
+            icon: '🏢',
+            color: 'bg-blue-100 text-blue-800'
+          },
+          { 
+            label: 'Contact "ABC Construction" added', 
+            time: '4 hours ago', 
+            type: 'contact',
+            icon: '👤',
+            color: 'bg-green-100 text-green-800'
+          },
+          { 
+            label: 'Task "Site Survey" completed', 
+            time: '6 hours ago', 
+            type: 'task',
+            icon: '✅',
+            color: 'bg-emerald-100 text-emerald-800'
+          },
+          { 
+            label: 'Invoice #INV-2024-001 sent', 
+            time: '1 day ago', 
+            type: 'invoice',
+            icon: '📄',
+            color: 'bg-purple-100 text-purple-800'
+          },
+          { 
+            label: 'Estimate for "Warehouse Project" approved', 
+            time: '2 days ago', 
+            type: 'estimate',
+            icon: '📊',
+            color: 'bg-yellow-100 text-yellow-800'
+          },
         ],
       },
     },
@@ -116,6 +171,12 @@ const createDefaultDashboard = (): Dashboard => ({
           ['Retail Space', 'Final Walkthrough', '2024-01-25', 'Scheduled'],
           ['Apartment Complex', 'Permit Submission', '2024-01-28', 'Draft'],
         ],
+        statusColors: {
+          'Pending': 'bg-yellow-100 text-yellow-800',
+          'In Progress': 'bg-blue-100 text-blue-800',
+          'Scheduled': 'bg-green-100 text-green-800',
+          'Draft': 'bg-gray-100 text-gray-800',
+        },
       },
     },
     {
@@ -125,12 +186,48 @@ const createDefaultDashboard = (): Dashboard => ({
       data: {
         message: 'Frequently used actions',
         actions: [
-          { label: 'New Project', action: 'navigate', target: '/projects/new' },
-          { label: 'Add Contact', action: 'navigate', target: '/contacts/new' },
-          { label: 'Create Estimate', action: 'navigate', target: '/estimates/new' },
-          { label: 'Generate Report', action: 'navigate', target: '/reports' },
-          { label: 'Schedule Meeting', action: 'navigate', target: '/calendar' },
-          { label: 'Upload Document', action: 'navigate', target: '/documents' },
+          { 
+            label: 'New Project', 
+            action: 'navigate', 
+            target: '/projects/new',
+            icon: '🏗️',
+            color: 'bg-gradient-to-r from-blue-500 to-blue-600'
+          },
+          { 
+            label: 'Add Contact', 
+            action: 'navigate', 
+            target: '/contacts/new',
+            icon: '👥',
+            color: 'bg-gradient-to-r from-green-500 to-green-600'
+          },
+          { 
+            label: 'Create Estimate', 
+            action: 'navigate', 
+            target: '/estimates/new',
+            icon: '📊',
+            color: 'bg-gradient-to-r from-purple-500 to-purple-600'
+          },
+          { 
+            label: 'Generate Report', 
+            action: 'navigate', 
+            target: '/reports',
+            icon: '📈',
+            color: 'bg-gradient-to-r from-orange-500 to-orange-600'
+          },
+          { 
+            label: 'Schedule Meeting', 
+            action: 'navigate', 
+            target: '/calendar',
+            icon: '📅',
+            color: 'bg-gradient-to-r from-pink-500 to-pink-600'
+          },
+          { 
+            label: 'Upload Document', 
+            action: 'navigate', 
+            target: '/documents',
+            icon: '📄',
+            color: 'bg-gradient-to-r from-teal-500 to-teal-600'
+          },
         ],
       },
     },
@@ -150,10 +247,38 @@ const createFinancialDashboard = (): Dashboard => ({
       title: 'Financial Overview',
       data: {
         stats: [
-          { label: 'Total Revenue', value: '$245,230', change: '+12%', trend: 'up' },
-          { label: 'Total Expenses', value: '$189,450', change: '+8%', trend: 'up' },
-          { label: 'Net Profit', value: '$55,780', change: '+18%', trend: 'up' },
-          { label: 'Profit Margin', value: '22.7%', change: '+2.1%', trend: 'up' },
+          { 
+            label: 'Total Revenue', 
+            value: '$245,230', 
+            change: '+12%', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-green-500 to-green-600',
+            icon: '💰'
+          },
+          { 
+            label: 'Total Expenses', 
+            value: '$189,450', 
+            change: '+8%', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-red-500 to-red-600',
+            icon: '💸'
+          },
+          { 
+            label: 'Net Profit', 
+            value: '$55,780', 
+            change: '+18%', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+            icon: '📈'
+          },
+          { 
+            label: 'Profit Margin', 
+            value: '22.7%', 
+            change: '+2.1%', 
+            trend: 'up',
+            color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+            icon: '📊'
+          },
         ],
       },
     },
@@ -171,6 +296,8 @@ const createFinancialDashboard = (): Dashboard => ({
           { month: 'May', revenue: 38000 },
           { month: 'Jun', revenue: 45000 },
         ],
+        gradient: 'from-green-400 to-green-600',
+        color: '#10b981',
       },
     },
     {
@@ -180,11 +307,41 @@ const createFinancialDashboard = (): Dashboard => ({
       data: {
         type: 'pie',
         data: [
-          { label: 'Materials', value: 18500, color: '#3b82f6' },
-          { label: 'Labor', value: 12300, color: '#f59e0b' },
-          { label: 'Equipment', value: 4200, color: '#8b5cf6' },
-          { label: 'Overhead', value: 3800, color: '#10b981' },
-          { label: 'Subcontractors', value: 5600, color: '#ef4444' },
+          { 
+            label: 'Materials', 
+            value: 18500, 
+            color: '#3b82f6',
+            gradient: 'from-blue-400 to-blue-600',
+            icon: '🧱'
+          },
+          { 
+            label: 'Labor', 
+            value: 12300, 
+            color: '#f59e0b',
+            gradient: 'from-yellow-400 to-orange-500',
+            icon: '👷'
+          },
+          { 
+            label: 'Equipment', 
+            value: 4200, 
+            color: '#8b5cf6',
+            gradient: 'from-purple-400 to-purple-600',
+            icon: '🔧'
+          },
+          { 
+            label: 'Overhead', 
+            value: 3800, 
+            color: '#10b981',
+            gradient: 'from-green-400 to-green-600',
+            icon: '🏢'
+          },
+          { 
+            label: 'Subcontractors', 
+            value: 5600, 
+            color: '#ef4444',
+            gradient: 'from-red-400 to-red-600',
+            icon: '🤝'
+          },
         ],
       },
     },
@@ -202,6 +359,10 @@ const createFinancialDashboard = (): Dashboard => ({
           { month: 'May', inflow: 38000, outflow: 32000 },
           { month: 'Jun', inflow: 45000, outflow: 38000 },
         ],
+        inflowColor: '#10b981',
+        outflowColor: '#ef4444',
+        inflowGradient: 'from-green-400 to-green-600',
+        outflowGradient: 'from-red-400 to-red-600',
       },
     },
     {
@@ -216,6 +377,11 @@ const createFinancialDashboard = (): Dashboard => ({
           ['INV-2024-003', 'Metro Developers', '$15,200', '2024-01-25', 'Pending'],
           ['INV-2024-004', 'City Contractors', '$6,800', '2024-01-30', 'Pending'],
         ],
+        statusColors: {
+          'Overdue': 'bg-red-100 text-red-800',
+          'Pending': 'bg-yellow-100 text-yellow-800',
+          'Paid': 'bg-green-100 text-green-800',
+        },
       },
     },
     {
@@ -230,6 +396,10 @@ const createFinancialDashboard = (): Dashboard => ({
           ['Retail Space', '$75,000', '$78,500', '-$3,500', '-4.7%'],
           ['Apartment Complex', '$200,000', '$185,000', '$15,000', '7.5%'],
         ],
+        profitColors: {
+          positive: 'bg-green-100 text-green-800',
+          negative: 'bg-red-100 text-red-800',
+        },
       },
     },
     {
@@ -239,12 +409,48 @@ const createFinancialDashboard = (): Dashboard => ({
       data: {
         message: 'Quick financial management actions',
         actions: [
-          { label: 'Create Invoice', action: 'navigate', target: '/invoices/new' },
-          { label: 'Record Expense', action: 'navigate', target: '/expenses/new' },
-          { label: 'Generate Report', action: 'navigate', target: '/reports/financial' },
-          { label: 'View Budgets', action: 'navigate', target: '/budgets' },
-          { label: 'Payment Tracking', action: 'navigate', target: '/payments' },
-          { label: 'Tax Reports', action: 'navigate', target: '/reports/tax' },
+          { 
+            label: 'Create Invoice', 
+            action: 'navigate', 
+            target: '/invoices/new',
+            icon: '📄',
+            color: 'bg-gradient-to-r from-blue-500 to-blue-600'
+          },
+          { 
+            label: 'Record Expense', 
+            action: 'navigate', 
+            target: '/expenses/new',
+            icon: '💸',
+            color: 'bg-gradient-to-r from-red-500 to-red-600'
+          },
+          { 
+            label: 'Generate Report', 
+            action: 'navigate', 
+            target: '/reports/financial',
+            icon: '📊',
+            color: 'bg-gradient-to-r from-purple-500 to-purple-600'
+          },
+          { 
+            label: 'View Budgets', 
+            action: 'navigate', 
+            target: '/budgets',
+            icon: '💰',
+            color: 'bg-gradient-to-r from-green-500 to-green-600'
+          },
+          { 
+            label: 'Payment Tracking', 
+            action: 'navigate', 
+            target: '/payments',
+            icon: '💳',
+            color: 'bg-gradient-to-r from-orange-500 to-orange-600'
+          },
+          { 
+            label: 'Tax Reports', 
+            action: 'navigate', 
+            target: '/reports/tax',
+            icon: '📋',
+            color: 'bg-gradient-to-r from-teal-500 to-teal-600'
+          },
         ],
       },
     },
