@@ -41,7 +41,7 @@ const createDefaultDashboard = (): Dashboard => ({
   id: 'default-dashboard',
   name: 'Home',
   description: 'Main dashboard with comprehensive overview widgets',
-  isDefault: true,
+  isDefault: false,
   widgets: [
     {
       id: 'welcome-widget',

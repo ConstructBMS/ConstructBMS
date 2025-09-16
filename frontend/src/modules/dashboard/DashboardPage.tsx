@@ -1,4 +1,4 @@
-import { Plus, Edit2, Trash2, Check, X } from 'lucide-react';
+import { Check, Edit2, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
@@ -14,8 +14,13 @@ export default function DashboardPage() {
   const [editingDashboard, setEditingDashboard] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
 
-  const { dashboards, activeDashboardId, setActiveDashboard, updateDashboard, deleteDashboard } =
-    useDashboardStore();
+  const {
+    dashboards,
+    activeDashboardId,
+    setActiveDashboard,
+    updateDashboard,
+    deleteDashboard,
+  } = useDashboardStore();
 
   // const activeDashboard = dashboards.find(d => d.id === activeDashboardId);
 
@@ -81,20 +86,35 @@ export default function DashboardPage() {
   };
 
   return (
-    <Page title='Dashboard'>
+    <Page 
+      title='Dashboard'
+      actions={
+        <CreateDashboardDialog>
+          <Button size='sm' className='gap-2'>
+            <Plus className='h-4 w-4' />
+            Add Dashboard
+          </Button>
+        </CreateDashboardDialog>
+      }
+    >
       <div className='w-full'>
         {/* Tab Navigation */}
         <div className='flex items-center justify-center mb-8'>
           <div className='flex items-center space-x-6'>
             {dashboards.map(dashboard => (
-              <div key={dashboard.id} className='flex flex-col items-center group'>
+              <div
+                key={dashboard.id}
+                className='flex flex-col items-center group'
+              >
                 {/* Edit/Delete buttons above each tab */}
                 {!dashboard.isDefault && (
                   <div className='flex items-center space-x-1 mb-1 opacity-0 group-hover:opacity-100 transition-opacity'>
                     <Button
                       size='sm'
                       variant='ghost'
-                      onClick={() => handleEditStart(dashboard.id, dashboard.name)}
+                      onClick={() =>
+                        handleEditStart(dashboard.id, dashboard.name)
+                      }
                       className='h-6 w-6 p-0'
                     >
                       <Edit2 className='h-3 w-3' />
@@ -109,15 +129,15 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                 )}
-                
+
                 {/* Dashboard tab */}
                 {editingDashboard === dashboard.id ? (
                   <div className='flex items-center space-x-1'>
                     <Input
                       value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
+                      onChange={e => setEditName(e.target.value)}
                       className='h-8 text-sm'
-                      onKeyDown={(e) => {
+                      onKeyDown={e => {
                         if (e.key === 'Enter') handleEditSave(dashboard.id);
                         if (e.key === 'Escape') handleEditCancel();
                       }}
@@ -158,14 +178,6 @@ export default function DashboardPage() {
                 )}
               </div>
             ))}
-
-            {/* Add New Dashboard Tab */}
-            <CreateDashboardDialog>
-              <button className='relative px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground/50 border-b-2 border-transparent'>
-                <Plus className='h-4 w-4 inline mr-1' />
-                Add Dashboard
-              </button>
-            </CreateDashboardDialog>
           </div>
         </div>
 

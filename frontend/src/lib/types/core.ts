@@ -37,6 +37,7 @@ export interface BreadcrumbItem {
 export interface PageProps {
   title: string;
   breadcrumbs?: BreadcrumbItem[];
+  actions?: ReactNode;
   children: ReactNode;
 }
 

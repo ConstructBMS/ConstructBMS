@@ -2,7 +2,7 @@ import React from 'react';
 import type { PageProps } from '../../lib/types/core';
 import { ChevronRight } from 'lucide-react';
 
-export function Page({ title, breadcrumbs, children }: PageProps) {
+export function Page({ title, breadcrumbs, actions, children }: PageProps) {
   return (
     <div className='flex-1 space-y-6 p-6'>
       {/* Header */}
@@ -28,10 +28,17 @@ export function Page({ title, breadcrumbs, children }: PageProps) {
           </nav>
         )}
 
-        {/* Title */}
-        <h1 className='text-3xl font-bold tracking-tight text-foreground'>
-          {title}
-        </h1>
+        {/* Title and Actions */}
+        <div className='flex items-center justify-between'>
+          <h1 className='text-3xl font-bold tracking-tight text-foreground'>
+            {title}
+          </h1>
+          {actions && (
+            <div className='flex items-center space-x-2'>
+              {actions}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Content */}
