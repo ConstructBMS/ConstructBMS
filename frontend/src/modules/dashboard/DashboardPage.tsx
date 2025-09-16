@@ -90,15 +90,32 @@ export default function DashboardPage() {
       title='Dashboard'
       actions={
         <div className='flex items-center space-x-2'>
-          <Button size='sm' className='bg-red-600 text-white'>
-            EMERGENCY TEST
+          <Button 
+            size='sm' 
+            className='gap-2 bg-blue-600 text-white hover:bg-blue-700'
+            onClick={() => {
+              // Simple dashboard creation for now
+              const name = prompt('Enter dashboard name:');
+              if (name && name.trim()) {
+                const { addDashboard } = useDashboardStore.getState();
+                addDashboard({
+                  name: name.trim(),
+                  description: 'Custom dashboard',
+                  widgets: [
+                    {
+                      id: `welcome-${Date.now()}`,
+                      type: 'custom',
+                      title: 'Welcome',
+                      data: { message: `Welcome to ${name}!` }
+                    }
+                  ]
+                });
+              }
+            }}
+          >
+            <Plus className='h-4 w-4' />
+            Add Dashboard
           </Button>
-          <CreateDashboardDialog>
-            <Button size='sm' className='gap-2'>
-              <Plus className='h-4 w-4' />
-              Add Dashboard
-            </Button>
-          </CreateDashboardDialog>
         </div>
       }
     >
