@@ -80,12 +80,12 @@ export default function DashboardPage() {
           {/* Add New Dashboard Button */}
           <CreateDashboardDialog>
             <Button
-              variant='outline'
+              variant='default'
               size='sm'
-              className='bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
+              className='bg-blue-600 text-white hover:bg-blue-700'
             >
               <Plus className='h-4 w-4 mr-2' />
-              Add Dashboard
+              + Add Dashboard
             </Button>
           </CreateDashboardDialog>
         </div>
