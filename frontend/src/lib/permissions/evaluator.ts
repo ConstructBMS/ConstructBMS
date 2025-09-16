@@ -125,7 +125,10 @@ export class PermissionEvaluator {
     action: Action
   ): PermissionEvaluation {
     // Super admin bypass - if user has superadmin role, allow everything
-    if (context.userAttributes?.role === 'super_admin' || context.userAttributes?.role === 'superadmin') {
+    if (
+      context.userAttributes?.role === 'super_admin' ||
+      context.userAttributes?.role === 'superadmin'
+    ) {
       return {
         decision: 'allow',
         reason: 'Super admin has full access',
@@ -393,18 +396,21 @@ export class PermissionEvaluator {
     action: Action
   ): string {
     // Safely stringify the context, handling any non-serializable values
-    const contextKey = JSON.stringify({
-      userId: context.userId,
-      scope: context.scope,
-      scopeId: context.scopeId,
-      userAttributes: context.userAttributes,
-    }, (key, value) => {
-      // Handle non-serializable values
-      if (typeof value === 'object' && value !== null) {
-        return '[Object]';
+    const contextKey = JSON.stringify(
+      {
+        userId: context.userId,
+        scope: context.scope,
+        scopeId: context.scopeId,
+        userAttributes: context.userAttributes,
+      },
+      (key, value) => {
+        // Handle non-serializable values
+        if (typeof value === 'object' && value !== null) {
+          return '[Object]';
+        }
+        return value;
       }
-      return value;
-    });
+    );
 
     // Use a safer encoding method
     try {

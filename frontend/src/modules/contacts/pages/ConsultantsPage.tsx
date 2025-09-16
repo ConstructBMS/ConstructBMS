@@ -72,7 +72,8 @@ export default function ConsultantsPage() {
 
   // Calculate consultant statistics from main store data
   const consultantStats = useMemo(() => {
-    const totalConsultants = consultantContacts.length + consultantCompanies.length;
+    const totalConsultants =
+      consultantContacts.length + consultantCompanies.length;
     const activeConsultants = totalConsultants; // For now, assume all are active
     const totalProjects = totalConsultants * 3; // Mock projects per consultant
 
@@ -141,9 +142,7 @@ export default function ConsultantsPage() {
                   <Brain className='h-6 w-6 text-purple-600 dark:text-purple-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    {consultantStats.total}
-                  </p>
+                  <p className='text-2xl font-bold'>{consultantStats.total}</p>
                   <p className='text-sm text-muted-foreground'>
                     Total Consultants
                   </p>
@@ -177,12 +176,8 @@ export default function ConsultantsPage() {
                   <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    4.9/5
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    Expert Rating
-                  </p>
+                  <p className='text-2xl font-bold'>4.9/5</p>
+                  <p className='text-sm text-muted-foreground'>Expert Rating</p>
                 </div>
               </div>
             </CardContent>
@@ -207,9 +202,7 @@ export default function ConsultantsPage() {
         {/* Consultant Network Table */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              Consultant Network
-            </CardTitle>
+            <CardTitle>Consultant Network</CardTitle>
             <CardDescription>
               Your expert consultants and their specializations
             </CardDescription>
@@ -267,9 +260,7 @@ export default function ConsultantsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className='font-medium'>
-                              {consultant.name}
-                            </div>
+                            <div className='font-medium'>{consultant.name}</div>
                             <div className='text-sm text-muted-foreground'>
                               {'companyName' in consultant
                                 ? 'Company'
@@ -296,9 +287,7 @@ export default function ConsultantsPage() {
                             <Lightbulb className='h-3 w-3 mr-1' />
                             Strategy
                           </Badge>
-                          <Badge variant='outline'>
-                            Architecture
-                          </Badge>
+                          <Badge variant='outline'>Architecture</Badge>
                         </div>
                       </TableCell>
                       <TableCell>

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+// import { persist } from 'zustand/middleware';
 import { ProjectsDAL } from '../../lib/data/projects';
 import type {
   Project,

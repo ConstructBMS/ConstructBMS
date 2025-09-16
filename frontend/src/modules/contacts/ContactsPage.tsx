@@ -250,10 +250,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.clients}</div>
-                 <Link
-                   to='/contacts/clients'
-                   className='text-primary hover:text-primary/80'
-                 >
+                <Link
+                  to='/contacts/clients'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -272,10 +272,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.contractors}</div>
-                 <Link
-                   to='/contacts/contractors'
-                   className='text-primary hover:text-primary/80'
-                 >
+                <Link
+                  to='/contacts/contractors'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>
@@ -294,10 +294,10 @@ function ContactsPage() {
             <CardContent>
               <div className='flex items-center justify-between'>
                 <div className='text-2xl font-bold'>{stats.consultants}</div>
-                 <Link
-                   to='/contacts/consultants'
-                   className='text-primary hover:text-primary/80'
-                 >
+                <Link
+                  to='/contacts/consultants'
+                  className='text-primary hover:text-primary/80'
+                >
                   <ArrowRight className='h-4 w-4' />
                 </Link>
               </div>

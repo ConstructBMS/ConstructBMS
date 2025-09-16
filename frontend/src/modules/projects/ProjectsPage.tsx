@@ -29,13 +29,11 @@ export function ProjectsPage() {
   const canCreate = useCan({ resource: 'projects', action: 'create' });
 
   const {
-    isLoading,
     error,
     viewMode,
     filters,
     setViewMode,
     clearError,
-    getFilteredProjects,
   } = useProjectsStore();
 
   const [showProjectForm, setShowProjectForm] = useState(false);

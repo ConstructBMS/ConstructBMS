@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { DashboardWidget } from '../../store';
 import { useNavigate } from 'react-router-dom';
@@ -33,31 +38,31 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{widget.title}</CardTitle>
+        <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className='space-y-4'>
           {data.message && (
-            <p className="text-muted-foreground leading-relaxed">
+            <p className='text-muted-foreground leading-relaxed'>
               {data.message}
             </p>
           )}
-          
+
           {data.content && (
-            <div className="prose prose-sm max-w-none">
+            <div className='prose prose-sm max-w-none'>
               <p>{data.content}</p>
             </div>
           )}
-          
+
           {data.actions && data.actions.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div className='flex flex-wrap gap-2 pt-2'>
               {data.actions.map((action, index) => (
                 <Button
                   key={index}
-                  variant="outline"
-                  size="sm"
+                  variant='outline'
+                  size='sm'
                   onClick={() => handleAction(action)}
-                  className="text-xs"
+                  className='text-xs'
                 >
                   {action.label}
                 </Button>

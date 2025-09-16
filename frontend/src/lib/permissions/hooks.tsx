@@ -79,7 +79,6 @@ export function useCan(options: UseCanOptions): UseCanResult {
       setIsLoading(true);
       setError(null);
 
-
       // In a real implementation, this might be async (API call)
       // For now, we'll use the synchronous evaluator
       const result = defaultEvaluator.evaluate(

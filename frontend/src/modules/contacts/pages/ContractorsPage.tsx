@@ -69,7 +69,8 @@ export default function ContractorsPage() {
 
   // Calculate contractor statistics from main store data
   const contractorStats = useMemo(() => {
-    const totalContractors = contractorContacts.length + contractorCompanies.length;
+    const totalContractors =
+      contractorContacts.length + contractorCompanies.length;
     const activeContractors = totalContractors; // For now, assume all are active
     const totalCapacity = totalContractors * 8; // Mock capacity hours per week
 
@@ -138,9 +139,7 @@ export default function ContractorsPage() {
                   <HardHat className='h-6 w-6 text-orange-600 dark:text-orange-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    {contractorStats.total}
-                  </p>
+                  <p className='text-2xl font-bold'>{contractorStats.total}</p>
                   <p className='text-sm text-muted-foreground'>
                     Total Contractors
                   </p>
@@ -174,12 +173,8 @@ export default function ContractorsPage() {
                   <Shield className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    98%
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    Safety Rating
-                  </p>
+                  <p className='text-2xl font-bold'>98%</p>
+                  <p className='text-sm text-muted-foreground'>Safety Rating</p>
                 </div>
               </div>
             </CardContent>
@@ -204,9 +199,7 @@ export default function ContractorsPage() {
         {/* Contractor Workforce Table */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              Contractor Workforce
-            </CardTitle>
+            <CardTitle>Contractor Workforce</CardTitle>
             <CardDescription>
               Your skilled contractors and their specializations
             </CardDescription>
@@ -264,9 +257,7 @@ export default function ContractorsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className='font-medium'>
-                              {contractor.name}
-                            </div>
+                            <div className='font-medium'>{contractor.name}</div>
                             <div className='text-sm text-muted-foreground'>
                               {'companyName' in contractor
                                 ? 'Company'
@@ -293,9 +284,7 @@ export default function ContractorsPage() {
                             <Wrench className='h-3 w-3 mr-1' />
                             General
                           </Badge>
-                          <Badge variant='outline'>
-                            Electrical
-                          </Badge>
+                          <Badge variant='outline'>Electrical</Badge>
                         </div>
                       </TableCell>
                       <TableCell>

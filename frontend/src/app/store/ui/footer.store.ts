@@ -89,16 +89,16 @@ export const useFooterStore = create<FooterState>()(
   persist(
     (set, get) => ({
       config: defaultConfig,
-      setConfig: (config) => set({ config }),
-      updateConfig: (updates) =>
-        set((state) => ({
+      setConfig: config => set({ config }),
+      updateConfig: updates =>
+        set(state => ({
           config: { ...state.config, ...updates },
         })),
       resetConfig: () => set({ config: defaultConfig }),
     }),
     {
       name: 'footer-storage',
-      partialize: (state) => ({ config: state.config }),
+      partialize: state => ({ config: state.config }),
     }
   )
 );

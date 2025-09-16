@@ -124,4 +124,11 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 );
 DialogTrigger.displayName = 'DialogTrigger';
 
-export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger };
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+};

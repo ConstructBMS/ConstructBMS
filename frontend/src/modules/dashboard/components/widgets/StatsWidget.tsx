@@ -1,5 +1,10 @@
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import { DashboardWidget } from '../../store';
 
 interface StatsWidgetProps {
@@ -14,16 +19,16 @@ interface StatItem {
 }
 
 export function StatsWidget({ widget }: StatsWidgetProps) {
-  const stats = widget.data?.stats as StatItem[] || [];
+  const stats = (widget.data?.stats as StatItem[]) || [];
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-500" />;
+        return <TrendingUp className='h-4 w-4 text-green-500' />;
       case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-500" />;
+        return <TrendingDown className='h-4 w-4 text-red-500' />;
       default:
-        return <Minus className="h-4 w-4 text-muted-foreground" />;
+        return <Minus className='h-4 w-4 text-muted-foreground' />;
     }
   };
 
@@ -41,22 +46,26 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{widget.title}</CardTitle>
+        <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
           {stats.map((stat, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+            <div key={index} className='space-y-2'>
+              <div className='flex items-center justify-between'>
+                <p className='text-sm font-medium text-muted-foreground'>
+                  {stat.label}
+                </p>
                 {stat.change && (
-                  <div className={`flex items-center space-x-1 text-xs ${getTrendColor(stat.trend)}`}>
+                  <div
+                    className={`flex items-center space-x-1 text-xs ${getTrendColor(stat.trend)}`}
+                  >
                     {getTrendIcon(stat.trend)}
                     <span>{stat.change}</span>
                   </div>
                 )}
               </div>
-              <p className="text-2xl font-bold">{stat.value}</p>
+              <p className='text-2xl font-bold'>{stat.value}</p>
             </div>
           ))}
         </div>

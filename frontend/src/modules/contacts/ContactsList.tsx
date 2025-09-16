@@ -15,7 +15,6 @@ export function ContactsList({
   onEdit,
   onDelete,
 }: ContactsListProps) {
-
   const allItems = [
     ...contacts.map(contact => ({ ...contact, itemType: 'contact' as const })),
     ...companies.map(company => ({ ...company, itemType: 'company' as const })),

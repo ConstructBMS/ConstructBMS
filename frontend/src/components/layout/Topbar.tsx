@@ -1,10 +1,4 @@
-import {
-  Bell,
-  ChevronDown,
-  Moon,
-  Search,
-  Sun,
-} from 'lucide-react';
+import { Bell, ChevronDown, Moon, Search, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
@@ -46,7 +40,11 @@ export function Topbar() {
 
   const getThemeIcon = () => {
     // Only show sun for light theme, moon for dark theme
-    return theme === 'light' ? <Sun className='h-4 w-4' /> : <Moon className='h-4 w-4' />;
+    return theme === 'light' ? (
+      <Sun className='h-4 w-4' />
+    ) : (
+      <Moon className='h-4 w-4' />
+    );
   };
 
   return (

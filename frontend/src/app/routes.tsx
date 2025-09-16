@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { Link, Navigate, Route, Routes, createBrowserRouter } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { Guard } from '../lib/permissions/Guard';
 
 // Lazy load all pages
@@ -40,9 +40,7 @@ const LoadingSpinner = () => (
 
 // Wrapper component for lazy-loaded routes
 const LazyRoute = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={<LoadingSpinner />}>
-    {children}
-  </Suspense>
+  <Suspense fallback={<LoadingSpinner />}>{children}</Suspense>
 );
 
 // 404 component

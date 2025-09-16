@@ -93,7 +93,7 @@ export function FeatureFlags() {
               <div className='flex items-center gap-2'>
                 <Select
                   value={flag.audience || 'all'}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleAudienceChange(
                       flag.key,
                       value as 'all' | 'admins' | 'beta'

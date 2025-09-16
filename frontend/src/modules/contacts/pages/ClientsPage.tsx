@@ -118,10 +118,7 @@ export default function ClientsPage() {
               Manage your client relationships and project portfolio
             </p>
           </div>
-          <Button
-            onClick={handleAddClient}
-            className='flex items-center gap-2'
-          >
+          <Button onClick={handleAddClient} className='flex items-center gap-2'>
             <Plus className='h-4 w-4' />
             Add New Client
           </Button>
@@ -136,12 +133,8 @@ export default function ClientsPage() {
                   <Users className='h-6 w-6 text-blue-600 dark:text-blue-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    {clientStats.total}
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    Total Clients
-                  </p>
+                  <p className='text-2xl font-bold'>{clientStats.total}</p>
+                  <p className='text-sm text-muted-foreground'>Total Clients</p>
                 </div>
               </div>
             </CardContent>
@@ -157,9 +150,7 @@ export default function ClientsPage() {
                   <p className='text-2xl font-bold'>
                     £{clientStats.totalValue.toLocaleString()}
                   </p>
-                  <p className='text-sm text-muted-foreground'>
-                    Total Value
-                  </p>
+                  <p className='text-sm text-muted-foreground'>Total Value</p>
                 </div>
               </div>
             </CardContent>
@@ -172,12 +163,8 @@ export default function ClientsPage() {
                   <Star className='h-6 w-6 text-yellow-600 dark:text-yellow-400' />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold'>
-                    4.7/5
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    Satisfaction
-                  </p>
+                  <p className='text-2xl font-bold'>4.7/5</p>
+                  <p className='text-sm text-muted-foreground'>Satisfaction</p>
                 </div>
               </div>
             </CardContent>
@@ -202,141 +189,130 @@ export default function ClientsPage() {
         {/* Client Portfolio Table */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              Client Portfolio
-            </CardTitle>
+            <CardTitle>Client Portfolio</CardTitle>
             <CardDescription>
               Your valued clients and their project relationships
             </CardDescription>
           </CardHeader>
-            <CardContent>
-              {filteredClients.length === 0 ? (
-                <div className='text-center py-16'>
-                  <div className='p-4 bg-blue-100 dark:bg-blue-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
-                    <User className='h-10 w-10 text-blue-600 dark:text-blue-400' />
-                  </div>
-                  <h3 className='text-xl font-semibold mb-2'>
-                    No Clients Found
-                  </h3>
-                  <p className='text-muted-foreground mb-6'>
-                    {searchQuery
-                      ? 'No clients match your search criteria.'
-                      : 'Add your first client to get started.'}
-                  </p>
-                  {!searchQuery && (
-                    <Button
-                      onClick={handleAddClient}
-                      className='flex items-center gap-2'
-                    >
-                      <Plus className='h-4 w-4' />
-                      Add Your First Client
-                    </Button>
-                  )}
+          <CardContent>
+            {filteredClients.length === 0 ? (
+              <div className='text-center py-16'>
+                <div className='p-4 bg-blue-100 dark:bg-blue-900 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center'>
+                  <User className='h-10 w-10 text-blue-600 dark:text-blue-400' />
                 </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Project Value</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Last Contact</TableHead>
-                      <TableHead>Actions</TableHead>
+                <h3 className='text-xl font-semibold mb-2'>No Clients Found</h3>
+                <p className='text-muted-foreground mb-6'>
+                  {searchQuery
+                    ? 'No clients match your search criteria.'
+                    : 'Add your first client to get started.'}
+                </p>
+                {!searchQuery && (
+                  <Button
+                    onClick={handleAddClient}
+                    className='flex items-center gap-2'
+                  >
+                    <Plus className='h-4 w-4' />
+                    Add Your First Client
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Contact</TableHead>
+                    <TableHead>Project Value</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Last Contact</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredClients.map(client => (
+                    <TableRow key={client.id}>
+                      <TableCell>
+                        <div className='flex items-center gap-3'>
+                          <Avatar className='h-10 w-10'>
+                            <AvatarImage
+                              src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
+                            />
+                            <AvatarFallback className='text-sm font-semibold'>
+                              {client.name
+                                .split(' ')
+                                .map(n => n[0])
+                                .join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className='font-medium'>{client.name}</div>
+                            <div className='text-sm text-muted-foreground'>
+                              {'companyName' in client
+                                ? 'Company'
+                                : 'Individual'}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className='space-y-1'>
+                          <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                            <Phone className='h-3 w-3' />
+                            {client.phone || 'No phone'}
+                          </div>
+                          <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                            <Mail className='h-3 w-3' />
+                            {client.email || 'No email'}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className='text-lg font-bold text-green-600 dark:text-green-400'>
+                          £
+                          {Math.floor(
+                            Math.random() * 500000 + 50000
+                          ).toLocaleString()}
+                        </div>
+                        <div className='text-xs text-muted-foreground'>
+                          {Math.floor(Math.random() * 5 + 1)} projects
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
+                          <CheckCircle className='h-3 w-3 mr-1' />
+                          Active
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className='text-sm text-muted-foreground'>
+                          {Math.floor(Math.random() * 7 + 1)} days ago
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className='flex gap-2'>
+                          <Button size='sm' onClick={() => handleEdit(client)}>
+                            <Briefcase className='h-3 w-3 mr-1' />
+                            Manage
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            onClick={() =>
+                              handleDelete(
+                                client.id,
+                                'companyName' in client ? 'company' : 'contact'
+                              )
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredClients.map(client => (
-                      <TableRow key={client.id}>
-                        <TableCell>
-                          <div className='flex items-center gap-3'>
-                            <Avatar className='h-10 w-10'>
-                              <AvatarImage
-                                src={`https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`}
-                              />
-                              <AvatarFallback className='text-sm font-semibold'>
-                                {client.name
-                                  .split(' ')
-                                  .map(n => n[0])
-                                  .join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <div className='font-medium'>
-                                {client.name}
-                              </div>
-                              <div className='text-sm text-muted-foreground'>
-                                {'companyName' in client
-                                  ? 'Company'
-                                  : 'Individual'}
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className='space-y-1'>
-                            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                              <Phone className='h-3 w-3' />
-                              {client.phone || 'No phone'}
-                            </div>
-                            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                              <Mail className='h-3 w-3' />
-                              {client.email || 'No email'}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className='text-lg font-bold text-green-600 dark:text-green-400'>
-                            £
-                            {Math.floor(
-                              Math.random() * 500000 + 50000
-                            ).toLocaleString()}
-                          </div>
-                          <div className='text-xs text-muted-foreground'>
-                            {Math.floor(Math.random() * 5 + 1)} projects
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
-                            <CheckCircle className='h-3 w-3 mr-1' />
-                            Active
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className='text-sm text-muted-foreground'>
-                            {Math.floor(Math.random() * 7 + 1)} days ago
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className='flex gap-2'>
-                            <Button
-                              size='sm'
-                              onClick={() => handleEdit(client)}
-                            >
-                              <Briefcase className='h-3 w-3 mr-1' />
-                              Manage
-                            </Button>
-                            <Button
-                              size='sm'
-                              variant='outline'
-                              onClick={() =>
-                                handleDelete(
-                                  client.id,
-                                  'companyName' in client
-                                    ? 'company'
-                                    : 'contact'
-                                )
-                              }
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>

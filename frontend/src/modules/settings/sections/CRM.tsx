@@ -78,7 +78,12 @@ export function CRM() {
       {error && (
         <div className='p-4 border border-destructive rounded-lg bg-destructive/10'>
           <p className='text-sm text-destructive'>{error}</p>
-          <Button variant='outline' size='sm' onClick={clearError} className='mt-2'>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={clearError}
+            className='mt-2'
+          >
             Dismiss
           </Button>
         </div>
@@ -110,7 +115,7 @@ export function CRM() {
                   <Switch
                     id='auto-assign'
                     checked={crmSettings.contactManagement.autoAssignContacts}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         contactManagement: {
                           ...crmSettings.contactManagement,
@@ -121,11 +126,13 @@ export function CRM() {
                   />
                 </div>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='duplicate-detection'>Duplicate detection</Label>
+                  <Label htmlFor='duplicate-detection'>
+                    Duplicate detection
+                  </Label>
                   <Switch
                     id='duplicate-detection'
                     checked={crmSettings.contactManagement.duplicateDetection}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         contactManagement: {
                           ...crmSettings.contactManagement,
@@ -140,7 +147,7 @@ export function CRM() {
                   <Switch
                     id='require-email'
                     checked={crmSettings.contactManagement.requireEmail}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         contactManagement: {
                           ...crmSettings.contactManagement,
@@ -155,7 +162,7 @@ export function CRM() {
                   <Switch
                     id='require-phone'
                     checked={crmSettings.contactManagement.requirePhone}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         contactManagement: {
                           ...crmSettings.contactManagement,
@@ -168,7 +175,9 @@ export function CRM() {
               </div>
 
               <div>
-                <Label htmlFor='default-contact-type'>Default contact type</Label>
+                <Label htmlFor='default-contact-type'>
+                  Default contact type
+                </Label>
                 <Select
                   value={crmSettings.contactManagement.defaultContactType}
                   onValueChange={(value: 'person' | 'company') =>
@@ -214,15 +223,20 @@ export function CRM() {
                   </Button>
                 </div>
                 <div className='space-y-2'>
-                  {crmSettings.contactManagement.customFields.map((field) => (
-                    <div key={field.id} className='flex items-center gap-2 p-2 border rounded'>
+                  {crmSettings.contactManagement.customFields.map(field => (
+                    <div
+                      key={field.id}
+                      className='flex items-center gap-2 p-2 border rounded'
+                    >
                       <GripVertical className='h-4 w-4 text-muted-foreground' />
                       {editingField === field.id ? (
                         <div className='flex-1 grid grid-cols-3 gap-2'>
                           <Input
                             value={field.name}
-                            onChange={(e) =>
-                              updateCustomField(field.id, { name: e.target.value })
+                            onChange={e =>
+                              updateCustomField(field.id, {
+                                name: e.target.value,
+                              })
                             }
                             placeholder='Field name'
                           />
@@ -308,7 +322,7 @@ export function CRM() {
                   <Switch
                     id='lead-scoring'
                     checked={crmSettings.leadManagement.leadScoring}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         leadManagement: {
                           ...crmSettings.leadManagement,
@@ -323,7 +337,7 @@ export function CRM() {
                   <Switch
                     id='auto-assignment'
                     checked={crmSettings.leadManagement.autoLeadAssignment}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         leadManagement: {
                           ...crmSettings.leadManagement,
@@ -334,11 +348,13 @@ export function CRM() {
                   />
                 </div>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='follow-up-reminders'>Follow-up reminders</Label>
+                  <Label htmlFor='follow-up-reminders'>
+                    Follow-up reminders
+                  </Label>
                   <Switch
                     id='follow-up-reminders'
                     checked={crmSettings.leadManagement.followUpReminders}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         leadManagement: {
                           ...crmSettings.leadManagement,
@@ -354,7 +370,7 @@ export function CRM() {
                     id='reminder-days'
                     type='number'
                     value={crmSettings.leadManagement.reminderDays}
-                    onChange={(e) =>
+                    onChange={e =>
                       updateCRMSettings({
                         leadManagement: {
                           ...crmSettings.leadManagement,
@@ -391,8 +407,11 @@ export function CRM() {
                   </Button>
                 </div>
                 <div className='space-y-2'>
-                  {crmSettings.leadManagement.leadSources.map((source) => (
-                    <div key={source.id} className='flex items-center gap-2 p-2 border rounded'>
+                  {crmSettings.leadManagement.leadSources.map(source => (
+                    <div
+                      key={source.id}
+                      className='flex items-center gap-2 p-2 border rounded'
+                    >
                       <div
                         className='w-4 h-4 rounded-full'
                         style={{ backgroundColor: source.color }}
@@ -401,15 +420,19 @@ export function CRM() {
                         <div className='flex-1 grid grid-cols-3 gap-2'>
                           <Input
                             value={source.name}
-                            onChange={(e) =>
-                              updateLeadSource(source.id, { name: e.target.value })
+                            onChange={e =>
+                              updateLeadSource(source.id, {
+                                name: e.target.value,
+                              })
                             }
                             placeholder='Source name'
                           />
                           <Input
                             value={source.description}
-                            onChange={(e) =>
-                              updateLeadSource(source.id, { description: e.target.value })
+                            onChange={e =>
+                              updateLeadSource(source.id, {
+                                description: e.target.value,
+                              })
                             }
                             placeholder='Description'
                           />
@@ -478,7 +501,8 @@ export function CRM() {
                         isWon: false,
                         isLost: false,
                         color: '#6b7280',
-                        order: crmSettings.leadManagement.leadStatuses.length + 1,
+                        order:
+                          crmSettings.leadManagement.leadStatuses.length + 1,
                       };
                       addLeadStatus(newStatus);
                       setEditingStatus(newStatus.id);
@@ -491,81 +515,96 @@ export function CRM() {
                 <div className='space-y-2'>
                   {crmSettings.leadManagement.leadStatuses
                     .sort((a, b) => a.order - b.order)
-                    .map((status) => (
-                    <div key={status.id} className='flex items-center gap-2 p-2 border rounded'>
+                    .map(status => (
                       <div
-                        className='w-4 h-4 rounded-full'
-                        style={{ backgroundColor: status.color }}
-                      />
-                      {editingStatus === status.id ? (
-                        <div className='flex-1 grid grid-cols-4 gap-2'>
-                          <Input
-                            value={status.name}
-                            onChange={(e) =>
-                              updateLeadStatus(status.id, { name: e.target.value })
-                            }
-                            placeholder='Status name'
-                          />
-                          <Input
-                            value={status.description}
-                            onChange={(e) =>
-                              updateLeadStatus(status.id, { description: e.target.value })
-                            }
-                            placeholder='Description'
-                          />
-                          <Input
-                            type='number'
-                            value={status.order}
-                            onChange={(e) =>
-                              updateLeadStatus(status.id, { order: parseInt(e.target.value) || 1 })
-                            }
-                            placeholder='Order'
-                          />
-                          <div className='flex gap-1'>
-                            <Button
-                              size='sm'
-                              onClick={() => setEditingStatus(null)}
-                            >
-                              <Save className='h-4 w-4' />
-                            </Button>
+                        key={status.id}
+                        className='flex items-center gap-2 p-2 border rounded'
+                      >
+                        <div
+                          className='w-4 h-4 rounded-full'
+                          style={{ backgroundColor: status.color }}
+                        />
+                        {editingStatus === status.id ? (
+                          <div className='flex-1 grid grid-cols-4 gap-2'>
+                            <Input
+                              value={status.name}
+                              onChange={e =>
+                                updateLeadStatus(status.id, {
+                                  name: e.target.value,
+                                })
+                              }
+                              placeholder='Status name'
+                            />
+                            <Input
+                              value={status.description}
+                              onChange={e =>
+                                updateLeadStatus(status.id, {
+                                  description: e.target.value,
+                                })
+                              }
+                              placeholder='Description'
+                            />
+                            <Input
+                              type='number'
+                              value={status.order}
+                              onChange={e =>
+                                updateLeadStatus(status.id, {
+                                  order: parseInt(e.target.value) || 1,
+                                })
+                              }
+                              placeholder='Order'
+                            />
+                            <div className='flex gap-1'>
+                              <Button
+                                size='sm'
+                                onClick={() => setEditingStatus(null)}
+                              >
+                                <Save className='h-4 w-4' />
+                              </Button>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={() => {
+                                  removeLeadStatus(status.id);
+                                  setEditingStatus(null);
+                                }}
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className='flex-1'>
+                              <span className='font-medium'>{status.name}</span>
+                              {status.description && (
+                                <span className='text-sm text-muted-foreground ml-2'>
+                                  {status.description}
+                                </span>
+                              )}
+                              <div className='flex gap-1 mt-1'>
+                                {status.isWon && (
+                                  <Badge variant='default'>Won</Badge>
+                                )}
+                                {status.isLost && (
+                                  <Badge variant='destructive'>Lost</Badge>
+                                )}
+                                {!status.isActive && (
+                                  <Badge variant='secondary'>Inactive</Badge>
+                                )}
+                              </div>
+                            </div>
                             <Button
                               size='sm'
                               variant='outline'
-                              onClick={() => {
-                                removeLeadStatus(status.id);
-                                setEditingStatus(null);
-                              }}
+                              onClick={() => setEditingStatus(status.id)}
                             >
-                              <Trash2 className='h-4 w-4' />
+                              <Edit className='h-4 w-4' />
                             </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className='flex-1'>
-                            <span className='font-medium'>{status.name}</span>
-                            {status.description && (
-                              <span className='text-sm text-muted-foreground ml-2'>
-                                {status.description}
-                              </span>
-                            )}
-                            <div className='flex gap-1 mt-1'>
-                              {status.isWon && <Badge variant='default'>Won</Badge>}
-                              {status.isLost && <Badge variant='destructive'>Lost</Badge>}
-                              {!status.isActive && <Badge variant='secondary'>Inactive</Badge>}
-                            </div>
-                          </div>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => setEditingStatus(status.id)}
-                          >
-                            <Edit className='h-4 w-4' />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  ))}
+                          </>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </CardContent>
@@ -588,7 +627,7 @@ export function CRM() {
                   <Switch
                     id='auto-advance'
                     checked={crmSettings.pipelineManagement.autoAdvanceStages}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         pipelineManagement: {
                           ...crmSettings.pipelineManagement,
@@ -599,11 +638,15 @@ export function CRM() {
                   />
                 </div>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='pipeline-notifications'>Pipeline notifications</Label>
+                  <Label htmlFor='pipeline-notifications'>
+                    Pipeline notifications
+                  </Label>
                   <Switch
                     id='pipeline-notifications'
-                    checked={crmSettings.pipelineManagement.pipelineNotifications}
-                    onCheckedChange={(checked) =>
+                    checked={
+                      crmSettings.pipelineManagement.pipelineNotifications
+                    }
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         pipelineManagement: {
                           ...crmSettings.pipelineManagement,
@@ -646,91 +689,110 @@ export function CRM() {
                 <div className='space-y-2'>
                   {crmSettings.pipelineManagement.stages
                     .sort((a, b) => a.order - b.order)
-                    .map((stage) => (
-                    <div key={stage.id} className='flex items-center gap-2 p-2 border rounded'>
-                      <GripVertical className='h-4 w-4 text-muted-foreground' />
+                    .map(stage => (
                       <div
-                        className='w-4 h-4 rounded-full'
-                        style={{ backgroundColor: stage.color }}
-                      />
-                      {editingStage === stage.id ? (
-                        <div className='flex-1 grid grid-cols-5 gap-2'>
-                          <Input
-                            value={stage.name}
-                            onChange={(e) =>
-                              updatePipelineStage(stage.id, { name: e.target.value })
-                            }
-                            placeholder='Stage name'
-                          />
-                          <Input
-                            value={stage.description}
-                            onChange={(e) =>
-                              updatePipelineStage(stage.id, { description: e.target.value })
-                            }
-                            placeholder='Description'
-                          />
-                          <Input
-                            type='number'
-                            value={stage.probability}
-                            onChange={(e) =>
-                              updatePipelineStage(stage.id, { probability: parseInt(e.target.value) || 0 })
-                            }
-                            placeholder='Probability %'
-                          />
-                          <Input
-                            type='number'
-                            value={stage.order}
-                            onChange={(e) =>
-                              updatePipelineStage(stage.id, { order: parseInt(e.target.value) || 1 })
-                            }
-                            placeholder='Order'
-                          />
-                          <div className='flex gap-1'>
-                            <Button
-                              size='sm'
-                              onClick={() => setEditingStage(null)}
-                            >
-                              <Save className='h-4 w-4' />
-                            </Button>
+                        key={stage.id}
+                        className='flex items-center gap-2 p-2 border rounded'
+                      >
+                        <GripVertical className='h-4 w-4 text-muted-foreground' />
+                        <div
+                          className='w-4 h-4 rounded-full'
+                          style={{ backgroundColor: stage.color }}
+                        />
+                        {editingStage === stage.id ? (
+                          <div className='flex-1 grid grid-cols-5 gap-2'>
+                            <Input
+                              value={stage.name}
+                              onChange={e =>
+                                updatePipelineStage(stage.id, {
+                                  name: e.target.value,
+                                })
+                              }
+                              placeholder='Stage name'
+                            />
+                            <Input
+                              value={stage.description}
+                              onChange={e =>
+                                updatePipelineStage(stage.id, {
+                                  description: e.target.value,
+                                })
+                              }
+                              placeholder='Description'
+                            />
+                            <Input
+                              type='number'
+                              value={stage.probability}
+                              onChange={e =>
+                                updatePipelineStage(stage.id, {
+                                  probability: parseInt(e.target.value) || 0,
+                                })
+                              }
+                              placeholder='Probability %'
+                            />
+                            <Input
+                              type='number'
+                              value={stage.order}
+                              onChange={e =>
+                                updatePipelineStage(stage.id, {
+                                  order: parseInt(e.target.value) || 1,
+                                })
+                              }
+                              placeholder='Order'
+                            />
+                            <div className='flex gap-1'>
+                              <Button
+                                size='sm'
+                                onClick={() => setEditingStage(null)}
+                              >
+                                <Save className='h-4 w-4' />
+                              </Button>
+                              <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={() => {
+                                  removePipelineStage(stage.id);
+                                  setEditingStage(null);
+                                }}
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className='flex-1'>
+                              <span className='font-medium'>{stage.name}</span>
+                              {stage.description && (
+                                <span className='text-sm text-muted-foreground ml-2'>
+                                  {stage.description}
+                                </span>
+                              )}
+                              <div className='flex gap-1 mt-1'>
+                                <Badge variant='outline'>
+                                  {stage.probability}%
+                                </Badge>
+                                {stage.isWon && (
+                                  <Badge variant='default'>Won</Badge>
+                                )}
+                                {stage.isLost && (
+                                  <Badge variant='destructive'>Lost</Badge>
+                                )}
+                                {!stage.isActive && (
+                                  <Badge variant='secondary'>Inactive</Badge>
+                                )}
+                              </div>
+                            </div>
                             <Button
                               size='sm'
                               variant='outline'
-                              onClick={() => {
-                                removePipelineStage(stage.id);
-                                setEditingStage(null);
-                              }}
+                              onClick={() => setEditingStage(stage.id)}
                             >
-                              <Trash2 className='h-4 w-4' />
+                              <Edit className='h-4 w-4' />
                             </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className='flex-1'>
-                            <span className='font-medium'>{stage.name}</span>
-                            {stage.description && (
-                              <span className='text-sm text-muted-foreground ml-2'>
-                                {stage.description}
-                              </span>
-                            )}
-                            <div className='flex gap-1 mt-1'>
-                              <Badge variant='outline'>{stage.probability}%</Badge>
-                              {stage.isWon && <Badge variant='default'>Won</Badge>}
-                              {stage.isLost && <Badge variant='destructive'>Lost</Badge>}
-                              {!stage.isActive && <Badge variant='secondary'>Inactive</Badge>}
-                            </div>
-                          </div>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() => setEditingStage(stage.id)}
-                          >
-                            <Edit className='h-4 w-4' />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  ))}
+                          </>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             </CardContent>
@@ -753,7 +815,7 @@ export function CRM() {
                   <Switch
                     id='sms-enabled'
                     checked={crmSettings.communication.smsEnabled}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         communication: {
                           ...crmSettings.communication,
@@ -768,7 +830,7 @@ export function CRM() {
                   <Switch
                     id='call-logging'
                     checked={crmSettings.communication.callLogging}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         communication: {
                           ...crmSettings.communication,
@@ -783,7 +845,7 @@ export function CRM() {
                   <Switch
                     id='meeting-scheduling'
                     checked={crmSettings.communication.meetingScheduling}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         communication: {
                           ...crmSettings.communication,
@@ -798,7 +860,7 @@ export function CRM() {
                   <Switch
                     id='auto-follow-up'
                     checked={crmSettings.communication.autoFollowUp}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={checked =>
                       updateCRMSettings({
                         communication: {
                           ...crmSettings.communication,
@@ -837,59 +899,83 @@ export function CRM() {
                   </Button>
                 </div>
                 <div className='space-y-4'>
-                  {crmSettings.communication.emailTemplates.map((template) => (
+                  {crmSettings.communication.emailTemplates.map(template => (
                     <div key={template.id} className='border rounded-lg p-4'>
                       {editingTemplate === template.id ? (
                         <div className='space-y-4'>
                           <div className='grid grid-cols-2 gap-4'>
                             <div>
-                              <Label htmlFor={`template-name-${template.id}`}>Template Name</Label>
+                              <Label htmlFor={`template-name-${template.id}`}>
+                                Template Name
+                              </Label>
                               <Input
                                 id={`template-name-${template.id}`}
                                 value={template.name}
-                                onChange={(e) =>
-                                  updateEmailTemplate(template.id, { name: e.target.value })
+                                onChange={e =>
+                                  updateEmailTemplate(template.id, {
+                                    name: e.target.value,
+                                  })
                                 }
                               />
                             </div>
                             <div>
-                              <Label htmlFor={`template-type-${template.id}`}>Type</Label>
+                              <Label htmlFor={`template-type-${template.id}`}>
+                                Type
+                              </Label>
                               <Select
                                 value={template.type}
                                 onValueChange={(value: any) =>
-                                  updateEmailTemplate(template.id, { type: value })
+                                  updateEmailTemplate(template.id, {
+                                    type: value,
+                                  })
                                 }
                               >
                                 <SelectTrigger>
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value='welcome'>Welcome</SelectItem>
-                                  <SelectItem value='follow_up'>Follow Up</SelectItem>
-                                  <SelectItem value='proposal'>Proposal</SelectItem>
-                                  <SelectItem value='contract'>Contract</SelectItem>
+                                  <SelectItem value='welcome'>
+                                    Welcome
+                                  </SelectItem>
+                                  <SelectItem value='follow_up'>
+                                    Follow Up
+                                  </SelectItem>
+                                  <SelectItem value='proposal'>
+                                    Proposal
+                                  </SelectItem>
+                                  <SelectItem value='contract'>
+                                    Contract
+                                  </SelectItem>
                                   <SelectItem value='custom'>Custom</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
                           </div>
                           <div>
-                            <Label htmlFor={`template-subject-${template.id}`}>Subject</Label>
+                            <Label htmlFor={`template-subject-${template.id}`}>
+                              Subject
+                            </Label>
                             <Input
                               id={`template-subject-${template.id}`}
                               value={template.subject}
-                              onChange={(e) =>
-                                updateEmailTemplate(template.id, { subject: e.target.value })
+                              onChange={e =>
+                                updateEmailTemplate(template.id, {
+                                  subject: e.target.value,
+                                })
                               }
                             />
                           </div>
                           <div>
-                            <Label htmlFor={`template-body-${template.id}`}>Body</Label>
+                            <Label htmlFor={`template-body-${template.id}`}>
+                              Body
+                            </Label>
                             <Textarea
                               id={`template-body-${template.id}`}
                               value={template.body}
-                              onChange={(e) =>
-                                updateEmailTemplate(template.id, { body: e.target.value })
+                              onChange={e =>
+                                updateEmailTemplate(template.id, {
+                                  body: e.target.value,
+                                })
                               }
                               rows={6}
                             />
@@ -920,10 +1006,16 @@ export function CRM() {
                           <div className='flex items-center justify-between mb-2'>
                             <div>
                               <h5 className='font-medium'>{template.name}</h5>
-                              <p className='text-sm text-muted-foreground'>{template.subject}</p>
+                              <p className='text-sm text-muted-foreground'>
+                                {template.subject}
+                              </p>
                             </div>
                             <div className='flex gap-2'>
-                              <Badge variant={template.isActive ? 'default' : 'secondary'}>
+                              <Badge
+                                variant={
+                                  template.isActive ? 'default' : 'secondary'
+                                }
+                              >
                                 {template.type}
                               </Badge>
                               <Button
@@ -1006,7 +1098,7 @@ export function CRM() {
                 <Switch
                   id='automation-enabled'
                   checked={crmSettings.automation.enabled}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={checked =>
                     updateCRMSettings({
                       automation: {
                         ...crmSettings.automation,
@@ -1018,8 +1110,9 @@ export function CRM() {
               </div>
               <div className='p-4 border rounded-lg bg-muted/50'>
                 <p className='text-sm text-muted-foreground'>
-                  Automation features are coming soon. You'll be able to create custom workflows,
-                  set up triggers, and automate repetitive tasks.
+                  Automation features are coming soon. You'll be able to create
+                  custom workflows, set up triggers, and automate repetitive
+                  tasks.
                 </p>
               </div>
             </CardContent>

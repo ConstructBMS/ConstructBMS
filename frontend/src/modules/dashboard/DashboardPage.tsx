@@ -16,12 +16,12 @@ import { useDashboardStore } from './store';
 export default function DashboardPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  // const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { dashboards, activeDashboardId, setActiveDashboard, deleteDashboard } =
     useDashboardStore();
 
-  const activeDashboard = dashboards.find(d => d.id === activeDashboardId);
+  // const activeDashboard = dashboards.find(d => d.id === activeDashboardId);
 
   // URL to dashboard ID mapping
   const urlToDashboardId: Record<string, string> = {
@@ -118,7 +118,7 @@ export default function DashboardPage() {
               className='text-muted-foreground hover:text-foreground'
             >
               <Plus className='h-4 w-4 mr-2' />
-              Add New
+              Add New Dashboard
             </Button>
           </CreateDashboardDialog>
         </div>

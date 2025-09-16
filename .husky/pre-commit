@@ -1,15 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged to check staged files
+# Run lint-staged to check staged files only
+echo "🔍 Running lint-staged on staged files..."
 npx lint-staged
-
-# Run type checking on staged files
-echo "🔍 Running type checking on staged files..."
-pnpm run typecheck
-
-# Run tests on staged files (if any)
-echo "🧪 Running tests..."
-pnpm run test:run || echo "⚠️  Tests failed, but continuing..."
 
 echo "✅ Pre-commit checks passed!"

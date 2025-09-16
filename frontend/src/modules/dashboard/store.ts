@@ -23,11 +23,17 @@ interface DashboardStore {
   dashboards: Dashboard[];
   activeDashboardId: string;
   setActiveDashboard: (id: string) => void;
-  addDashboard: (dashboard: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addDashboard: (
+    dashboard: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'>
+  ) => void;
   updateDashboard: (id: string, updates: Partial<Dashboard>) => void;
   deleteDashboard: (id: string) => void;
   addWidget: (dashboardId: string, widget: Omit<DashboardWidget, 'id'>) => void;
-  updateWidget: (dashboardId: string, widgetId: string, updates: Partial<DashboardWidget>) => void;
+  updateWidget: (
+    dashboardId: string,
+    widgetId: string,
+    updates: Partial<DashboardWidget>
+  ) => void;
   deleteWidget: (dashboardId: string, widgetId: string) => void;
 }
 
@@ -42,7 +48,8 @@ const createDefaultDashboard = (): Dashboard => ({
       type: 'custom',
       title: 'Welcome to ConstructBMS',
       data: {
-        message: 'Welcome to your construction business management system. Use the tabs above to navigate between different dashboards.',
+        message:
+          'Welcome to your construction business management system. Use the tabs above to navigate between different dashboards.',
         actions: [
           { label: 'View Projects', action: 'navigate', target: '/projects' },
           { label: 'Manage Contacts', action: 'navigate', target: '/contacts' },
@@ -58,7 +65,12 @@ const createDefaultDashboard = (): Dashboard => ({
           { label: 'Active Projects', value: '12', change: '+2', trend: 'up' },
           { label: 'Total Contacts', value: '156', change: '+8', trend: 'up' },
           { label: 'Pending Tasks', value: '23', change: '-5', trend: 'down' },
-          { label: 'This Month Revenue', value: '$45,230', change: '+12%', trend: 'up' },
+          {
+            label: 'This Month Revenue',
+            value: '$45,230',
+            change: '+12%',
+            trend: 'up',
+          },
         ],
       },
     },
@@ -111,65 +123,66 @@ export const useDashboardStore = create<DashboardStore>()(
     (set, get) => ({
       dashboards: [createDefaultDashboard(), createFinancialDashboard()],
       activeDashboardId: 'default-dashboard',
-      
+
       setActiveDashboard: (id: string) => {
         set({ activeDashboardId: id });
       },
-      
-      addDashboard: (dashboardData) => {
+
+      addDashboard: dashboardData => {
         const newDashboard: Dashboard = {
           ...dashboardData,
           id: `dashboard-${Date.now()}`,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-        
-        set((state) => ({
+
+        set(state => ({
           dashboards: [...state.dashboards, newDashboard],
           activeDashboardId: newDashboard.id,
         }));
       },
-      
+
       updateDashboard: (id: string, updates: Partial<Dashboard>) => {
-        set((state) => ({
-          dashboards: state.dashboards.map((dashboard) =>
+        set(state => ({
+          dashboards: state.dashboards.map(dashboard =>
             dashboard.id === id
               ? { ...dashboard, ...updates, updatedAt: new Date() }
               : dashboard
           ),
         }));
       },
-      
+
       deleteDashboard: (id: string) => {
         const state = get();
         const dashboardToDelete = state.dashboards.find(d => d.id === id);
-        
+
         // Don't allow deleting the default dashboard
         if (dashboardToDelete?.isDefault) {
           return;
         }
-        
-        set((state) => {
+
+        set(state => {
           const newDashboards = state.dashboards.filter(d => d.id !== id);
-          const newActiveId = state.activeDashboardId === id 
-            ? (newDashboards[0]?.id || 'default-dashboard')
-            : state.activeDashboardId;
-            
+          const newActiveId =
+            state.activeDashboardId === id
+              ? newDashboards[0]?.id || 'default-dashboard'
+              : state.activeDashboardId;
+
           return {
             dashboards: newDashboards,
             activeDashboardId: newActiveId,
           };
         });
       },
-      
+
       addWidget: (dashboardId: string, widgetData) => {
         const newWidget: DashboardWidget = {
           ...widgetData,
           id: `widget-${Date.now()}`,
         };
-        
-        set((state) => ({
-          dashboards: state.dashboards.map((dashboard) =>
+
+        set(state => ({
+          dashboards: state.dashboards.map(dashboard =>
             dashboard.id === dashboardId
               ? {
                   ...dashboard,
@@ -180,14 +193,18 @@ export const useDashboardStore = create<DashboardStore>()(
           ),
         }));
       },
-      
-      updateWidget: (dashboardId: string, widgetId: string, updates: Partial<DashboardWidget>) => {
-        set((state) => ({
-          dashboards: state.dashboards.map((dashboard) =>
+
+      updateWidget: (
+        dashboardId: string,
+        widgetId: string,
+        updates: Partial<DashboardWidget>
+      ) => {
+        set(state => ({
+          dashboards: state.dashboards.map(dashboard =>
             dashboard.id === dashboardId
               ? {
                   ...dashboard,
-                  widgets: dashboard.widgets.map((widget) =>
+                  widgets: dashboard.widgets.map(widget =>
                     widget.id === widgetId ? { ...widget, ...updates } : widget
                   ),
                   updatedAt: new Date(),
@@ -196,14 +213,16 @@ export const useDashboardStore = create<DashboardStore>()(
           ),
         }));
       },
-      
+
       deleteWidget: (dashboardId: string, widgetId: string) => {
-        set((state) => ({
-          dashboards: state.dashboards.map((dashboard) =>
+        set(state => ({
+          dashboards: state.dashboards.map(dashboard =>
             dashboard.id === dashboardId
               ? {
                   ...dashboard,
-                  widgets: dashboard.widgets.filter((widget) => widget.id !== widgetId),
+                  widgets: dashboard.widgets.filter(
+                    widget => widget.id !== widgetId
+                  ),
                   updatedAt: new Date(),
                 }
               : dashboard
@@ -214,7 +233,7 @@ export const useDashboardStore = create<DashboardStore>()(
     {
       name: 'dashboard-store',
       version: 1,
-      partialize: (state) => ({
+      partialize: state => ({
         dashboards: state.dashboards,
         activeDashboardId: state.activeDashboardId,
       }),
