@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- Hot reload and development server issues - resolved 907 linting errors blocking hot reload
+- Duplicate package.json script keys - removed duplicate test scripts causing build warnings
+- HMR overlay disabled - enabled error overlay in Vite config to show compilation errors
+- Missing ESLint globals - added React, NodeJS, setFilters, and test globals to prevent undefined errors
+- Development server stability - improved error visibility and hot reload performance
 - Dashboard store syntax errors - fixed missing closing brace preventing dashboard page from loading
 - Add Dashboard button visibility - removed debug code and cleaned up interface, button now functional
 - Missing DialogTrigger export - added DialogTrigger component to dialog.tsx to resolve dashboard loading error
