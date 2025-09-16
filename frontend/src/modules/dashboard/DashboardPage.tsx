@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
+import { DashboardBuilder } from './components/DashboardBuilder';
 import { DashboardWidgets } from './components/DashboardWidgets';
 import { useDashboardStore } from './store';
 
@@ -13,8 +13,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [editingDashboard, setEditingDashboard] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newDashboardName, setNewDashboardName] = useState('');
+  const [showDashboardBuilder, setShowDashboardBuilder] = useState(false);
 
   const {
     dashboards,
@@ -87,25 +86,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCreateDashboard = () => {
-    if (newDashboardName.trim()) {
-      const { addDashboard } = useDashboardStore.getState();
-      addDashboard({
-        name: newDashboardName.trim(),
-        description: 'Custom dashboard',
-        widgets: [
-          {
-            id: `welcome-${Date.now()}`,
-            type: 'custom',
-            title: 'Welcome',
-            data: { message: `Welcome to ${newDashboardName}!` }
-          }
-        ]
-      });
-      setNewDashboardName('');
-      setShowCreateModal(false);
-    }
-  };
 
   return (
     <Page
@@ -114,7 +94,7 @@ export default function DashboardPage() {
         <Button
           size='sm'
           className='gap-2 bg-blue-600 text-white hover:bg-blue-700'
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => setShowDashboardBuilder(true)}
         >
           <Plus className='h-4 w-4' />
           Add Dashboard
@@ -227,51 +207,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Create Dashboard Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className='sm:max-w-md'>
-          <DialogHeader>
-            <DialogTitle>Create New Dashboard</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <div className='space-y-2'>
-              <label htmlFor='dashboard-name' className='text-sm font-medium'>
-                Dashboard Name
-              </label>
-              <Input
-                id='dashboard-name'
-                value={newDashboardName}
-                onChange={(e) => setNewDashboardName(e.target.value)}
-                placeholder='Enter dashboard name...'
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreateDashboard();
-                  }
-                }}
-                autoFocus
-              />
-            </div>
-            <div className='flex justify-end space-x-2'>
-              <Button
-                variant='outline'
-                onClick={() => {
-                  setShowCreateModal(false);
-                  setNewDashboardName('');
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateDashboard}
-                disabled={!newDashboardName.trim()}
-                className='bg-blue-600 text-white hover:bg-blue-700'
-              >
-                Create Dashboard
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Dashboard Builder */}
+      <DashboardBuilder
+        isOpen={showDashboardBuilder}
+        onClose={() => setShowDashboardBuilder(false)}
+      />
     </Page>
   );
 }
