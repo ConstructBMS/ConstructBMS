@@ -90,7 +90,7 @@ export default function DashboardPage() {
       title='Dashboard'
       actions={
         <CreateDashboardDialog>
-          <Button size='sm' className='gap-2'>
+          <Button size='sm' className='gap-2 bg-blue-600 text-white hover:bg-blue-700'>
             <Plus className='h-4 w-4' />
             Add Dashboard
           </Button>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
               >
                 {/* Edit/Delete buttons above each tab */}
                 {!dashboard.isDefault && (
-                  <div className='flex items-center space-x-1 mb-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+                  <div className='flex items-center space-x-1 mb-1 opacity-100 transition-opacity'>
                     <Button
                       size='sm'
                       variant='ghost'
