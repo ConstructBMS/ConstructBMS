@@ -39,6 +39,148 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
     );
   }
 
+  // Special layout for financial dashboard
+  if (dashboard.id === 'financial-dashboard') {
+    return (
+      <div className='space-y-6'>
+        {/* Financial Overview Stats - Full width row */}
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+          {dashboard.widgets
+            .filter(widget => widget.id === 'financial-overview')
+            .map(widget => (
+              <div key={widget.id} className='h-full'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+
+        {/* Charts Row - 3 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          {dashboard.widgets
+            .filter(widget => 
+              widget.id === 'revenue-chart' || 
+              widget.id === 'expense-breakdown' || 
+              widget.id === 'cash-flow'
+            )
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+
+        {/* Tables Row - 2 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+          {dashboard.widgets
+            .filter(widget => 
+              widget.id === 'outstanding-invoices' || 
+              widget.id === 'project-profitability'
+            )
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+
+        {/* Actions Row - Full width */}
+        <div className='grid grid-cols-1'>
+          {dashboard.widgets
+            .filter(widget => widget.id === 'financial-actions')
+            .map(widget => (
+              <div key={widget.id} className='h-full'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Special layout for home dashboard
+  if (dashboard.id === 'default-dashboard') {
+    return (
+      <div className='space-y-6'>
+        {/* Welcome and Business Overview Row */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          {/* Welcome Widget - Takes 1 column */}
+          <div className='lg:col-span-1'>
+            {dashboard.widgets
+              .filter(widget => widget.id === 'welcome-widget')
+              .map(widget => (
+                <div key={widget.id} className='h-full'>
+                  <WidgetRenderer widget={widget} />
+                </div>
+              ))}
+          </div>
+          
+          {/* Business Overview - Takes 2 columns */}
+          <div className='lg:col-span-2'>
+            {dashboard.widgets
+              .filter(widget => widget.id === 'business-overview')
+              .map(widget => (
+                <div key={widget.id} className='h-full'>
+                  <WidgetRenderer widget={widget} />
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Charts Row - 3 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          {dashboard.widgets
+            .filter(widget => widget.id === 'project-status')
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+          {/* Add placeholder widgets to fill the space */}
+          <div className='h-96 bg-card border rounded-lg p-6 flex items-center justify-center'>
+            <div className='text-center text-muted-foreground'>
+              <div className='text-4xl mb-2'>📊</div>
+              <h3 className='text-lg font-semibold mb-2'>Performance Metrics</h3>
+              <p className='text-sm'>Coming soon...</p>
+            </div>
+          </div>
+          <div className='h-96 bg-card border rounded-lg p-6 flex items-center justify-center'>
+            <div className='text-center text-muted-foreground'>
+              <div className='text-4xl mb-2'>📈</div>
+              <h3 className='text-lg font-semibold mb-2'>Growth Analytics</h3>
+              <p className='text-sm'>Coming soon...</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Activities and Deadlines Row - 2 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          {dashboard.widgets
+            .filter(widget => 
+              widget.id === 'recent-activities' || 
+              widget.id === 'upcoming-deadlines'
+            )
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+
+        {/* Quick Actions - Full width */}
+        <div className='grid grid-cols-1'>
+          {dashboard.widgets
+            .filter(widget => widget.id === 'quick-actions')
+            .map(widget => (
+              <div key={widget.id} className='h-full'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Default layout for other dashboards
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
       {dashboard.widgets.map(widget => {

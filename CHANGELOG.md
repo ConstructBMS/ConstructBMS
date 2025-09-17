@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+
 - **Dashboard Chart Widgets Implementation**
   - ChartWidget component with pie, line, and bar chart support
   - Project Status Distribution pie chart with real-time data
@@ -19,6 +20,7 @@ All notable changes to this project will be documented in this file.
   - Analytics service for frontend API communication
 
 ### Fixed
+
 - **Dashboard Chart Widgets Restoration**
   - Restored missing analytics service for frontend API communication
   - Recreated ChartWidget component with full chart functionality
@@ -59,6 +61,7 @@ All notable changes to this project will be documented in this file.
   - Smooth transitions and visual feedback for all editing actions
 
 ### Fixed
+
 - Comprehensive codebase cleanup - reduced 743 linting errors to ~20 warnings (97% reduction)
 - All prettier formatting issues - automatically fixed 582 formatting errors
 - Unused variables cleanup - removed unused imports and variables across all modules
@@ -66,15 +69,19 @@ All notable changes to this project will be documented in this file.
 - Hot reload and development server issues - resolved 907 linting errors blocking hot reload
 - Duplicate package.json script keys - removed duplicate test scripts causing build warnings
 - HMR overlay disabled - enabled error overlay in Vite config to show compilation errors
-- Missing ESLint globals - added React, NodeJS, setFilters, and test globals to prevent undefined errors
+- Missing ESLint globals - added React, NodeJS, setFilters, and test globals to prevent undefined
+  errors
 - Development server stability - improved error visibility and hot reload performance
 - Dashboard store syntax errors - fixed missing closing brace preventing dashboard page from loading
-- Add Dashboard button visibility - removed debug code and cleaned up interface, button now functional
-- Missing DialogTrigger export - added DialogTrigger component to dialog.tsx to resolve dashboard loading error
+- Add Dashboard button visibility - removed debug code and cleaned up interface, button now
+  functional
+- Missing DialogTrigger export - added DialogTrigger component to dialog.tsx to resolve dashboard
+  loading error
 - Settings page import crash - fixed missing sections and created barrel index.ts
 - Projects page 401 errors - replaced /api calls with Supabase DAL
 - Missing footer component - added global footer to AppShell
-- Contacts variants not rendering - created Clients/Contractors/Consultants pages with proper filtering
+- Contacts variants not rendering - created Clients/Contractors/Consultants pages with proper
+  filtering
 - React Router v7 future flags warnings - updated to React Router 7.8.2 to resolve all warnings
 - Error boundary missing - added ErrorBoundary component with fallback UI
 - localStorage usage audit - identified remaining usage for future cleanup
@@ -83,7 +90,8 @@ All notable changes to this project will be documented in this file.
 - Switch component warnings - fixed onCheckedChange prop handling and controlled component warnings
 - Feature Flags UI - removed checkboxes, kept only toggles, fixed dropdown text visibility
 - Switch component - converted from checkbox-based to proper button-based toggle component
-- Select component dark mode - fixed dropdown text visibility using CSS variables instead of hardcoded colors
+- Select component dark mode - fixed dropdown text visibility using CSS variables instead of
+  hardcoded colors
 - Superadmin permissions - fixed demo mode role to enable full access to contacts pages
 - Contacts access - resolved permission guards blocking content display
 - React Router v7 upgrade - converted to data router API to eliminate future flag warnings
@@ -95,6 +103,7 @@ All notable changes to this project will be documented in this file.
   - All contact categories (clients, contractors, consultants) displaying data properly
 
 ### Added
+
 - Footer component with responsive design and dark mode support
 - Contact variant pages: ClientsPage, ContractorsPage, ConsultantsPage
 - ErrorBoundary component with custom fallback support
@@ -115,12 +124,14 @@ All notable changes to this project will be documented in this file.
 - **Comprehensive Settings Pages** - Permissions and Users & Roles sections
 
 ### Changed
+
 - Updated AppShell to use createBrowserRouter with future flags
 - Projects DAL now uses Supabase instead of /api endpoints
 - Settings page now uses barrel imports for better maintainability
 - Router structure updated to support React Router v7 compatibility
 
 ### Technical
+
 - Added comprehensive test suite with vitest
 - Improved error handling with ErrorBoundary
 - Better separation of concerns with DAL pattern
@@ -143,7 +154,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- **Settings Module**: Settings page now properly renders tabs and allows navigation between different settings sections
+- **Settings Module**: Settings page now properly renders tabs and allows navigation between
+  different settings sections
 - **Contacts Module**: Contacts/clients/contractors/consultants functionality restored and working
 - **Database Schema**: Resolved conflicts between main schema.sql and migration files
 - **Backend API**: Projects endpoint now handles missing org_id column without crashing
@@ -151,15 +163,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- **Database Migration**: Created 2025-09-09_fix_projects_schema.sql to properly align database structure
+- **Database Migration**: Created 2025-09-09_fix_projects_schema.sql to properly align database
+  structure
 - **Error Handling**: Improved backend error handling for missing database columns
 - **Route Protection**: Temporarily removed permission guard from contacts route for testing
 
 ### Fixed (Layout Issues)
 
-- **Missing UI Components**: Created missing UI components (separator, slider, toggle) that were causing Vite errors
-- **Dependencies**: Installed required Radix UI dependencies (@radix-ui/react-separator, @radix-ui/react-slider, @radix-ui/react-toggle, class-variance-authority)
-- **Settings Layout**: Restored working settings page layout (reverted complex vertical layout that was causing issues)
+- **Missing UI Components**: Created missing UI components (separator, slider, toggle) that were
+  causing Vite errors
+- **Dependencies**: Installed required Radix UI dependencies (@radix-ui/react-separator,
+  @radix-ui/react-slider, @radix-ui/react-toggle, class-variance-authority)
+- **Settings Layout**: Restored working settings page layout (reverted complex vertical layout that
+  was causing issues)
 - **Component Exports**: Updated UI component index.ts to properly export all components
 - **Vite Errors**: Resolved all "Failed to load url" errors for missing component files
 - **Dashboard Enhancement**: Full-featured dashboard with comprehensive metrics

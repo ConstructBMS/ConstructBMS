@@ -30,12 +30,12 @@ export function ListWidget({ widget }: ListWidgetProps) {
 
   if (!items || items.length === 0) {
     return (
-      <Card>
+      <Card className='h-full flex flex-col'>
         <CardHeader>
           <CardTitle className='text-lg'>{widget.title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className='flex items-center justify-center h-32 text-muted-foreground'>
+        <CardContent className='flex-1 flex items-center justify-center'>
+          <div className='text-muted-foreground'>
             <p>No items available</p>
           </div>
         </CardContent>
@@ -44,11 +44,11 @@ export function ListWidget({ widget }: ListWidgetProps) {
   }
 
   return (
-    <Card>
+    <Card className='h-full flex flex-col'>
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex-1 overflow-y-auto'>
         <div className='space-y-3'>
           {items.map((item, index) => (
             <div

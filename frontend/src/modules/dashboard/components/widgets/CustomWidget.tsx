@@ -40,7 +40,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
   };
 
   return (
-    <Card className='overflow-hidden'>
+    <Card className='overflow-hidden h-full flex flex-col'>
       <CardHeader
         className={`${data.gradient ? `bg-gradient-to-r ${data.gradient} text-white` : ''}`}
       >
@@ -49,7 +49,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           <span>{widget.title}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex-1 flex flex-col'>
         <div className='space-y-4'>
           {data.message && (
             <p

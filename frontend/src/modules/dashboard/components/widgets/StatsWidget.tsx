@@ -46,12 +46,12 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
   };
 
   return (
-    <Card className='overflow-hidden'>
+    <Card className='overflow-hidden h-full flex flex-col'>
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+      <CardContent className='flex-1'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full'>
           {stats.map((stat, index) => (
             <div key={index} className='relative'>
               <div

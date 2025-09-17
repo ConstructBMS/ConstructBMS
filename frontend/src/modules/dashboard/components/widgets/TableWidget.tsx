@@ -22,12 +22,12 @@ export function TableWidget({ widget }: TableWidgetProps) {
 
   if (!tableData || !tableData.columns || !tableData.rows) {
     return (
-      <Card>
+      <Card className='h-full flex flex-col'>
         <CardHeader>
           <CardTitle className='text-lg'>{widget.title}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className='flex items-center justify-center h-32 text-muted-foreground'>
+        <CardContent className='flex-1 flex items-center justify-center'>
+          <div className='text-muted-foreground'>
             <p>No table data available</p>
           </div>
         </CardContent>
@@ -36,11 +36,11 @@ export function TableWidget({ widget }: TableWidgetProps) {
   }
 
   return (
-    <Card>
+    <Card className='h-full flex flex-col'>
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex-1 flex flex-col'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm'>
             <thead>

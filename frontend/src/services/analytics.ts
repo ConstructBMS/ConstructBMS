@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5174/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5174/api';
 
 export interface ProjectStatusData {
   label: string;
@@ -36,16 +37,16 @@ export interface BusinessOverviewData {
 class AnalyticsService {
   private async fetchWithAuth<T>(endpoint: string): Promise<T> {
     const token = localStorage.getItem('auth_token');
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    
+
     // Only add authorization header if token exists
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers,
     });
@@ -58,12 +59,12 @@ class AnalyticsService {
             'Content-Type': 'application/json',
           },
         });
-        
+
         if (retryResponse.ok) {
           return retryResponse.json();
         }
       }
-      
+
       throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
     }
 
@@ -79,7 +80,9 @@ class AnalyticsService {
   }
 
   async getExpenseBreakdown(): Promise<ExpenseBreakdownData[]> {
-    return this.fetchWithAuth<ExpenseBreakdownData[]>('/analytics/expense-breakdown');
+    return this.fetchWithAuth<ExpenseBreakdownData[]>(
+      '/analytics/expense-breakdown'
+    );
   }
 
   async getCashFlowProjection(): Promise<CashFlowData[]> {
@@ -87,7 +90,9 @@ class AnalyticsService {
   }
 
   async getBusinessOverview(): Promise<BusinessOverviewData> {
-    return this.fetchWithAuth<BusinessOverviewData>('/analytics/business-overview');
+    return this.fetchWithAuth<BusinessOverviewData>(
+      '/analytics/business-overview'
+    );
   }
 }
 
