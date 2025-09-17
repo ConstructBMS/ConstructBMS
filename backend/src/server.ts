@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { analyticsRoutes } from './routes/analytics';
 import { authRoutes } from './routes/auth';
 import { clientRoutes } from './routes/clients';
 import { moduleRoutes } from './routes/modules';
@@ -45,6 +46,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/modules', moduleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // 404 handler
 app.use('*', (_req, res) => {
