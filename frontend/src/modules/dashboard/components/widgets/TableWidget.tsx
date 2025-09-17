@@ -64,32 +64,46 @@ export function TableWidget({ widget }: TableWidgetProps) {
                   {row.map((cell, cellIndex) => {
                     const columnName = tableData.columns[cellIndex];
                     const cellValue = String(cell);
-                    
+
                     // Check if this is a status column
-                    const isStatusColumn = columnName?.toLowerCase().includes('status');
-                    const isProfitColumn = columnName?.toLowerCase().includes('profit') || columnName?.toLowerCase().includes('margin');
-                    
+                    const isStatusColumn = columnName
+                      ?.toLowerCase()
+                      .includes('status');
+                    const isProfitColumn =
+                      columnName?.toLowerCase().includes('profit') ||
+                      columnName?.toLowerCase().includes('margin');
+
                     let cellClassName = 'py-2 px-3';
                     let cellContent = cell;
-                    
-                    if (isStatusColumn && tableData.statusColors && tableData.statusColors[cellValue]) {
+
+                    if (
+                      isStatusColumn &&
+                      tableData.statusColors &&
+                      tableData.statusColors[cellValue]
+                    ) {
                       cellClassName += ` ${tableData.statusColors[cellValue]}`;
                       cellContent = (
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${tableData.statusColors[cellValue]}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${tableData.statusColors[cellValue]}`}
+                        >
                           {cell}
                         </span>
                       );
                     } else if (isProfitColumn && tableData.profitColors) {
                       const isPositive = !cellValue.startsWith('-');
-                      const colorClass = isPositive ? tableData.profitColors.positive : tableData.profitColors.negative;
+                      const colorClass = isPositive
+                        ? tableData.profitColors.positive
+                        : tableData.profitColors.negative;
                       cellClassName += ` ${colorClass}`;
                       cellContent = (
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}
+                        >
                           {cell}
                         </span>
                       );
                     }
-                    
+
                     return (
                       <td key={cellIndex} className={cellClassName}>
                         {cellContent}

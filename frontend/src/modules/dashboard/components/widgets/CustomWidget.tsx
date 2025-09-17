@@ -1,12 +1,12 @@
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../../../components/ui/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card';
-import { Button } from '../../../../components/ui/button';
 import { DashboardWidget } from '../../store';
-import { useNavigate } from 'react-router-dom';
 
 interface CustomWidgetProps {
   widget: DashboardWidget;
@@ -30,6 +30,11 @@ interface CustomWidgetData {
 export function CustomWidget({ widget }: CustomWidgetProps) {
   const navigate = useNavigate();
   const data = widget.data as CustomWidgetData;
+  
+  // Debug logging
+  console.log('CustomWidget data:', widget.data);
+  console.log('CustomWidget gradient:', data.gradient);
+  console.log('CustomWidget icon:', data.icon);
 
   const handleAction = (action: CustomWidgetData['actions'][0]) => {
     if (action.action === 'navigate' && action.target) {
@@ -41,7 +46,9 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
 
   return (
     <Card className='overflow-hidden'>
-      <CardHeader className={`${data.gradient ? `bg-gradient-to-r ${data.gradient} text-white` : ''}`}>
+      <CardHeader
+        className={`${data.gradient ? `bg-gradient-to-r ${data.gradient} text-white` : ''}`}
+      >
         <CardTitle className='text-lg flex items-center space-x-2'>
           {data.icon && <span className='text-xl'>{data.icon}</span>}
           <span>{widget.title}</span>
@@ -50,7 +57,9 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
       <CardContent>
         <div className='space-y-4'>
           {data.message && (
-            <p className={`leading-relaxed ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}>
+            <p
+              className={`leading-relaxed ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
+            >
               {data.message}
             </p>
           )}
@@ -70,8 +79,8 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
                   size='sm'
                   onClick={() => handleAction(action)}
                   className={`text-xs h-auto py-3 px-4 flex items-center space-x-2 ${
-                    action.color 
-                      ? `${action.color} text-white border-0 hover:opacity-90` 
+                    action.color
+                      ? `${action.color} text-white border-0 hover:opacity-90`
                       : ''
                   }`}
                 >

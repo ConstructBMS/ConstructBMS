@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -22,6 +22,10 @@ interface StatItem {
 
 export function StatsWidget({ widget }: StatsWidgetProps) {
   const stats = (widget.data?.stats as StatItem[]) || [];
+  
+  // Debug logging
+  console.log('StatsWidget data:', widget.data);
+  console.log('StatsWidget stats:', stats);
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
@@ -54,12 +58,12 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
           {stats.map((stat, index) => (
             <div key={index} className='relative'>
-              <div className={`p-4 rounded-lg ${stat.color || 'bg-gradient-to-r from-gray-500 to-gray-600'} text-white shadow-lg`}>
+              <div
+                className={`p-4 rounded-lg ${stat.color || 'bg-gradient-to-r from-gray-500 to-gray-600'} text-white shadow-lg`}
+              >
                 <div className='flex items-center justify-between mb-2'>
                   <div className='flex items-center space-x-2'>
-                    {stat.icon && (
-                      <span className='text-lg'>{stat.icon}</span>
-                    )}
+                    {stat.icon && <span className='text-lg'>{stat.icon}</span>}
                     <p className='text-sm font-medium opacity-90'>
                       {stat.label}
                     </p>
@@ -67,11 +71,11 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
                   {stat.change && (
                     <div
                       className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full ${
-                        stat.trend === 'up' 
-                          ? 'bg-green-500/20 text-green-100' 
+                        stat.trend === 'up'
+                          ? 'bg-green-500/20 text-green-100'
                           : stat.trend === 'down'
-                          ? 'bg-red-500/20 text-red-100'
-                          : 'bg-gray-500/20 text-gray-100'
+                            ? 'bg-red-500/20 text-red-100'
+                            : 'bg-gray-500/20 text-gray-100'
                       }`}
                     >
                       {getTrendIcon(stat.trend)}

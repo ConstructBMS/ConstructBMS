@@ -1,10 +1,10 @@
+import { Badge } from '../../../../components/ui/badge';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card';
-import { Badge } from '../../../../components/ui/badge';
 import { DashboardWidget } from '../../store';
 
 interface ListWidgetProps {
@@ -78,8 +78,8 @@ export function ListWidget({ widget }: ListWidgetProps) {
                 )}
                 {item.type && (
                   <div className='mt-2'>
-                    <Badge 
-                      variant='secondary' 
+                    <Badge
+                      variant='secondary'
                       className={`text-xs ${item.color || 'bg-gray-100 text-gray-800'}`}
                     >
                       {item.type}
