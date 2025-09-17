@@ -31,11 +31,6 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
   const navigate = useNavigate();
   const data = widget.data as CustomWidgetData;
 
-  // Debug logging
-  console.log('CustomWidget data:', widget.data);
-  console.log('CustomWidget gradient:', data.gradient);
-  console.log('CustomWidget icon:', data.icon);
-  console.log('CustomWidget full data keys:', Object.keys(data));
 
   const handleAction = (action: CustomWidgetData['actions'][0]) => {
     if (action.action === 'navigate' && action.target) {

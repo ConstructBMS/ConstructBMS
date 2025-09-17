@@ -23,12 +23,6 @@ interface StatItem {
 export function StatsWidget({ widget }: StatsWidgetProps) {
   const stats = (widget.data?.stats as StatItem[]) || [];
 
-  // Debug logging
-  console.log('StatsWidget data:', widget.data);
-  console.log('StatsWidget stats:', stats);
-  console.log('First stat item:', stats[0]);
-  console.log('First stat color:', stats[0]?.color);
-  console.log('First stat icon:', stats[0]?.icon);
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
@@ -64,16 +58,16 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
               <div
                 className={`p-4 rounded-lg ${stat.color || 'bg-gradient-to-r from-gray-500 to-gray-600'} text-white shadow-lg`}
               >
-                <div className='flex items-center justify-between mb-2'>
-                  <div className='flex items-center space-x-2'>
-                    {stat.icon && <span className='text-lg'>{stat.icon}</span>}
-                    <p className='text-sm font-medium opacity-90'>
+                <div className='flex items-start justify-between mb-2'>
+                  <div className='flex items-center space-x-2 flex-1 min-w-0'>
+                    {stat.icon && <span className='text-lg flex-shrink-0'>{stat.icon}</span>}
+                    <p className='text-sm font-medium opacity-90 truncate'>
                       {stat.label}
                     </p>
                   </div>
                   {stat.change && (
                     <div
-                      className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full ${
+                      className={`flex items-center space-x-1 text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2 ${
                         stat.trend === 'up'
                           ? 'bg-green-500/20 text-green-100'
                           : stat.trend === 'down'
@@ -82,7 +76,7 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
                       }`}
                     >
                       {getTrendIcon(stat.trend)}
-                      <span>{stat.change}</span>
+                      <span className='whitespace-nowrap'>{stat.change}</span>
                     </div>
                   )}
                 </div>
