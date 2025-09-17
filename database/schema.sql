@@ -183,8 +183,57 @@ RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
-END;
-$$ language 'plpgsql';
+  END;
+  $$ language 'plpgsql';
+
+-- Financial tables for dashboard analytics
+CREATE TABLE invoices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    invoice_number VARCHAR(50) UNIQUE NOT NULL,
+    client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+    project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (status IN ('draft', 'pending', 'paid', 'overdue', 'cancelled')),
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    paid_date DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE expenses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    description VARCHAR(255) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    category VARCHAR(50) NOT NULL CHECK (category IN ('materials', 'labor', 'equipment', 'overhead', 'subcontractors', 'other')),
+    project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
+    vendor VARCHAR(255),
+    expense_date DATE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE revenue (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    amount DECIMAL(15,2) NOT NULL,
+    source VARCHAR(100) NOT NULL,
+    project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
+    invoice_id UUID REFERENCES invoices(id) ON DELETE SET NULL,
+    revenue_date DATE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for financial tables
+CREATE INDEX idx_invoices_client ON invoices(client_id);
+CREATE INDEX idx_invoices_project ON invoices(project_id);
+CREATE INDEX idx_invoices_status ON invoices(status);
+CREATE INDEX idx_invoices_due_date ON invoices(due_date);
+CREATE INDEX idx_expenses_category ON expenses(category);
+CREATE INDEX idx_expenses_project ON expenses(project_id);
+CREATE INDEX idx_expenses_date ON expenses(expense_date);
+CREATE INDEX idx_revenue_project ON revenue(project_id);
+CREATE INDEX idx_revenue_date ON revenue(revenue_date);
 
 -- Create triggers for updated_at columns
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -197,3 +246,6 @@ CREATE TRIGGER update_projects_updated_at BEFORE UPDATE ON projects FOR EACH ROW
 CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON tasks FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_notes_updated_at BEFORE UPDATE ON notes FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_documents_updated_at BEFORE UPDATE ON documents FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_invoices_updated_at BEFORE UPDATE ON invoices FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_expenses_updated_at BEFORE UPDATE ON expenses FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_revenue_updated_at BEFORE UPDATE ON revenue FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

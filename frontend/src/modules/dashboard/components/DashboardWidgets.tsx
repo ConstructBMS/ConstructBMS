@@ -1,8 +1,9 @@
 import { Dashboard, DashboardWidget } from '../store';
+import { ChartWidget } from './widgets/ChartWidget';
+import { CustomWidget } from './widgets/CustomWidget';
+import { ListWidget } from './widgets/ListWidget';
 import { StatsWidget } from './widgets/StatsWidget';
 import { TableWidget } from './widgets/TableWidget';
-import { ListWidget } from './widgets/ListWidget';
-import { CustomWidget } from './widgets/CustomWidget';
 
 interface DashboardWidgetsProps {
   dashboard: Dashboard;
@@ -73,14 +74,7 @@ function WidgetRenderer({ widget }: WidgetRendererProps) {
     case 'custom':
       return <CustomWidget widget={widget} />;
     case 'chart':
-      return (
-        <div className='bg-card border rounded-lg p-6'>
-          <h3 className='text-lg font-semibold mb-4'>{widget.title}</h3>
-          <div className='flex items-center justify-center h-32 text-muted-foreground'>
-            <p>Chart widget coming soon...</p>
-          </div>
-        </div>
-      );
+      return <ChartWidget widget={widget} />;
     default:
       return (
         <div className='bg-card border rounded-lg p-6'>
