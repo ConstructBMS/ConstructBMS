@@ -22,10 +22,13 @@ interface StatItem {
 
 export function StatsWidget({ widget }: StatsWidgetProps) {
   const stats = (widget.data?.stats as StatItem[]) || [];
-  
+
   // Debug logging
   console.log('StatsWidget data:', widget.data);
   console.log('StatsWidget stats:', stats);
+  console.log('First stat item:', stats[0]);
+  console.log('First stat color:', stats[0]?.color);
+  console.log('First stat icon:', stats[0]?.icon);
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
