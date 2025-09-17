@@ -40,9 +40,17 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-      {dashboard.widgets.map(widget => (
-        <WidgetRenderer key={widget.id} widget={widget} />
-      ))}
+      {dashboard.widgets.map(widget => {
+        // Make certain widgets span multiple columns for landscape layout
+        const isWideWidget = widget.type === 'stats' || widget.type === 'table' || widget.type === 'list';
+        const colSpan = isWideWidget ? 'md:col-span-2 lg:col-span-3' : '';
+        
+        return (
+          <div key={widget.id} className={colSpan}>
+            <WidgetRenderer widget={widget} />
+          </div>
+        );
+      })}
     </div>
   );
 }

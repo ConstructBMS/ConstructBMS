@@ -31,7 +31,6 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
   const navigate = useNavigate();
   const data = widget.data as CustomWidgetData;
 
-
   const handleAction = (action: CustomWidgetData['actions'][0]) => {
     if (action.action === 'navigate' && action.target) {
       navigate(action.target);
