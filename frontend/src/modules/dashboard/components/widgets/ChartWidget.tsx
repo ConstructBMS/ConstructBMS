@@ -66,15 +66,41 @@ export function ChartWidget({ widget }: ChartWidgetProps) {
     case 'pie':
       return <PieChart title={widget.title} data={data.data} />;
     case 'line':
+      // Check if it's a multi-series line chart (Growth Analytics)
+      if (widget.id === 'growth-analytics') {
+        return (
+          <MultiLineChart title={widget.title} data={data.data} config={data} />
+        );
+      }
       // Check if it's a multi-series line chart
-      if (data.data && data.data[0] && 'revenue' in data.data[0] && 'projects' in data.data[0]) {
-        return <MultiLineChart title={widget.title} data={data.data} config={data} />;
+      if (
+        data.data &&
+        data.data[0] &&
+        'revenue' in data.data[0] &&
+        'projects' in data.data[0]
+      ) {
+        return (
+          <MultiLineChart title={widget.title} data={data.data} config={data} />
+        );
       }
       return <LineChart title={widget.title} data={data.data} />;
     case 'bar':
+      // Check if it's a multi-series bar chart (Performance Metrics)
+      if (widget.id === 'performance-metrics') {
+        return (
+          <MultiBarChart title={widget.title} data={data.data} config={data} />
+        );
+      }
       // Check if it's a multi-series bar chart
-      if (data.data && data.data[0] && 'efficiency' in data.data[0] && 'quality' in data.data[0]) {
-        return <MultiBarChart title={widget.title} data={data.data} config={data} />;
+      if (
+        data.data &&
+        data.data[0] &&
+        'efficiency' in data.data[0] &&
+        'quality' in data.data[0]
+      ) {
+        return (
+          <MultiBarChart title={widget.title} data={data.data} config={data} />
+        );
       }
       return <BarChart title={widget.title} data={data.data} />;
     default:

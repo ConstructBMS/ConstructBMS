@@ -19,8 +19,18 @@ interface MultiLineChartData {
   clients: number;
 }
 
-export function MultiBarChart({ title, data, config }: { title: string; data: MultiBarChartData[]; config: any }) {
-  const maxValue = Math.max(...data.map(d => Math.max(d.efficiency, d.quality, d.delivery)));
+export function MultiBarChart({
+  title,
+  data,
+  config,
+}: {
+  title: string;
+  data: MultiBarChartData[];
+  config: any;
+}) {
+  const maxValue = Math.max(
+    ...data.map(d => Math.max(d.efficiency, d.quality, d.delivery))
+  );
 
   return (
     <Card className='h-full flex flex-col'>
@@ -89,7 +99,8 @@ export function MultiBarChart({ title, data, config }: { title: string; data: Mu
 
               {/* X-axis labels */}
               {data.map((item, index) => {
-                const x = 40 + (index / data.length) * 340 + (320 / data.length / 2);
+                const x =
+                  40 + (index / data.length) * 340 + 320 / data.length / 2;
                 return (
                   <text
                     key={item.metric}
@@ -126,19 +137,31 @@ export function MultiBarChart({ title, data, config }: { title: string; data: Mu
             <div>
               <span className='text-muted-foreground'>Avg Efficiency:</span>
               <span className='ml-2 font-semibold text-blue-600'>
-                {Math.round(data.reduce((sum, item) => sum + item.efficiency, 0) / data.length)}%
+                {Math.round(
+                  data.reduce((sum, item) => sum + item.efficiency, 0) /
+                    data.length
+                )}
+                %
               </span>
             </div>
             <div>
               <span className='text-muted-foreground'>Avg Quality:</span>
               <span className='ml-2 font-semibold text-green-600'>
-                {Math.round(data.reduce((sum, item) => sum + item.quality, 0) / data.length)}%
+                {Math.round(
+                  data.reduce((sum, item) => sum + item.quality, 0) /
+                    data.length
+                )}
+                %
               </span>
             </div>
             <div>
               <span className='text-muted-foreground'>Avg Delivery:</span>
               <span className='ml-2 font-semibold text-yellow-600'>
-                {Math.round(data.reduce((sum, item) => sum + item.delivery, 0) / data.length)}%
+                {Math.round(
+                  data.reduce((sum, item) => sum + item.delivery, 0) /
+                    data.length
+                )}
+                %
               </span>
             </div>
           </div>
@@ -148,7 +171,15 @@ export function MultiBarChart({ title, data, config }: { title: string; data: Mu
   );
 }
 
-export function MultiLineChart({ title, data, config }: { title: string; data: MultiLineChartData[]; config: any }) {
+export function MultiLineChart({
+  title,
+  data,
+  config,
+}: {
+  title: string;
+  data: MultiLineChartData[];
+  config: any;
+}) {
   const maxRevenue = Math.max(...data.map(d => d.revenue));
   const maxProjects = Math.max(...data.map(d => d.projects));
   const maxClients = Math.max(...data.map(d => d.clients));
@@ -230,14 +261,30 @@ export function MultiLineChart({ title, data, config }: { title: string; data: M
               {data.map((item, index) => {
                 const x = 40 + (index / (data.length - 1)) * 340;
                 const revenueY = 160 - (item.revenue / maxValue) * 140;
-                const projectsY = 160 - ((item.projects * 1000) / maxValue) * 140;
+                const projectsY =
+                  160 - ((item.projects * 1000) / maxValue) * 140;
                 const clientsY = 160 - ((item.clients * 1000) / maxValue) * 140;
-                
+
                 return (
                   <g key={item.month}>
-                    <circle cx={x} cy={revenueY} r='3' fill={config.revenueColor || '#10b981'} />
-                    <circle cx={x} cy={projectsY} r='3' fill={config.projectsColor || '#3b82f6'} />
-                    <circle cx={x} cy={clientsY} r='3' fill={config.clientsColor || '#8b5cf6'} />
+                    <circle
+                      cx={x}
+                      cy={revenueY}
+                      r='3'
+                      fill={config.revenueColor || '#10b981'}
+                    />
+                    <circle
+                      cx={x}
+                      cy={projectsY}
+                      r='3'
+                      fill={config.projectsColor || '#3b82f6'}
+                    />
+                    <circle
+                      cx={x}
+                      cy={clientsY}
+                      r='3'
+                      fill={config.clientsColor || '#8b5cf6'}
+                    />
                   </g>
                 );
               })}
@@ -281,7 +328,10 @@ export function MultiLineChart({ title, data, config }: { title: string; data: M
             <div>
               <span className='text-muted-foreground'>Total Revenue:</span>
               <span className='ml-2 font-semibold text-green-600'>
-                ${data.reduce((sum, item) => sum + item.revenue, 0).toLocaleString()}
+                $
+                {data
+                  .reduce((sum, item) => sum + item.revenue, 0)
+                  .toLocaleString()}
               </span>
             </div>
             <div>
@@ -302,3 +352,4 @@ export function MultiLineChart({ title, data, config }: { title: string; data: M
     </Card>
   );
 }
+

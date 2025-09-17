@@ -131,10 +131,11 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
         {/* Charts Row - 3 equal columns */}
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
           {dashboard.widgets
-            .filter(widget => 
-              widget.id === 'project-status' || 
-              widget.id === 'performance-metrics' || 
-              widget.id === 'growth-analytics'
+            .filter(
+              widget =>
+                widget.id === 'project-status' ||
+                widget.id === 'performance-metrics' ||
+                widget.id === 'growth-analytics'
             )
             .map(widget => (
               <div key={widget.id} className='h-96'>
