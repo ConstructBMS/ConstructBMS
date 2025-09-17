@@ -59,9 +59,7 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
               >
                 <div className='flex items-center justify-between mb-3'>
                   <div className='flex items-center space-x-2'>
-                    {stat.icon && (
-                      <span className='text-lg'>{stat.icon}</span>
-                    )}
+                    {stat.icon && <span className='text-lg'>{stat.icon}</span>}
                     <p className='text-sm font-medium opacity-90'>
                       {stat.label}
                     </p>

@@ -28,13 +28,8 @@ export function ProjectsPage() {
   const canView = useCan({ resource: 'projects', action: 'read' });
   const canCreate = useCan({ resource: 'projects', action: 'create' });
 
-  const {
-    error,
-    viewMode,
-    filters,
-    setViewMode,
-    clearError,
-  } = useProjectsStore();
+  const { error, viewMode, filters, setViewMode, clearError } =
+    useProjectsStore();
 
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);

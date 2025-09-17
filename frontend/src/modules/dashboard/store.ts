@@ -5,8 +5,8 @@ export interface DashboardWidget {
   id: string;
   type: 'stats' | 'table' | 'chart' | 'list' | 'custom';
   title: string;
-  data?: any;
-  config?: any;
+  data?: Record<string, unknown>;
+  config?: Record<string, unknown>;
 }
 
 export interface Dashboard {

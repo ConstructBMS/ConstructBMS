@@ -86,7 +86,6 @@ export default function DashboardPage() {
     }
   };
 
-
   return (
     <Page
       title='Dashboard'

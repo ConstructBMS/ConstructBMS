@@ -34,9 +34,7 @@ export function Page({ title, breadcrumbs, actions, children }: PageProps) {
             {title}
           </h1>
           {actions && (
-            <div className='flex items-center space-x-2'>
-              {actions}
-            </div>
+            <div className='flex items-center space-x-2'>{actions}</div>
           )}
         </div>
       </div>

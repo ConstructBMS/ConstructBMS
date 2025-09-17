@@ -238,7 +238,11 @@ const LAYOUT_TEMPLATES = [
   },
 ];
 
-export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuilderProps) {
+export function DashboardBuilder({
+  isOpen,
+  onClose,
+  dashboardId,
+}: DashboardBuilderProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState('project-manager');
   const [selectedWidgets, setSelectedWidgets] = useState<string[]>([]);
@@ -326,18 +330,43 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
       case 'project-overview':
         return {
           stats: [
-            { label: 'Active Projects', value: '12', change: '+2', trend: 'up' },
+            {
+              label: 'Active Projects',
+              value: '12',
+              change: '+2',
+              trend: 'up',
+            },
             { label: 'Completed', value: '8', change: '+1', trend: 'up' },
             { label: 'On Hold', value: '2', change: '0', trend: 'neutral' },
-            { label: 'Total Budget', value: '$2.4M', change: '+5%', trend: 'up' },
+            {
+              label: 'Total Budget',
+              value: '$2.4M',
+              change: '+5%',
+              trend: 'up',
+            },
           ],
         };
       case 'project-status':
         return {
           projects: [
-            { name: 'Office Building', status: 'In Progress', progress: 75, color: 'bg-blue-500' },
-            { name: 'Warehouse', status: 'Planning', progress: 25, color: 'bg-yellow-500' },
-            { name: 'Retail Space', status: 'Review', progress: 90, color: 'bg-green-500' },
+            {
+              name: 'Office Building',
+              status: 'In Progress',
+              progress: 75,
+              color: 'bg-blue-500',
+            },
+            {
+              name: 'Warehouse',
+              status: 'Planning',
+              progress: 25,
+              color: 'bg-yellow-500',
+            },
+            {
+              name: 'Retail Space',
+              status: 'Review',
+              progress: 90,
+              color: 'bg-green-500',
+            },
           ],
         };
       case 'revenue-chart':
@@ -353,10 +382,25 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
       case 'stats-grid':
         return {
           stats: [
-            { label: 'Total Revenue', value: '$245,230', change: '+12%', trend: 'up' },
-            { label: 'Active Projects', value: '12', change: '+2', trend: 'up' },
+            {
+              label: 'Total Revenue',
+              value: '$245,230',
+              change: '+12%',
+              trend: 'up',
+            },
+            {
+              label: 'Active Projects',
+              value: '12',
+              change: '+2',
+              trend: 'up',
+            },
             { label: 'Team Members', value: '24', change: '+3', trend: 'up' },
-            { label: 'Client Satisfaction', value: '94%', change: '+2%', trend: 'up' },
+            {
+              label: 'Client Satisfaction',
+              value: '94%',
+              change: '+2%',
+              trend: 'up',
+            },
           ],
         };
       default:
@@ -365,13 +409,16 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
   };
 
   const getWidgetsByCategory = () => {
-    const categories = WIDGET_TYPES.reduce((acc, widget) => {
-      if (!acc[widget.category]) {
-        acc[widget.category] = [];
-      }
-      acc[widget.category].push(widget);
-      return acc;
-    }, {} as Record<string, typeof WIDGET_TYPES>);
+    const categories = WIDGET_TYPES.reduce(
+      (acc, widget) => {
+        if (!acc[widget.category]) {
+          acc[widget.category] = [];
+        }
+        acc[widget.category].push(widget);
+        return acc;
+      },
+      {} as Record<string, typeof WIDGET_TYPES>
+    );
 
     return categories;
   };
@@ -439,7 +486,9 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
           <div className='space-y-6'>
             <div className='text-center'>
               <h3 className='text-xl font-semibold mb-2'>Choose a Template</h3>
-              <p className='text-gray-600'>Select a pre-configured layout or start custom</p>
+              <p className='text-gray-600'>
+                Select a pre-configured layout or start custom
+              </p>
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -463,7 +512,11 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
                   <CardContent>
                     <div className='flex flex-wrap gap-1'>
                       {template.layout.map((item, index) => (
-                        <Badge key={index} variant='secondary' className='text-xs'>
+                        <Badge
+                          key={index}
+                          variant='secondary'
+                          className='text-xs'
+                        >
                           {item.type.replace('-', ' ')}
                         </Badge>
                       ))}
@@ -493,42 +546,52 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
                 <TabsTrigger value='General'>General</TabsTrigger>
               </TabsList>
 
-              {Object.entries(getWidgetsByCategory()).map(([category, widgets]) => (
-                <TabsContent key={category} value={category} className='space-y-4'>
-                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {widgets.map(widget => {
-                      const Icon = widget.icon;
-                      const isSelected = selectedWidgets.includes(widget.id);
+              {Object.entries(getWidgetsByCategory()).map(
+                ([category, widgets]) => (
+                  <TabsContent
+                    key={category}
+                    value={category}
+                    className='space-y-4'
+                  >
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                      {widgets.map(widget => {
+                        const Icon = widget.icon;
+                        const isSelected = selectedWidgets.includes(widget.id);
 
-                      return (
-                        <Card
-                          key={widget.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            isSelected
-                              ? 'ring-2 ring-blue-500 border-blue-500'
-                              : 'hover:border-blue-300'
-                          }`}
-                          onClick={() => handleWidgetToggle(widget.id)}
-                        >
-                          <CardHeader className='pb-2'>
-                            <div className='flex items-center space-x-3'>
-                              <div className={`p-2 rounded-lg ${widget.color} text-white`}>
-                                <Icon className='h-5 w-5' />
+                        return (
+                          <Card
+                            key={widget.id}
+                            className={`cursor-pointer transition-all hover:shadow-md ${
+                              isSelected
+                                ? 'ring-2 ring-blue-500 border-blue-500'
+                                : 'hover:border-blue-300'
+                            }`}
+                            onClick={() => handleWidgetToggle(widget.id)}
+                          >
+                            <CardHeader className='pb-2'>
+                              <div className='flex items-center space-x-3'>
+                                <div
+                                  className={`p-2 rounded-lg ${widget.color} text-white`}
+                                >
+                                  <Icon className='h-5 w-5' />
+                                </div>
+                                <div>
+                                  <CardTitle className='text-lg'>
+                                    {widget.name}
+                                  </CardTitle>
+                                  <CardDescription className='text-sm'>
+                                    {widget.description}
+                                  </CardDescription>
+                                </div>
                               </div>
-                              <div>
-                                <CardTitle className='text-lg'>{widget.name}</CardTitle>
-                                <CardDescription className='text-sm'>
-                                  {widget.description}
-                                </CardDescription>
-                              </div>
-                            </div>
-                          </CardHeader>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-              ))}
+                            </CardHeader>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+                )
+              )}
             </Tabs>
           </div>
         )}
@@ -537,7 +600,9 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
           <div className='space-y-6'>
             <div className='text-center'>
               <h3 className='text-xl font-semibold mb-2'>Review & Create</h3>
-              <p className='text-gray-600'>Review your dashboard configuration</p>
+              <p className='text-gray-600'>
+                Review your dashboard configuration
+              </p>
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -550,11 +615,15 @@ export function DashboardBuilder({ isOpen, onClose, dashboardId }: DashboardBuil
                     <strong>Name:</strong> {dashboardName}
                   </div>
                   <div>
-                    <strong>Description:</strong> {dashboardDescription || 'No description'}
+                    <strong>Description:</strong>{' '}
+                    {dashboardDescription || 'No description'}
                   </div>
                   <div>
                     <strong>Template:</strong>{' '}
-                    {LAYOUT_TEMPLATES.find(t => t.id === selectedTemplate)?.name}
+                    {
+                      LAYOUT_TEMPLATES.find(t => t.id === selectedTemplate)
+                        ?.name
+                    }
                   </div>
                 </CardContent>
               </Card>
