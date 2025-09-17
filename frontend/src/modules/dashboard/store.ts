@@ -619,7 +619,7 @@ export const useDashboardStore = create<DashboardStore>()(
       },
     }),
     {
-      name: 'dashboard-store',
+      name: 'dashboard-store-v2',
       version: 1,
       partialize: state => ({
         dashboards: state.dashboards,
