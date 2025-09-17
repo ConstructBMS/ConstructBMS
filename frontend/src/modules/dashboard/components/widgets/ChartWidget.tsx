@@ -5,6 +5,7 @@ import {
   CardTitle,
 } from '../../../../components/ui/card';
 import { DashboardWidget } from '../../store';
+import { MultiBarChart, MultiLineChart } from './MultiChartWidgets';
 
 interface ChartWidgetProps {
   widget: DashboardWidget;
@@ -29,6 +30,20 @@ interface BarChartData {
   outflow: number;
 }
 
+interface MultiBarChartData {
+  metric: string;
+  efficiency: number;
+  quality: number;
+  delivery: number;
+}
+
+interface MultiLineChartData {
+  month: string;
+  revenue: number;
+  projects: number;
+  clients: number;
+}
+
 export function ChartWidget({ widget }: ChartWidgetProps) {
   const { data } = widget;
 
@@ -51,8 +66,16 @@ export function ChartWidget({ widget }: ChartWidgetProps) {
     case 'pie':
       return <PieChart title={widget.title} data={data.data} />;
     case 'line':
+      // Check if it's a multi-series line chart
+      if (data.data && data.data[0] && 'revenue' in data.data[0] && 'projects' in data.data[0]) {
+        return <MultiLineChart title={widget.title} data={data.data} config={data} />;
+      }
       return <LineChart title={widget.title} data={data.data} />;
     case 'bar':
+      // Check if it's a multi-series bar chart
+      if (data.data && data.data[0] && 'efficiency' in data.data[0] && 'quality' in data.data[0]) {
+        return <MultiBarChart title={widget.title} data={data.data} config={data} />;
+      }
       return <BarChart title={widget.title} data={data.data} />;
     default:
       return (

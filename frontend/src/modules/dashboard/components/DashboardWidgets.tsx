@@ -57,10 +57,11 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
         {/* Charts Row - 3 equal columns */}
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
           {dashboard.widgets
-            .filter(widget => 
-              widget.id === 'revenue-chart' || 
-              widget.id === 'expense-breakdown' || 
-              widget.id === 'cash-flow'
+            .filter(
+              widget =>
+                widget.id === 'revenue-chart' ||
+                widget.id === 'expense-breakdown' ||
+                widget.id === 'cash-flow'
             )
             .map(widget => (
               <div key={widget.id} className='h-96'>
@@ -72,9 +73,10 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
         {/* Tables Row - 2 equal columns */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
           {dashboard.widgets
-            .filter(widget => 
-              widget.id === 'outstanding-invoices' || 
-              widget.id === 'project-profitability'
+            .filter(
+              widget =>
+                widget.id === 'outstanding-invoices' ||
+                widget.id === 'project-profitability'
             )
             .map(widget => (
               <div key={widget.id} className='h-96'>
@@ -113,7 +115,7 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
                 </div>
               ))}
           </div>
-          
+
           {/* Business Overview - Takes 2 columns */}
           <div className='lg:col-span-2'>
             {dashboard.widgets
@@ -129,35 +131,25 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
         {/* Charts Row - 3 equal columns */}
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
           {dashboard.widgets
-            .filter(widget => widget.id === 'project-status')
+            .filter(widget => 
+              widget.id === 'project-status' || 
+              widget.id === 'performance-metrics' || 
+              widget.id === 'growth-analytics'
+            )
             .map(widget => (
               <div key={widget.id} className='h-96'>
                 <WidgetRenderer widget={widget} />
               </div>
             ))}
-          {/* Add placeholder widgets to fill the space */}
-          <div className='h-96 bg-card border rounded-lg p-6 flex items-center justify-center'>
-            <div className='text-center text-muted-foreground'>
-              <div className='text-4xl mb-2'>📊</div>
-              <h3 className='text-lg font-semibold mb-2'>Performance Metrics</h3>
-              <p className='text-sm'>Coming soon...</p>
-            </div>
-          </div>
-          <div className='h-96 bg-card border rounded-lg p-6 flex items-center justify-center'>
-            <div className='text-center text-muted-foreground'>
-              <div className='text-4xl mb-2'>📈</div>
-              <h3 className='text-lg font-semibold mb-2'>Growth Analytics</h3>
-              <p className='text-sm'>Coming soon...</p>
-            </div>
-          </div>
         </div>
 
         {/* Activities and Deadlines Row - 2 equal columns */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {dashboard.widgets
-            .filter(widget => 
-              widget.id === 'recent-activities' || 
-              widget.id === 'upcoming-deadlines'
+            .filter(
+              widget =>
+                widget.id === 'recent-activities' ||
+                widget.id === 'upcoming-deadlines'
             )
             .map(widget => (
               <div key={widget.id} className='h-96'>
