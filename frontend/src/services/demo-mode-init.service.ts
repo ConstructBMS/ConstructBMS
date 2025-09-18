@@ -1,5 +1,5 @@
-import { supabase } from './supabase';
 import { useDemoModeStore } from '../app/store/demo-mode.store';
+import { supabase } from './supabase';
 
 export class DemoModeInitService {
   /**
@@ -10,20 +10,19 @@ export class DemoModeInitService {
     try {
       // Check if user has permission to manage demo data
       const canManage = await this.checkDemoDataPermissions();
-      
+
       // Update the store with permission status
       useDemoModeStore.getState().setCanManageDemoData(canManage);
-      
+
       // Check if we're in demo mode by looking at the data
       const isDemoMode = await this.checkIfInDemoMode();
       useDemoModeStore.getState().setDemoMode(isDemoMode);
-      
+
       // Get demo data count
       if (isDemoMode) {
         const stats = await this.getDemoDataStats();
         useDemoModeStore.getState().setDemoDataCount(stats.totalRecords);
       }
-      
     } catch (error) {
       console.error('Error initializing demo mode:', error);
       // Default to demo mode if there's an error
@@ -61,8 +60,10 @@ export class DemoModeInitService {
    */
   private static async checkDemoDataPermissions(): Promise<boolean> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) return false;
 
       // Check if user is admin or super admin
@@ -75,8 +76,11 @@ export class DemoModeInitService {
       if (!userData) return false;
 
       // Super admin and admin roles can manage demo data
-      return ['super_admin', 'admin'].includes(userData.role) || 
-             (userData.permissions && userData.permissions.includes('manage_demo_data'));
+      return (
+        ['super_admin', 'admin'].includes(userData.role) ||
+        (userData.permissions &&
+          userData.permissions.includes('manage_demo_data'))
+      );
     } catch (error) {
       console.error('Error checking demo data permissions:', error);
       return false;
@@ -95,45 +99,45 @@ export class DemoModeInitService {
         invoicesResult,
         expensesResult,
         usersResult,
-        documentsResult
+        documentsResult,
       ] = await Promise.all([
         supabase
           .from('projects')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('contacts')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('tasks')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('invoices')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('expenses')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('users')
           .select('id', { count: 'exact' })
           .eq('is_demo_data', true),
-        
+
         supabase
           .from('documents')
           .select('id', { count: 'exact' })
-          .eq('is_demo_data', true)
+          .eq('is_demo_data', true),
       ]);
 
-      const totalRecords = 
+      const totalRecords =
         (projectsResult.count || 0) +
         (contactsResult.count || 0) +
         (tasksResult.count || 0) +

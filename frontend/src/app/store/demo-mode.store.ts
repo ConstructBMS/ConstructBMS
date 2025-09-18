@@ -14,7 +14,7 @@ interface DemoModeStore extends DemoModeState {
   setCanManageDemoData: (canManage: boolean) => void;
   markDemoDataCleanup: () => void;
   resetDemoMode: () => void;
-  
+
   // Computed
   getDemoModeStatus: () => {
     isDemo: boolean;
@@ -45,10 +45,10 @@ export const useDemoModeStore = create<DemoModeStore>((set, get) => ({
   },
 
   markDemoDataCleanup: () => {
-    set({ 
+    set({
       lastDemoDataCleanup: new Date(),
       isDemoMode: false,
-      demoDataCount: 0
+      demoDataCount: 0,
     });
   },
 
@@ -57,19 +57,19 @@ export const useDemoModeStore = create<DemoModeStore>((set, get) => ({
       isDemoMode: true,
       demoDataCount: 0,
       lastDemoDataCleanup: undefined,
-      canManageDemoData: false
+      canManageDemoData: false,
     });
   },
 
   // Computed
   getDemoModeStatus: () => {
     const { isDemoMode, canManageDemoData } = get();
-    
+
     return {
       isDemo: isDemoMode,
       statusText: isDemoMode ? 'Demo Mode' : 'Live Mode',
       statusColor: isDemoMode ? 'bg-blue-600' : 'bg-green-600',
-      canManage: canManageDemoData
+      canManage: canManageDemoData,
     };
-  }
+  },
 }));

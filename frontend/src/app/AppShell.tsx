@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { DemoModeBanner } from '../components/DemoModeBanner';
 import Footer from '../components/Footer';
 import { ErrorBoundary } from '../components/feedback/ErrorBoundary';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
-import { DemoModeBanner } from '../components/DemoModeBanner';
 import { AuthProvider } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext.tsx';
 import type { KeyboardShortcut } from '../lib/types/core';
@@ -79,7 +79,7 @@ function AppLayout() {
     <div className='min-h-screen bg-background flex flex-col'>
       {/* Demo Mode Banner */}
       <DemoModeBanner />
-      
+
       <div className='flex-1 grid grid-cols-[auto_1fr] grid-rows-[auto_1fr]'>
         {/* Sidebar */}
         <div className='row-span-2'>

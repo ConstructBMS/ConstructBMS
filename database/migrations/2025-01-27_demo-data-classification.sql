@@ -3,51 +3,51 @@
 -- Description: Add is_demo_data column to classify data as demo or live
 
 -- Add is_demo_data column to projects table
-ALTER TABLE projects 
+ALTER TABLE projects
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to contacts table
-ALTER TABLE contacts 
+ALTER TABLE contacts
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to tasks table
-ALTER TABLE tasks 
+ALTER TABLE tasks
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to invoices table
-ALTER TABLE invoices 
+ALTER TABLE invoices
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to expenses table
-ALTER TABLE expenses 
+ALTER TABLE expenses
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to users table
-ALTER TABLE users 
+ALTER TABLE users
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to documents table
-ALTER TABLE documents 
+ALTER TABLE documents
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to project_members table
-ALTER TABLE project_members 
+ALTER TABLE project_members
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to task_comments table
-ALTER TABLE task_comments 
+ALTER TABLE task_comments
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to invoice_items table
-ALTER TABLE invoice_items 
+ALTER TABLE invoice_items
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to expense_attachments table
-ALTER TABLE expense_attachments 
+ALTER TABLE expense_attachments
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Add is_demo_data column to document_versions table
-ALTER TABLE document_versions 
+ALTER TABLE document_versions
 ADD COLUMN is_demo_data BOOLEAN DEFAULT false;
 
 -- Create index for better performance when filtering demo data

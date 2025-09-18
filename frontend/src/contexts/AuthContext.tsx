@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setUser(user);
             console.log('👤 User session restored:', user);
-            
+
             // Initialize demo mode after successful authentication
             try {
               await DemoModeInitService.initializeDemoMode();
