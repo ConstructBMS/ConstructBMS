@@ -70,13 +70,13 @@
     scroll-behavior: smooth;
     scroll-padding-top: 0;
   }
-  
+
   /* Improve main page scrolling smoothness */
   main {
     scroll-behavior: smooth;
     scroll-padding-top: 0;
   }
-  
+
   /* Reduce scroll sensitivity for better UX */
   * {
     scroll-behavior: smooth;
