@@ -14,6 +14,25 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
   defaultColors,
   useStickyNotesStore,
 } from '../app/store/sticky-notes.store';
@@ -36,6 +55,74 @@ interface StickyNotesModalProps {
   onClose: () => void;
 }
 
+interface SortableNoteItemProps {
+  note: any;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+function SortableNoteItem({ note, isSelected, onClick }: SortableNoteItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: note.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        'p-3 border-b cursor-pointer hover:bg-accent transition-colors',
+        isSelected && 'bg-accent',
+        isDragging && 'opacity-50'
+      )}
+      onClick={onClick}
+      {...attributes}
+      {...listeners}
+    >
+      <div className='flex items-start justify-between'>
+        <div className='flex-1 min-w-0'>
+          <div className='flex items-center gap-2'>
+            {note.isPinned && (
+              <Pin className='h-3 w-3 text-yellow-500' />
+            )}
+            <h3 className='font-medium truncate'>{note.title}</h3>
+          </div>
+          <p className='text-sm text-muted-foreground mt-1 line-clamp-2'>
+            {note.content}
+          </p>
+          {note.tags.length > 0 && (
+            <div className='flex flex-wrap gap-1 mt-2'>
+              {note.tags.map((tag: string) => (
+                <Badge
+                  key={tag}
+                  variant='secondary'
+                  className='text-xs'
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+        <div
+          className='w-3 h-3 rounded-full ml-2 flex-shrink-0'
+          style={{ backgroundColor: note.color }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const {
     notes,
@@ -47,6 +134,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     togglePin,
     addTag,
     removeTag,
+    reorderNotes,
     getPinnedNotes,
     searchNotes,
   } = useStickyNotesStore();
@@ -60,6 +148,26 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = notes.findIndex((note) => note.id === active.id);
+      const newIndex = notes.findIndex((note) => note.id === over?.id);
+      
+      // Update the order in the store
+      const reorderedNotes = arrayMove(notes, oldIndex, newIndex);
+      reorderNotes(reorderedNotes);
+    }
+  };
 
   // Mock data for projects and contacts
   const projects = [
@@ -157,7 +265,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-96 h-full bg-background border-l shadow-xl'>
+      <div className='relative ml-auto w-[800px] h-full bg-gray-100 border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b'>
@@ -191,49 +299,27 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 </Button>
               </div>
 
-              <div className='flex-1 overflow-y-auto'>
-                {filteredNotes.map(note => (
-                  <div
-                    key={note.id}
-                    className={cn(
-                      'p-3 border-b cursor-pointer hover:bg-accent transition-colors',
-                      selectedNote?.id === note.id && 'bg-accent'
-                    )}
-                    onClick={() => setSelectedNote(note)}
-                  >
-                    <div className='flex items-start justify-between'>
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-center gap-2'>
-                          {note.isPinned && (
-                            <Pin className='h-3 w-3 text-yellow-500' />
-                          )}
-                          <h3 className='font-medium truncate'>{note.title}</h3>
-                        </div>
-                        <p className='text-sm text-muted-foreground mt-1 line-clamp-2'>
-                          {note.content}
-                        </p>
-                        {note.tags.length > 0 && (
-                          <div className='flex flex-wrap gap-1 mt-2'>
-                            {note.tags.map(tag => (
-                              <Badge
-                                key={tag}
-                                variant='secondary'
-                                className='text-xs'
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className='w-3 h-3 rounded-full ml-2 flex-shrink-0'
-                        style={{ backgroundColor: note.color }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+               <div className='flex-1 overflow-y-auto'>
+                 <DndContext
+                   sensors={sensors}
+                   collisionDetection={closestCenter}
+                   onDragEnd={handleDragEnd}
+                 >
+                   <SortableContext
+                     items={filteredNotes.map(note => note.id)}
+                     strategy={verticalListSortingStrategy}
+                   >
+                     {filteredNotes.map(note => (
+                       <SortableNoteItem
+                         key={note.id}
+                         note={note}
+                         isSelected={selectedNote?.id === note.id}
+                         onClick={() => setSelectedNote(note)}
+                       />
+                     ))}
+                   </SortableContext>
+                 </DndContext>
+               </div>
             </div>
 
             {/* Note Editor */}

@@ -27,6 +27,7 @@ interface StickyNotesStore {
   togglePin: (id: string) => void;
   addTag: (id: string, tag: string) => void;
   removeTag: (id: string, tag: string) => void;
+  reorderNotes: (reorderedNotes: StickyNote[]) => void;
 
   // Getters
   getNotesByProject: (projectId: string) => StickyNote[];
@@ -36,14 +37,16 @@ interface StickyNotesStore {
 }
 
 const defaultColors = [
-  '#fef3c7', // yellow
-  '#dbeafe', // blue
-  '#dcfce7', // green
-  '#fce7f3', // pink
-  '#e0e7ff', // purple
-  '#fef2f2', // red
-  '#f0fdf4', // emerald
-  '#fefce8', // amber
+  '#fde047', // bright yellow
+  '#60a5fa', // bright blue
+  '#4ade80', // bright green
+  '#f472b6', // bright pink
+  '#a78bfa', // bright purple
+  '#f87171', // bright red
+  '#34d399', // bright emerald
+  '#fbbf24', // bright amber
+  '#06b6d4', // bright cyan
+  '#84cc16', // bright lime
 ];
 
 export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
@@ -112,6 +115,10 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
           : note
       ),
     }));
+  },
+
+  reorderNotes: (reorderedNotes: StickyNote[]) => {
+    set({ notes: reorderedNotes });
   },
 
   getNotesByProject: (projectId: string) => {
