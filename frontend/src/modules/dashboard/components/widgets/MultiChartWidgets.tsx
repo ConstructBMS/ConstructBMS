@@ -352,4 +352,3 @@ export function MultiLineChart({
     </Card>
   );
 }
-
