@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface DashboardWidget {
   id: string;
@@ -550,9 +549,7 @@ const createFinancialDashboard = (): Dashboard => ({
   updatedAt: new Date(),
 });
 
-export const useDashboardStore = create<DashboardStore>()(
-  persist(
-    (set, get) => ({
+export const useDashboardStore = create<DashboardStore>()((set, get) => ({
       dashboards: [createDefaultDashboard(), createFinancialDashboard()],
       activeDashboardId: 'default-dashboard',
 
@@ -661,14 +658,5 @@ export const useDashboardStore = create<DashboardStore>()(
           ),
         }));
       },
-    }),
-    {
-      name: 'dashboard-store-v2',
-      version: 1,
-      partialize: state => ({
-        dashboards: state.dashboards,
-        activeDashboardId: state.activeDashboardId,
-      }),
-    }
-  )
+    })
 );
