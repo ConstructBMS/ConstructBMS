@@ -25,8 +25,10 @@ import {
   Settings,
   Shield,
   Users,
+  Trash2,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { DemoDataManagement } from '../modules/settings/sections/DemoDataManagement';
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'auto';
@@ -353,6 +355,24 @@ const GeneralSettings: React.FC = () => {
                       </div>
                       <div className='text-xs lg:text-sm opacity-70'>
                         System Configuration
+                      </div>
+                    </div>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='demo-data'
+                    className='w-full justify-start !bg-transparent !shadow-none !rounded-lg !border-none !p-3 lg:!p-4 !mb-2 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white hover:!bg-gray-100 dark:hover:!bg-gray-700'
+                    style={{
+                      color: theme === 'dark' ? '#f9fafb' : '#1e293b',
+                      borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb',
+                    }}
+                  >
+                    <Trash2 className='w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3' />
+                    <div className='text-left'>
+                      <div className='font-medium text-sm lg:text-base'>
+                        Demo Data
+                      </div>
+                      <div className='text-xs lg:text-sm opacity-70'>
+                        Manage Demo Mode
                       </div>
                     </div>
                   </TabsTrigger>
@@ -1492,6 +1512,10 @@ const GeneralSettings: React.FC = () => {
                     </CardContent>
                   </Card>
                 </div>
+              </TabsContent>
+
+              <TabsContent value='demo-data' className='space-y-6'>
+                <DemoDataManagement />
               </TabsContent>
             </div>
           </div>

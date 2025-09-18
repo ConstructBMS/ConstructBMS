@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { DemoModeInitService } from '../services/demo-mode-init.service';
 
 // Define the user type based on Supabase's actual user structure
 interface User {
@@ -98,6 +99,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setUser(user);
             console.log('👤 User session restored:', user);
+            
+            // Initialize demo mode after successful authentication
+            try {
+              await DemoModeInitService.initializeDemoMode();
+            } catch (error) {
+              console.error('Error initializing demo mode:', error);
+            }
           } else {
             // Token is invalid, remove it
             console.log('❌ Token invalid, removing from storage');
