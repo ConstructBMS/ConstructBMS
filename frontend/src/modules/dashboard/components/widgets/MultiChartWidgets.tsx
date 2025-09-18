@@ -132,11 +132,13 @@ export function MultiBarChart({
             </div>
           </div>
 
-          {/* Summary - improved spacing */}
+          {/* Summary - improved spacing with center alignment */}
           <div className='grid grid-cols-3 gap-4 text-sm mt-3'>
-            <div className='flex flex-col'>
-              <span className='text-muted-foreground text-xs'>Avg Efficiency:</span>
-              <span className='font-semibold text-blue-600 text-lg'>
+            <div className='flex flex-col items-center text-center'>
+              <span className='text-muted-foreground text-xs leading-tight'>
+                Avg<br />Efficiency:
+              </span>
+              <span className='font-semibold text-blue-600 text-lg mt-1'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.efficiency, 0) /
                     data.length
@@ -144,9 +146,11 @@ export function MultiBarChart({
                 %
               </span>
             </div>
-            <div className='flex flex-col'>
-              <span className='text-muted-foreground text-xs'>Avg Quality:</span>
-              <span className='font-semibold text-green-600 text-lg'>
+            <div className='flex flex-col items-center text-center'>
+              <span className='text-muted-foreground text-xs leading-tight'>
+                Avg<br />Quality:
+              </span>
+              <span className='font-semibold text-green-600 text-lg mt-1'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.quality, 0) /
                     data.length
@@ -154,9 +158,11 @@ export function MultiBarChart({
                 %
               </span>
             </div>
-            <div className='flex flex-col'>
-              <span className='text-muted-foreground text-xs'>Avg Delivery:</span>
-              <span className='font-semibold text-yellow-600 text-lg'>
+            <div className='flex flex-col items-center text-center'>
+              <span className='text-muted-foreground text-xs leading-tight'>
+                Avg<br />Delivery:
+              </span>
+              <span className='font-semibold text-yellow-600 text-lg mt-1'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.delivery, 0) /
                     data.length
