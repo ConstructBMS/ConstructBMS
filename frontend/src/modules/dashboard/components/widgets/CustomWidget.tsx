@@ -66,7 +66,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           )}
 
           {data.actions && data.actions.length > 0 && (
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-6'>
               {data.actions.map((action, index) => (
                 <Button
                   key={index}
