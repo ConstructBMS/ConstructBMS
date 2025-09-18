@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card';
+import { useScrollbar } from '../../../../hooks/useScrollbar';
 import { DashboardWidget } from '../../store';
 
 interface ListWidgetProps {
@@ -27,6 +28,7 @@ interface ListItem {
 
 export function ListWidget({ widget }: ListWidgetProps) {
   const items = (widget.data?.items as ListItem[]) || [];
+  const scrollbarRef = useScrollbar();
 
   if (!items || items.length === 0) {
     return (
@@ -48,7 +50,10 @@ export function ListWidget({ widget }: ListWidgetProps) {
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 overflow-y-auto'>
+      <CardContent 
+        ref={scrollbarRef}
+        className='flex-1 overflow-y-auto scrollbar-accent scrollbar-fade'
+      >
         <div className='space-y-3'>
           {items.map((item, index) => (
             <div

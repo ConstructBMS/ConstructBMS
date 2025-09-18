@@ -4,6 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card';
+import { useScrollbar } from '../../../../hooks/useScrollbar';
 import { DashboardWidget } from '../../store';
 
 interface TableWidgetProps {
@@ -19,6 +20,7 @@ interface TableData {
 
 export function TableWidget({ widget }: TableWidgetProps) {
   const tableData = widget.data as TableData;
+  const scrollbarRef = useScrollbar();
 
   if (!tableData || !tableData.columns || !tableData.rows) {
     return (
@@ -41,7 +43,10 @@ export function TableWidget({ widget }: TableWidgetProps) {
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
       <CardContent className='flex-1 flex flex-col overflow-hidden'>
-        <div className='overflow-x-auto overflow-y-auto flex-1'>
+        <div 
+          ref={scrollbarRef}
+          className='overflow-x-auto overflow-y-auto flex-1 scrollbar-accent scrollbar-fade'
+        >
           <table className='w-full text-sm'>
             <thead className='sticky top-0 bg-background z-10'>
               <tr className='border-b'>

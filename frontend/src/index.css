@@ -71,3 +71,88 @@
     position: relative;
   }
 }
+
+/* Custom Scrollbar Styles */
+@layer utilities {
+  /* Hide scrollbars by default */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+
+  /* Custom scrollbar - hidden by default, visible on hover/scroll */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.3);
+  }
+  
+  /* Show scrollbar on hover */
+  .scrollbar-custom:hover::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.2);
+  }
+  
+  /* Show scrollbar when scrolling (using scroll event) */
+  .scrollbar-custom.scrolling::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.4);
+  }
+  
+  /* Accent blue scrollbar variant */
+  .scrollbar-accent {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  .scrollbar-accent::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-accent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-accent::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+  
+  .scrollbar-accent:hover::-webkit-scrollbar-thumb {
+    background: #3b82f6; /* Blue accent */
+  }
+  
+  .scrollbar-accent.scrolling::-webkit-scrollbar-thumb {
+    background: #3b82f6; /* Blue accent */
+  }
+  
+  /* Fade out scrollbar after scroll stops */
+  .scrollbar-fade {
+    transition: opacity 0.3s ease;
+  }
+  
+  .scrollbar-fade:not(:hover):not(.scrolling)::-webkit-scrollbar-thumb {
+    opacity: 0;
+  }
+}
