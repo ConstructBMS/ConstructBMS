@@ -55,7 +55,8 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
     {
       id: 'demo-1',
       title: 'Project Alpha Meeting Notes',
-      content: '<h3>Discussion Points:</h3><ul><li>Review Q1 performance</li><li>Plan Q2 initiatives</li><li>Assign tasks for new feature</li></ul>',
+      content:
+        '<h3>Discussion Points:</h3><ul><li>Review Q1 performance</li><li>Plan Q2 initiatives</li><li>Assign tasks for new feature</li></ul>',
       color: '#fef08a', // classic sticky note yellow
       isPinned: true,
       projectId: 'project-alpha-id',
@@ -67,7 +68,8 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
     {
       id: 'demo-2',
       title: 'Call John Doe - Contract Renewal',
-      content: '<p>Remind him about the upcoming contract renewal for Project Beta. Discuss potential upsell opportunities.</p>',
+      content:
+        '<p>Remind him about the upcoming contract renewal for Project Beta. Discuss potential upsell opportunities.</p>',
       color: '#fde047', // bright yellow
       isPinned: false,
       projectId: 'project-beta-id',
@@ -79,7 +81,8 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
     {
       id: 'demo-3',
       title: 'Idea: New Marketing Campaign',
-      content: '<p>Brainstorming session for a new digital marketing campaign. Focus on social media and influencer outreach.</p>',
+      content:
+        '<p>Brainstorming session for a new digital marketing campaign. Focus on social media and influencer outreach.</p>',
       color: '#4ade80', // bright green
       isPinned: false,
       projectId: null,
