@@ -20,12 +20,12 @@ export function useScrollbar() {
         element.classList.add('scrolling');
         isScrollingRef.current = true;
       }
-      
+
       // Clear existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-      
+
       // Remove scrolling class after scroll stops - longer delay
       scrollTimeoutRef.current = setTimeout(() => {
         element.classList.remove('scrolling');
@@ -35,17 +35,20 @@ export function useScrollbar() {
 
     // Add scroll listener with passive for better performance
     element.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Also handle mouse wheel events for better detection
     const handleWheel = (event: WheelEvent) => {
       // Only handle if the element is scrollable
-      if (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) {
+      if (
+        element.scrollHeight > element.clientHeight ||
+        element.scrollWidth > element.clientWidth
+      ) {
         handleScroll();
       }
     };
-    
+
     element.addEventListener('wheel', handleWheel, { passive: true });
-    
+
     // Cleanup
     return () => {
       element.removeEventListener('scroll', handleScroll);
@@ -79,11 +82,11 @@ export function useScrollbarFade() {
         element.classList.add('scrolling');
         isScrollingRef.current = true;
       }
-      
+
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-      
+
       scrollTimeoutRef.current = setTimeout(() => {
         element.classList.remove('scrolling');
         isScrollingRef.current = false;
@@ -92,17 +95,20 @@ export function useScrollbarFade() {
 
     // Add scroll listener with passive for better performance
     element.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // Also handle mouse wheel events for better detection
     const handleWheel = (event: WheelEvent) => {
       // Only handle if the element is scrollable
-      if (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) {
+      if (
+        element.scrollHeight > element.clientHeight ||
+        element.scrollWidth > element.clientWidth
+      ) {
         handleScroll();
       }
     };
-    
+
     element.addEventListener('wheel', handleWheel, { passive: true });
-    
+
     return () => {
       element.removeEventListener('scroll', handleScroll);
       element.removeEventListener('wheel', handleWheel);
