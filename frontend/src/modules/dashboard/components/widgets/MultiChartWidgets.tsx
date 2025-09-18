@@ -37,7 +37,7 @@ export function MultiBarChart({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-4'>
+      <CardContent className='flex-1 flex flex-col pt-6'>
         <div className='space-y-2 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
@@ -136,7 +136,9 @@ export function MultiBarChart({
           <div className='grid grid-cols-3 gap-4 text-sm mt-3'>
             <div className='flex flex-col items-center text-center'>
               <span className='text-muted-foreground text-xs leading-tight'>
-                Avg<br />Efficiency:
+                Avg
+                <br />
+                Efficiency:
               </span>
               <span className='font-semibold text-blue-600 text-lg mt-1'>
                 {Math.round(
@@ -148,7 +150,9 @@ export function MultiBarChart({
             </div>
             <div className='flex flex-col items-center text-center'>
               <span className='text-muted-foreground text-xs leading-tight'>
-                Avg<br />Quality:
+                Avg
+                <br />
+                Quality:
               </span>
               <span className='font-semibold text-green-600 text-lg mt-1'>
                 {Math.round(
@@ -160,7 +164,9 @@ export function MultiBarChart({
             </div>
             <div className='flex flex-col items-center text-center'>
               <span className='text-muted-foreground text-xs leading-tight'>
-                Avg<br />Delivery:
+                Avg
+                <br />
+                Delivery:
               </span>
               <span className='font-semibold text-yellow-600 text-lg mt-1'>
                 {Math.round(
@@ -196,7 +202,7 @@ export function MultiLineChart({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-4'>
+      <CardContent className='flex-1 flex flex-col pt-6'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>

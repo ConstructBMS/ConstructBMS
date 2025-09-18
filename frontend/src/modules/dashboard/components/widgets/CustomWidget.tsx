@@ -49,11 +49,11 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           <span>{widget.title}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-4'>
+      <CardContent className='flex-1 flex flex-col pt-6'>
         <div className='space-y-4'>
           {data.message && (
             <p
-              className={`leading-relaxed ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
+              className={`leading-relaxed pt-4 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
             >
               {data.message}
             </p>
