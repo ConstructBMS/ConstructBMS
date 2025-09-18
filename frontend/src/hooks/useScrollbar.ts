@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Hook to manage custom scrollbar behavior
@@ -10,31 +10,28 @@ export function useScrollbar() {
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const isScrollingRef = useRef(false);
 
-  const handleScroll = useCallback(() => {
-    const element = elementRef.current;
-    if (!element) return;
-
-    // Add scrolling class immediately
-    if (!isScrollingRef.current) {
-      element.classList.add('scrolling');
-      isScrollingRef.current = true;
-    }
-    
-    // Clear existing timeout
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    
-    // Remove scrolling class after scroll stops
-    scrollTimeoutRef.current = setTimeout(() => {
-      element.classList.remove('scrolling');
-      isScrollingRef.current = false;
-    }, 100); // Reduced delay for better responsiveness
-  }, []);
-
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
+
+    const handleScroll = () => {
+      // Add scrolling class immediately
+      if (!isScrollingRef.current) {
+        element.classList.add('scrolling');
+        isScrollingRef.current = true;
+      }
+      
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      
+      // Remove scrolling class after scroll stops
+      scrollTimeoutRef.current = setTimeout(() => {
+        element.classList.remove('scrolling');
+        isScrollingRef.current = false;
+      }, 100); // Reduced delay for better responsiveness
+    };
 
     // Add scroll listener with passive for better performance
     element.addEventListener('scroll', handleScroll, { passive: true });
@@ -46,7 +43,7 @@ export function useScrollbar() {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [handleScroll]);
+  }, []); // Empty dependency array to ensure stable hook order
 
   return elementRef;
 }
@@ -61,29 +58,26 @@ export function useScrollbarFade() {
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const isScrollingRef = useRef(false);
 
-  const handleScroll = useCallback(() => {
-    const element = elementRef.current;
-    if (!element) return;
-
-    // Add scrolling class immediately
-    if (!isScrollingRef.current) {
-      element.classList.add('scrolling');
-      isScrollingRef.current = true;
-    }
-    
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    
-    scrollTimeoutRef.current = setTimeout(() => {
-      element.classList.remove('scrolling');
-      isScrollingRef.current = false;
-    }, 200); // Optimized delay for fade effect
-  }, []);
-
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
+
+    const handleScroll = () => {
+      // Add scrolling class immediately
+      if (!isScrollingRef.current) {
+        element.classList.add('scrolling');
+        isScrollingRef.current = true;
+      }
+      
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      
+      scrollTimeoutRef.current = setTimeout(() => {
+        element.classList.remove('scrolling');
+        isScrollingRef.current = false;
+      }, 200); // Optimized delay for fade effect
+    };
 
     element.addEventListener('scroll', handleScroll, { passive: true });
     
@@ -93,7 +87,7 @@ export function useScrollbarFade() {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [handleScroll]);
+  }, []); // Empty dependency array to ensure stable hook order
 
   return elementRef;
 }
