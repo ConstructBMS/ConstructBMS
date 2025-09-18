@@ -1,15 +1,17 @@
-import { Bell, ChevronDown, Moon, Search, Sun } from 'lucide-react';
+import { Bell, ChevronDown, Moon, Search, StickyNote, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
+import { StickyNotesModal } from '../StickyNotesModal';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();
   const { currentOrgId, orgs, setOrg, getCurrentOrg } = useOrgStore();
   const [searchFocused, setSearchFocused] = useState(false);
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+  const [stickyNotesOpen, setStickyNotesOpen] = useState(false);
   const currentOrg = getCurrentOrg();
 
   React.useEffect(() => {
@@ -132,6 +134,16 @@ export function Topbar() {
             )}
           </div>
 
+          {/* Sticky Notes */}
+          <Button 
+            variant='ghost' 
+            size='icon' 
+            onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
+            title='Sticky Notes'
+          >
+            <StickyNote className='h-5 w-5' />
+          </Button>
+
           {/* Notifications */}
           <Button variant='ghost' size='icon' className='relative'>
             <Bell className='h-5 w-5' />
@@ -154,6 +166,12 @@ export function Topbar() {
           <UserMenu />
         </div>
       </div>
+
+      {/* Sticky Notes Modal */}
+      <StickyNotesModal 
+        isOpen={stickyNotesOpen} 
+        onClose={() => setStickyNotesOpen(false)} 
+      />
     </header>
   );
 }

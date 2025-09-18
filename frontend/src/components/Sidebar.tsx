@@ -47,12 +47,6 @@ const menuItems: MenuItem[] = [
     route: '/tasks',
   },
   {
-    id: 'notes',
-    name: 'Notes',
-    icon: 'FileText',
-    route: '/notes',
-  },
-  {
     id: 'procurement',
     name: 'Procurement',
     icon: 'ShoppingCart',
