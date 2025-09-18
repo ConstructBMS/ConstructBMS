@@ -49,7 +49,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           <span>{widget.title}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-2'>
+      <CardContent className='flex-1 flex flex-col'>
         <div className='space-y-4'>
           {data.message && (
             <p
