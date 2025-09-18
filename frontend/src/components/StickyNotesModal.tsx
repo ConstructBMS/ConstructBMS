@@ -6,6 +6,7 @@ import {
   PinOff,
   Plus,
   Save,
+  StickyNote,
   Tag,
   Trash2,
   Users,
