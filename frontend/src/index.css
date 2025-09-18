@@ -125,8 +125,8 @@
   }
 
   .scrollbar-accent::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   .scrollbar-accent::-webkit-scrollbar-track {
@@ -135,18 +135,21 @@
 
   .scrollbar-accent::-webkit-scrollbar-thumb {
     background: transparent;
-    border-radius: 3px;
-    transition: background-color 0.1s ease;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+    min-height: 20px;
   }
 
-  /* Show on hover */
+  /* Show on hover - more responsive */
   .scrollbar-accent:hover::-webkit-scrollbar-thumb {
     background: #3b82f6 !important;
+    opacity: 0.8;
   }
 
   /* Show when scrolling - higher specificity */
   .scrollbar-accent.scrolling::-webkit-scrollbar-thumb {
     background: #3b82f6 !important;
+    opacity: 1;
   }
 
   /* Immediate visibility during scroll */
@@ -154,9 +157,14 @@
     scrollbar-color: #3b82f6 transparent;
   }
 
+  /* Better hover area for scrollbar */
+  .scrollbar-accent::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   /* Fade out scrollbar after scroll stops - improved */
   .scrollbar-fade {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
   }
 
   .scrollbar-fade:not(:hover):not(.scrolling)::-webkit-scrollbar-thumb {
@@ -167,6 +175,12 @@
   /* Force visibility during scroll */
   .scrollbar-fade.scrolling::-webkit-scrollbar-thumb {
     opacity: 1 !important;
+    background: #3b82f6 !important;
+  }
+
+  /* Better hover detection */
+  .scrollbar-fade:hover::-webkit-scrollbar-thumb {
+    opacity: 0.9 !important;
     background: #3b82f6 !important;
   }
 }
