@@ -50,7 +50,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className='flex-1 flex flex-col'>
-        <div className='space-y-8'>
+        <div className='space-y-4'>
           {data.message && (
             <p
               className={`leading-relaxed pt-4 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
@@ -66,7 +66,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           )}
 
           {data.actions && data.actions.length > 0 && (
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-6'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2'>
               {data.actions.map((action, index) => (
                 <Button
                   key={index}
