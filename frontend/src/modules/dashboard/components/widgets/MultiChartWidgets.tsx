@@ -37,7 +37,7 @@ export function MultiBarChart({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
+      <CardContent className='flex-1 flex flex-col pt-4'>
         <div className='space-y-2 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
@@ -196,7 +196,7 @@ export function MultiLineChart({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
+      <CardContent className='flex-1 flex flex-col pt-4'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>

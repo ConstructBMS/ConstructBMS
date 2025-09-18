@@ -53,7 +53,7 @@ export function ChartWidget({ widget }: ChartWidgetProps) {
         <CardHeader>
           <CardTitle>{widget.title}</CardTitle>
         </CardHeader>
-        <CardContent className='flex-1 flex items-center justify-center'>
+        <CardContent className='flex-1 flex items-center justify-center pt-4'>
           <div className='text-muted-foreground'>
             <p>No data available</p>
           </div>
@@ -109,7 +109,7 @@ export function ChartWidget({ widget }: ChartWidgetProps) {
           <CardHeader>
             <CardTitle>{widget.title}</CardTitle>
           </CardHeader>
-          <CardContent className='flex-1 flex items-center justify-center'>
+          <CardContent className='flex-1 flex items-center justify-center pt-4'>
             <div className='text-muted-foreground'>
               <p>Unsupported chart type</p>
             </div>
@@ -127,7 +127,7 @@ function PieChart({ title, data }: { title: string; data: PieChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
+      <CardContent className='flex-1 flex flex-col pt-4'>
         <div className='flex flex-col space-y-4 flex-1'>
           {/* Chart visualization */}
           <div className='flex items-center justify-center'>
@@ -207,7 +207,7 @@ function LineChart({ title, data }: { title: string; data: LineChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
+      <CardContent className='flex-1 flex flex-col pt-4'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
@@ -305,7 +305,7 @@ function BarChart({ title, data }: { title: string; data: BarChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
+      <CardContent className='flex-1 flex flex-col pt-4'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
