@@ -5,17 +5,25 @@ All notable changes to this project will be documented in this file.
 ## [2025-01-27] - Dashboard Widget Visibility Fix
 
 ### Fixed
-- **Dashboard Widgets**: Fixed Performance Metrics and Growth Analytics widgets not being visible on the home dashboard
-  - Moved `performance-metrics` and `growth-analytics` widgets from outside the default dashboard widgets array to inside it
+
+- **Dashboard Widgets**: Fixed Performance Metrics and Growth Analytics widgets not being visible on
+  the home dashboard
+  - Moved `performance-metrics` and `growth-analytics` widgets from outside the default dashboard
+    widgets array to inside it
   - Removed duplicate widget definitions that were causing conflicts
   - Cleaned up debugging console.log statements and test widgets
   - Widgets should now render properly as multi-series bar and line charts respectively
 
 ### Technical Details
-- **File**: `frontend/src/modules/dashboard/store.ts` - Moved widget definitions to correct location within default dashboard
-- **File**: `frontend/src/modules/dashboard/components/DashboardWidgets.tsx` - Cleaned up debugging code
-- **File**: `frontend/src/modules/dashboard/components/widgets/ChartWidget.tsx` - Removed debugging console.log statements
-- **Root Cause**: Widgets were defined outside the default dashboard widgets array, so they weren't being included when the dashboard was loaded
+
+- **File**: `frontend/src/modules/dashboard/store.ts` - Moved widget definitions to correct location
+  within default dashboard
+- **File**: `frontend/src/modules/dashboard/components/DashboardWidgets.tsx` - Cleaned up debugging
+  code
+- **File**: `frontend/src/modules/dashboard/components/widgets/ChartWidget.tsx` - Removed debugging
+  console.log statements
+- **Root Cause**: Widgets were defined outside the default dashboard widgets array, so they weren't
+  being included when the dashboard was loaded
 
 ## [Unreleased]
 
