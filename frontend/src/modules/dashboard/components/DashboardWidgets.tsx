@@ -64,7 +64,7 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
                 <WidgetRenderer widget={widget} />
               </div>
             ))}
-          
+
           {/* Expense Breakdown */}
           {dashboard.widgets
             .filter(widget => widget.id === 'expense-breakdown')
@@ -73,7 +73,7 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
                 <WidgetRenderer widget={widget} />
               </div>
             ))}
-          
+
           {/* Cash Flow Projection */}
           {dashboard.widgets
             .filter(widget => widget.id === 'cash-flow')
