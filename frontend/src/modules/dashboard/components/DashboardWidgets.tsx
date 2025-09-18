@@ -43,8 +43,8 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
   if (dashboard.id === 'financial-dashboard') {
     return (
       <div className='space-y-6'>
-        {/* Financial Overview Stats - Full width row */}
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+        {/* Row 1: Financial Overview - Full width */}
+        <div className='grid grid-cols-1'>
           {dashboard.widgets
             .filter(widget => widget.id === 'financial-overview')
             .map(widget => (
@@ -54,15 +54,29 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
             ))}
         </div>
 
-        {/* Charts Row - 3 equal columns */}
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+        {/* Row 2: Revenue Trend, Expense Breakdown, Cash Flow - 3 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          {/* Revenue Trend (6 Months) */}
           {dashboard.widgets
-            .filter(
-              widget =>
-                widget.id === 'revenue-chart' ||
-                widget.id === 'expense-breakdown' ||
-                widget.id === 'cash-flow'
-            )
+            .filter(widget => widget.id === 'revenue-chart')
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+          
+          {/* Expense Breakdown */}
+          {dashboard.widgets
+            .filter(widget => widget.id === 'expense-breakdown')
+            .map(widget => (
+              <div key={widget.id} className='h-96'>
+                <WidgetRenderer widget={widget} />
+              </div>
+            ))}
+          
+          {/* Cash Flow Projection */}
+          {dashboard.widgets
+            .filter(widget => widget.id === 'cash-flow')
             .map(widget => (
               <div key={widget.id} className='h-96'>
                 <WidgetRenderer widget={widget} />
@@ -70,8 +84,8 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
             ))}
         </div>
 
-        {/* Tables Row - 2 equal columns */}
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+        {/* Row 3: Outstanding Invoices and Project Profitability - 2 equal columns */}
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {dashboard.widgets
             .filter(
               widget =>
@@ -85,7 +99,7 @@ export function DashboardWidgets({ dashboard }: DashboardWidgetsProps) {
             ))}
         </div>
 
-        {/* Actions Row - Full width */}
+        {/* Row 4: Financial Quick Actions - Full width */}
         <div className='grid grid-cols-1'>
           {dashboard.widgets
             .filter(widget => widget.id === 'financial-actions')
