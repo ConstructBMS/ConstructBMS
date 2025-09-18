@@ -1,4 +1,21 @@
 import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
   Edit3,
   FolderOpen,
   Palette,
@@ -13,25 +30,6 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import {
   defaultColors,
   useStickyNotesStore,
@@ -61,7 +59,11 @@ interface SortableNoteItemProps {
   onClick: () => void;
 }
 
-function SortableNoteItem({ note, isSelected, onClick }: SortableNoteItemProps) {
+function SortableNoteItem({
+  note,
+  isSelected,
+  onClick,
+}: SortableNoteItemProps) {
   const {
     attributes,
     listeners,
@@ -81,45 +83,49 @@ function SortableNoteItem({ note, isSelected, onClick }: SortableNoteItemProps) 
       ref={setNodeRef}
       style={style}
       className={cn(
-        'p-3 border-b cursor-pointer hover:bg-accent transition-colors',
-        isSelected && 'bg-accent',
-        isDragging && 'opacity-50'
+        'p-3 m-2 cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105',
+        isSelected && 'ring-2 ring-blue-500 ring-opacity-50',
+        isDragging && 'opacity-50 rotate-2'
       )}
       onClick={onClick}
       {...attributes}
       {...listeners}
     >
-      <div className='flex items-start justify-between'>
-        <div className='flex-1 min-w-0'>
-          <div className='flex items-center gap-2'>
-            {note.isPinned && (
-              <Pin className='h-3 w-3 text-yellow-500' />
-            )}
-            <h3 className='font-medium truncate'>{note.title}</h3>
-          </div>
-          <p className='text-sm text-muted-foreground mt-1 line-clamp-2'>
-            {note.content}
-          </p>
-          {note.tags.length > 0 && (
-            <div className='flex flex-wrap gap-1 mt-2'>
-              {note.tags.map((tag: string) => (
-                <Badge
-                  key={tag}
-                  variant='secondary'
-                  className='text-xs'
-                >
-                  {tag}
-                </Badge>
-              ))}
+        <div 
+          className="p-3 rounded-lg shadow-md border-l-4 border-t-2 border-l-yellow-400 border-t-yellow-300"
+          style={{ 
+            backgroundColor: note.color,
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)',
+            transform: 'rotate(-1deg)',
+            position: 'relative'
+          }}
+        >
+          <div className='flex items-start justify-between'>
+            <div className='flex-1 min-w-0'>
+              <div className='flex items-center gap-2'>
+                {note.isPinned && <Pin className='h-3 w-3 text-yellow-500' />}
+                <h3 className='font-medium truncate text-gray-800'>{note.title}</h3>
+              </div>
+              <p className='text-sm text-gray-700 mt-1 line-clamp-2'>
+                {note.content}
+              </p>
+              {note.tags.length > 0 && (
+                <div className='flex flex-wrap gap-1 mt-2'>
+                  {note.tags.map((tag: string) => (
+                    <Badge key={tag} variant='secondary' className='text-xs'>
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+            <div
+              className='w-3 h-3 rounded-full ml-2 flex-shrink-0'
+              style={{ backgroundColor: note.color }}
+            />
+          </div>
         </div>
-        <div
-          className='w-3 h-3 rounded-full ml-2 flex-shrink-0'
-          style={{ backgroundColor: note.color }}
-        />
       </div>
-    </div>
   );
 }
 
@@ -160,9 +166,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldIndex = notes.findIndex((note) => note.id === active.id);
-      const newIndex = notes.findIndex((note) => note.id === over?.id);
-      
+      const oldIndex = notes.findIndex(note => note.id === active.id);
+      const newIndex = notes.findIndex(note => note.id === over?.id);
+
       // Update the order in the store
       const reorderedNotes = arrayMove(notes, oldIndex, newIndex);
       reorderNotes(reorderedNotes);
@@ -265,7 +271,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[800px] h-full bg-gray-100 border-l shadow-xl'>
+      <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b'>
@@ -299,27 +305,27 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 </Button>
               </div>
 
-               <div className='flex-1 overflow-y-auto'>
-                 <DndContext
-                   sensors={sensors}
-                   collisionDetection={closestCenter}
-                   onDragEnd={handleDragEnd}
-                 >
-                   <SortableContext
-                     items={filteredNotes.map(note => note.id)}
-                     strategy={verticalListSortingStrategy}
-                   >
-                     {filteredNotes.map(note => (
-                       <SortableNoteItem
-                         key={note.id}
-                         note={note}
-                         isSelected={selectedNote?.id === note.id}
-                         onClick={() => setSelectedNote(note)}
-                       />
-                     ))}
-                   </SortableContext>
-                 </DndContext>
-               </div>
+              <div className='flex-1 overflow-y-auto'>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={filteredNotes.map(note => note.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {filteredNotes.map(note => (
+                      <SortableNoteItem
+                        key={note.id}
+                        note={note}
+                        isSelected={selectedNote?.id === note.id}
+                        onClick={() => setSelectedNote(note)}
+                      />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              </div>
             </div>
 
             {/* Note Editor */}

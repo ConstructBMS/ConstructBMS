@@ -37,6 +37,7 @@ interface StickyNotesStore {
 }
 
 const defaultColors = [
+  '#fef08a', // classic sticky note yellow
   '#fde047', // bright yellow
   '#60a5fa', // bright blue
   '#4ade80', // bright green
@@ -50,7 +51,44 @@ const defaultColors = [
 ];
 
 export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
-  notes: [],
+  notes: [
+    {
+      id: 'demo-1',
+      title: 'Project Alpha Meeting Notes',
+      content: '<h3>Discussion Points:</h3><ul><li>Review Q1 performance</li><li>Plan Q2 initiatives</li><li>Assign tasks for new feature</li></ul>',
+      color: '#fef08a', // classic sticky note yellow
+      isPinned: true,
+      projectId: 'project-alpha-id',
+      contactId: null,
+      tags: ['meeting', 'urgent'],
+      createdAt: new Date(Date.now() - 86400000 * 2),
+      updatedAt: new Date(Date.now() - 86400000),
+    },
+    {
+      id: 'demo-2',
+      title: 'Call John Doe - Contract Renewal',
+      content: '<p>Remind him about the upcoming contract renewal for Project Beta. Discuss potential upsell opportunities.</p>',
+      color: '#fde047', // bright yellow
+      isPinned: false,
+      projectId: 'project-beta-id',
+      contactId: 'contact-john-doe-id',
+      tags: ['follow-up', 'client'],
+      createdAt: new Date(Date.now() - 86400000 * 5),
+      updatedAt: new Date(Date.now() - 86400000 * 3),
+    },
+    {
+      id: 'demo-3',
+      title: 'Idea: New Marketing Campaign',
+      content: '<p>Brainstorming session for a new digital marketing campaign. Focus on social media and influencer outreach.</p>',
+      color: '#4ade80', // bright green
+      isPinned: false,
+      projectId: null,
+      contactId: null,
+      tags: ['idea', 'marketing'],
+      createdAt: new Date(Date.now() - 86400000 * 10),
+      updatedAt: new Date(Date.now() - 86400000 * 7),
+    },
+  ],
   isOpen: false,
   selectedNote: null,
 
