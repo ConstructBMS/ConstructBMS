@@ -127,7 +127,7 @@ function PieChart({ title, data }: { title: string; data: PieChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-6'>
+      <CardContent className='flex-1 flex flex-col pt-8'>
         <div className='flex flex-col space-y-4 flex-1'>
           {/* Chart visualization */}
           <div className='flex items-center justify-center'>
@@ -207,7 +207,7 @@ function LineChart({ title, data }: { title: string; data: LineChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-6'>
+      <CardContent className='flex-1 flex flex-col pt-8'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
@@ -305,7 +305,7 @@ function BarChart({ title, data }: { title: string; data: BarChartData[] }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col pt-6'>
+      <CardContent className='flex-1 flex flex-col pt-8'>
         <div className='space-y-4 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
