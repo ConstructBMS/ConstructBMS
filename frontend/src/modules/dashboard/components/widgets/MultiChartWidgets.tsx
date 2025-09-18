@@ -38,7 +38,7 @@ export function MultiBarChart({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className='flex-1 flex flex-col'>
-        <div className='space-y-4 flex-1'>
+        <div className='space-y-2 flex-1'>
           {/* Chart */}
           <div className='h-48 relative'>
             <svg className='w-full h-full' viewBox='0 0 400 180'>
@@ -116,8 +116,8 @@ export function MultiBarChart({
             </svg>
           </div>
 
-          {/* Legend */}
-          <div className='flex items-center justify-center space-x-6'>
+          {/* Legend - moved closer to chart */}
+          <div className='flex items-center justify-center space-x-6 -mt-1'>
             <div className='flex items-center space-x-2'>
               <div className='w-4 h-4 bg-blue-500 rounded'></div>
               <span className='text-sm text-muted-foreground'>Efficiency</span>
@@ -132,11 +132,11 @@ export function MultiBarChart({
             </div>
           </div>
 
-          {/* Summary */}
-          <div className='grid grid-cols-3 gap-4 text-sm'>
-            <div>
-              <span className='text-muted-foreground'>Avg Efficiency:</span>
-              <span className='ml-2 font-semibold text-blue-600'>
+          {/* Summary - improved spacing */}
+          <div className='grid grid-cols-3 gap-4 text-sm mt-3'>
+            <div className='flex flex-col'>
+              <span className='text-muted-foreground text-xs'>Avg Efficiency:</span>
+              <span className='font-semibold text-blue-600 text-lg'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.efficiency, 0) /
                     data.length
@@ -144,9 +144,9 @@ export function MultiBarChart({
                 %
               </span>
             </div>
-            <div>
-              <span className='text-muted-foreground'>Avg Quality:</span>
-              <span className='ml-2 font-semibold text-green-600'>
+            <div className='flex flex-col'>
+              <span className='text-muted-foreground text-xs'>Avg Quality:</span>
+              <span className='font-semibold text-green-600 text-lg'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.quality, 0) /
                     data.length
@@ -154,9 +154,9 @@ export function MultiBarChart({
                 %
               </span>
             </div>
-            <div>
-              <span className='text-muted-foreground'>Avg Delivery:</span>
-              <span className='ml-2 font-semibold text-yellow-600'>
+            <div className='flex flex-col'>
+              <span className='text-muted-foreground text-xs'>Avg Delivery:</span>
+              <span className='font-semibold text-yellow-600 text-lg'>
                 {Math.round(
                   data.reduce((sum, item) => sum + item.delivery, 0) /
                     data.length
