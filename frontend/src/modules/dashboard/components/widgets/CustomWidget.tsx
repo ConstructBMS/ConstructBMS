@@ -53,7 +53,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
         <div className='space-y-4'>
           {data.message && (
             <p
-              className={`leading-relaxed pt-4 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
+              className={`leading-relaxed pt-6 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
             >
               {data.message}
             </p>
