@@ -9,16 +9,12 @@ export function useScrollbar() {
   const elementRef = useRef<HTMLElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const isScrollingRef = useRef(false);
-  const lastScrollTimeRef = useRef(0);
 
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 
-    const handleScroll = (event: Event) => {
-      const now = Date.now();
-      lastScrollTimeRef.current = now;
-      
+    const handleScroll = () => {
       // Add scrolling class immediately
       if (!isScrollingRef.current) {
         element.classList.add('scrolling');
@@ -30,14 +26,11 @@ export function useScrollbar() {
         clearTimeout(scrollTimeoutRef.current);
       }
       
-      // Remove scrolling class after scroll stops
+      // Remove scrolling class after scroll stops - longer delay
       scrollTimeoutRef.current = setTimeout(() => {
-        // Only remove if no new scroll events occurred
-        if (Date.now() - lastScrollTimeRef.current >= 150) {
-          element.classList.remove('scrolling');
-          isScrollingRef.current = false;
-        }
-      }, 200); // Increased delay for better UX
+        element.classList.remove('scrolling');
+        isScrollingRef.current = false;
+      }, 800); // Much longer delay for better UX
     };
 
     // Add scroll listener with passive for better performance
@@ -47,7 +40,7 @@ export function useScrollbar() {
     const handleWheel = (event: WheelEvent) => {
       // Only handle if the element is scrollable
       if (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) {
-        handleScroll(event);
+        handleScroll();
       }
     };
     
@@ -75,16 +68,12 @@ export function useScrollbarFade() {
   const elementRef = useRef<HTMLElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const isScrollingRef = useRef(false);
-  const lastScrollTimeRef = useRef(0);
 
   useEffect(() => {
     const element = elementRef.current;
     if (!element) return;
 
-    const handleScroll = (event: Event) => {
-      const now = Date.now();
-      lastScrollTimeRef.current = now;
-      
+    const handleScroll = () => {
       // Add scrolling class immediately
       if (!isScrollingRef.current) {
         element.classList.add('scrolling');
@@ -96,12 +85,9 @@ export function useScrollbarFade() {
       }
       
       scrollTimeoutRef.current = setTimeout(() => {
-        // Only remove if no new scroll events occurred
-        if (Date.now() - lastScrollTimeRef.current >= 200) {
-          element.classList.remove('scrolling');
-          isScrollingRef.current = false;
-        }
-      }, 300); // Longer delay for fade effect
+        element.classList.remove('scrolling');
+        isScrollingRef.current = false;
+      }, 1000); // Even longer delay for fade effect
     };
 
     // Add scroll listener with passive for better performance
@@ -111,7 +97,7 @@ export function useScrollbarFade() {
     const handleWheel = (event: WheelEvent) => {
       // Only handle if the element is scrollable
       if (element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth) {
-        handleScroll(event);
+        handleScroll();
       }
     };
     
