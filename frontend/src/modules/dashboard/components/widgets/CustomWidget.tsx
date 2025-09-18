@@ -53,7 +53,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
         <div className='space-y-4'>
           {data.message && (
             <p
-              className={`leading-relaxed pt-2 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
+              className={`leading-relaxed pt-4 ${data.gradient ? 'text-white/90' : 'text-muted-foreground'}`}
             >
               {data.message}
             </p>
@@ -66,7 +66,7 @@ export function CustomWidget({ widget }: CustomWidgetProps) {
           )}
 
           {data.actions && data.actions.length > 0 && (
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 pt-4'>
               {data.actions.map((action, index) => (
                 <Button
                   key={index}
