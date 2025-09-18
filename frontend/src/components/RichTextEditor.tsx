@@ -1,16 +1,16 @@
-import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  List, 
-  ListOrdered, 
-  AlignLeft,
+import {
   AlignCenter,
-  AlignRight
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Underline,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { Button } from './ui/button';
 import { cn } from '../lib/utils/cn';
+import { Button } from './ui/button';
 
 interface RichTextEditorProps {
   value: string;
@@ -19,11 +19,11 @@ interface RichTextEditorProps {
   className?: string;
 }
 
-export function RichTextEditor({ 
-  value, 
-  onChange, 
-  placeholder = "Start typing...",
-  className 
+export function RichTextEditor({
+  value,
+  onChange,
+  placeholder = 'Start typing...',
+  className,
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -112,19 +112,19 @@ export function RichTextEditor({
   ];
 
   return (
-    <div className={cn("border rounded-lg", className)}>
+    <div className={cn('border rounded-lg', className)}>
       {/* Toolbar */}
-      <div className="flex items-center gap-1 p-2 border-b bg-muted/50">
-        {toolbarButtons.map((button) => (
+      <div className='flex items-center gap-1 p-2 border-b bg-muted/50'>
+        {toolbarButtons.map(button => (
           <Button
             key={button.command}
-            variant="ghost"
-            size="sm"
+            variant='ghost'
+            size='sm'
             onClick={() => execCommand(button.command)}
             title={button.title}
-            className="h-8 w-8 p-0"
+            className='h-8 w-8 p-0'
           >
-            <button.icon className="h-4 w-4" />
+            <button.icon className='h-4 w-4' />
           </Button>
         ))}
       </div>
@@ -134,8 +134,8 @@ export function RichTextEditor({
         ref={editorRef}
         contentEditable
         className={cn(
-          "min-h-32 p-3 focus:outline-none",
-          isFocused && "ring-2 ring-ring ring-offset-2"
+          'min-h-32 p-3 focus:outline-none',
+          isFocused && 'ring-2 ring-ring ring-offset-2'
         )}
         onInput={updateContent}
         onFocus={() => setIsFocused(true)}

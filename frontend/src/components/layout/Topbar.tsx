@@ -2,9 +2,9 @@ import { Bell, ChevronDown, Moon, Search, StickyNote, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
+import { StickyNotesModal } from '../StickyNotesModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
-import { StickyNotesModal } from '../StickyNotesModal';
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeStore();
@@ -135,9 +135,9 @@ export function Topbar() {
           </div>
 
           {/* Sticky Notes */}
-          <Button 
-            variant='ghost' 
-            size='icon' 
+          <Button
+            variant='ghost'
+            size='icon'
             onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
             title='Sticky Notes'
           >
@@ -168,9 +168,9 @@ export function Topbar() {
       </div>
 
       {/* Sticky Notes Modal */}
-      <StickyNotesModal 
-        isOpen={stickyNotesOpen} 
-        onClose={() => setStickyNotesOpen(false)} 
+      <StickyNotesModal
+        isOpen={stickyNotesOpen}
+        onClose={() => setStickyNotesOpen(false)}
       />
     </header>
   );

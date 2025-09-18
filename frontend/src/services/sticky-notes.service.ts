@@ -1,5 +1,5 @@
-import { supabase } from './supabase';
 import { StickyNote } from '../app/store/sticky-notes.store';
+import { supabase } from './supabase';
 
 export class StickyNotesService {
   static async getNotes(): Promise<StickyNote[]> {
@@ -11,25 +11,29 @@ export class StickyNotesService {
 
       if (error) throw error;
 
-      return data?.map(note => ({
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        color: note.color,
-        projectId: note.project_id,
-        contactId: note.contact_id,
-        createdAt: new Date(note.created_at),
-        updatedAt: new Date(note.updated_at),
-        isPinned: note.is_pinned,
-        tags: note.tags || [],
-      })) || [];
+      return (
+        data?.map(note => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          color: note.color,
+          projectId: note.project_id,
+          contactId: note.contact_id,
+          createdAt: new Date(note.created_at),
+          updatedAt: new Date(note.updated_at),
+          isPinned: note.is_pinned,
+          tags: note.tags || [],
+        })) || []
+      );
     } catch (error) {
       console.error('Error fetching sticky notes:', error);
       return [];
     }
   }
 
-  static async createNote(note: Omit<StickyNote, 'id' | 'createdAt' | 'updatedAt'>): Promise<StickyNote> {
+  static async createNote(
+    note: Omit<StickyNote, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<StickyNote> {
     try {
       const { data, error } = await supabase
         .from('sticky_notes')
@@ -65,16 +69,22 @@ export class StickyNotesService {
     }
   }
 
-  static async updateNote(id: string, updates: Partial<StickyNote>): Promise<StickyNote> {
+  static async updateNote(
+    id: string,
+    updates: Partial<StickyNote>
+  ): Promise<StickyNote> {
     try {
       const updateData: any = {};
-      
+
       if (updates.title !== undefined) updateData.title = updates.title;
       if (updates.content !== undefined) updateData.content = updates.content;
       if (updates.color !== undefined) updateData.color = updates.color;
-      if (updates.projectId !== undefined) updateData.project_id = updates.projectId;
-      if (updates.contactId !== undefined) updateData.contact_id = updates.contactId;
-      if (updates.isPinned !== undefined) updateData.is_pinned = updates.isPinned;
+      if (updates.projectId !== undefined)
+        updateData.project_id = updates.projectId;
+      if (updates.contactId !== undefined)
+        updateData.contact_id = updates.contactId;
+      if (updates.isPinned !== undefined)
+        updateData.is_pinned = updates.isPinned;
       if (updates.tags !== undefined) updateData.tags = updates.tags;
 
       const { data, error } = await supabase
@@ -128,18 +138,20 @@ export class StickyNotesService {
 
       if (error) throw error;
 
-      return data?.map(note => ({
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        color: note.color,
-        projectId: note.project_id,
-        contactId: note.contact_id,
-        createdAt: new Date(note.created_at),
-        updatedAt: new Date(note.updated_at),
-        isPinned: note.is_pinned,
-        tags: note.tags || [],
-      })) || [];
+      return (
+        data?.map(note => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          color: note.color,
+          projectId: note.project_id,
+          contactId: note.contact_id,
+          createdAt: new Date(note.created_at),
+          updatedAt: new Date(note.updated_at),
+          isPinned: note.is_pinned,
+          tags: note.tags || [],
+        })) || []
+      );
     } catch (error) {
       console.error('Error fetching notes by project:', error);
       return [];
@@ -156,18 +168,20 @@ export class StickyNotesService {
 
       if (error) throw error;
 
-      return data?.map(note => ({
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        color: note.color,
-        projectId: note.project_id,
-        contactId: note.contact_id,
-        createdAt: new Date(note.created_at),
-        updatedAt: new Date(note.updated_at),
-        isPinned: note.is_pinned,
-        tags: note.tags || [],
-      })) || [];
+      return (
+        data?.map(note => ({
+          id: note.id,
+          title: note.title,
+          content: note.content,
+          color: note.color,
+          projectId: note.project_id,
+          contactId: note.contact_id,
+          createdAt: new Date(note.created_at),
+          updatedAt: new Date(note.updated_at),
+          isPinned: note.is_pinned,
+          tags: note.tags || [],
+        })) || []
+      );
     } catch (error) {
       console.error('Error fetching notes by contact:', error);
       return [];

@@ -17,7 +17,7 @@ interface StickyNotesStore {
   notes: StickyNote[];
   isOpen: boolean;
   selectedNote: StickyNote | null;
-  
+
   // Actions
   setOpen: (open: boolean) => void;
   addNote: (note: Omit<StickyNote, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -27,7 +27,7 @@ interface StickyNotesStore {
   togglePin: (id: string) => void;
   addTag: (id: string, tag: string) => void;
   removeTag: (id: string, tag: string) => void;
-  
+
   // Getters
   getNotesByProject: (projectId: string) => StickyNote[];
   getNotesByContact: (contactId: string) => StickyNote[];
@@ -53,7 +53,7 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
 
   setOpen: (open: boolean) => set({ isOpen: open }),
 
-  addNote: (noteData) => {
+  addNote: noteData => {
     const newNote: StickyNote = {
       ...noteData,
       id: `note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -70,13 +70,12 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
   updateNote: (id: string, updates: Partial<StickyNote>) => {
     set(state => ({
       notes: state.notes.map(note =>
-        note.id === id 
-          ? { ...note, ...updates, updatedAt: new Date() }
-          : note
+        note.id === id ? { ...note, ...updates, updatedAt: new Date() } : note
       ),
-      selectedNote: state.selectedNote?.id === id 
-        ? { ...state.selectedNote, ...updates, updatedAt: new Date() }
-        : state.selectedNote,
+      selectedNote:
+        state.selectedNote?.id === id
+          ? { ...state.selectedNote, ...updates, updatedAt: new Date() }
+          : state.selectedNote,
     }));
   },
 
@@ -100,9 +99,7 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
   addTag: (id: string, tag: string) => {
     set(state => ({
       notes: state.notes.map(note =>
-        note.id === id 
-          ? { ...note, tags: [...note.tags, tag] }
-          : note
+        note.id === id ? { ...note, tags: [...note.tags, tag] } : note
       ),
     }));
   },
@@ -110,7 +107,7 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
   removeTag: (id: string, tag: string) => {
     set(state => ({
       notes: state.notes.map(note =>
-        note.id === id 
+        note.id === id
           ? { ...note, tags: note.tags.filter(t => t !== tag) }
           : note
       ),
@@ -131,10 +128,11 @@ export const useStickyNotesStore = create<StickyNotesStore>((set, get) => ({
 
   searchNotes: (query: string) => {
     const lowercaseQuery = query.toLowerCase();
-    return get().notes.filter(note =>
-      note.title.toLowerCase().includes(lowercaseQuery) ||
-      note.content.toLowerCase().includes(lowercaseQuery) ||
-      note.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+    return get().notes.filter(
+      note =>
+        note.title.toLowerCase().includes(lowercaseQuery) ||
+        note.content.toLowerCase().includes(lowercaseQuery) ||
+        note.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
     );
   },
 }));
