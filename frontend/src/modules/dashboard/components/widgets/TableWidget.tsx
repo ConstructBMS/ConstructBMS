@@ -40,10 +40,10 @@ export function TableWidget({ widget }: TableWidgetProps) {
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent className='flex-1 flex flex-col'>
-        <div className='overflow-x-auto'>
+      <CardContent className='flex-1 flex flex-col overflow-hidden'>
+        <div className='overflow-x-auto overflow-y-auto flex-1'>
           <table className='w-full text-sm'>
-            <thead>
+            <thead className='sticky top-0 bg-background z-10'>
               <tr className='border-b'>
                 {tableData.columns.map((column, index) => (
                   <th
