@@ -43,7 +43,7 @@ export function TableWidget({ widget }: TableWidgetProps) {
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
       <CardContent className='flex-1 flex flex-col overflow-hidden'>
-        <div 
+        <div
           ref={scrollbarRef}
           className='overflow-x-auto overflow-y-auto flex-1 scrollbar-accent scrollbar-fade'
         >

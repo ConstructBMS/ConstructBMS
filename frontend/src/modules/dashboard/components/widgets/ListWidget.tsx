@@ -50,7 +50,7 @@ export function ListWidget({ widget }: ListWidgetProps) {
       <CardHeader>
         <CardTitle className='text-lg'>{widget.title}</CardTitle>
       </CardHeader>
-      <CardContent 
+      <CardContent
         ref={scrollbarRef}
         className='flex-1 overflow-y-auto scrollbar-accent scrollbar-fade'
       >
