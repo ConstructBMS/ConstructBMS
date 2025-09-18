@@ -281,13 +281,13 @@ function LineChart({ title, data }: { title: string; data: LineChartData[] }) {
             <div>
               <span className='text-muted-foreground'>Highest:</span>
               <span className='ml-2 font-semibold'>
-                ${maxValue.toLocaleString()}
+                £{maxValue.toLocaleString()}
               </span>
             </div>
             <div>
               <span className='text-muted-foreground'>Lowest:</span>
               <span className='ml-2 font-semibold'>
-                ${minValue.toLocaleString()}
+                £{minValue.toLocaleString()}
               </span>
             </div>
           </div>
@@ -393,7 +393,7 @@ function BarChart({ title, data }: { title: string; data: BarChartData[] }) {
             <div>
               <span className='text-muted-foreground'>Total Inflow:</span>
               <span className='ml-2 font-semibold text-green-600'>
-                $
+                £
                 {data
                   .reduce((sum, item) => sum + item.inflow, 0)
                   .toLocaleString()}
@@ -402,7 +402,7 @@ function BarChart({ title, data }: { title: string; data: BarChartData[] }) {
             <div>
               <span className='text-muted-foreground'>Total Outflow:</span>
               <span className='ml-2 font-semibold text-red-600'>
-                $
+                £
                 {data
                   .reduce((sum, item) => sum + item.outflow, 0)
                   .toLocaleString()}

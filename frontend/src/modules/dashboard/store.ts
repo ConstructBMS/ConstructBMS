@@ -95,7 +95,7 @@ const createDefaultDashboard = (): Dashboard => ({
           },
           {
             label: 'This Month Revenue',
-            value: '$45,230',
+            value: '£45,230',
             change: '+12%',
             trend: 'up',
             color: 'bg-gradient-to-r from-purple-500 to-purple-600',
@@ -321,7 +321,7 @@ const createFinancialDashboard = (): Dashboard => ({
         stats: [
           {
             label: 'Total Revenue',
-            value: '$245,230',
+            value: '£245,230',
             change: '+12%',
             trend: 'up',
             color: 'bg-gradient-to-r from-green-500 to-green-600',
@@ -329,7 +329,7 @@ const createFinancialDashboard = (): Dashboard => ({
           },
           {
             label: 'Total Expenses',
-            value: '$189,450',
+            value: '£189,450',
             change: '+8%',
             trend: 'up',
             color: 'bg-gradient-to-r from-red-500 to-red-600',
@@ -337,7 +337,7 @@ const createFinancialDashboard = (): Dashboard => ({
           },
           {
             label: 'Net Profit',
-            value: '$55,780',
+            value: '£55,780',
             change: '+18%',
             trend: 'up',
             color: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
@@ -447,22 +447,22 @@ const createFinancialDashboard = (): Dashboard => ({
           [
             'INV-2024-001',
             'ABC Construction',
-            '$12,500',
+            '£12,500',
             '2024-01-15',
             'Overdue',
           ],
-          ['INV-2024-002', 'XYZ Builders', '$8,750', '2024-01-20', 'Pending'],
+          ['INV-2024-002', 'XYZ Builders', '£8,750', '2024-01-20', 'Pending'],
           [
             'INV-2024-003',
             'Metro Developers',
-            '$15,200',
+            '£15,200',
             '2024-01-25',
             'Pending',
           ],
           [
             'INV-2024-004',
             'City Contractors',
-            '$6,800',
+            '£6,800',
             '2024-01-30',
             'Pending',
           ],
@@ -481,10 +481,10 @@ const createFinancialDashboard = (): Dashboard => ({
       data: {
         columns: ['Project', 'Budget', 'Actual Cost', 'Profit', 'Margin'],
         rows: [
-          ['Office Building', '$150,000', '$142,500', '$7,500', '5.0%'],
-          ['Warehouse Project', '$95,000', '$89,200', '$5,800', '6.1%'],
-          ['Retail Space', '$75,000', '$78,500', '-$3,500', '-4.7%'],
-          ['Apartment Complex', '$200,000', '$185,000', '$15,000', '7.5%'],
+          ['Office Building', '£150,000', '£142,500', '£7,500', '5.0%'],
+          ['Warehouse Project', '£95,000', '£89,200', '£5,800', '6.1%'],
+          ['Retail Space', '£75,000', '£78,500', '-£3,500', '-4.7%'],
+          ['Apartment Complex', '£200,000', '£185,000', '£15,000', '7.5%'],
         ],
         profitColors: {
           positive: 'bg-green-100 text-green-800',

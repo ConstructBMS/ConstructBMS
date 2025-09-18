@@ -340,7 +340,7 @@ export function DashboardBuilder({
             { label: 'On Hold', value: '2', change: '0', trend: 'neutral' },
             {
               label: 'Total Budget',
-              value: '$2.4M',
+              value: '£2.4M',
               change: '+5%',
               trend: 'up',
             },
@@ -384,7 +384,7 @@ export function DashboardBuilder({
           stats: [
             {
               label: 'Total Revenue',
-              value: '$245,230',
+              value: '£245,230',
               change: '+12%',
               trend: 'up',
             },

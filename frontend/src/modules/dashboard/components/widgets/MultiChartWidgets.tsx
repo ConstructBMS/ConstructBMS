@@ -340,7 +340,7 @@ export function MultiLineChart({
             <div>
               <span className='text-muted-foreground'>Total Revenue:</span>
               <span className='ml-2 font-semibold text-green-600'>
-                $
+                £
                 {data
                   .reduce((sum, item) => sum + item.revenue, 0)
                   .toLocaleString()}

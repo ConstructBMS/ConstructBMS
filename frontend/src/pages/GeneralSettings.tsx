@@ -1308,7 +1308,6 @@ const GeneralSettings: React.FC = () => {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value='GBP'>£ GBP</SelectItem>
-                              <SelectItem value='USD'>$ USD</SelectItem>
                               <SelectItem value='EUR'>€ EUR</SelectItem>
                             </SelectContent>
                           </Select>
