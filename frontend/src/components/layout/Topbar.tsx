@@ -2,8 +2,11 @@ import { Bell, ChevronDown, MessageCircle, Moon, Search, StickyNote, Sun } from 
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
+import { useChatStore } from '../../app/store/chat.store';
+import { useNotificationsStore } from '../../app/store/notifications.store';
 import { StickyNotesModal } from '../StickyNotesModal';
 import { ChatModal } from '../ChatModal';
+import { NotificationsModal } from '../NotificationsModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 
@@ -14,6 +17,11 @@ export function Topbar() {
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const [stickyNotesOpen, setStickyNotesOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const { getTotalUnreadCount } = useChatStore();
+  const { getUnreadCount } = useNotificationsStore();
+  const totalUnreadCount = getTotalUnreadCount();
+  const notificationUnreadCount = getUnreadCount();
   const currentOrg = getCurrentOrg();
 
   React.useEffect(() => {
@@ -142,8 +150,14 @@ export function Topbar() {
                   size='icon'
                   onClick={() => setChatOpen(!chatOpen)}
                   title='Chat'
+                  className='relative'
                 >
                   <MessageCircle className='h-5 w-5' />
+                  {totalUnreadCount > 0 && (
+                    <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
+                      {totalUnreadCount}
+                    </span>
+                  )}
                 </Button>
 
                 {/* Sticky Notes */}
@@ -156,13 +170,21 @@ export function Topbar() {
                   <StickyNote className='h-5 w-5' />
                 </Button>
 
-          {/* Notifications */}
-          <Button variant='ghost' size='icon' className='relative'>
-            <Bell className='h-5 w-5' />
-            <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center'>
-              3
-            </span>
-          </Button>
+                {/* Notifications */}
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  title='Notifications'
+                  className='relative'
+                >
+                  <Bell className='h-5 w-5' />
+                  {notificationUnreadCount > 0 && (
+                    <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
+                      {notificationUnreadCount}
+                    </span>
+                  )}
+                </Button>
 
           {/* Theme Toggle */}
           <Button
@@ -190,6 +212,12 @@ export function Topbar() {
           isOpen={stickyNotesOpen}
           onClose={() => setStickyNotesOpen(false)}
         />
-    </header>
-  );
-}
+
+        {/* Notifications Modal */}
+        <NotificationsModal
+          isOpen={notificationsOpen}
+          onClose={() => setNotificationsOpen(false)}
+        />
+      </header>
+    );
+  }

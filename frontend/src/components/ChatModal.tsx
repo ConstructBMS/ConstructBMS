@@ -67,13 +67,24 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 size='icon'
                 onClick={() => setShowUserSelector(true)}
                 title='New Chat'
+                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
               >
                 <Users className='h-4 w-4' />
               </Button>
-              <Button variant='ghost' size='icon' title='Settings'>
+              <Button 
+                variant='ghost' 
+                size='icon' 
+                title='Settings'
+                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+              >
                 <Settings className='h-4 w-4' />
               </Button>
-              <Button variant='ghost' size='icon' onClick={onClose}>
+              <Button 
+                variant='ghost' 
+                size='icon' 
+                onClick={onClose}
+                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+              >
                 <X className='h-4 w-4' />
               </Button>
             </div>
