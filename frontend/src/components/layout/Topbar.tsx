@@ -1,8 +1,9 @@
-import { Bell, ChevronDown, Moon, Search, StickyNote, Sun } from 'lucide-react';
+import { Bell, ChevronDown, MessageCircle, Moon, Search, StickyNote, Sun } from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { StickyNotesModal } from '../StickyNotesModal';
+import { ChatModal } from '../ChatModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 
@@ -12,6 +13,7 @@ export function Topbar() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
   const [stickyNotesOpen, setStickyNotesOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const currentOrg = getCurrentOrg();
 
   React.useEffect(() => {
@@ -134,15 +136,25 @@ export function Topbar() {
             )}
           </div>
 
-          {/* Sticky Notes */}
-          <Button
-            variant='ghost'
-            size='icon'
-            onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
-            title='Sticky Notes'
-          >
-            <StickyNote className='h-5 w-5' />
-          </Button>
+                {/* Chat */}
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setChatOpen(!chatOpen)}
+                  title='Chat'
+                >
+                  <MessageCircle className='h-5 w-5' />
+                </Button>
+
+                {/* Sticky Notes */}
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
+                  title='Sticky Notes'
+                >
+                  <StickyNote className='h-5 w-5' />
+                </Button>
 
           {/* Notifications */}
           <Button variant='ghost' size='icon' className='relative'>
@@ -167,11 +179,17 @@ export function Topbar() {
         </div>
       </div>
 
-      {/* Sticky Notes Modal */}
-      <StickyNotesModal
-        isOpen={stickyNotesOpen}
-        onClose={() => setStickyNotesOpen(false)}
-      />
+        {/* Chat Modal */}
+        <ChatModal
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+        />
+
+        {/* Sticky Notes Modal */}
+        <StickyNotesModal
+          isOpen={stickyNotesOpen}
+          onClose={() => setStickyNotesOpen(false)}
+        />
     </header>
   );
 }
