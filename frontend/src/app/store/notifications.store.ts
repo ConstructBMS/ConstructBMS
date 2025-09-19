@@ -170,440 +170,505 @@ interface NotificationsStore {
 export const useNotificationsStore = create<NotificationsStore>()(
   persist(
     (set, get) => ({
-  // Initial State
-  notifications: [
-    {
-      id: 'notif-1',
-      title: 'New Message in Project Alpha',
-      message: 'Sarah Wilson sent a message in the Project Alpha team chat',
-      type: 'chat',
-      category: 'chat',
-      priority: 'medium',
-      isRead: false,
-      isArchived: false,
-      isPinned: false,
-      userId: 'user-1',
-      relatedEntityId: 'chat-1',
-      relatedEntityType: 'chat',
-      actionUrl: '/chat/chat-1',
-      actionText: 'View Chat',
-      createdAt: new Date(Date.now() - 1800000), // 30 minutes ago
-    },
-    {
-      id: 'notif-2',
-      title: 'Project Status Update',
-      message: 'Project Beta has moved to the "Review" phase',
-      type: 'project',
-      category: 'project',
-      priority: 'high',
-      isRead: false,
-      isArchived: false,
-      isPinned: false,
-      userId: 'user-1',
-      relatedEntityId: 'project-beta-id',
-      relatedEntityType: 'project',
-      actionUrl: '/projects/project-beta-id',
-      actionText: 'View Project',
-      createdAt: new Date(Date.now() - 3600000), // 1 hour ago
-    },
-    {
-      id: 'notif-3',
-      title: 'Task Assignment',
-      message: 'You have been assigned to "Site Inspection" task',
-      type: 'task',
-      category: 'task',
-      priority: 'medium',
-      isRead: true,
-      isArchived: false,
-      isPinned: false,
-      userId: 'user-1',
-      relatedEntityId: 'task-1',
-      relatedEntityType: 'task',
-      actionUrl: '/tasks/task-1',
-      actionText: 'View Task',
-      createdAt: new Date(Date.now() - 7200000), // 2 hours ago
-    },
-    {
-      id: 'notif-4',
-      title: 'System Maintenance',
-      message: 'Scheduled maintenance will occur tonight from 2 AM to 4 AM',
-      type: 'system',
-      category: 'system',
-      priority: 'low',
-      isRead: true,
-      isArchived: false,
-      isPinned: false,
-      userId: 'user-1',
-      actionText: 'Learn More',
-      createdAt: new Date(Date.now() - 86400000), // 1 day ago
-    },
-  ],
-  settings: [
-    {
-      id: 'settings-1',
-      userId: 'user-1',
-      category: 'chat',
-      enabled: true,
-      channels: {
-        inApp: true,
-        email: true,
-        push: true,
-        sms: false,
-      },
-      frequency: 'immediate',
-      quietHours: {
-        enabled: true,
-        start: '22:00',
-        end: '08:00',
-        timezone: 'UTC',
-      },
-      keywords: ['urgent', 'important'],
-      excludeKeywords: ['spam'],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
-  templates: [
-    {
-      id: 'template-1',
-      name: 'Project Update',
-      category: 'project',
-      type: 'info',
-      title: 'Project {{projectName}} Update',
-      message: '{{projectName}} has been updated: {{updateMessage}}',
-      isActive: true,
-      isSystem: true,
-      createdBy: 'system',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
-  permissions: [
-    {
-      id: 'perm-1',
-      role: 'admin',
-      category: 'all',
-      canReceive: true,
-      canConfigure: true,
-      canSend: true,
-      canManage: true,
-    },
-    {
-      id: 'perm-2',
-      role: 'user',
-      category: 'chat',
-      canReceive: true,
-      canConfigure: true,
-      canSend: false,
-      canManage: false,
-    },
-  ],
-  isOpen: false,
-  selectedCategory: null,
-  searchQuery: '',
-  filterUnread: false,
-  filterPriority: null,
-
-  // Notification Management Actions
-  setOpen: (open: boolean) => set({ isOpen: open }),
-
-  addNotification: notificationData => {
-    const newNotification: Notification = {
-      ...notificationData,
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      isRead: false,
-      isArchived: false,
-      isPinned: false,
-    };
-    set(state => ({
-      notifications: [newNotification, ...state.notifications],
-    }));
-  },
-
-  markAsRead: notificationId => {
-    set(state => ({
-      notifications: state.notifications.map(notif =>
-        notif.id === notificationId
-          ? { ...notif, isRead: true, readAt: new Date() }
-          : notif
-      ),
-    }));
-  },
-
-  markAllAsRead: () => {
-    set(state => ({
-      notifications: state.notifications.map(notif => ({
-        ...notif,
-        isRead: true,
-        readAt: new Date(),
-      })),
-    }));
-  },
-
-  archiveNotification: notificationId => {
-    set(state => ({
-      notifications: state.notifications.map(notif =>
-        notif.id === notificationId
-          ? { ...notif, isArchived: !notif.isArchived }
-          : notif
-      ),
-    }));
-  },
-
-  pinNotification: notificationId => {
-    set(state => ({
-      notifications: state.notifications.map(notif =>
-        notif.id === notificationId
-          ? { ...notif, isPinned: !notif.isPinned }
-          : notif
-      ),
-    }));
-  },
-
-  deleteNotification: notificationId => {
-    set(state => ({
-      notifications: state.notifications.filter(
-        notif => notif.id !== notificationId
-      ),
-    }));
-  },
-
-  clearExpired: () => {
-    const now = new Date();
-    set(state => ({
-      notifications: state.notifications.filter(
-        notif => !notif.expiresAt || notif.expiresAt > now
-      ),
-    }));
-  },
-
-  // Settings Management Actions
-  updateSettings: (userId, category, settingsData) => {
-    set(state => {
-      const existingIndex = state.settings.findIndex(
-        s => s.userId === userId && s.category === category
-      );
-
-      if (existingIndex >= 0) {
-        const updatedSettings = [...state.settings];
-        updatedSettings[existingIndex] = {
-          ...updatedSettings[existingIndex],
-          ...settingsData,
-          updatedAt: new Date(),
-        };
-        return { settings: updatedSettings };
-      } else {
-        const newSettings: NotificationSettings = {
-          id: `settings-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          userId,
-          category,
+      // Initial State
+      notifications: [
+        {
+          id: 'notif-1',
+          title: 'New Message in Project Alpha',
+          message: 'Sarah Wilson sent a message in the Project Alpha team chat',
+          type: 'chat',
+          category: 'chat',
+          priority: 'medium',
+          isRead: false,
+          isArchived: false,
+          isPinned: false,
+          userId: 'user-1',
+          relatedEntityId: 'chat-1',
+          relatedEntityType: 'chat',
+          actionUrl: '/chat/chat-1',
+          actionText: 'View Chat',
+          createdAt: new Date(Date.now() - 1800000), // 30 minutes ago
+        },
+        {
+          id: 'notif-2',
+          title: 'Project Status Update',
+          message: 'Project Beta has moved to the "Review" phase',
+          type: 'project',
+          category: 'project',
+          priority: 'high',
+          isRead: false,
+          isArchived: false,
+          isPinned: false,
+          userId: 'user-1',
+          relatedEntityId: 'project-beta-id',
+          relatedEntityType: 'project',
+          actionUrl: '/projects/project-beta-id',
+          actionText: 'View Project',
+          createdAt: new Date(Date.now() - 3600000), // 1 hour ago
+        },
+        {
+          id: 'notif-3',
+          title: 'Task Assignment',
+          message: 'You have been assigned to "Site Inspection" task',
+          type: 'task',
+          category: 'task',
+          priority: 'medium',
+          isRead: true,
+          isArchived: false,
+          isPinned: false,
+          userId: 'user-1',
+          relatedEntityId: 'task-1',
+          relatedEntityType: 'task',
+          actionUrl: '/tasks/task-1',
+          actionText: 'View Task',
+          createdAt: new Date(Date.now() - 7200000), // 2 hours ago
+        },
+        {
+          id: 'notif-4',
+          title: 'System Maintenance',
+          message: 'Scheduled maintenance will occur tonight from 2 AM to 4 AM',
+          type: 'system',
+          category: 'system',
+          priority: 'low',
+          isRead: true,
+          isArchived: false,
+          isPinned: false,
+          userId: 'user-1',
+          actionText: 'Learn More',
+          createdAt: new Date(Date.now() - 86400000), // 1 day ago
+        },
+      ],
+      settings: [
+        {
+          id: 'settings-1',
+          userId: 'user-1',
+          category: 'chat',
           enabled: true,
           channels: {
             inApp: true,
-            email: false,
-            push: false,
+            email: true,
+            push: true,
             sms: false,
           },
           frequency: 'immediate',
           quietHours: {
-            enabled: false,
+            enabled: true,
             start: '22:00',
             end: '08:00',
             timezone: 'UTC',
           },
-          keywords: [],
-          excludeKeywords: [],
+          keywords: ['urgent', 'important'],
+          excludeKeywords: ['spam'],
           createdAt: new Date(),
           updatedAt: new Date(),
-          ...settingsData,
-        };
-        return { settings: [...state.settings, newSettings] };
-      }
-    });
-  },
-
-  getSettings: (userId, category) => {
-    return (
-      get().settings.find(
-        s => s.userId === userId && s.category === category
-      ) || null
-    );
-  },
-
-  resetSettings: userId => {
-    set(state => ({
-      settings: state.settings.filter(s => s.userId !== userId),
-    }));
-  },
-
-  // Template Management Actions
-  createTemplate: templateData => {
-    const newTemplate: NotificationTemplate = {
-      ...templateData,
-      id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    set(state => ({
-      templates: [...state.templates, newTemplate],
-    }));
-  },
-
-  updateTemplate: (templateId, updates) => {
-    set(state => ({
-      templates: state.templates.map(template =>
-        template.id === templateId
-          ? { ...template, ...updates, updatedAt: new Date() }
-          : template
-      ),
-    }));
-  },
-
-  deleteTemplate: templateId => {
-    set(state => ({
-      templates: state.templates.filter(template => template.id !== templateId),
-    }));
-  },
-
-  // Permission Management Actions
-  updatePermission: (role, category, permissionData) => {
-    set(state => {
-      const existingIndex = state.permissions.findIndex(
-        p => p.role === role && p.category === category
-      );
-
-      if (existingIndex >= 0) {
-        const updatedPermissions = [...state.permissions];
-        updatedPermissions[existingIndex] = {
-          ...updatedPermissions[existingIndex],
-          ...permissionData,
-        };
-        return { permissions: updatedPermissions };
-      } else {
-        const newPermission: NotificationPermission = {
-          id: `perm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          role,
-          category,
+        },
+      ],
+      templates: [
+        {
+          id: 'template-1',
+          name: 'Project Update',
+          category: 'project',
+          type: 'info',
+          title: 'Project {{projectName}} Update',
+          message: '{{projectName}} has been updated: {{updateMessage}}',
+          isActive: true,
+          isSystem: true,
+          createdBy: 'system',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      permissions: [
+        {
+          id: 'perm-1',
+          role: 'admin',
+          category: 'all',
           canReceive: true,
-          canConfigure: false,
+          canConfigure: true,
+          canSend: true,
+          canManage: true,
+        },
+        {
+          id: 'perm-2',
+          role: 'user',
+          category: 'chat',
+          canReceive: true,
+          canConfigure: true,
           canSend: false,
           canManage: false,
-          ...permissionData,
+        },
+      ],
+      isOpen: false,
+      selectedCategory: null,
+      searchQuery: '',
+      filterUnread: false,
+      filterPriority: null,
+
+      // Notification Management Actions
+      setOpen: (open: boolean) => set({ isOpen: open }),
+
+      addNotification: notificationData => {
+        const newNotification: Notification = {
+          ...notificationData,
+          id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: new Date(),
+          isRead: false,
+          isArchived: false,
+          isPinned: false,
         };
-        return { permissions: [...state.permissions, newPermission] };
-      }
-    });
-  },
+        set(state => ({
+          notifications: [newNotification, ...state.notifications],
+        }));
+      },
 
-  getPermission: (role, category) => {
-    return (
-      get().permissions.find(p => p.role === role && p.category === category) ||
-      null
-    );
-  },
+      markAsRead: notificationId => {
+        set(state => ({
+          notifications: state.notifications.map(notif =>
+            notif.id === notificationId
+              ? { ...notif, isRead: true, readAt: new Date() }
+              : notif
+          ),
+        }));
+      },
 
-  // Filter and Search Actions
-  setSelectedCategory: category => set({ selectedCategory: category }),
-  setSearchQuery: query => set({ searchQuery: query }),
-  setFilterUnread: unread => set({ filterUnread: unread }),
-  setFilterPriority: priority => set({ filterPriority: priority }),
+      markAllAsRead: () => {
+        set(state => ({
+          notifications: state.notifications.map(notif => ({
+            ...notif,
+            isRead: true,
+            readAt: new Date(),
+          })),
+        }));
+      },
 
-  // Getters
-  getUnreadCount: () => {
-    return get().notifications.filter(notif => !notif.isRead).length;
-  },
+      archiveNotification: notificationId => {
+        set(state => ({
+          notifications: state.notifications.map(notif =>
+            notif.id === notificationId
+              ? { ...notif, isArchived: !notif.isArchived }
+              : notif
+          ),
+        }));
+      },
 
-  getUnreadCountByCategory: category => {
-    return get().notifications.filter(
-      notif => !notif.isRead && notif.category === category
-    ).length;
-  },
+      pinNotification: notificationId => {
+        set(state => ({
+          notifications: state.notifications.map(notif =>
+            notif.id === notificationId
+              ? { ...notif, isPinned: !notif.isPinned }
+              : notif
+          ),
+        }));
+      },
 
-  getFilteredNotifications: () => {
-    const {
-      notifications,
-      selectedCategory,
-      searchQuery,
-      filterUnread,
-      filterPriority,
-    } = get();
-    let filtered = [...notifications];
+      deleteNotification: notificationId => {
+        set(state => ({
+          notifications: state.notifications.filter(
+            notif => notif.id !== notificationId
+          ),
+        }));
+      },
 
-    // Sort by pinned first, then by creation date
-    filtered.sort((a, b) => {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      return b.createdAt.getTime() - a.createdAt.getTime();
-    });
+      clearExpired: () => {
+        const now = new Date();
+        set(state => ({
+          notifications: state.notifications.filter(
+            notif => !notif.expiresAt || notif.expiresAt > now
+          ),
+        }));
+      },
 
-    if (selectedCategory) {
-      filtered = filtered.filter(notif => notif.category === selectedCategory);
-    }
+      // Settings Management Actions
+      updateSettings: (userId, category, settingsData) => {
+        set(state => {
+          const existingIndex = state.settings.findIndex(
+            s => s.userId === userId && s.category === category
+          );
 
-    if (searchQuery) {
-      const lowercaseQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        notif =>
-          notif.title.toLowerCase().includes(lowercaseQuery) ||
-          notif.message.toLowerCase().includes(lowercaseQuery)
-      );
-    }
+          if (existingIndex >= 0) {
+            const updatedSettings = [...state.settings];
+            updatedSettings[existingIndex] = {
+              ...updatedSettings[existingIndex],
+              ...settingsData,
+              updatedAt: new Date(),
+            };
+            return { settings: updatedSettings };
+          } else {
+            const newSettings: NotificationSettings = {
+              id: `settings-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              userId,
+              category,
+              enabled: true,
+              channels: {
+                inApp: true,
+                email: false,
+                push: false,
+                sms: false,
+              },
+              frequency: 'immediate',
+              quietHours: {
+                enabled: false,
+                start: '22:00',
+                end: '08:00',
+                timezone: 'UTC',
+              },
+              keywords: [],
+              excludeKeywords: [],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              ...settingsData,
+            };
+            return { settings: [...state.settings, newSettings] };
+          }
+        });
+      },
 
-    if (filterUnread) {
-      filtered = filtered.filter(notif => !notif.isRead);
-    }
+      getSettings: (userId, category) => {
+        return (
+          get().settings.find(
+            s => s.userId === userId && s.category === category
+          ) || null
+        );
+      },
 
-    if (filterPriority) {
-      filtered = filtered.filter(notif => notif.priority === filterPriority);
-    }
+      resetSettings: userId => {
+        set(state => ({
+          settings: state.settings.filter(s => s.userId !== userId),
+        }));
+      },
 
-    return filtered;
-  },
+      // Template Management Actions
+      createTemplate: templateData => {
+        const newTemplate: NotificationTemplate = {
+          ...templateData,
+          id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        set(state => ({
+          templates: [...state.templates, newTemplate],
+        }));
+      },
 
-  getNotificationsByCategory: category => {
-    return get().notifications.filter(notif => notif.category === category);
-  },
+      updateTemplate: (templateId, updates) => {
+        set(state => ({
+          templates: state.templates.map(template =>
+            template.id === templateId
+              ? { ...template, ...updates, updatedAt: new Date() }
+              : template
+          ),
+        }));
+      },
 
-  getNotificationsByPriority: priority => {
-    return get().notifications.filter(notif => notif.priority === priority);
-  },
+      deleteTemplate: templateId => {
+        set(state => ({
+          templates: state.templates.filter(
+            template => template.id !== templateId
+          ),
+        }));
+      },
 
-  getRecentNotifications: limit => {
-    return get()
-      .notifications.sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-      )
-      .slice(0, limit);
-  },
+      // Permission Management Actions
+      updatePermission: (role, category, permissionData) => {
+        set(state => {
+          const existingIndex = state.permissions.findIndex(
+            p => p.role === role && p.category === category
+          );
 
-  getNotificationStats: () => {
-    const notifications = get().notifications;
-    const stats = {
-      total: notifications.length,
-      unread: notifications.filter(n => !n.isRead).length,
-      byCategory: {} as Record<string, number>,
-      byPriority: {} as Record<string, number>,
-    };
+          if (existingIndex >= 0) {
+            const updatedPermissions = [...state.permissions];
+            updatedPermissions[existingIndex] = {
+              ...updatedPermissions[existingIndex],
+              ...permissionData,
+            };
+            return { permissions: updatedPermissions };
+          } else {
+            const newPermission: NotificationPermission = {
+              id: `perm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              role,
+              category,
+              canReceive: true,
+              canConfigure: false,
+              canSend: false,
+              canManage: false,
+              ...permissionData,
+            };
+            return { permissions: [...state.permissions, newPermission] };
+          }
+        });
+      },
 
-    notifications.forEach(notif => {
-      stats.byCategory[notif.category] =
-        (stats.byCategory[notif.category] || 0) + 1;
-      stats.byPriority[notif.priority] =
-        (stats.byPriority[notif.priority] || 0) + 1;
-    });
+      getPermission: (role, category) => {
+        return (
+          get().permissions.find(
+            p => p.role === role && p.category === category
+          ) || null
+        );
+      },
 
-    return stats;
-  },
-}),
+      // Filter and Search Actions
+      setSelectedCategory: category => set({ selectedCategory: category }),
+      setSearchQuery: query => set({ searchQuery: query }),
+      setFilterUnread: unread => set({ filterUnread: unread }),
+      setFilterPriority: priority => set({ filterPriority: priority }),
+
+      // Getters
+      getUnreadCount: () => {
+        return get().notifications.filter(notif => !notif.isRead).length;
+      },
+
+      getUnreadCountByCategory: category => {
+        return get().notifications.filter(
+          notif => !notif.isRead && notif.category === category
+        ).length;
+      },
+
+      getFilteredNotifications: () => {
+        const {
+          notifications,
+          selectedCategory,
+          searchQuery,
+          filterUnread,
+          filterPriority,
+        } = get();
+        let filtered = [...notifications];
+
+        // Sort by pinned first, then by creation date
+        filtered.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          // Ensure createdAt is a Date object
+          const aDate =
+            a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+          const bDate =
+            b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+          return bDate.getTime() - aDate.getTime();
+        });
+
+        if (selectedCategory) {
+          filtered = filtered.filter(
+            notif => notif.category === selectedCategory
+          );
+        }
+
+        if (searchQuery) {
+          const lowercaseQuery = searchQuery.toLowerCase();
+          filtered = filtered.filter(
+            notif =>
+              notif.title.toLowerCase().includes(lowercaseQuery) ||
+              notif.message.toLowerCase().includes(lowercaseQuery)
+          );
+        }
+
+        if (filterUnread) {
+          filtered = filtered.filter(notif => !notif.isRead);
+        }
+
+        if (filterPriority) {
+          filtered = filtered.filter(
+            notif => notif.priority === filterPriority
+          );
+        }
+
+        return filtered;
+      },
+
+      getNotificationsByCategory: category => {
+        return get().notifications.filter(notif => notif.category === category);
+      },
+
+      getNotificationsByPriority: priority => {
+        return get().notifications.filter(notif => notif.priority === priority);
+      },
+
+      getRecentNotifications: limit => {
+        return get()
+          .notifications.sort((a, b) => {
+            // Ensure createdAt is a Date object
+            const aDate =
+              a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+            const bDate =
+              b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+            return bDate.getTime() - aDate.getTime();
+          })
+          .slice(0, limit);
+      },
+
+      getNotificationStats: () => {
+        const notifications = get().notifications;
+        const stats = {
+          total: notifications.length,
+          unread: notifications.filter(n => !n.isRead).length,
+          byCategory: {} as Record<string, number>,
+          byPriority: {} as Record<string, number>,
+        };
+
+        notifications.forEach(notif => {
+          stats.byCategory[notif.category] =
+            (stats.byCategory[notif.category] || 0) + 1;
+          stats.byPriority[notif.priority] =
+            (stats.byPriority[notif.priority] || 0) + 1;
+        });
+
+        return stats;
+      },
+    }),
     {
       name: 'notifications-store',
-      partialize: (state) => ({
+      partialize: state => ({
         notifications: state.notifications,
         settings: state.settings,
         templates: state.templates,
         permissions: state.permissions,
       }),
+      onRehydrateStorage: () => state => {
+        if (state) {
+          // Convert string dates back to Date objects for notifications
+          state.notifications = state.notifications.map(notif => ({
+            ...notif,
+            createdAt:
+              notif.createdAt instanceof Date
+                ? notif.createdAt
+                : new Date(notif.createdAt),
+            expiresAt: notif.expiresAt
+              ? notif.expiresAt instanceof Date
+                ? notif.expiresAt
+                : new Date(notif.expiresAt)
+              : undefined,
+            readAt: notif.readAt
+              ? notif.readAt instanceof Date
+                ? notif.readAt
+                : new Date(notif.readAt)
+              : undefined,
+          }));
+
+          // Convert string dates back to Date objects for settings
+          state.settings = state.settings.map(setting => ({
+            ...setting,
+            createdAt:
+              setting.createdAt instanceof Date
+                ? setting.createdAt
+                : new Date(setting.createdAt),
+            updatedAt:
+              setting.updatedAt instanceof Date
+                ? setting.updatedAt
+                : new Date(setting.updatedAt),
+          }));
+
+          // Convert string dates back to Date objects for templates
+          state.templates = state.templates.map(template => ({
+            ...template,
+            createdAt:
+              template.createdAt instanceof Date
+                ? template.createdAt
+                : new Date(template.createdAt),
+            updatedAt:
+              template.updatedAt instanceof Date
+                ? template.updatedAt
+                : new Date(template.updatedAt),
+          }));
+        }
+      },
     }
   )
 );
