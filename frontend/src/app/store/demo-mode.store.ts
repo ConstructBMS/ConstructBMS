@@ -1,75 +1,84 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-export interface DemoModeState {
+export interface DemoModeStore {
   isDemoMode: boolean;
-  demoDataCount: number;
-  lastDemoDataCleanup?: Date;
+  demoDataCleared: boolean;
   canManageDemoData: boolean;
-}
-
-interface DemoModeStore extends DemoModeState {
+  
   // Actions
   setDemoMode: (isDemo: boolean) => void;
-  setDemoDataCount: (count: number) => void;
+  clearDemoData: () => void;
+  resetToDemoMode: () => void;
   setCanManageDemoData: (canManage: boolean) => void;
-  markDemoDataCleanup: () => void;
-  resetDemoMode: () => void;
-
-  // Computed
   getDemoModeStatus: () => {
     isDemo: boolean;
     statusText: string;
-    statusColor: string;
-    canManage: boolean;
   };
 }
 
-export const useDemoModeStore = create<DemoModeStore>((set, get) => ({
-  // Initial state
-  isDemoMode: true, // Start in demo mode
-  demoDataCount: 0,
-  lastDemoDataCleanup: undefined,
-  canManageDemoData: false, // Will be set based on user permissions
-
-  // Actions
-  setDemoMode: (isDemo: boolean) => {
-    set({ isDemoMode: isDemo });
-  },
-
-  setDemoDataCount: (count: number) => {
-    set({ demoDataCount: count });
-  },
-
-  setCanManageDemoData: (canManage: boolean) => {
-    set({ canManageDemoData: canManage });
-  },
-
-  markDemoDataCleanup: () => {
-    set({
-      lastDemoDataCleanup: new Date(),
-      isDemoMode: false,
-      demoDataCount: 0,
-    });
-  },
-
-  resetDemoMode: () => {
-    set({
+export const useDemoModeStore = create<DemoModeStore>()(
+  persist(
+    (set, get) => ({
       isDemoMode: true,
-      demoDataCount: 0,
-      lastDemoDataCleanup: undefined,
-      canManageDemoData: false,
-    });
-  },
+      demoDataCleared: false,
+      canManageDemoData: true,
 
-  // Computed
-  getDemoModeStatus: () => {
-    const { isDemoMode, canManageDemoData } = get();
+      setDemoMode: (isDemo: boolean) => {
+        set({ isDemoMode: isDemo });
+      },
 
-    return {
-      isDemo: isDemoMode,
-      statusText: isDemoMode ? 'Demo Mode' : 'Live Mode',
-      statusColor: isDemoMode ? 'bg-blue-600' : 'bg-green-600',
-      canManage: canManageDemoData,
-    };
-  },
-}));
+      setCanManageDemoData: (canManage: boolean) => {
+        set({ canManageDemoData: canManage });
+      },
+
+      getDemoModeStatus: () => {
+        const { isDemoMode } = get();
+        return {
+          isDemo: isDemoMode,
+          statusText: isDemoMode ? 'Demo Mode' : 'Live Mode',
+        };
+      },
+
+      clearDemoData: () => {
+        // Clear all demo data from localStorage
+        localStorage.removeItem('notifications-store');
+        localStorage.removeItem('chat-store');
+        localStorage.removeItem('sticky-notes-store');
+        
+        // Clear any other demo data stores
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.includes('demo') || key.includes('store'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
+        set({ 
+          isDemoMode: false, 
+          demoDataCleared: true 
+        });
+      },
+
+      resetToDemoMode: () => {
+        // Reset to demo mode with fresh demo data
+        localStorage.clear();
+        set({ 
+          isDemoMode: true, 
+          demoDataCleared: false 
+        });
+        // Reload the page to reset all stores
+        window.location.reload();
+      },
+    }),
+    {
+      name: 'demo-mode-store',
+      partialize: (state) => ({
+        isDemoMode: state.isDemoMode,
+        demoDataCleared: state.demoDataCleared,
+      }),
+    }
+  )
+);

@@ -27,7 +27,7 @@ export function Topbar() {
   const [chatOpen, setChatOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { getTotalUnreadCount } = useChatStore();
-  const { getUnreadCount } = useNotificationsStore();
+  const { getUnreadCount, notifications } = useNotificationsStore();
   const totalUnreadCount = getTotalUnreadCount();
   const notificationUnreadCount = getUnreadCount();
   const currentOrg = getCurrentOrg();

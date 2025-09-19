@@ -1,4 +1,4 @@
-import { MessageSquare, Users, Settings, Search } from 'lucide-react';
+import { MessageSquare, Search, Settings, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useChatStore } from '../../app/store/chat.store';
 import { ChatList } from '../../components/ChatList';
@@ -90,9 +90,7 @@ export default function ChatPage() {
       {/* Right Side - Chat Window */}
       <div className='flex-1 bg-white'>
         {currentChatId ? (
-          <ChatWindow
-            chat={chats.find(chat => chat.id === currentChatId)!}
-          />
+          <ChatWindow chat={chats.find(chat => chat.id === currentChatId)!} />
         ) : (
           <div className='flex-1 flex items-center justify-center text-gray-500'>
             <div className='text-center'>

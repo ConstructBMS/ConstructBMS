@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface Notification {
   id: string;
@@ -166,7 +167,9 @@ interface NotificationsStore {
   };
 }
 
-export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
+export const useNotificationsStore = create<NotificationsStore>()(
+  persist(
+    (set, get) => ({
   // Initial State
   notifications: [
     {
@@ -592,4 +595,15 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
 
     return stats;
   },
-}));
+}),
+    {
+      name: 'notifications-store',
+      partialize: (state) => ({
+        notifications: state.notifications,
+        settings: state.settings,
+        templates: state.templates,
+        permissions: state.permissions,
+      }),
+    }
+  )
+);
