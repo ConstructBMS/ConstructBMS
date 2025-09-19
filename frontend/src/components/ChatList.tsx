@@ -24,7 +24,7 @@ export function ChatList({
   currentChatId,
   onChatSelect,
 }: ChatListProps) {
-  const { archiveChat, muteChat, pinChat, deleteChat, getUnreadCount } =
+  const { archiveChat, muteChat, pinChat, deleteChat, getUnreadCount, markChatAsRead } =
     useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
 
@@ -103,7 +103,13 @@ export function ChatList({
                     ? 'bg-blue-50 border border-blue-200'
                     : 'hover:bg-gray-50'
                 )}
-                onClick={() => onChatSelect(chat.id)}
+                onClick={() => {
+                  onChatSelect(chat.id);
+                  // Mark chat as read when selected
+                  if (getUnreadCount(chat.id) > 0) {
+                    markChatAsRead(chat.id);
+                  }
+                }}
               >
                 <div className='flex items-start space-x-3'>
                   {/* Avatar */}

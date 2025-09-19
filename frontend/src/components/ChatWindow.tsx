@@ -33,6 +33,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
     archiveChat,
     getChatUsers,
     getUnreadCount,
+    markChatAsRead,
   } = useChatStore();
 
   const [showMenu, setShowMenu] = useState(false);
@@ -46,6 +47,13 @@ export function ChatWindow({ chat }: ChatWindowProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages.length]);
+
+  // Mark chat as read when viewed
+  useEffect(() => {
+    if (chat.id && unreadCount > 0) {
+      markChatAsRead(chat.id);
+    }
+  }, [chat.id, unreadCount, markChatAsRead]);
 
   const handleSendMessage = (
     content: string,

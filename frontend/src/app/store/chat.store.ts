@@ -88,6 +88,7 @@ interface ChatStore {
   addReaction: (messageId: string, userId: string, emoji: string) => void;
   removeReaction: (messageId: string, userId: string) => void;
   markAsRead: (chatId: string, messageId: string) => void;
+  markChatAsRead: (chatId: string) => void;
 
   // User Management
   addUserToChat: (chatId: string, userId: string) => void;
@@ -417,6 +418,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         [chatId]: (state.messages[chatId] || []).map(msg =>
           msg.id === messageId ? { ...msg, isRead: true } : msg
         ),
+      },
+    }));
+  },
+
+  markChatAsRead: (chatId) => {
+    set(state => ({
+      messages: {
+        ...state.messages,
+        [chatId]: (state.messages[chatId] || []).map(msg => ({
+          ...msg,
+          isRead: true,
+        })),
       },
     }));
   },
