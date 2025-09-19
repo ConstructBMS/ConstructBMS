@@ -1,7 +1,6 @@
 import {
   Bell,
   BellOff,
-  Clock,
   Mail,
   MessageSquare,
   Phone,
@@ -12,36 +11,77 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useNotificationsStore } from '../app/store/notifications.store';
+import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 import { Switch } from './ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { cn } from '../lib/utils/cn';
 
 export function NotificationSettings() {
-  const {
-    settings,
-    permissions,
-    updateSettings,
-    getSettings,
-    getPermission,
-  } = useNotificationsStore();
+  const { settings, permissions, updateSettings, getSettings, getPermission } =
+    useNotificationsStore();
 
   const [activeCategory, setActiveCategory] = useState('chat');
   const [isSaving, setIsSaving] = useState(false);
 
   const categories = [
-    { id: 'chat', name: 'Chat', icon: MessageSquare, description: 'Chat messages and conversations' },
-    { id: 'project', name: 'Project', icon: Settings, description: 'Project updates and changes' },
-    { id: 'task', name: 'Task', icon: Settings, description: 'Task assignments and updates' },
-    { id: 'system', name: 'System', icon: Settings, description: 'System notifications and maintenance' },
-    { id: 'user', name: 'User', icon: Settings, description: 'User-related notifications' },
-    { id: 'security', name: 'Security', icon: Shield, description: 'Security alerts and warnings' },
-    { id: 'billing', name: 'Billing', icon: Settings, description: 'Billing and payment notifications' },
+    {
+      id: 'chat',
+      name: 'Chat',
+      icon: MessageSquare,
+      description: 'Chat messages and conversations',
+    },
+    {
+      id: 'project',
+      name: 'Project',
+      icon: Settings,
+      description: 'Project updates and changes',
+    },
+    {
+      id: 'task',
+      name: 'Task',
+      icon: Settings,
+      description: 'Task assignments and updates',
+    },
+    {
+      id: 'system',
+      name: 'System',
+      icon: Settings,
+      description: 'System notifications and maintenance',
+    },
+    {
+      id: 'user',
+      name: 'User',
+      icon: Settings,
+      description: 'User-related notifications',
+    },
+    {
+      id: 'security',
+      name: 'Security',
+      icon: Shield,
+      description: 'Security alerts and warnings',
+    },
+    {
+      id: 'billing',
+      name: 'Billing',
+      icon: Settings,
+      description: 'Billing and payment notifications',
+    },
   ];
 
   const currentSettings = getSettings('user-1', activeCategory) || {
@@ -103,7 +143,7 @@ export function NotificationSettings() {
 
   const addKeyword = (keyword: string, isExclude = false) => {
     if (!keyword.trim()) return;
-    
+
     setFormData(prev => ({
       ...prev,
       [isExclude ? 'excludeKeywords' : 'keywords']: [
@@ -126,7 +166,9 @@ export function NotificationSettings() {
     <div className='space-y-6'>
       {/* Category Selection */}
       <div>
-        <Label className='text-base font-medium mb-3 block'>Notification Categories</Label>
+        <Label className='text-base font-medium mb-3 block'>
+          Notification Categories
+        </Label>
         <div className='grid grid-cols-2 gap-3'>
           {categories.map(category => {
             const Icon = category.icon;
@@ -148,7 +190,9 @@ export function NotificationSettings() {
                     <Icon className='h-5 w-5 text-gray-600' />
                     <div className='flex-1 min-w-0'>
                       <h3 className='font-medium text-sm'>{category.name}</h3>
-                      <p className='text-xs text-gray-500 truncate'>{category.description}</p>
+                      <p className='text-xs text-gray-500 truncate'>
+                        {category.description}
+                      </p>
                     </div>
                     <div className='flex items-center space-x-2'>
                       {isEnabled ? (
@@ -157,7 +201,9 @@ export function NotificationSettings() {
                         <BellOff className='h-4 w-4 text-gray-400' />
                       )}
                       {isActive && (
-                        <Badge variant='secondary' className='text-xs'>Active</Badge>
+                        <Badge variant='secondary' className='text-xs'>
+                          Active
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -173,42 +219,62 @@ export function NotificationSettings() {
         <CardHeader>
           <CardTitle className='flex items-center space-x-2'>
             <Settings className='h-5 w-5' />
-            <span>{categories.find(c => c.id === activeCategory)?.name} Settings</span>
+            <span>
+              {categories.find(c => c.id === activeCategory)?.name} Settings
+            </span>
           </CardTitle>
           <CardDescription>
-            Configure how you receive {categories.find(c => c.id === activeCategory)?.name.toLowerCase()} notifications
+            Configure how you receive{' '}
+            {categories.find(c => c.id === activeCategory)?.name.toLowerCase()}{' '}
+            notifications
           </CardDescription>
         </CardHeader>
         <CardContent className='space-y-6'>
           {/* Enable/Disable */}
           <div className='flex items-center justify-between'>
             <div>
-              <Label className='text-base font-medium'>Enable Notifications</Label>
+              <Label className='text-base font-medium'>
+                Enable Notifications
+              </Label>
               <p className='text-sm text-gray-500'>
-                Turn {categories.find(c => c.id === activeCategory)?.name.toLowerCase()} notifications on or off
+                Turn{' '}
+                {categories
+                  .find(c => c.id === activeCategory)
+                  ?.name.toLowerCase()}{' '}
+                notifications on or off
               </p>
             </div>
             <Switch
               checked={formData.enabled}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, enabled: checked }))}
+              onCheckedChange={checked =>
+                setFormData(prev => ({ ...prev, enabled: checked }))
+              }
             />
           </div>
 
           {/* Notification Channels */}
           <div>
-            <Label className='text-base font-medium mb-3 block'>Notification Channels</Label>
+            <Label className='text-base font-medium mb-3 block'>
+              Notification Channels
+            </Label>
             <div className='space-y-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center space-x-3'>
                   <Bell className='h-5 w-5 text-gray-600' />
                   <div>
-                    <Label className='text-sm font-medium'>In-App Notifications</Label>
-                    <p className='text-xs text-gray-500'>Show notifications within the application</p>
+                    <Label className='text-sm font-medium'>
+                      In-App Notifications
+                    </Label>
+                    <p className='text-xs text-gray-500'>
+                      Show notifications within the application
+                    </p>
                   </div>
                 </div>
                 <Switch
                   checked={formData.channels.inApp}
-                  onCheckedChange={(checked) => handleChannelChange('inApp', checked)}
+                  onCheckedChange={checked =>
+                    handleChannelChange('inApp', checked)
+                  }
                 />
               </div>
 
@@ -216,13 +282,19 @@ export function NotificationSettings() {
                 <div className='flex items-center space-x-3'>
                   <Mail className='h-5 w-5 text-gray-600' />
                   <div>
-                    <Label className='text-sm font-medium'>Email Notifications</Label>
-                    <p className='text-xs text-gray-500'>Send notifications via email</p>
+                    <Label className='text-sm font-medium'>
+                      Email Notifications
+                    </Label>
+                    <p className='text-xs text-gray-500'>
+                      Send notifications via email
+                    </p>
                   </div>
                 </div>
                 <Switch
                   checked={formData.channels.email}
-                  onCheckedChange={(checked) => handleChannelChange('email', checked)}
+                  onCheckedChange={checked =>
+                    handleChannelChange('email', checked)
+                  }
                 />
               </div>
 
@@ -230,13 +302,19 @@ export function NotificationSettings() {
                 <div className='flex items-center space-x-3'>
                   <Smartphone className='h-5 w-5 text-gray-600' />
                   <div>
-                    <Label className='text-sm font-medium'>Push Notifications</Label>
-                    <p className='text-xs text-gray-500'>Send push notifications to your device</p>
+                    <Label className='text-sm font-medium'>
+                      Push Notifications
+                    </Label>
+                    <p className='text-xs text-gray-500'>
+                      Send push notifications to your device
+                    </p>
                   </div>
                 </div>
                 <Switch
                   checked={formData.channels.push}
-                  onCheckedChange={(checked) => handleChannelChange('push', checked)}
+                  onCheckedChange={checked =>
+                    handleChannelChange('push', checked)
+                  }
                 />
               </div>
 
@@ -244,13 +322,19 @@ export function NotificationSettings() {
                 <div className='flex items-center space-x-3'>
                   <Phone className='h-5 w-5 text-gray-600' />
                   <div>
-                    <Label className='text-sm font-medium'>SMS Notifications</Label>
-                    <p className='text-xs text-gray-500'>Send notifications via SMS (premium feature)</p>
+                    <Label className='text-sm font-medium'>
+                      SMS Notifications
+                    </Label>
+                    <p className='text-xs text-gray-500'>
+                      Send notifications via SMS (premium feature)
+                    </p>
                   </div>
                 </div>
                 <Switch
                   checked={formData.channels.sms}
-                  onCheckedChange={(checked) => handleChannelChange('sms', checked)}
+                  onCheckedChange={checked =>
+                    handleChannelChange('sms', checked)
+                  }
                 />
               </div>
             </div>
@@ -258,10 +342,14 @@ export function NotificationSettings() {
 
           {/* Frequency */}
           <div>
-            <Label className='text-base font-medium mb-3 block'>Notification Frequency</Label>
+            <Label className='text-base font-medium mb-3 block'>
+              Notification Frequency
+            </Label>
             <Select
               value={formData.frequency}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, frequency: value as any }))}
+              onValueChange={value =>
+                setFormData(prev => ({ ...prev, frequency: value as any }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -282,7 +370,9 @@ export function NotificationSettings() {
               <Label className='text-base font-medium'>Quiet Hours</Label>
               <Switch
                 checked={formData.quietHours.enabled}
-                onCheckedChange={(checked) => handleQuietHoursChange('enabled', checked)}
+                onCheckedChange={checked =>
+                  handleQuietHoursChange('enabled', checked)
+                }
               />
             </div>
             {formData.quietHours.enabled && (
@@ -292,7 +382,9 @@ export function NotificationSettings() {
                   <Input
                     type='time'
                     value={formData.quietHours.start}
-                    onChange={(e) => handleQuietHoursChange('start', e.target.value)}
+                    onChange={e =>
+                      handleQuietHoursChange('start', e.target.value)
+                    }
                   />
                 </div>
                 <div>
@@ -300,7 +392,9 @@ export function NotificationSettings() {
                   <Input
                     type='time'
                     value={formData.quietHours.end}
-                    onChange={(e) => handleQuietHoursChange('end', e.target.value)}
+                    onChange={e =>
+                      handleQuietHoursChange('end', e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -309,7 +403,9 @@ export function NotificationSettings() {
 
           {/* Keywords */}
           <div>
-            <Label className='text-base font-medium mb-3 block'>Keyword Filters</Label>
+            <Label className='text-base font-medium mb-3 block'>
+              Keyword Filters
+            </Label>
             <div className='space-y-4'>
               <div>
                 <Label className='text-sm font-medium'>Include Keywords</Label>
@@ -318,7 +414,11 @@ export function NotificationSettings() {
                 </p>
                 <div className='flex flex-wrap gap-2 mb-2'>
                   {formData.keywords.map(keyword => (
-                    <Badge key={keyword} variant='secondary' className='text-xs'>
+                    <Badge
+                      key={keyword}
+                      variant='secondary'
+                      className='text-xs'
+                    >
                       {keyword}
                       <button
                         onClick={() => removeKeyword(keyword)}
@@ -332,7 +432,7 @@ export function NotificationSettings() {
                 <div className='flex space-x-2'>
                   <Input
                     placeholder='Add keyword...'
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (e.key === 'Enter') {
                         addKeyword(e.currentTarget.value);
                         e.currentTarget.value = '';
@@ -341,8 +441,9 @@ export function NotificationSettings() {
                   />
                   <Button
                     size='sm'
-                    onClick={(e) => {
-                      const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                    onClick={e => {
+                      const input = e.currentTarget
+                        .previousElementSibling as HTMLInputElement;
                       addKeyword(input.value);
                       input.value = '';
                     }}
@@ -359,7 +460,11 @@ export function NotificationSettings() {
                 </p>
                 <div className='flex flex-wrap gap-2 mb-2'>
                   {formData.excludeKeywords.map(keyword => (
-                    <Badge key={keyword} variant='destructive' className='text-xs'>
+                    <Badge
+                      key={keyword}
+                      variant='destructive'
+                      className='text-xs'
+                    >
                       {keyword}
                       <button
                         onClick={() => removeKeyword(keyword, true)}
@@ -373,7 +478,7 @@ export function NotificationSettings() {
                 <div className='flex space-x-2'>
                   <Input
                     placeholder='Add exclude keyword...'
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (e.key === 'Enter') {
                         addKeyword(e.currentTarget.value, true);
                         e.currentTarget.value = '';
@@ -383,8 +488,9 @@ export function NotificationSettings() {
                   <Button
                     size='sm'
                     variant='destructive'
-                    onClick={(e) => {
-                      const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                    onClick={e => {
+                      const input = e.currentTarget
+                        .previousElementSibling as HTMLInputElement;
                       addKeyword(input.value, true);
                       input.value = '';
                     }}

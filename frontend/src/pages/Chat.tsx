@@ -1,14 +1,14 @@
 import { MessageSquare, Users, Settings, Search } from 'lucide-react';
 import { useState } from 'react';
-import { useChatStore } from '../../app/store/chat.store';
-import { ChatList } from '../../components/ChatList';
-import { ChatWindow } from '../../components/ChatWindow';
-import { UserSelector } from '../../components/UserSelector';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { cn } from '../../lib/utils/cn';
+import { useChatStore } from '../app/store/chat.store';
+import { ChatList } from '../components/ChatList';
+import { ChatWindow } from '../components/ChatWindow';
+import { UserSelector } from '../components/UserSelector';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { cn } from '../lib/utils/cn';
 
-export default function ChatPage() {
+export function Chat() {
   const {
     chats,
     currentChatId,

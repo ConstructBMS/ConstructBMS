@@ -5,14 +5,15 @@ import {
   Pin,
   PinOff,
   Trash2,
-  X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Notification } from '../app/store/notifications.store';
-import { useNotificationsStore } from '../app/store/notifications.store';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import {
+  Notification,
+  useNotificationsStore,
+} from '../app/store/notifications.store';
 import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -132,26 +133,33 @@ export function NotificationItem({ notification }: NotificationItemProps) {
           <div className='flex items-start justify-between'>
             <div className='flex-1 min-w-0'>
               <div className='flex items-center space-x-2 mb-1'>
-                <h3 className={cn(
-                  'text-sm font-medium truncate',
-                  !notification.isRead ? 'text-gray-900' : 'text-gray-700'
-                )}>
+                <h3
+                  className={cn(
+                    'text-sm font-medium truncate',
+                    !notification.isRead ? 'text-gray-900' : 'text-gray-700'
+                  )}
+                >
                   {notification.title}
                 </h3>
                 {notification.isPinned && (
                   <Pin className='h-3 w-3 text-blue-500' />
                 )}
               </div>
-              <p className={cn(
-                'text-sm truncate',
-                !notification.isRead ? 'text-gray-700' : 'text-gray-500'
-              )}>
+              <p
+                className={cn(
+                  'text-sm truncate',
+                  !notification.isRead ? 'text-gray-700' : 'text-gray-500'
+                )}
+              >
                 {notification.message}
               </p>
               <div className='flex items-center space-x-2 mt-2'>
                 <Badge
                   variant='secondary'
-                  className={cn('text-xs', getPriorityColor(notification.priority))}
+                  className={cn(
+                    'text-xs',
+                    getPriorityColor(notification.priority)
+                  )}
                 >
                   {notification.priority}
                 </Badge>
@@ -170,7 +178,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
                 variant='ghost'
                 size='icon'
                 className='h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity'
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   setShowMenu(!showMenu);
                 }}
@@ -187,7 +195,7 @@ export function NotificationItem({ notification }: NotificationItemProps) {
                 variant='outline'
                 size='sm'
                 className='text-xs'
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   handleAction();
                 }}

@@ -4,8 +4,23 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error' | 'chat' | 'project' | 'task' | 'system';
-  category: 'chat' | 'project' | 'task' | 'system' | 'user' | 'security' | 'billing';
+  type:
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'chat'
+    | 'project'
+    | 'task'
+    | 'system';
+  category:
+    | 'chat'
+    | 'project'
+    | 'task'
+    | 'system'
+    | 'user'
+    | 'security'
+    | 'billing';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   isRead: boolean;
   isArchived: boolean;
@@ -81,37 +96,61 @@ interface NotificationsStore {
   searchQuery: string;
   filterUnread: boolean;
   filterPriority: string | null;
-  
+
   // Notification Management
   setOpen: (open: boolean) => void;
-  addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'isRead' | 'isArchived' | 'isPinned'>) => void;
+  addNotification: (
+    notification: Omit<
+      Notification,
+      'id' | 'createdAt' | 'isRead' | 'isArchived' | 'isPinned'
+    >
+  ) => void;
   markAsRead: (notificationId: string) => void;
   markAllAsRead: () => void;
   archiveNotification: (notificationId: string) => void;
   pinNotification: (notificationId: string) => void;
   deleteNotification: (notificationId: string) => void;
   clearExpired: () => void;
-  
+
   // Settings Management
-  updateSettings: (userId: string, category: string, settings: Partial<NotificationSettings>) => void;
-  getSettings: (userId: string, category: string) => NotificationSettings | null;
+  updateSettings: (
+    userId: string,
+    category: string,
+    settings: Partial<NotificationSettings>
+  ) => void;
+  getSettings: (
+    userId: string,
+    category: string
+  ) => NotificationSettings | null;
   resetSettings: (userId: string) => void;
-  
+
   // Template Management
-  createTemplate: (template: Omit<NotificationTemplate, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateTemplate: (templateId: string, updates: Partial<NotificationTemplate>) => void;
+  createTemplate: (
+    template: Omit<NotificationTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ) => void;
+  updateTemplate: (
+    templateId: string,
+    updates: Partial<NotificationTemplate>
+  ) => void;
   deleteTemplate: (templateId: string) => void;
-  
+
   // Permission Management
-  updatePermission: (role: string, category: string, permission: Partial<NotificationPermission>) => void;
-  getPermission: (role: string, category: string) => NotificationPermission | null;
-  
+  updatePermission: (
+    role: string,
+    category: string,
+    permission: Partial<NotificationPermission>
+  ) => void;
+  getPermission: (
+    role: string,
+    category: string
+  ) => NotificationPermission | null;
+
   // Filters and Search
   setSelectedCategory: (category: string | null) => void;
   setSearchQuery: (query: string) => void;
   setFilterUnread: (unread: boolean) => void;
   setFilterPriority: (priority: string | null) => void;
-  
+
   // Getters
   getUnreadCount: () => number;
   getUnreadCountByCategory: (category: string) => number;
@@ -265,7 +304,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
   // Notification Management Actions
   setOpen: (open: boolean) => set({ isOpen: open }),
 
-  addNotification: (notificationData) => {
+  addNotification: notificationData => {
     const newNotification: Notification = {
       ...notificationData,
       id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -279,7 +318,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }));
   },
 
-  markAsRead: (notificationId) => {
+  markAsRead: notificationId => {
     set(state => ({
       notifications: state.notifications.map(notif =>
         notif.id === notificationId
@@ -299,7 +338,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }));
   },
 
-  archiveNotification: (notificationId) => {
+  archiveNotification: notificationId => {
     set(state => ({
       notifications: state.notifications.map(notif =>
         notif.id === notificationId
@@ -309,7 +348,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }));
   },
 
-  pinNotification: (notificationId) => {
+  pinNotification: notificationId => {
     set(state => ({
       notifications: state.notifications.map(notif =>
         notif.id === notificationId
@@ -319,17 +358,19 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }));
   },
 
-  deleteNotification: (notificationId) => {
+  deleteNotification: notificationId => {
     set(state => ({
-      notifications: state.notifications.filter(notif => notif.id !== notificationId),
+      notifications: state.notifications.filter(
+        notif => notif.id !== notificationId
+      ),
     }));
   },
 
   clearExpired: () => {
     const now = new Date();
     set(state => ({
-      notifications: state.notifications.filter(notif =>
-        !notif.expiresAt || notif.expiresAt > now
+      notifications: state.notifications.filter(
+        notif => !notif.expiresAt || notif.expiresAt > now
       ),
     }));
   },
@@ -340,7 +381,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
       const existingIndex = state.settings.findIndex(
         s => s.userId === userId && s.category === category
       );
-      
+
       if (existingIndex >= 0) {
         const updatedSettings = [...state.settings];
         updatedSettings[existingIndex] = {
@@ -380,19 +421,21 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
   },
 
   getSettings: (userId, category) => {
-    return get().settings.find(
-      s => s.userId === userId && s.category === category
-    ) || null;
+    return (
+      get().settings.find(
+        s => s.userId === userId && s.category === category
+      ) || null
+    );
   },
 
-  resetSettings: (userId) => {
+  resetSettings: userId => {
     set(state => ({
       settings: state.settings.filter(s => s.userId !== userId),
     }));
   },
 
   // Template Management Actions
-  createTemplate: (templateData) => {
+  createTemplate: templateData => {
     const newTemplate: NotificationTemplate = {
       ...templateData,
       id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -414,7 +457,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }));
   },
 
-  deleteTemplate: (templateId) => {
+  deleteTemplate: templateId => {
     set(state => ({
       templates: state.templates.filter(template => template.id !== templateId),
     }));
@@ -426,7 +469,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
       const existingIndex = state.permissions.findIndex(
         p => p.role === role && p.category === category
       );
-      
+
       if (existingIndex >= 0) {
         const updatedPermissions = [...state.permissions];
         updatedPermissions[existingIndex] = {
@@ -451,30 +494,37 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
   },
 
   getPermission: (role, category) => {
-    return get().permissions.find(
-      p => p.role === role && p.category === category
-    ) || null;
+    return (
+      get().permissions.find(p => p.role === role && p.category === category) ||
+      null
+    );
   },
 
   // Filter and Search Actions
-  setSelectedCategory: (category) => set({ selectedCategory: category }),
-  setSearchQuery: (query) => set({ searchQuery: query }),
-  setFilterUnread: (unread) => set({ filterUnread: unread }),
-  setFilterPriority: (priority) => set({ filterPriority: priority }),
+  setSelectedCategory: category => set({ selectedCategory: category }),
+  setSearchQuery: query => set({ searchQuery: query }),
+  setFilterUnread: unread => set({ filterUnread: unread }),
+  setFilterPriority: priority => set({ filterPriority: priority }),
 
   // Getters
   getUnreadCount: () => {
     return get().notifications.filter(notif => !notif.isRead).length;
   },
 
-  getUnreadCountByCategory: (category) => {
+  getUnreadCountByCategory: category => {
     return get().notifications.filter(
       notif => !notif.isRead && notif.category === category
     ).length;
   },
 
   getFilteredNotifications: () => {
-    const { notifications, selectedCategory, searchQuery, filterUnread, filterPriority } = get();
+    const {
+      notifications,
+      selectedCategory,
+      searchQuery,
+      filterUnread,
+      filterPriority,
+    } = get();
     let filtered = [...notifications];
 
     // Sort by pinned first, then by creation date
@@ -490,9 +540,10 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
 
     if (searchQuery) {
       const lowercaseQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(notif =>
-        notif.title.toLowerCase().includes(lowercaseQuery) ||
-        notif.message.toLowerCase().includes(lowercaseQuery)
+      filtered = filtered.filter(
+        notif =>
+          notif.title.toLowerCase().includes(lowercaseQuery) ||
+          notif.message.toLowerCase().includes(lowercaseQuery)
       );
     }
 
@@ -507,17 +558,19 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     return filtered;
   },
 
-  getNotificationsByCategory: (category) => {
+  getNotificationsByCategory: category => {
     return get().notifications.filter(notif => notif.category === category);
   },
 
-  getNotificationsByPriority: (priority) => {
+  getNotificationsByPriority: priority => {
     return get().notifications.filter(notif => notif.priority === priority);
   },
 
-  getRecentNotifications: (limit) => {
-    return get().notifications
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  getRecentNotifications: limit => {
+    return get()
+      .notifications.sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      )
       .slice(0, limit);
   },
 
@@ -531,8 +584,10 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     };
 
     notifications.forEach(notif => {
-      stats.byCategory[notif.category] = (stats.byCategory[notif.category] || 0) + 1;
-      stats.byPriority[notif.priority] = (stats.byPriority[notif.priority] || 0) + 1;
+      stats.byCategory[notif.category] =
+        (stats.byCategory[notif.category] || 0) + 1;
+      stats.byPriority[notif.priority] =
+        (stats.byPriority[notif.priority] || 0) + 1;
     });
 
     return stats;

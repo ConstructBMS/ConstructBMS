@@ -1,12 +1,20 @@
-import { Bell, ChevronDown, MessageCircle, Moon, Search, StickyNote, Sun } from 'lucide-react';
+import {
+  Bell,
+  ChevronDown,
+  MessageCircle,
+  Moon,
+  Search,
+  StickyNote,
+  Sun,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useOrgStore } from '../../app/store/auth/org.store';
-import { useThemeStore } from '../../app/store/ui/theme.store';
 import { useChatStore } from '../../app/store/chat.store';
 import { useNotificationsStore } from '../../app/store/notifications.store';
-import { StickyNotesModal } from '../StickyNotesModal';
+import { useThemeStore } from '../../app/store/ui/theme.store';
 import { ChatModal } from '../ChatModal';
 import { NotificationsModal } from '../NotificationsModal';
+import { StickyNotesModal } from '../StickyNotesModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 
@@ -144,47 +152,47 @@ export function Topbar() {
             )}
           </div>
 
-                {/* Chat */}
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setChatOpen(!chatOpen)}
-                  title='Chat'
-                  className='relative'
-                >
-                  <MessageCircle className='h-5 w-5' />
-                  {totalUnreadCount > 0 && (
-                    <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
-                      {totalUnreadCount}
-                    </span>
-                  )}
-                </Button>
+          {/* Chat */}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setChatOpen(!chatOpen)}
+            title='Chat'
+            className='relative'
+          >
+            <MessageCircle className='h-5 w-5' />
+            {totalUnreadCount > 0 && (
+              <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
+                {totalUnreadCount}
+              </span>
+            )}
+          </Button>
 
-                {/* Sticky Notes */}
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
-                  title='Sticky Notes'
-                >
-                  <StickyNote className='h-5 w-5' />
-                </Button>
+          {/* Sticky Notes */}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
+            title='Sticky Notes'
+          >
+            <StickyNote className='h-5 w-5' />
+          </Button>
 
-                {/* Notifications */}
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  title='Notifications'
-                  className='relative'
-                >
-                  <Bell className='h-5 w-5' />
-                  {notificationUnreadCount > 0 && (
-                    <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
-                      {notificationUnreadCount}
-                    </span>
-                  )}
-                </Button>
+          {/* Notifications */}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setNotificationsOpen(!notificationsOpen)}
+            title='Notifications'
+            className='relative'
+          >
+            <Bell className='h-5 w-5' />
+            {notificationUnreadCount > 0 && (
+              <span className='absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center'>
+                {notificationUnreadCount}
+              </span>
+            )}
+          </Button>
 
           {/* Theme Toggle */}
           <Button
@@ -201,23 +209,20 @@ export function Topbar() {
         </div>
       </div>
 
-        {/* Chat Modal */}
-        <ChatModal
-          isOpen={chatOpen}
-          onClose={() => setChatOpen(false)}
-        />
+      {/* Chat Modal */}
+      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
 
-        {/* Sticky Notes Modal */}
-        <StickyNotesModal
-          isOpen={stickyNotesOpen}
-          onClose={() => setStickyNotesOpen(false)}
-        />
+      {/* Sticky Notes Modal */}
+      <StickyNotesModal
+        isOpen={stickyNotesOpen}
+        onClose={() => setStickyNotesOpen(false)}
+      />
 
-        {/* Notifications Modal */}
-        <NotificationsModal
-          isOpen={notificationsOpen}
-          onClose={() => setNotificationsOpen(false)}
-        />
-      </header>
-    );
-  }
+      {/* Notifications Modal */}
+      <NotificationsModal
+        isOpen={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
+    </header>
+  );
+}

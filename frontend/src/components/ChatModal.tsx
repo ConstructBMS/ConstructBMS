@@ -1,23 +1,12 @@
-import {
-  Archive,
-  Bell,
-  BellOff,
-  MoreVertical,
-  Pin,
-  PinOff,
-  Search,
-  Settings,
-  Users,
-  X,
-} from 'lucide-react';
+import { Search, Settings, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { cn } from '../lib/utils/cn';
 import { ChatList } from './ChatList';
 import { ChatWindow } from './ChatWindow';
 import { UserSelector } from './UserSelector';
-import { cn } from '../lib/utils/cn';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 interface ChatModalProps {
   isOpen: boolean;
@@ -71,17 +60,17 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
               >
                 <Users className='h-4 w-4' />
               </Button>
-              <Button 
-                variant='ghost' 
-                size='icon' 
+              <Button
+                variant='ghost'
+                size='icon'
                 title='Settings'
                 className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
               >
                 <Settings className='h-4 w-4' />
               </Button>
-              <Button 
-                variant='ghost' 
-                size='icon' 
+              <Button
+                variant='ghost'
+                size='icon'
                 onClick={onClose}
                 className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
               >
@@ -141,7 +130,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 />
               ) : (
                 <div className='p-4'>
-                  <p className='text-gray-500 text-center'>Contacts coming soon...</p>
+                  <p className='text-gray-500 text-center'>
+                    Contacts coming soon...
+                  </p>
                 </div>
               )}
             </div>
@@ -156,8 +147,13 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
                       <Users className='h-8 w-8 text-gray-400' />
                     </div>
-                    <h3 className='text-lg font-medium mb-2'>Select a chat to start messaging</h3>
-                    <p className='text-sm'>Choose from your existing chats or start a new conversation</p>
+                    <h3 className='text-lg font-medium mb-2'>
+                      Select a chat to start messaging
+                    </h3>
+                    <p className='text-sm'>
+                      Choose from your existing chats or start a new
+                      conversation
+                    </p>
                   </div>
                 </div>
               )}
@@ -171,7 +167,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         <UserSelector
           isOpen={showUserSelector}
           onClose={() => setShowUserSelector(false)}
-          onUsersSelected={(userIds) => {
+          onUsersSelected={userIds => {
             // Create new chat logic here
             setShowUserSelector(false);
           }}

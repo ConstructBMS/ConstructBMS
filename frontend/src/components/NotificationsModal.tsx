@@ -1,34 +1,28 @@
-import {
-  Archive,
-  Bell,
-  BellOff,
-  Check,
-  Filter,
-  MoreVertical,
-  Pin,
-  PinOff,
-  Search,
-  Settings,
-  Trash2,
-  X,
-} from 'lucide-react';
+import { Bell, Check, Filter, Search, Settings, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNotificationsStore } from '../app/store/notifications.store';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Badge } from './ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { NotificationItem } from './NotificationItem';
 import { NotificationSettings } from './NotificationSettings';
-import { cn } from '../lib/utils/cn';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface NotificationsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps) {
+export function NotificationsModal({
+  isOpen,
+  onClose,
+}: NotificationsModalProps) {
   const {
     notifications,
     selectedCategory,
@@ -45,7 +39,9 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
     getNotificationStats,
   } = useNotificationsStore();
 
-  const [activeTab, setActiveTab] = useState<'notifications' | 'settings'>('notifications');
+  const [activeTab, setActiveTab] = useState<'notifications' | 'settings'>(
+    'notifications'
+  );
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredNotifications = getFilteredNotifications();
@@ -84,7 +80,9 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
             <div className='flex items-center space-x-4'>
-              <h2 className='text-lg font-semibold text-gray-900'>Notifications</h2>
+              <h2 className='text-lg font-semibold text-gray-900'>
+                Notifications
+              </h2>
               {unreadCount > 0 && (
                 <span className='bg-red-500 text-white text-xs rounded-full px-2 py-1'>
                   {unreadCount}
@@ -137,7 +135,9 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
               <div className='grid grid-cols-2 gap-3'>
                 <Select
                   value={selectedCategory || 'all'}
-                  onValueChange={value => setSelectedCategory(value === 'all' ? null : value)}
+                  onValueChange={value =>
+                    setSelectedCategory(value === 'all' ? null : value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='Category' />
@@ -153,7 +153,9 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
 
                 <Select
                   value={filterPriority || 'all'}
-                  onValueChange={value => setFilterPriority(value === 'all' ? null : value)}
+                  onValueChange={value =>
+                    setFilterPriority(value === 'all' ? null : value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='Priority' />
@@ -192,13 +194,19 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
                 )}
               </div>
               <div className='text-sm text-gray-500'>
-                {filteredNotifications.length} notification{filteredNotifications.length !== 1 ? 's' : ''}
+                {filteredNotifications.length} notification
+                {filteredNotifications.length !== 1 ? 's' : ''}
               </div>
             </div>
           </div>
 
           {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'notifications' | 'settings')}>
+          <Tabs
+            value={activeTab}
+            onValueChange={value =>
+              setActiveTab(value as 'notifications' | 'settings')
+            }
+          >
             <div className='px-4 pt-4'>
               <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value='notifications'>Notifications</TabsTrigger>
@@ -207,17 +215,25 @@ export function NotificationsModal({ isOpen, onClose }: NotificationsModalProps)
             </div>
 
             {/* Notifications Tab */}
-            <TabsContent value='notifications' className='flex-1 overflow-hidden'>
+            <TabsContent
+              value='notifications'
+              className='flex-1 overflow-hidden'
+            >
               <div className='flex-1 overflow-y-auto p-4'>
                 {filteredNotifications.length === 0 ? (
                   <div className='flex-1 flex items-center justify-center text-gray-500'>
                     <div className='text-center'>
                       <Bell className='h-12 w-12 mx-auto mb-4 opacity-50' />
-                      <h3 className='text-lg font-medium mb-2'>No notifications</h3>
+                      <h3 className='text-lg font-medium mb-2'>
+                        No notifications
+                      </h3>
                       <p className='text-sm'>
-                        {searchQuery || selectedCategory || filterUnread || filterPriority
+                        {searchQuery ||
+                        selectedCategory ||
+                        filterUnread ||
+                        filterPriority
                           ? 'No notifications match your current filters'
-                          : 'You\'re all caught up!'}
+                          : "You're all caught up!"}
                       </p>
                     </div>
                   </div>
