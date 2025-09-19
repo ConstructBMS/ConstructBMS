@@ -5,7 +5,7 @@ export interface DemoModeStore {
   isDemoMode: boolean;
   demoDataCleared: boolean;
   canManageDemoData: boolean;
-  
+
   // Actions
   setDemoMode: (isDemo: boolean) => void;
   clearDemoData: () => void;
@@ -45,7 +45,7 @@ export const useDemoModeStore = create<DemoModeStore>()(
         localStorage.removeItem('notifications-store');
         localStorage.removeItem('chat-store');
         localStorage.removeItem('sticky-notes-store');
-        
+
         // Clear any other demo data stores
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -55,19 +55,19 @@ export const useDemoModeStore = create<DemoModeStore>()(
           }
         }
         keysToRemove.forEach(key => localStorage.removeItem(key));
-        
-        set({ 
-          isDemoMode: false, 
-          demoDataCleared: true 
+
+        set({
+          isDemoMode: false,
+          demoDataCleared: true,
         });
       },
 
       resetToDemoMode: () => {
         // Reset to demo mode with fresh demo data
         localStorage.clear();
-        set({ 
-          isDemoMode: true, 
-          demoDataCleared: false 
+        set({
+          isDemoMode: true,
+          demoDataCleared: false,
         });
         // Reload the page to reset all stores
         window.location.reload();
@@ -75,7 +75,7 @@ export const useDemoModeStore = create<DemoModeStore>()(
     }),
     {
       name: 'demo-mode-store',
-      partialize: (state) => ({
+      partialize: state => ({
         isDemoMode: state.isDemoMode,
         demoDataCleared: state.demoDataCleared,
       }),
