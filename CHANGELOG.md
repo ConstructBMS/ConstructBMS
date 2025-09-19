@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-19] - Notifications Store Date Handling Fix
+
+### Fixed
+
+- **Notifications Store**: Resolved `createdAt.getTime()` TypeError in notifications store
+  - Added proper date conversion in `getFilteredNotifications` and `getRecentNotifications`
+    functions
+  - Added `onRehydrateStorage` handler to convert string dates back to Date objects when store is
+    restored from localStorage
+  - Fixed issue where persisted dates were stored as strings but code expected Date objects
+  - Ensures proper date handling across all notification operations and sorting
+
+### Technical Details
+
+- **File**: `frontend/src/app/store/notifications.store.ts` - Added date conversion logic and
+  rehydration handler
+- **Issue**: When Zustand store data is persisted to localStorage, Date objects are serialized as
+  strings
+- **Solution**: Added type checking and conversion to ensure dates are properly handled during
+  rehydration
+
 ## [2025-01-27] - Dashboard Widget Visibility Fix
 
 ### Fixed
