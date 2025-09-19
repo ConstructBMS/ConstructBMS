@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-19] - Chat Notification Badge Real-Time Updates Fix
+
+### Fixed
+
+- **Chat Notification Badges**: Implemented real-time updates for chat notification badges
+  - Added `markChatAsRead` function to chat store to mark all messages in a chat as read
+  - Updated ChatWindow component to automatically mark chat as read when viewed
+  - Updated ChatList component to mark chat as read when selected
+  - Fixed issue where chat notification badges were not updating in real-time
+  - Ensures unread message counts update immediately when chats are opened
+
+### Technical Details
+
+- **Files**: `frontend/src/app/store/chat.store.ts`, `frontend/src/components/ChatWindow.tsx`, `frontend/src/components/ChatList.tsx`
+- **Issue**: Chat notification badges were not updating in real-time because messages weren't being marked as read
+- **Solution**: Added automatic message reading when chats are viewed or selected
+
 ## [2025-01-19] - Notifications Store Date Handling Fix
 
 ### Fixed
