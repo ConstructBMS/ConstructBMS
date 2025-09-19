@@ -49,7 +49,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[1000px] h-full bg-white border-l shadow-xl'>
+      <div className='relative ml-auto w-[700px] h-full bg-white border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
@@ -121,7 +121,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           {/* Content */}
           <div className='flex-1 flex overflow-hidden'>
             {/* Left Pane - Chat List */}
-            <div className='w-1/3 border-r bg-white'>
+            <div className='w-2/5 border-r bg-white'>
               {activeTab === 'chats' ? (
                 <ChatList
                   chats={chats}
@@ -136,7 +136,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             </div>
 
             {/* Right Pane - Chat Window */}
-            <div className='flex-1 bg-white'>
+            <div className='w-3/5 bg-white'>
               {currentChat ? (
                 <ChatWindow chat={currentChat} />
               ) : (
