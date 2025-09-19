@@ -283,30 +283,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[800px] h-full bg-gray-50 border-l shadow-xl'>
+      <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
-          <div className='flex items-center justify-between p-4 border-b'>
-            <h2 className='text-lg font-semibold'>Sticky Notes</h2>
-            <Button variant='ghost' size='icon' onClick={onClose}>
+          <div className='flex items-center justify-between p-4 border-b bg-white'>
+            <h2 className='text-lg font-semibold text-gray-900'>Sticky Notes</h2>
+            <Button variant='ghost' size='icon' onClick={onClose} className='text-gray-900 hover:bg-gray-100'>
               <X className='h-4 w-4' />
             </Button>
           </div>
 
           {/* Search */}
-          <div className='p-4 border-b'>
+          <div className='p-4 border-b bg-white'>
             <Input
               placeholder='Search notes...'
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
+              className='bg-white border-gray-300 text-gray-900'
             />
           </div>
 
           {/* Content */}
           <div className='flex-1 flex'>
             {/* Notes List */}
-            <div className='w-1/2 border-r'>
-              <div className='p-4'>
+            <div className='w-1/2 border-r bg-white'>
+              <div className='p-4 bg-white'>
                 <Button
                   onClick={handleCreateNote}
                   className='w-full mb-4'
@@ -341,11 +342,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             </div>
 
             {/* Note Editor */}
-            <div className='w-1/2 flex flex-col'>
+            <div className='w-1/2 flex flex-col bg-white'>
               {selectedNote ? (
                 <>
                   {/* Note Header */}
-                  <div className='p-4 border-b'>
+                  <div className='p-4 border-b bg-white'>
                     <div className='flex items-center justify-between mb-2'>
                       <div className='flex items-center gap-2'>
                         <Button
@@ -459,7 +460,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   </div>
 
                   {/* Note Content */}
-                  <div className='flex-1 p-4'>
+                  <div className='flex-1 p-4 bg-white'>
                     {isEditing ? (
                       <div className='space-y-4'>
                         <div>
