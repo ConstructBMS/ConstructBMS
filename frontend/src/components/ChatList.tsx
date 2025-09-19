@@ -8,11 +8,10 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Chat } from '../app/store/chat.store';
-import { useChatStore } from '../app/store/chat.store';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { Chat, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface ChatListProps {
   chats: Chat[];
@@ -20,8 +19,13 @@ interface ChatListProps {
   onChatSelect: (chatId: string) => void;
 }
 
-export function ChatList({ chats, currentChatId, onChatSelect }: ChatListProps) {
-  const { archiveChat, muteChat, pinChat, deleteChat, getUnreadCount } = useChatStore();
+export function ChatList({
+  chats,
+  currentChatId,
+  onChatSelect,
+}: ChatListProps) {
+  const { archiveChat, muteChat, pinChat, deleteChat, getUnreadCount } =
+    useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
 
   // Sort chats: pinned first, then by last activity
@@ -33,14 +37,14 @@ export function ChatList({ chats, currentChatId, onChatSelect }: ChatListProps) 
 
   const formatLastMessage = (chat: Chat) => {
     if (!chat.lastMessage) return 'No messages yet';
-    
+
     const content = chat.lastMessage.content;
     const maxLength = 50;
-    
+
     if (content.length > maxLength) {
       return content.substring(0, maxLength) + '...';
     }
-    
+
     return content;
   };
 
@@ -123,7 +127,10 @@ export function ChatList({ chats, currentChatId, onChatSelect }: ChatListProps) 
                           <BellOff className='h-3 w-3 text-gray-400' />
                         )}
                         {unreadCount > 0 && (
-                          <Badge variant='destructive' className='text-xs px-1.5 py-0.5'>
+                          <Badge
+                            variant='destructive'
+                            className='text-xs px-1.5 py-0.5'
+                          >
                             {unreadCount}
                           </Badge>
                         )}
@@ -152,7 +159,7 @@ export function ChatList({ chats, currentChatId, onChatSelect }: ChatListProps) 
                       variant='ghost'
                       size='icon'
                       className='h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity'
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         setShowMenu(showMenu === chat.id ? null : chat.id);
                       }}

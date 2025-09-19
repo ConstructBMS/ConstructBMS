@@ -7,19 +7,15 @@ import {
   Pin,
   PinOff,
   Search,
-  Settings,
   Users,
   Video,
 } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
-import { Chat, Message } from '../app/store/chat.store';
-import { useChatStore } from '../app/store/chat.store';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Badge } from './ui/badge';
+import { useEffect, useRef, useState } from 'react';
+import { Chat, useChatStore } from '../app/store/chat.store';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
-import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface ChatWindowProps {
   chat: Chat;
@@ -51,7 +47,10 @@ export function ChatWindow({ chat }: ChatWindowProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages.length]);
 
-  const handleSendMessage = (content: string, contentType: 'text' | 'rich' = 'text') => {
+  const handleSendMessage = (
+    content: string,
+    contentType: 'text' | 'rich' = 'text'
+  ) => {
     if (!content.trim()) return;
 
     sendMessage({
@@ -92,16 +91,15 @@ export function ChatWindow({ chat }: ChatWindowProps) {
             <h3 className='font-medium text-gray-900'>{chat.name}</h3>
             <div className='flex items-center space-x-2'>
               <p className='text-sm text-gray-500'>
-                {chatUsers.length} participant{chatUsers.length !== 1 ? 's' : ''}
+                {chatUsers.length} participant
+                {chatUsers.length !== 1 ? 's' : ''}
               </p>
               {chat.type === 'project' && (
                 <Badge variant='secondary' className='text-xs'>
                   Project Chat
                 </Badge>
               )}
-              {chat.isMuted && (
-                <BellOff className='h-4 w-4 text-gray-400' />
-              )}
+              {chat.isMuted && <BellOff className='h-4 w-4 text-gray-400' />}
             </div>
           </div>
         </div>
@@ -191,16 +189,21 @@ export function ChatWindow({ chat }: ChatWindowProps) {
                 <Users className='h-8 w-8 text-gray-400' />
               </div>
               <h3 className='text-lg font-medium mb-2'>No messages yet</h3>
-              <p className='text-sm'>Start the conversation by sending a message</p>
+              <p className='text-sm'>
+                Start the conversation by sending a message
+              </p>
             </div>
           </div>
         ) : (
           <>
             {chatMessages.map((message, index) => {
               const prevMessage = index > 0 ? chatMessages[index - 1] : null;
-              const showAvatar = !prevMessage || 
+              const showAvatar =
+                !prevMessage ||
                 prevMessage.senderId !== message.senderId ||
-                new Date(message.timestamp).getTime() - new Date(prevMessage.timestamp).getTime() > 5 * 60 * 1000; // 5 minutes
+                new Date(message.timestamp).getTime() -
+                  new Date(prevMessage.timestamp).getTime() >
+                  5 * 60 * 1000; // 5 minutes
 
               return (
                 <MessageBubble

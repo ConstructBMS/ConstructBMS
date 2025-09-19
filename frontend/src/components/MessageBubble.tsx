@@ -8,11 +8,10 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Message } from '../app/store/chat.store';
-import { useChatStore } from '../app/store/chat.store';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { Message, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface MessageBubbleProps {
   message: Message;
@@ -20,17 +19,22 @@ interface MessageBubbleProps {
   isOwn: boolean;
 }
 
-export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps) {
-  const { editMessage, deleteMessage, addReaction, removeReaction } = useChatStore();
+export function MessageBubble({
+  message,
+  showAvatar,
+  isOwn,
+}: MessageBubbleProps) {
+  const { editMessage, deleteMessage, addReaction, removeReaction } =
+    useChatStore();
   const [showMenu, setShowMenu] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return new Date(date).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -56,7 +60,12 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
 
   return (
     <div className={cn('flex', isOwn ? 'justify-end' : 'justify-start')}>
-      <div className={cn('flex max-w-[70%]', isOwn ? 'flex-row-reverse' : 'flex-row')}>
+      <div
+        className={cn(
+          'flex max-w-[70%]',
+          isOwn ? 'flex-row-reverse' : 'flex-row'
+        )}
+      >
         {/* Avatar */}
         {showAvatar && !isOwn && (
           <div className='flex-shrink-0 mr-2'>
@@ -80,7 +89,7 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
               <div className='space-y-2'>
                 <textarea
                   value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
+                  onChange={e => setEditContent(e.target.value)}
                   className='w-full p-2 border border-gray-300 rounded text-gray-900 resize-none'
                   rows={3}
                   autoFocus
@@ -89,9 +98,9 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
                   <Button size='sm' onClick={handleEdit}>
                     Save
                   </Button>
-                  <Button 
-                    size='sm' 
-                    variant='outline' 
+                  <Button
+                    size='sm'
+                    variant='outline'
                     onClick={() => {
                       setIsEditing(false);
                       setEditContent(message.content);
@@ -118,10 +127,12 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
                 )}
 
                 {/* Timestamp and Status */}
-                <div className={cn(
-                  'flex items-center justify-end mt-1 text-xs opacity-70',
-                  isOwn ? 'text-blue-100' : 'text-gray-500'
-                )}>
+                <div
+                  className={cn(
+                    'flex items-center justify-end mt-1 text-xs opacity-70',
+                    isOwn ? 'text-blue-100' : 'text-gray-500'
+                  )}
+                >
                   <span>{formatTime(message.timestamp)}</span>
                   {isOwn && (
                     <div className='ml-1'>
@@ -168,9 +179,7 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
                         <Smile className='h-4 w-4 mr-2' />
                         React
                       </button>
-                      <button
-                        className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
-                      >
+                      <button className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'>
                         <Reply className='h-4 w-4 mr-2' />
                         Reply
                       </button>
@@ -211,7 +220,7 @@ export function MessageBubble({ message, showAvatar, isOwn }: MessageBubbleProps
           {showReactions && (
             <div className='absolute bottom-full left-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
               <div className='flex space-x-1'>
-                {commonReactions.map((emoji) => (
+                {commonReactions.map(emoji => (
                   <button
                     key={emoji}
                     className='w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded'

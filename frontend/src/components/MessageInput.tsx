@@ -8,9 +8,9 @@ import {
   Smile,
   Underline,
 } from 'lucide-react';
-import { useState, useRef, KeyboardEvent } from 'react';
-import { Button } from './ui/button';
+import { KeyboardEvent, useRef, useState } from 'react';
 import { cn } from '../lib/utils/cn';
+import { Button } from './ui/button';
 
 interface MessageInputProps {
   onSendMessage: (content: string, contentType: 'text' | 'rich') => void;
@@ -29,7 +29,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
     const contentType = isRichText ? 'rich' : 'text';
     onSendMessage(message, contentType);
     setMessage('');
-    
+
     if (richTextRef.current) {
       richTextRef.current.innerHTML = '';
     }
@@ -53,7 +53,20 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
     }
   };
 
-  const emojis = ['😀', '😂', '😍', '🥰', '😎', '🤔', '👍', '👎', '❤️', '🎉', '🔥', '💯'];
+  const emojis = [
+    '😀',
+    '😂',
+    '😍',
+    '🥰',
+    '😎',
+    '🤔',
+    '👍',
+    '👎',
+    '❤️',
+    '🎉',
+    '🔥',
+    '💯',
+  ];
 
   return (
     <div className='flex flex-col space-y-2'>
@@ -131,7 +144,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             <textarea
               ref={textareaRef}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={e => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder='Type a message...'
               className={cn(
@@ -151,10 +164,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             size='icon'
             onClick={() => setIsRichText(!isRichText)}
             title={isRichText ? 'Switch to plain text' : 'Switch to rich text'}
-            className={cn(
-              'h-8 w-8',
-              isRichText && 'bg-blue-100 text-blue-600'
-            )}
+            className={cn('h-8 w-8', isRichText && 'bg-blue-100 text-blue-600')}
           >
             <Bold className='h-4 w-4' />
           </Button>
@@ -172,7 +182,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             {showEmojiPicker && (
               <div className='absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
                 <div className='grid grid-cols-6 gap-1'>
-                  {emojis.map((emoji) => (
+                  {emojis.map(emoji => (
                     <button
                       key={emoji}
                       className='w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded'
@@ -194,11 +204,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             )}
           </div>
 
-          <Button
-            variant='ghost'
-            size='icon'
-            title='Attach file'
-          >
+          <Button variant='ghost' size='icon' title='Attach file'>
             <Paperclip className='h-4 w-4' />
           </Button>
 

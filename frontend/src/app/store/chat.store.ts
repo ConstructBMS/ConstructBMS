@@ -66,34 +66,42 @@ interface ChatStore {
   isOpen: boolean;
   searchQuery: string;
   selectedUsers: string[];
-  
+
   // Chat Management
   setOpen: (open: boolean) => void;
   setCurrentChat: (chatId: string | null) => void;
-  createChat: (chat: Omit<Chat, 'id' | 'createdAt' | 'updatedAt' | 'lastActivity'>) => void;
+  createChat: (
+    chat: Omit<Chat, 'id' | 'createdAt' | 'updatedAt' | 'lastActivity'>
+  ) => void;
   updateChat: (chatId: string, updates: Partial<Chat>) => void;
   deleteChat: (chatId: string) => void;
   archiveChat: (chatId: string) => void;
   muteChat: (chatId: string) => void;
   pinChat: (chatId: string) => void;
-  
+
   // Message Management
-  sendMessage: (message: Omit<Message, 'id' | 'timestamp' | 'reactions' | 'isRead'>) => void;
+  sendMessage: (
+    message: Omit<Message, 'id' | 'timestamp' | 'reactions' | 'isRead'>
+  ) => void;
   editMessage: (messageId: string, content: string) => void;
   deleteMessage: (messageId: string) => void;
   addReaction: (messageId: string, userId: string, emoji: string) => void;
   removeReaction: (messageId: string, userId: string) => void;
   markAsRead: (chatId: string, messageId: string) => void;
-  
+
   // User Management
   addUserToChat: (chatId: string, userId: string) => void;
   removeUserFromChat: (chatId: string, userId: string) => void;
-  inviteUserToChat: (chatId: string, userId: string, invitedBy: string) => ChatInvitation;
-  
+  inviteUserToChat: (
+    chatId: string,
+    userId: string,
+    invitedBy: string
+  ) => ChatInvitation;
+
   // Search & Filter
   setSearchQuery: (query: string) => void;
   setSelectedUsers: (userIds: string[]) => void;
-  
+
   // Getters
   getCurrentChat: () => Chat | null;
   getChatMessages: (chatId: string) => Message[];
@@ -166,7 +174,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       },
       {
         id: 'msg-2',
-        content: '<p>Great to be here! Looking forward to working on this project.</p>',
+        content:
+          '<p>Great to be here! Looking forward to working on this project.</p>',
         contentType: 'rich',
         senderId: 'user-2',
         chatId: 'chat-1',
@@ -253,7 +262,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   setOpen: (open: boolean) => set({ isOpen: open }),
   setCurrentChat: (chatId: string | null) => set({ currentChatId: chatId }),
 
-  createChat: (chatData) => {
+  createChat: chatData => {
     const newChat: Chat = {
       ...chatData,
       id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -269,22 +278,25 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   updateChat: (chatId, updates) => {
     set(state => ({
       chats: state.chats.map(chat =>
-        chat.id === chatId ? { ...chat, ...updates, updatedAt: new Date() } : chat
+        chat.id === chatId
+          ? { ...chat, ...updates, updatedAt: new Date() }
+          : chat
       ),
     }));
   },
 
-  deleteChat: (chatId) => {
+  deleteChat: chatId => {
     set(state => ({
       chats: state.chats.filter(chat => chat.id !== chatId),
       messages: Object.fromEntries(
         Object.entries(state.messages).filter(([id]) => id !== chatId)
       ),
-      currentChatId: state.currentChatId === chatId ? null : state.currentChatId,
+      currentChatId:
+        state.currentChatId === chatId ? null : state.currentChatId,
     }));
   },
 
-  archiveChat: (chatId) => {
+  archiveChat: chatId => {
     set(state => ({
       chats: state.chats.map(chat =>
         chat.id === chatId ? { ...chat, isArchived: !chat.isArchived } : chat
@@ -292,7 +304,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }));
   },
 
-  muteChat: (chatId) => {
+  muteChat: chatId => {
     set(state => ({
       chats: state.chats.map(chat =>
         chat.id === chatId ? { ...chat, isMuted: !chat.isMuted } : chat
@@ -300,7 +312,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }));
   },
 
-  pinChat: (chatId) => {
+  pinChat: chatId => {
     set(state => ({
       chats: state.chats.map(chat =>
         chat.id === chatId ? { ...chat, isPinned: !chat.isPinned } : chat
@@ -309,7 +321,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   // Message Management Actions
-  sendMessage: (messageData) => {
+  sendMessage: messageData => {
     const newMessage: Message = {
       ...messageData,
       id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -321,11 +333,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set(state => ({
       messages: {
         ...state.messages,
-        [messageData.chatId]: [...(state.messages[messageData.chatId] || []), newMessage],
+        [messageData.chatId]: [
+          ...(state.messages[messageData.chatId] || []),
+          newMessage,
+        ],
       },
       chats: state.chats.map(chat =>
         chat.id === messageData.chatId
-          ? { ...chat, lastMessage: newMessage, lastActivity: new Date(), updatedAt: new Date() }
+          ? {
+              ...chat,
+              lastMessage: newMessage,
+              lastActivity: new Date(),
+              updatedAt: new Date(),
+            }
           : chat
       ),
     }));
@@ -337,14 +357,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         Object.entries(state.messages).map(([chatId, messages]) => [
           chatId,
           messages.map(msg =>
-            msg.id === messageId ? { ...msg, content, editedAt: new Date() } : msg
+            msg.id === messageId
+              ? { ...msg, content, editedAt: new Date() }
+              : msg
           ),
         ])
       ),
     }));
   },
 
-  deleteMessage: (messageId) => {
+  deleteMessage: messageId => {
     set(state => ({
       messages: Object.fromEntries(
         Object.entries(state.messages).map(([chatId, messages]) => [
@@ -414,7 +436,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set(state => ({
       chats: state.chats.map(chat =>
         chat.id === chatId
-          ? { ...chat, participants: chat.participants.filter(id => id !== userId) }
+          ? {
+              ...chat,
+              participants: chat.participants.filter(id => id !== userId),
+            }
           : chat
       ),
     }));
@@ -434,8 +459,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   // Search & Filter Actions
-  setSearchQuery: (query) => set({ searchQuery: query }),
-  setSelectedUsers: (userIds) => set({ selectedUsers: userIds }),
+  setSearchQuery: query => set({ searchQuery: query }),
+  setSelectedUsers: userIds => set({ selectedUsers: userIds }),
 
   // Getters
   getCurrentChat: () => {
@@ -443,18 +468,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     return chats.find(chat => chat.id === currentChatId) || null;
   },
 
-  getChatMessages: (chatId) => {
+  getChatMessages: chatId => {
     return get().messages[chatId] || [];
   },
 
-  getChatUsers: (chatId) => {
+  getChatUsers: chatId => {
     const { users, chats } = get();
     const chat = chats.find(c => c.id === chatId);
     if (!chat) return [];
     return users.filter(user => chat.participants.includes(user.id));
   },
 
-  getUnreadCount: (chatId) => {
+  getUnreadCount: chatId => {
     const messages = get().messages[chatId] || [];
     return messages.filter(msg => !msg.isRead).length;
   },
@@ -462,17 +487,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   getTotalUnreadCount: () => {
     const { messages } = get();
     return Object.values(messages).reduce(
-      (total, chatMessages) => total + chatMessages.filter(msg => !msg.isRead).length,
+      (total, chatMessages) =>
+        total + chatMessages.filter(msg => !msg.isRead).length,
       0
     );
   },
 
-  searchChats: (query) => {
+  searchChats: query => {
     const { chats } = get();
     const lowercaseQuery = query.toLowerCase();
-    return chats.filter(chat =>
-      chat.name.toLowerCase().includes(lowercaseQuery) ||
-      chat.description?.toLowerCase().includes(lowercaseQuery)
+    return chats.filter(
+      chat =>
+        chat.name.toLowerCase().includes(lowercaseQuery) ||
+        chat.description?.toLowerCase().includes(lowercaseQuery)
     );
   },
 
