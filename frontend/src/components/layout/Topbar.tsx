@@ -68,7 +68,7 @@ export function Topbar() {
   //     // Only close org dropdown if not clicking on org switcher and not on modal
   //     // Also check if clicking on the topbar itself (more specific)
   //     const isTopbarClick = target.closest('.topbar') || target.closest('[data-topbar]');
-      
+
   //     if (!target.closest('.org-switcher') && !isModalClick && !isTopbarClick) {
   //       setOrgDropdownOpen(false);
   //     }
@@ -232,12 +232,20 @@ export function Topbar() {
       </div>
 
       {/* Chat Modal */}
-      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      <ChatModal isOpen={chatOpen} onClose={() => {
+        console.log('Topbar: Closing chat modal, current state:', chatOpen);
+        setChatOpen(false);
+        console.log('Topbar: Chat modal state set to false');
+      }} />
 
       {/* Sticky Notes Modal */}
       <StickyNotesModal
         isOpen={stickyNotesOpen}
-        onClose={() => setStickyNotesOpen(false)}
+        onClose={() => {
+          console.log('Topbar: Closing sticky notes modal, current state:', stickyNotesOpen);
+          setStickyNotesOpen(false);
+          console.log('Topbar: Sticky notes modal state set to false');
+        }}
       />
 
       {/* Notifications Modal */}

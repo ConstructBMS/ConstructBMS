@@ -312,6 +312,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     };
   }, [isOpen]);
 
+  console.log('StickyNotesModal render - isOpen:', isOpen);
   if (!isOpen) return null;
 
   return (

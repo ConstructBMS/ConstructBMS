@@ -79,6 +79,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     };
   }, [isOpen, onClose]);
 
+  console.log('ChatModal render - isOpen:', isOpen);
   if (!isOpen) return null;
 
   return (
