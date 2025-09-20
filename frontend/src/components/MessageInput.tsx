@@ -564,7 +564,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
                   {emojis.map(emoji => (
                     <button
                       key={emoji}
-                      className='w-8 h-8 flex items-center justify-center hover:bg-gray-600 rounded text-lg transition-transform duration-200 hover:scale-125'
+                      className='w-8 h-8 flex items-center justify-center hover:bg-gray-600 rounded text-lg transition-transform duration-200 hover:scale-150'
                       onClick={() => {
                         if (isRichText && richTextRef.current) {
                           richTextRef.current.innerHTML += emoji;
