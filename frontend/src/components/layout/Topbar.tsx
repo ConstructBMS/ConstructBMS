@@ -63,10 +63,11 @@ export function Topbar() {
     };
 
     document.addEventListener('keydown', handleKeyDownEvent);
-    document.addEventListener('click', handleClickOutside);
+    // TEMPORARILY REMOVED CLICK HANDLER FOR DEBUGGING
+    // document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('keydown', handleKeyDownEvent);
-      document.removeEventListener('click', handleClickOutside);
+      // document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 

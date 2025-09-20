@@ -315,18 +315,28 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex' data-modal='sticky-notes'>
-      {/* Backdrop */}
-      <div 
-        className='fixed inset-0 bg-black/50' 
-        onClick={(e) => {
-          console.log('StickyNotesModal backdrop clicked!', e.target);
+    <div 
+      className='fixed inset-0 z-50 flex' 
+      data-modal='sticky-notes'
+      onClick={e => {
+        console.log('StickyNotesModal container clicked!', e.target);
+        if (e.target === e.currentTarget) {
+          console.log('StickyNotesModal backdrop clicked - closing modal!');
           onClose();
-        }} 
-      />
+        }
+      }}
+    >
+      {/* Backdrop */}
+      <div className='fixed inset-0 bg-black/50' />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
+      <div 
+        className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'
+        onClick={e => {
+          console.log('StickyNotesModal content clicked - stopping propagation');
+          e.stopPropagation();
+        }}
+      >
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
