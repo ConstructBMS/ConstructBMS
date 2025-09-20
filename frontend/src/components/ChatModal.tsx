@@ -97,13 +97,15 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         className='absolute inset-0 bg-black/50'
         onClick={e => {
           console.log('Backdrop clicked!', e.target, e.currentTarget);
+          console.log('Calling onClose function...');
           onClose();
+          console.log('onClose function called');
         }}
       />
 
       {/* Modal */}
       <div
-        className='relative ml-auto w-[900px] h-full bg-gray-900 border-l shadow-xl overflow-hidden pointer-events-auto'
+        className='absolute right-0 top-0 w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden pointer-events-auto'
         onClick={e => {
           console.log('Modal content clicked - stopping propagation');
           e.stopPropagation();

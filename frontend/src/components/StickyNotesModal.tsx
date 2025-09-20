@@ -340,13 +340,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             e.target,
             e.currentTarget
           );
+          console.log('Calling StickyNotes onClose function...');
           onClose();
+          console.log('StickyNotes onClose function called');
         }}
       />
 
       {/* Modal */}
       <div
-        className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl pointer-events-auto'
+        className='absolute right-0 top-0 w-[800px] h-full bg-white border-l shadow-xl pointer-events-auto'
         onClick={e => {
           console.log(
             'StickyNotes modal content clicked - stopping propagation'
