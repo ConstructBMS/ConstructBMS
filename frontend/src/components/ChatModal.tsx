@@ -31,21 +31,16 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   const [activeTab] = useState<'chats' | 'contacts'>('chats');
 
   const currentChat = getCurrentChat();
-
-  // Get filtered chats based on search query
   const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
 
-  // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      // Store current scroll position
       const scrollY = window.scrollY;
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     } else {
-      // Restore scroll position
       const scrollY = document.body.style.top;
       document.body.style.position = '';
       document.body.style.top = '';
@@ -56,7 +51,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       }
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.position = '';
       document.body.style.top = '';
@@ -69,20 +63,14 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   return (
     <>
-      {/* Backdrop - covers entire screen */}
       <div className='fixed inset-0 bg-black/50 z-50' onClick={onClose} />
-
-      {/* Modal Container */}
       <div className='fixed right-0 top-0 h-full flex z-50'>
-        {/* Modal - WhatsApp-like design */}
         <div
           className='relative w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'
           onClick={e => e.stopPropagation()}
         >
           <div className='flex h-full'>
-            {/* Left Panel - Chat List */}
             <div className='w-1/3 bg-gray-50 border-r flex flex-col'>
-              {/* Header */}
               <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
                 <h2 className='text-lg font-semibold'>Chat</h2>
                 <div className='flex items-center space-x-2'>
@@ -124,7 +112,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 </div>
               </div>
 
-              {/* Search */}
               <div className='p-3 bg-white border-b'>
                 <div className='relative'>
                   <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
@@ -137,7 +124,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 </div>
               </div>
 
-              {/* Chat List */}
               <div className='flex-1 overflow-y-auto'>
                 {activeTab === 'chats' ? (
                   <ChatList
@@ -155,7 +141,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
               </div>
             </div>
 
-            {/* Right Panel - Chat Window */}
             <div className='w-2/3 bg-white flex flex-col'>
               {currentChat ? (
                 <ChatWindow chat={currentChat} />
@@ -180,7 +165,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         </div>
       </div>
 
-      {/* User Selector Modal */}
       {showUserSelector && (
         <UserSelector
           isOpen={showUserSelector}
@@ -191,7 +175,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         />
       )}
 
-      {/* Chat Settings Modal */}
       {showChatSettings && (
         <ChatSettings
           isOpen={showChatSettings}
@@ -199,7 +182,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         />
       )}
 
-      {/* Create Group Modal */}
       {showCreateGroup && (
         <CreateChatGroup
           isOpen={showCreateGroup}
