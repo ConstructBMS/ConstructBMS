@@ -65,7 +65,9 @@ export function MessageStatus({
     >
       {getStatusIcon()}
       {showTimestamp && <span className='ml-1'>{formatTime(timestamp)}</span>}
-      <span className={`ml-1 transition-opacity ${isOwn ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+      <span
+        className={`ml-1 transition-opacity ${isOwn ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+      >
         {getStatusText()}
       </span>
     </div>

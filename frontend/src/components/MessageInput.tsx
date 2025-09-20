@@ -180,12 +180,12 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             </Button>
 
             {showEmojiPicker && (
-              <div className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-2 z-10'>
-                <div className='grid grid-cols-6 gap-1'>
+              <div className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-3 z-10 max-w-xs'>
+                <div className='grid grid-cols-6 gap-2'>
                   {emojis.map(emoji => (
                     <button
                       key={emoji}
-                      className='w-8 h-8 flex items-center justify-center hover:bg-gray-600 rounded'
+                      className='w-10 h-10 flex items-center justify-center hover:bg-gray-600 rounded text-lg'
                       onClick={() => {
                         if (isRichText && richTextRef.current) {
                           richTextRef.current.innerHTML += emoji;
