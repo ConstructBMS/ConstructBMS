@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-19] - Chat Modal Display Fix
+
+### Fixed
+
+- **Chat Modal**: Resolved issue where chat modal was not showing chats
+  - Added proper search functionality to ChatModal to filter chats based on search query
+  - Fixed date handling in ChatList component to prevent `getTime()` errors
+  - Ensured `lastActivity` dates are properly converted to Date objects before sorting
+  - Fixed `formatTime` function to handle date conversion safely
+  - Chat modal now properly displays the chat list with search functionality
+
+### Technical Details
+
+- **Files**: `frontend/src/components/ChatModal.tsx`, `frontend/src/components/ChatList.tsx`
+- **Issue**: Chat modal was not displaying chats due to date handling errors and missing search functionality
+- **Solution**: Added proper date conversion and search filtering to display chats correctly
+
 ## [2025-01-19] - Chat Notification Badge Real-Time Updates Fix
 
 ### Fixed
