@@ -27,7 +27,10 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
   // Close emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
         setShowEmojiPicker(false);
       }
     };
@@ -577,7 +580,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             </Button>
 
             {showEmojiPicker && (
-              <div 
+              <div
                 ref={emojiPickerRef}
                 className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-4 z-10 w-80 max-h-48 overflow-y-auto'
               >

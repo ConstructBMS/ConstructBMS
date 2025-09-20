@@ -55,9 +55,12 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50'>
-      <div className='absolute inset-0 bg-black/50' onClick={onClose} />
-      <div className='absolute right-0 top-0 h-full flex'>
+    <>
+      {/* Backdrop - covers entire screen */}
+      <div className='fixed inset-0 bg-black/50 z-50' onClick={onClose} />
+      
+      {/* Modal Container */}
+      <div className='fixed right-0 top-0 h-full flex z-50'>
         <div
           className='relative w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
           onClick={e => e.stopPropagation()}
@@ -163,6 +166,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
