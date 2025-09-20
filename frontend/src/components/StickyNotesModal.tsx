@@ -280,15 +280,28 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   return (
     <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
-      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
+      <div 
+        className='fixed inset-0 bg-black/50' 
+        onClick={(e) => {
+          console.log('StickyNotes backdrop clicked', e.target, e.currentTarget);
+          onClose();
+        }} 
+      />
 
       {/* Modal */}
       <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
-            <h2 className='text-lg font-semibold text-gray-900'>Sticky Notes</h2>
-            <Button variant='ghost' size='icon' onClick={onClose} className='text-gray-900 hover:bg-gray-100'>
+            <h2 className='text-lg font-semibold text-gray-900'>
+              Sticky Notes
+            </h2>
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={onClose}
+              className='text-gray-900 hover:bg-gray-100'
+            >
               <X className='h-4 w-4' />
             </Button>
           </div>
