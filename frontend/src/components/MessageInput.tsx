@@ -35,9 +35,10 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
       }
     };
 
-    if (showEmojiPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    // Temporarily disabled to test modal clicks
+    // if (showEmojiPicker) {
+    //   document.addEventListener('mousedown', handleClickOutside);
+    // }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);

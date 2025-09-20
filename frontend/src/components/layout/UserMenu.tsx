@@ -28,7 +28,8 @@ export function UserMenu() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    // Temporarily disabled to test modal clicks
+    // document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
