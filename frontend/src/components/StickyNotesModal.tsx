@@ -280,13 +280,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     if (isOpen) {
       // Store current scroll position
       const scrollY = window.scrollY;
-      
+
       // Prevent body scroll without affecting layout
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
-      
+
       // Store scroll position for restoration
       document.body.setAttribute('data-scroll-y', scrollY.toString());
     } else {
@@ -315,7 +315,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex'>
+    <div className='fixed inset-0 z-50 flex' data-modal="sticky-notes">
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
