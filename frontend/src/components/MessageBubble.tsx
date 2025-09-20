@@ -1,18 +1,10 @@
-import {
-  Check,
-  CheckCheck,
-  Edit,
-  MoreVertical,
-  Reply,
-  Smile,
-  Trash2,
-} from 'lucide-react';
+import { Edit, MoreVertical, Reply, Smile, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Message, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
+import { MessageStatus } from './MessageStatus';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { MessageStatus } from './MessageStatus';
 
 interface MessageBubbleProps {
   message: Message;

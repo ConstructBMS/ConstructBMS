@@ -64,7 +64,10 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4'>
+      <div 
+        className='relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4'
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className='p-6'>
           {/* Header */}
           <div className='flex items-center justify-between mb-4'>

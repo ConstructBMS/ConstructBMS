@@ -6,11 +6,17 @@ interface MessageStatusProps {
   showTimestamp?: boolean;
 }
 
-export function MessageStatus({ status, timestamp, showTimestamp = true }: MessageStatusProps) {
+export function MessageStatus({
+  status,
+  timestamp,
+  showTimestamp = true,
+}: MessageStatusProps) {
   const getStatusIcon = () => {
     switch (status) {
       case 'sending':
-        return <div className='w-3 h-3 border border-gray-400 rounded-full animate-pulse' />;
+        return (
+          <div className='w-3 h-3 border border-gray-400 rounded-full animate-pulse' />
+        );
       case 'sent':
         return <Check className='h-3 w-3 text-gray-500' />;
       case 'delivered':
@@ -54,9 +60,7 @@ export function MessageStatus({ status, timestamp, showTimestamp = true }: Messa
   return (
     <div className='flex items-center space-x-1 text-xs text-gray-500'>
       {getStatusIcon()}
-      {showTimestamp && (
-        <span className='ml-1'>{formatTime(timestamp)}</span>
-      )}
+      {showTimestamp && <span className='ml-1'>{formatTime(timestamp)}</span>}
       <span className='ml-1 opacity-0 group-hover:opacity-100 transition-opacity'>
         {getStatusText()}
       </span>

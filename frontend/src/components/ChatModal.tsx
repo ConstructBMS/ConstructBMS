@@ -1,11 +1,11 @@
-import { Search, Settings, Users, X, Plus } from 'lucide-react';
+import { Plus, Search, Settings, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
 import { ChatList } from './ChatList';
-import { ChatWindow } from './ChatWindow';
-import { UserSelector } from './UserSelector';
 import { ChatSettings } from './ChatSettings';
+import { ChatWindow } from './ChatWindow';
 import { CreateChatGroup } from './CreateChatGroup';
+import { UserSelector } from './UserSelector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -43,7 +43,10 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal - WhatsApp-like design */}
-      <div className='relative ml-auto w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'>
+      <div 
+        className='relative ml-auto w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className='flex h-full'>
           {/* Left Panel - Chat List */}
           <div className='w-1/3 bg-gray-50 border-r flex flex-col'>
@@ -134,8 +137,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     ConstructBMS Chat
                   </h3>
                   <p className='text-gray-500 max-w-sm'>
-                    Send and receive messages with your team. Create project chats, 
-                    group discussions, and private conversations.
+                    Send and receive messages with your team. Create project
+                    chats, group discussions, and private conversations.
                   </p>
                 </div>
               </div>

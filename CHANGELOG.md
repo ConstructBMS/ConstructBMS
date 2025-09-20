@@ -5,27 +5,34 @@ All notable changes to this project will be documented in this file.
 ## [2025-01-20] - Comprehensive Chat System Implementation
 
 ### Added
-- **Advanced Chat Settings**: Comprehensive settings modal with notifications, appearance, privacy, and chat preferences
-- **Message Status Indicators**: Sent (one tick), delivered (two ticks), read (two blue ticks) with MessageStatus component
+
+- **Advanced Chat Settings**: Comprehensive settings modal with notifications, appearance, privacy,
+  and chat preferences
+- **Message Status Indicators**: Sent (one tick), delivered (two ticks), read (two blue ticks) with
+  MessageStatus component
 - **Chat Group Creation**: CreateChatGroup component for creating group chats and project chats
 - **Project Chat Assignment**: Ability to assign chats to specific projects
-- **Notification Settings**: Granular control over chat notifications including sound, desktop, mobile, mentions
+- **Notification Settings**: Granular control over chat notifications including sound, desktop,
+  mobile, mentions
 - **Appearance Customization**: Theme selection, font size, avatar display, timestamp options
 - **Privacy Controls**: Online status, last seen, read receipts, message expiry settings
 - **Chat Integration**: Full integration between chat modal and main chat module
 
 ### Changed
+
 - **Chat Branding**: Changed from WhatsApp branding to "Chat" with blue theme
 - **Chat Modal Interface**: Updated to use blue color scheme instead of green
 - **Message Bubbles**: Enhanced with proper status indicators and improved layout
 - **Chat Store**: Fixed syntax errors and added missing properties for proper functionality
 
 ### Fixed
+
 - **Chat Store Syntax**: Resolved TypeScript errors and missing lastActivity property
 - **Message Status**: Proper implementation of sent/received/read indicators
 - **Component Integration**: All chat components properly wired and functional
 
 ### Technical Details
+
 - Created ChatSettings component with 4 main sections: Notifications, Appearance, Privacy, Chat
 - Implemented MessageStatus component with proper status indicators
 - Added CreateChatGroup component with project assignment capabilities

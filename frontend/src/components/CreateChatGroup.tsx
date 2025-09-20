@@ -1,12 +1,18 @@
+import { Building, Search, Users, X } from 'lucide-react';
 import { useState } from 'react';
-import { X, Users, Plus, Search, Building, User } from 'lucide-react';
+import { useChatStore } from '../app/store/chat.store';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Badge } from './ui/badge';
-import { useChatStore } from '../app/store/chat.store';
 
 interface CreateChatGroupProps {
   isOpen: boolean;
@@ -24,9 +30,10 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
 
   if (!isOpen) return null;
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const toggleUser = (userId: string) => {
@@ -50,7 +57,7 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
         isPinned: false,
         createdBy: 'user-1', // Current user ID
       });
-      
+
       // Reset form
       setGroupName('');
       setGroupDescription('');
@@ -66,7 +73,10 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative w-[600px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-hidden'>
+      <div 
+        className='relative w-[600px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-hidden'
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className='p-6'>
           {/* Header */}
           <div className='flex items-center justify-between mb-6'>
@@ -76,7 +86,9 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
               </div>
               <div>
                 <h2 className='text-lg font-semibold'>Create Chat Group</h2>
-                <p className='text-sm text-gray-500'>Start a new group conversation</p>
+                <p className='text-sm text-gray-500'>
+                  Start a new group conversation
+                </p>
               </div>
             </div>
             <Button variant='ghost' size='icon' onClick={onClose}>
@@ -88,7 +100,12 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
             {/* Group Type */}
             <div>
               <Label htmlFor='group-type'>Group Type</Label>
-              <Select value={groupType} onValueChange={(value: 'group' | 'project') => setGroupType(value)}>
+              <Select
+                value={groupType}
+                onValueChange={(value: 'group' | 'project') =>
+                  setGroupType(value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -116,7 +133,7 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
                 id='group-name'
                 placeholder='Enter group name'
                 value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
+                onChange={e => setGroupName(e.target.value)}
               />
             </div>
 
@@ -127,7 +144,7 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
                 id='group-description'
                 placeholder='Enter group description'
                 value={groupDescription}
-                onChange={(e) => setGroupDescription(e.target.value)}
+                onChange={e => setGroupDescription(e.target.value)}
                 rows={3}
               />
             </div>
@@ -158,7 +175,7 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
                   id='user-search'
                   placeholder='Search users...'
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className='pl-10'
                 />
               </div>
@@ -198,7 +215,11 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
                   {selectedUsers.map(userId => {
                     const user = users.find(u => u.id === userId);
                     return user ? (
-                      <Badge key={userId} variant='secondary' className='flex items-center space-x-1'>
+                      <Badge
+                        key={userId}
+                        variant='secondary'
+                        className='flex items-center space-x-1'
+                      >
                         <span>{user.name}</span>
                         <button
                           onClick={() => toggleUser(userId)}
