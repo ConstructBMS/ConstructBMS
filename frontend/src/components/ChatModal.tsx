@@ -1,9 +1,11 @@
-import { Search, Settings, Users, X } from 'lucide-react';
+import { Search, Settings, Users, X, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
 import { ChatList } from './ChatList';
 import { ChatWindow } from './ChatWindow';
 import { UserSelector } from './UserSelector';
+import { ChatSettings } from './ChatSettings';
+import { CreateChatGroup } from './CreateChatGroup';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -24,6 +26,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   } = useChatStore();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
+  const [showChatSettings, setShowChatSettings] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [activeTab] = useState<'chats' | 'contacts'>('chats');
 
   const currentChat = getCurrentChat();
@@ -44,23 +48,33 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           {/* Left Panel - Chat List */}
           <div className='w-1/3 bg-gray-50 border-r flex flex-col'>
             {/* Header */}
-            <div className='bg-green-600 text-white p-4 flex items-center justify-between'>
-              <h2 className='text-lg font-semibold'>WhatsApp</h2>
+            <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
+              <h2 className='text-lg font-semibold'>Chat</h2>
               <div className='flex items-center space-x-2'>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setShowCreateGroup(true)}
+                  title='New Group'
+                  className='text-white hover:bg-blue-700'
+                >
+                  <Plus className='h-4 w-4' />
+                </Button>
                 <Button
                   variant='ghost'
                   size='icon'
                   onClick={() => setShowUserSelector(true)}
                   title='New Chat'
-                  className='text-white hover:bg-green-700'
+                  className='text-white hover:bg-blue-700'
                 >
                   <Users className='h-4 w-4' />
                 </Button>
                 <Button
                   variant='ghost'
                   size='icon'
+                  onClick={() => setShowChatSettings(true)}
                   title='Settings'
-                  className='text-white hover:bg-green-700'
+                  className='text-white hover:bg-blue-700'
                 >
                   <Settings className='h-4 w-4' />
                 </Button>
@@ -68,7 +82,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   variant='ghost'
                   size='icon'
                   onClick={onClose}
-                  className='text-white hover:bg-green-700'
+                  className='text-white hover:bg-blue-700'
                 >
                   <X className='h-4 w-4' />
                 </Button>
@@ -113,16 +127,15 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             ) : (
               <div className='flex-1 flex items-center justify-center bg-gray-50'>
                 <div className='text-center'>
-                  <div className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                    <Users className='h-10 w-10 text-green-600' />
+                  <div className='w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                    <Users className='h-10 w-10 text-blue-600' />
                   </div>
                   <h3 className='text-xl font-medium mb-2 text-gray-700'>
-                    WhatsApp Web
+                    ConstructBMS Chat
                   </h3>
                   <p className='text-gray-500 max-w-sm'>
-                    Send and receive messages without keeping your phone online.
-                    Use WhatsApp on up to 4 linked devices and 1 phone at the
-                    same time.
+                    Send and receive messages with your team. Create project chats, 
+                    group discussions, and private conversations.
                   </p>
                 </div>
               </div>
@@ -140,6 +153,22 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             // Create new chat logic here
             setShowUserSelector(false);
           }}
+        />
+      )}
+
+      {/* Chat Settings Modal */}
+      {showChatSettings && (
+        <ChatSettings
+          isOpen={showChatSettings}
+          onClose={() => setShowChatSettings(false)}
+        />
+      )}
+
+      {/* Create Group Modal */}
+      {showCreateGroup && (
+        <CreateChatGroup
+          isOpen={showCreateGroup}
+          onClose={() => setShowCreateGroup(false)}
         />
       )}
     </div>

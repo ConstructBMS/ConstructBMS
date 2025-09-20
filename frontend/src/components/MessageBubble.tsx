@@ -12,6 +12,7 @@ import { Message, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { MessageStatus } from './MessageStatus';
 
 interface MessageBubbleProps {
   message: Message;
@@ -127,23 +128,20 @@ export function MessageBubble({
                 )}
 
                 {/* Timestamp and Status */}
-                <div
-                  className={cn(
-                    'flex items-center justify-end mt-1 text-xs opacity-70',
-                    isOwn ? 'text-blue-100' : 'text-gray-500'
-                  )}
-                >
-                  <span>{formatTime(message.timestamp)}</span>
-                  {isOwn && (
-                    <div className='ml-1'>
-                      {message.isRead ? (
-                        <CheckCheck className='h-3 w-3' />
-                      ) : (
-                        <Check className='h-3 w-3' />
-                      )}
-                    </div>
-                  )}
-                </div>
+                {isOwn && (
+                  <div className='flex items-center justify-end mt-1'>
+                    <MessageStatus
+                      status={message.isRead ? 'read' : 'sent'}
+                      timestamp={message.timestamp}
+                      showTimestamp={true}
+                    />
+                  </div>
+                )}
+                {!isOwn && (
+                  <div className='flex items-center justify-end mt-1 text-xs text-gray-500'>
+                    <span>{formatTime(message.timestamp)}</span>
+                  </div>
+                )}
               </>
             )}
 

@@ -266,13 +266,14 @@ export const useChatStore = create<ChatStore>()(
       setOpen: (open: boolean) => set({ isOpen: open }),
       setCurrentChat: (chatId: string | null) => set({ currentChatId: chatId }),
 
-      createChat: chatData => {
-        const newChat: Chat = {
-          ...chatData,
-          id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
+       createChat: chatData => {
+         const newChat: Chat = {
+           ...chatData,
+           id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+           createdAt: new Date(),
+           updatedAt: new Date(),
+           lastActivity: new Date(),
+         };
         set(state => ({
           chats: [...state.chats, newChat],
           messages: { ...state.messages, [newChat.id]: [] },

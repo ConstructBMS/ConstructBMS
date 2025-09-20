@@ -5,23 +5,34 @@ All notable changes to this project will be documented in this file.
 ## [2025-01-20] - Chat Modal Redesign and Persistence
 
 ### Added
-- **Chat Store Persistence**: Added Zustand persist middleware to chat store with proper date handling for localStorage persistence
-- **WhatsApp-like Interface**: Redesigned chat modal with left panel for chat list and right panel for messages
-- **Enhanced Chat List**: Updated ChatList component with WhatsApp-like styling, green color scheme, and improved layout
-- **Date Conversion**: Implemented proper date conversion for persisted data to handle serialization/deserialization
+
+- **Chat Store Persistence**: Added Zustand persist middleware to chat store with proper date
+  handling for localStorage persistence
+- **WhatsApp-like Interface**: Redesigned chat modal with left panel for chat list and right panel
+  for messages
+- **Enhanced Chat List**: Updated ChatList component with WhatsApp-like styling, green color scheme,
+  and improved layout
+- **Date Conversion**: Implemented proper date conversion for persisted data to handle
+  serialization/deserialization
 
 ### Changed
-- **Chat Modal Layout**: Restructured ChatModal to use a two-panel layout (1/3 chat list, 2/3 messages)
-- **Chat Item Design**: Updated chat items with green avatars, better spacing, and WhatsApp-like appearance
+
+- **Chat Modal Layout**: Restructured ChatModal to use a two-panel layout (1/3 chat list, 2/3
+  messages)
+- **Chat Item Design**: Updated chat items with green avatars, better spacing, and WhatsApp-like
+  appearance
 - **Color Scheme**: Changed from blue to green color scheme to match WhatsApp branding
 - **Chat Store**: Added persistence configuration with onRehydrateStorage handler for date objects
 
 ### Fixed
-- **Chat Display Issue**: Resolved issue where chat modal was not showing chats due to missing persistence
+
+- **Chat Display Issue**: Resolved issue where chat modal was not showing chats due to missing
+  persistence
 - **Date Handling**: Fixed date object conversion issues in chat store persistence
 - **Linting Errors**: Removed unused imports and variables to pass ESLint checks
 
 ### Technical Details
+
 - Added `persist` middleware to chat store with proper partialize configuration
 - Implemented `onRehydrateStorage` handler to convert string dates back to Date objects
 - Updated ChatModal component structure for better UX

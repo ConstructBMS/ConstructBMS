@@ -116,7 +116,7 @@ export function ChatList({
                 key={chat.id}
                 className={cn(
                   'relative group p-3 cursor-pointer transition-colors border-b border-gray-100',
-                  isSelected ? 'bg-green-50' : 'hover:bg-gray-50'
+                  isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'
                 )}
                 onClick={() => {
                   onChatSelect(chat.id);
@@ -129,7 +129,7 @@ export function ChatList({
                 <div className='flex items-center space-x-3'>
                   {/* Avatar */}
                   <div className='flex-shrink-0 relative'>
-                    <div className='w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold text-lg'>
+                    <div className='w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-lg'>
                       {chat.avatar || chat.name.charAt(0).toUpperCase()}
                     </div>
                     {chat.type === 'group' && (
@@ -147,7 +147,7 @@ export function ChatList({
                       </h3>
                       <div className='flex items-center space-x-1'>
                         {chat.isPinned && (
-                          <Pin className='h-3 w-3 text-green-600' />
+                          <Pin className='h-3 w-3 text-blue-600' />
                         )}
                         {chat.isMuted && (
                           <BellOff className='h-3 w-3 text-gray-400' />
@@ -163,7 +163,7 @@ export function ChatList({
                         {formatLastMessage(chat)}
                       </p>
                       {unreadCount > 0 && (
-                        <div className='ml-2 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                        <div className='ml-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
                           {unreadCount}
                         </div>
                       )}
