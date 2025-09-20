@@ -70,10 +70,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   return (
     <>
       {/* Backdrop - covers entire screen */}
-      <div 
-        className='fixed inset-0 bg-black/50 z-50' 
-        onClick={onClose} 
-      />
+      <div className='fixed inset-0 bg-black/50 z-50' onClick={onClose} />
 
       {/* Modal Container */}
       <div className='fixed right-0 top-0 h-full flex z-50'>
