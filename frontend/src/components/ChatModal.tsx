@@ -106,6 +106,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         onMouseDown={e => {
           console.log('Backdrop mousedown!', e.target, e.currentTarget);
           console.log('Calling onClose function...');
+          e.stopPropagation();
+          e.preventDefault();
           onClose();
           console.log('onClose function called');
         }}

@@ -355,6 +355,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             e.currentTarget
           );
           console.log('Calling StickyNotes onClose function...');
+          e.stopPropagation();
+          e.preventDefault();
           onClose();
           console.log('StickyNotes onClose function called');
         }}
