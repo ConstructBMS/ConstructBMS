@@ -60,10 +60,12 @@ export function MessageStatus({
   };
 
   return (
-    <div className={`flex items-center space-x-1 text-xs ${isOwn ? 'text-white' : 'text-gray-500'}`}>
+    <div
+      className={`flex items-center space-x-1 text-xs ${isOwn ? 'text-white' : 'text-gray-500'}`}
+    >
       {getStatusIcon()}
       {showTimestamp && <span className='ml-1'>{formatTime(timestamp)}</span>}
-      <span className='ml-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+      <span className={`ml-1 transition-opacity ${isOwn ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
         {getStatusText()}
       </span>
     </div>
