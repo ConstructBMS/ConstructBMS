@@ -59,11 +59,11 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='absolute inset-0 bg-black/50' onClick={onClose} />
       <div className='absolute right-0 top-0 h-full flex'>
         <div
-          className='relative w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'
+          className='relative w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
           onClick={e => e.stopPropagation()}
         >
           <div className='flex h-full'>
-            <div className='w-1/3 bg-gray-50 border-r flex flex-col'>
+            <div className='w-1/3 bg-gray-800 border-r flex flex-col'>
               <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
                 <h2 className='text-lg font-semibold'>Chat</h2>
                 <div className='flex items-center space-x-2'>
@@ -105,14 +105,14 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 </div>
               </div>
 
-              <div className='p-3 bg-white border-b'>
+              <div className='p-3 bg-gray-800 border-b border-gray-700'>
                 <div className='relative'>
                   <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
                   <Input
                     placeholder='Search or start new chat'
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className='pl-10 bg-gray-100 border-0 text-gray-900 rounded-full'
+                    className='pl-10 bg-gray-700 border-0 text-white placeholder-gray-400 rounded-full'
                   />
                 </div>
               </div>

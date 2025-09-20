@@ -90,15 +90,15 @@ export function ChatWindow({ chat }: ChatWindowProps) {
   return (
     <div className='flex flex-col h-full'>
       {/* Chat Header */}
-      <div className='flex items-center justify-between p-4 border-b bg-white'>
+      <div className='flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
         <div className='flex items-center space-x-3'>
           <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
             {chat.avatar || '💬'}
           </div>
           <div>
-            <h3 className='font-medium text-gray-900'>{chat.name}</h3>
+            <h3 className='font-medium text-white'>{chat.name}</h3>
             <div className='flex items-center space-x-2'>
-              <p className='text-sm text-gray-500'>
+              <p className='text-sm text-gray-400'>
                 {chatUsers.length} participant
                 {chatUsers.length !== 1 ? 's' : ''}
               </p>
@@ -150,17 +150,17 @@ export function ChatWindow({ chat }: ChatWindowProps) {
 
         {/* Dropdown Menu */}
         {showMenu && (
-          <div className='absolute right-4 top-16 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[200px]'>
+          <div className='absolute right-4 top-16 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10 min-w-[200px]'>
             <div className='py-1'>
               <button
-                className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                 onClick={() => handleMenuAction('addUsers')}
               >
                 <Users className='h-4 w-4 mr-2' />
                 Add People
               </button>
               <button
-                className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                 onClick={() => handleMenuAction('pin')}
               >
                 {chat.isPinned ? (
@@ -176,7 +176,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
                 )}
               </button>
               <button
-                className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                 onClick={() => handleMenuAction('mute')}
               >
                 {chat.isMuted ? (
@@ -193,7 +193,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
               </button>
               <div className='border-t border-gray-200 my-1' />
               <button
-                className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                 onClick={() => handleMenuAction('archive')}
               >
                 <Archive className='h-4 w-4 mr-2' />
@@ -244,7 +244,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
       </div>
 
       {/* Message Input */}
-      <div className='p-4 border-t bg-white'>
+      <div className='p-4 border-t bg-gray-800 border-gray-700'>
         <MessageInput onSendMessage={handleSendMessage} />
       </div>
     </div>
