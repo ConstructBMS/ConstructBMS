@@ -232,20 +232,12 @@ export function Topbar() {
       </div>
 
       {/* Chat Modal */}
-      <ChatModal isOpen={chatOpen} onClose={() => {
-        console.log('Topbar: Closing chat modal, current state:', chatOpen);
-        setChatOpen(false);
-        console.log('Topbar: Chat modal state set to false');
-      }} />
+      <ChatModal isOpen={chatOpen} onClose={() => setChatOpen(false)} />
 
       {/* Sticky Notes Modal */}
       <StickyNotesModal
         isOpen={stickyNotesOpen}
-        onClose={() => {
-          console.log('Topbar: Closing sticky notes modal, current state:', stickyNotesOpen);
-          setStickyNotesOpen(false);
-          console.log('Topbar: Sticky notes modal state set to false');
-        }}
+        onClose={() => setStickyNotesOpen(false)}
       />
 
       {/* Notifications Modal */}

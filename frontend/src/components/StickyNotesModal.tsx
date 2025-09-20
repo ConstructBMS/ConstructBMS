@@ -312,73 +312,17 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     };
   }, [isOpen]);
 
-  console.log('StickyNotesModal render - isOpen:', isOpen);
   if (!isOpen) return null;
 
   return (
-    <div
-      className='fixed inset-0 z-50'
-      onMouseDown={e => {
-        console.log(
-          'StickyNotes container mousedown!',
-          e.target,
-          e.currentTarget
-        );
-        if (e.target === e.currentTarget) {
-          console.log(
-            'StickyNotes container backdrop mousedown - closing modal!'
-          );
-          onClose();
-        }
-      }}
-      onTouchStart={e => {
-        console.log(
-          'StickyNotes container touchstart!',
-          e.target,
-          e.currentTarget
-        );
-        if (e.target === e.currentTarget) {
-          console.log(
-            'StickyNotes container backdrop touchstart - closing modal!'
-          );
-          onClose();
-        }
-      }}
-    >
+    <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
-      <div
-        className='absolute inset-0 bg-black/50'
-        onMouseDown={e => {
-          console.log(
-            'StickyNotes backdrop mousedown!',
-            e.target,
-            e.currentTarget
-          );
-          console.log('Calling StickyNotes onClose function...');
-          e.stopPropagation();
-          e.preventDefault();
-          onClose();
-          console.log('StickyNotes onClose function called');
-        }}
-        onTouchStart={e => {
-          console.log(
-            'StickyNotes backdrop touchstart!',
-            e.target,
-            e.currentTarget
-          );
-          console.log('Calling StickyNotes onClose function...');
-          onClose();
-          console.log('StickyNotes onClose function called');
-        }}
-      />
+      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
       <div
-        className='absolute right-0 top-0 w-[800px] h-full bg-white border-l shadow-xl pointer-events-auto'
+        className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'
         onClick={e => {
-          console.log(
-            'StickyNotes modal content clicked - stopping propagation'
-          );
           e.stopPropagation();
         }}
       >

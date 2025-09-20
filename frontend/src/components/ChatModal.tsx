@@ -79,51 +79,17 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     };
   }, [isOpen, onClose]);
 
-  console.log('ChatModal render - isOpen:', isOpen);
   if (!isOpen) return null;
 
   return (
-    <div
-      className='fixed inset-0 z-50'
-      onMouseDown={e => {
-        console.log('Container mousedown!', e.target, e.currentTarget);
-        if (e.target === e.currentTarget) {
-          console.log('Container backdrop mousedown - closing modal!');
-          onClose();
-        }
-      }}
-      onTouchStart={e => {
-        console.log('Container touchstart!', e.target, e.currentTarget);
-        if (e.target === e.currentTarget) {
-          console.log('Container backdrop touchstart - closing modal!');
-          onClose();
-        }
-      }}
-    >
+    <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
-      <div
-        className='absolute inset-0 bg-black/50'
-        onMouseDown={e => {
-          console.log('Backdrop mousedown!', e.target, e.currentTarget);
-          console.log('Calling onClose function...');
-          e.stopPropagation();
-          e.preventDefault();
-          onClose();
-          console.log('onClose function called');
-        }}
-        onTouchStart={e => {
-          console.log('Backdrop touchstart!', e.target, e.currentTarget);
-          console.log('Calling onClose function...');
-          onClose();
-          console.log('onClose function called');
-        }}
-      />
+      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
       <div
-        className='absolute right-0 top-0 w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden pointer-events-auto'
+        className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
         onClick={e => {
-          console.log('Modal content clicked - stopping propagation');
           e.stopPropagation();
         }}
       >
