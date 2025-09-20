@@ -315,9 +315,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex' data-modal="sticky-notes">
+    <div className='fixed inset-0 z-50 flex' data-modal='sticky-notes'>
       {/* Backdrop */}
-      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
+      <div 
+        className='fixed inset-0 bg-black/50' 
+        onClick={(e) => {
+          console.log('StickyNotesModal backdrop clicked!', e.target);
+          onClose();
+        }} 
+      />
 
       {/* Modal */}
       <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
