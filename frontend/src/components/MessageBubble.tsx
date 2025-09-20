@@ -126,6 +126,7 @@ export function MessageBubble({
                       status={message.isRead ? 'read' : 'sent'}
                       timestamp={message.timestamp}
                       showTimestamp={true}
+                      isOwn={isOwn}
                     />
                   </div>
                 )}
