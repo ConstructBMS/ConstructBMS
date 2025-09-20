@@ -2,10 +2,7 @@ import { Plus, Search, Settings, Users, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
 import { ChatList } from './ChatList';
-import { ChatSettings } from './ChatSettings';
 import { ChatWindow } from './ChatWindow';
-import { CreateChatGroup } from './CreateChatGroup';
-import { UserSelector } from './UserSelector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -25,11 +22,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     searchChats,
   } = useChatStore();
 
-  const [showUserSelector, setShowUserSelector] = useState(false);
-  const [showChatSettings, setShowChatSettings] = useState(false);
-  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [activeTab] = useState<'chats' | 'contacts'>('chats');
-
   const currentChat = getCurrentChat();
   const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
 
@@ -62,9 +55,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   if (!isOpen) return null;
 
   return (
-    <>
-      <div className='fixed inset-0 bg-black/50 z-50' onClick={onClose} />
-      <div className='fixed right-0 top-0 h-full flex z-50'>
+    <div className='fixed inset-0 z-50'>
+      <div className='absolute inset-0 bg-black/50' onClick={onClose} />
+      <div className='absolute right-0 top-0 h-full flex'>
         <div
           className='relative w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'
           onClick={e => e.stopPropagation()}
@@ -74,33 +67,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
               <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
                 <h2 className='text-lg font-semibold'>Chat</h2>
                 <div className='flex items-center space-x-2'>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => setShowCreateGroup(true)}
-                    title='New Group'
-                    className='text-white hover:bg-blue-700'
-                  >
-                    <Plus className='h-4 w-4' />
-                  </Button>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => setShowUserSelector(true)}
-                    title='New Chat'
-                    className='text-white hover:bg-blue-700'
-                  >
-                    <Users className='h-4 w-4' />
-                  </Button>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => setShowChatSettings(true)}
-                    title='Settings'
-                    className='text-white hover:bg-blue-700'
-                  >
-                    <Settings className='h-4 w-4' />
-                  </Button>
                   <Button
                     variant='ghost'
                     size='icon'
@@ -164,30 +130,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           </div>
         </div>
       </div>
-
-      {showUserSelector && (
-        <UserSelector
-          isOpen={showUserSelector}
-          onClose={() => setShowUserSelector(false)}
-          onUsersSelected={() => {
-            setShowUserSelector(false);
-          }}
-        />
-      )}
-
-      {showChatSettings && (
-        <ChatSettings
-          isOpen={showChatSettings}
-          onClose={() => setShowChatSettings(false)}
-        />
-      )}
-
-      {showCreateGroup && (
-        <CreateChatGroup
-          isOpen={showCreateGroup}
-          onClose={() => setShowCreateGroup(false)}
-        />
-      )}
-    </>
+    </div>
   );
 }
