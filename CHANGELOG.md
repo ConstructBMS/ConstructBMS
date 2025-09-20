@@ -16,7 +16,8 @@ All notable changes to this project will be documented in this file.
 ### Technical Details
 
 - **Files**: `frontend/src/components/ChatModal.tsx`, `frontend/src/components/ChatList.tsx`
-- **Issue**: Chat modal was not displaying chats due to date handling errors and missing search functionality
+- **Issue**: Chat modal was not displaying chats due to date handling errors and missing search
+  functionality
 - **Solution**: Added proper date conversion and search filtering to display chats correctly
 
 ## [2025-01-19] - Chat Notification Badge Real-Time Updates Fix
@@ -32,8 +33,10 @@ All notable changes to this project will be documented in this file.
 
 ### Technical Details
 
-- **Files**: `frontend/src/app/store/chat.store.ts`, `frontend/src/components/ChatWindow.tsx`, `frontend/src/components/ChatList.tsx`
-- **Issue**: Chat notification badges were not updating in real-time because messages weren't being marked as read
+- **Files**: `frontend/src/app/store/chat.store.ts`, `frontend/src/components/ChatWindow.tsx`,
+  `frontend/src/components/ChatList.tsx`
+- **Issue**: Chat notification badges were not updating in real-time because messages weren't being
+  marked as read
 - **Solution**: Added automatic message reading when chats are viewed or selected
 
 ## [2025-01-19] - Notifications Store Date Handling Fix

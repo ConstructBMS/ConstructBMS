@@ -6,11 +6,11 @@ import {
   Pin,
   PinOff,
   Trash2,
+  Users,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Chat, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 
 interface ChatListProps {
@@ -24,8 +24,14 @@ export function ChatList({
   currentChatId,
   onChatSelect,
 }: ChatListProps) {
-  const { archiveChat, muteChat, pinChat, deleteChat, getUnreadCount, markChatAsRead } =
-    useChatStore();
+  const {
+    archiveChat,
+    muteChat,
+    pinChat,
+    deleteChat,
+    getUnreadCount,
+    markChatAsRead,
+  } = useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
 
   // Sort chats: pinned first, then by last activity
@@ -33,8 +39,14 @@ export function ChatList({
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
     // Ensure lastActivity is a Date object
-    const aDate = a.lastActivity instanceof Date ? a.lastActivity : new Date(a.lastActivity);
-    const bDate = b.lastActivity instanceof Date ? b.lastActivity : new Date(b.lastActivity);
+    const aDate =
+      a.lastActivity instanceof Date
+        ? a.lastActivity
+        : new Date(a.lastActivity);
+    const bDate =
+      b.lastActivity instanceof Date
+        ? b.lastActivity
+        : new Date(b.lastActivity);
     return bDate.getTime() - aDate.getTime();
   });
 
@@ -94,7 +106,7 @@ export function ChatList({
           <p className='text-sm'>Start a new conversation</p>
         </div>
       ) : (
-        <div className='space-y-1 p-2'>
+        <div className='space-y-0'>
           {sortedChats.map(chat => {
             const unreadCount = getUnreadCount(chat.id);
             const isSelected = currentChatId === chat.id;
@@ -103,10 +115,8 @@ export function ChatList({
               <div
                 key={chat.id}
                 className={cn(
-                  'relative group p-3 rounded-lg cursor-pointer transition-colors',
-                  isSelected
-                    ? 'bg-blue-50 border border-blue-200'
-                    : 'hover:bg-gray-50'
+                  'relative group p-3 cursor-pointer transition-colors border-b border-gray-100',
+                  isSelected ? 'bg-green-50' : 'hover:bg-gray-50'
                 )}
                 onClick={() => {
                   onChatSelect(chat.id);
@@ -116,50 +126,46 @@ export function ChatList({
                   }
                 }}
               >
-                <div className='flex items-start space-x-3'>
+                <div className='flex items-center space-x-3'>
                   {/* Avatar */}
-                  <div className='flex-shrink-0'>
-                    <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
-                      {chat.avatar || '💬'}
+                  <div className='flex-shrink-0 relative'>
+                    <div className='w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold text-lg'>
+                      {chat.avatar || chat.name.charAt(0).toUpperCase()}
                     </div>
+                    {chat.type === 'group' && (
+                      <div className='absolute -bottom-1 -right-1 w-4 h-4 bg-gray-200 rounded-full flex items-center justify-center'>
+                        <Users className='h-2 w-2 text-gray-600' />
+                      </div>
+                    )}
                   </div>
 
                   {/* Content */}
                   <div className='flex-1 min-w-0'>
-                    <div className='flex items-center justify-between'>
+                    <div className='flex items-center justify-between mb-1'>
                       <h3 className='text-sm font-medium text-gray-900 truncate'>
                         {chat.name}
                       </h3>
                       <div className='flex items-center space-x-1'>
                         {chat.isPinned && (
-                          <Pin className='h-3 w-3 text-blue-500' />
+                          <Pin className='h-3 w-3 text-green-600' />
                         )}
                         {chat.isMuted && (
                           <BellOff className='h-3 w-3 text-gray-400' />
                         )}
-                        {unreadCount > 0 && (
-                          <Badge
-                            variant='destructive'
-                            className='text-xs px-1.5 py-0.5'
-                          >
-                            {unreadCount}
-                          </Badge>
-                        )}
+                        <span className='text-xs text-gray-500'>
+                          {formatTime(chat.lastActivity)}
+                        </span>
                       </div>
                     </div>
 
-                    <p className='text-xs text-gray-500 truncate mt-1'>
-                      {formatLastMessage(chat)}
-                    </p>
-
-                    <div className='flex items-center justify-between mt-1'>
-                      <span className='text-xs text-gray-400'>
-                        {formatTime(chat.lastActivity)}
-                      </span>
-                      {chat.type === 'project' && (
-                        <Badge variant='secondary' className='text-xs'>
-                          Project
-                        </Badge>
+                    <div className='flex items-center justify-between'>
+                      <p className='text-sm text-gray-600 truncate flex-1'>
+                        {formatLastMessage(chat)}
+                      </p>
+                      {unreadCount > 0 && (
+                        <div className='ml-2 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                          {unreadCount}
+                        </div>
                       )}
                     </div>
                   </div>

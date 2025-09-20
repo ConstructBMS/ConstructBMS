@@ -1,7 +1,6 @@
 import { Search, Settings, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
-import { cn } from '../lib/utils/cn';
 import { ChatList } from './ChatList';
 import { ChatWindow } from './ChatWindow';
 import { UserSelector } from './UserSelector';
@@ -21,15 +20,13 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     setCurrentChat,
     setSearchQuery,
     getCurrentChat,
-    getTotalUnreadCount,
     searchChats,
   } = useChatStore();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState<'chats' | 'contacts'>('chats');
+  const [activeTab] = useState<'chats' | 'contacts'>('chats');
 
   const currentChat = getCurrentChat();
-  const totalUnreadCount = getTotalUnreadCount();
 
   // Get filtered chats based on search query
   const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
@@ -41,91 +38,58 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
-      {/* Modal */}
-      <div className='relative ml-auto w-[700px] h-full bg-white border-l shadow-xl'>
-        <div className='flex flex-col h-full'>
-          {/* Header */}
-          <div className='flex items-center justify-between p-4 border-b bg-white'>
-            <div className='flex items-center space-x-4'>
-              <h2 className='text-lg font-semibold text-gray-900'>Chat</h2>
-              {totalUnreadCount > 0 && (
-                <span className='bg-red-500 text-white text-xs rounded-full px-2 py-1'>
-                  {totalUnreadCount}
-                </span>
-              )}
+      {/* Modal - WhatsApp-like design */}
+      <div className='relative ml-auto w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'>
+        <div className='flex h-full'>
+          {/* Left Panel - Chat List */}
+          <div className='w-1/3 bg-gray-50 border-r flex flex-col'>
+            {/* Header */}
+            <div className='bg-green-600 text-white p-4 flex items-center justify-between'>
+              <h2 className='text-lg font-semibold'>WhatsApp</h2>
+              <div className='flex items-center space-x-2'>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setShowUserSelector(true)}
+                  title='New Chat'
+                  className='text-white hover:bg-green-700'
+                >
+                  <Users className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  title='Settings'
+                  className='text-white hover:bg-green-700'
+                >
+                  <Settings className='h-4 w-4' />
+                </Button>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={onClose}
+                  className='text-white hover:bg-green-700'
+                >
+                  <X className='h-4 w-4' />
+                </Button>
+              </div>
             </div>
-            <div className='flex items-center space-x-2'>
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={() => setShowUserSelector(true)}
-                title='New Chat'
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-              >
-                <Users className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='ghost'
-                size='icon'
-                title='Settings'
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-              >
-                <Settings className='h-4 w-4' />
-              </Button>
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={onClose}
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-              >
-                <X className='h-4 w-4' />
-              </Button>
+
+            {/* Search */}
+            <div className='p-3 bg-white border-b'>
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <Input
+                  placeholder='Search or start new chat'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className='pl-10 bg-gray-100 border-0 text-gray-900 rounded-full'
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Search */}
-          <div className='p-4 border-b bg-white'>
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-              <Input
-                placeholder='Search chats...'
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className='pl-10 bg-white border-gray-300 text-gray-900'
-              />
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className='flex border-b bg-white'>
-            <button
-              className={cn(
-                'flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors',
-                activeTab === 'chats'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              )}
-              onClick={() => setActiveTab('chats')}
-            >
-              Chats
-            </button>
-            <button
-              className={cn(
-                'flex-1 py-3 px-4 text-sm font-medium border-b-2 transition-colors',
-                activeTab === 'contacts'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              )}
-              onClick={() => setActiveTab('contacts')}
-            >
-              Contacts
-            </button>
-          </div>
-
-          {/* Content */}
-          <div className='flex-1 flex overflow-hidden'>
-            {/* Left Pane - Chat List */}
-            <div className='w-2/5 border-r bg-white'>
+            {/* Chat List */}
+            <div className='flex-1 overflow-y-auto'>
               {activeTab === 'chats' ? (
                 <ChatList
                   chats={filteredChats}
@@ -140,28 +104,29 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Right Pane - Chat Window */}
-            <div className='w-3/5 bg-white'>
-              {currentChat ? (
-                <ChatWindow chat={currentChat} />
-              ) : (
-                <div className='flex-1 flex items-center justify-center text-gray-500'>
-                  <div className='text-center'>
-                    <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                      <Users className='h-8 w-8 text-gray-400' />
-                    </div>
-                    <h3 className='text-lg font-medium mb-2'>
-                      Select a chat to start messaging
-                    </h3>
-                    <p className='text-sm'>
-                      Choose from your existing chats or start a new
-                      conversation
-                    </p>
+          {/* Right Panel - Chat Window */}
+          <div className='w-2/3 bg-white flex flex-col'>
+            {currentChat ? (
+              <ChatWindow chat={currentChat} />
+            ) : (
+              <div className='flex-1 flex items-center justify-center bg-gray-50'>
+                <div className='text-center'>
+                  <div className='w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+                    <Users className='h-10 w-10 text-green-600' />
                   </div>
+                  <h3 className='text-xl font-medium mb-2 text-gray-700'>
+                    WhatsApp Web
+                  </h3>
+                  <p className='text-gray-500 max-w-sm'>
+                    Send and receive messages without keeping your phone online.
+                    Use WhatsApp on up to 4 linked devices and 1 phone at the
+                    same time.
+                  </p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -171,7 +136,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
         <UserSelector
           isOpen={showUserSelector}
           onClose={() => setShowUserSelector(false)}
-          onUsersSelected={userIds => {
+          onUsersSelected={() => {
             // Create new chat logic here
             setShowUserSelector(false);
           }}
