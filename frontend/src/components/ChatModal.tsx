@@ -52,18 +52,40 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     };
   }, [isOpen]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50'>
+    <div className='fixed inset-0 z-50 flex justify-end' role="dialog" aria-modal="true">
       {/* Backdrop - covers entire screen */}
-      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
-      
+      <div 
+        className='fixed inset-0 bg-black/50' 
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
       {/* Modal Container */}
-      <div className='fixed right-0 top-0 h-full flex z-10'>
+      <div className='relative z-10 flex items-center justify-center h-full'>
         <div
           className='relative w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
           onClick={e => e.stopPropagation()}
+          role="document"
         >
           <div className='flex h-full'>
             <div className='w-1/3 bg-gray-800 border-r flex flex-col'>
