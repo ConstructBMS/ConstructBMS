@@ -318,7 +318,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     <div
       className='fixed inset-0 z-50 flex'
       data-modal='sticky-notes'
-      onMouseDown={e => {
+      onClick={e => {
         const target = e.target as HTMLElement;
         // Check if clicking on the backdrop div or the container itself
         if (
@@ -335,7 +335,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       {/* Modal */}
       <div
         className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'
-        onMouseDown={e => {
+        onClick={e => {
           e.stopPropagation();
         }}
       >

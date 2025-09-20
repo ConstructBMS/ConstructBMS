@@ -85,7 +85,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     <div
       className='fixed inset-0 z-50 flex'
       data-modal='chat'
-      onMouseDown={e => {
+      onClick={e => {
         const target = e.target as HTMLElement;
         // Check if clicking on the backdrop div or the container itself
         if (
@@ -102,7 +102,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       {/* Modal */}
       <div
         className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
-        onMouseDown={e => {
+        onClick={e => {
           e.stopPropagation();
         }}
       >
