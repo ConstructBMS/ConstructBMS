@@ -84,10 +84,17 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   return (
     <div
       className='fixed inset-0 z-50'
-      onClick={e => {
-        console.log('Container clicked!', e.target, e.currentTarget);
+      onMouseDown={e => {
+        console.log('Container mousedown!', e.target, e.currentTarget);
         if (e.target === e.currentTarget) {
-          console.log('Container backdrop clicked - closing modal!');
+          console.log('Container backdrop mousedown - closing modal!');
+          onClose();
+        }
+      }}
+      onTouchStart={e => {
+        console.log('Container touchstart!', e.target, e.currentTarget);
+        if (e.target === e.currentTarget) {
+          console.log('Container backdrop touchstart - closing modal!');
           onClose();
         }
       }}
@@ -95,8 +102,14 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       {/* Backdrop */}
       <div
         className='absolute inset-0 bg-black/50'
-        onClick={e => {
-          console.log('Backdrop clicked!', e.target, e.currentTarget);
+        onMouseDown={e => {
+          console.log('Backdrop mousedown!', e.target, e.currentTarget);
+          console.log('Calling onClose function...');
+          onClose();
+          console.log('onClose function called');
+        }}
+        onTouchStart={e => {
+          console.log('Backdrop touchstart!', e.target, e.currentTarget);
           console.log('Calling onClose function...');
           onClose();
           console.log('onClose function called');
