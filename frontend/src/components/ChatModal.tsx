@@ -1,5 +1,5 @@
 import { Plus, Search, Settings, Users, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useChatStore } from '../app/store/chat.store';
 import { ChatList } from './ChatList';
 import { ChatSettings } from './ChatSettings';
