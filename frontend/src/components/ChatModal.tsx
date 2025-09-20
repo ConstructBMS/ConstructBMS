@@ -85,10 +85,10 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     <div 
       className='fixed inset-0 z-50 flex' 
       data-modal='chat'
-      onClick={e => {
-        console.log('ChatModal container clicked!', e.target);
+      onMouseDown={e => {
+        console.log('ChatModal container mousedown!', e.target);
         if (e.target === e.currentTarget) {
-          console.log('ChatModal backdrop clicked - closing modal!');
+          console.log('ChatModal backdrop mousedown - closing modal!');
           onClose();
         }
       }}
@@ -99,8 +99,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       {/* Modal */}
       <div
         className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
-        onClick={e => {
-          console.log('ChatModal content clicked - stopping propagation');
+        onMouseDown={e => {
+          console.log('ChatModal content mousedown - stopping propagation');
           e.stopPropagation();
         }}
       >

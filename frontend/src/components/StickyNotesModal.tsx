@@ -318,10 +318,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     <div 
       className='fixed inset-0 z-50 flex' 
       data-modal='sticky-notes'
-      onClick={e => {
-        console.log('StickyNotesModal container clicked!', e.target);
+      onMouseDown={e => {
+        console.log('StickyNotesModal container mousedown!', e.target);
         if (e.target === e.currentTarget) {
-          console.log('StickyNotesModal backdrop clicked - closing modal!');
+          console.log('StickyNotesModal backdrop mousedown - closing modal!');
           onClose();
         }
       }}
@@ -330,10 +330,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div className='fixed inset-0 bg-black/50' />
 
       {/* Modal */}
-      <div 
+      <div
         className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'
-        onClick={e => {
-          console.log('StickyNotesModal content clicked - stopping propagation');
+        onMouseDown={e => {
+          console.log(
+            'StickyNotesModal content mousedown - stopping propagation'
+          );
           e.stopPropagation();
         }}
       >
