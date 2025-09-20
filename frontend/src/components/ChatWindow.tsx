@@ -113,13 +113,28 @@ export function ChatWindow({ chat }: ChatWindowProps) {
         </div>
 
         <div className='flex items-center space-x-2'>
-          <Button variant='ghost' size='icon' title='Search'>
+          <Button 
+            variant='ghost' 
+            size='icon' 
+            title='Search'
+            className='text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          >
             <Search className='h-4 w-4' />
           </Button>
-          <Button variant='ghost' size='icon' title='Video Call'>
+          <Button 
+            variant='ghost' 
+            size='icon' 
+            title='Video Call'
+            className='text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          >
             <Video className='h-4 w-4' />
           </Button>
-          <Button variant='ghost' size='icon' title='Voice Call'>
+          <Button 
+            variant='ghost' 
+            size='icon' 
+            title='Voice Call'
+            className='text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          >
             <Phone className='h-4 w-4' />
           </Button>
           <Button
@@ -127,6 +142,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
             size='icon'
             onClick={() => setShowMenu(!showMenu)}
             title='More options'
+            className='text-gray-600 hover:text-gray-900 hover:bg-gray-100'
           >
             <MoreVertical className='h-4 w-4' />
           </Button>

@@ -70,6 +70,33 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   <Button
                     variant='ghost'
                     size='icon'
+                    onClick={() => {/* TODO: Add new group functionality */}}
+                    title='New Group'
+                    className='text-white hover:bg-blue-700'
+                  >
+                    <Plus className='h-4 w-4' />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => {/* TODO: Add new chat functionality */}}
+                    title='New Chat'
+                    className='text-white hover:bg-blue-700'
+                  >
+                    <Users className='h-4 w-4' />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => {/* TODO: Add settings functionality */}}
+                    title='Settings'
+                    className='text-white hover:bg-blue-700'
+                  >
+                    <Settings className='h-4 w-4' />
+                  </Button>
+                  <Button
+                    variant='ghost'
+                    size='icon'
                     onClick={onClose}
                     className='text-white hover:bg-blue-700'
                   >
