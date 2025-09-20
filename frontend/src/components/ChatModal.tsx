@@ -43,9 +43,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal - WhatsApp-like design */}
-      <div 
+      <div
         className='relative ml-auto w-[900px] h-[600px] bg-white border-l shadow-xl rounded-lg overflow-hidden'
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className='flex h-full'>
           {/* Left Panel - Chat List */}

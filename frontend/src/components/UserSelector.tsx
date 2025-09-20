@@ -1,11 +1,10 @@
-import { Search, Users, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useState } from 'react';
-import { User } from '../app/store/chat.store';
 import { useChatStore } from '../app/store/chat.store';
+import { cn } from '../lib/utils/cn';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
-import { cn } from '../lib/utils/cn';
 
 interface UserSelectorProps {
   isOpen: boolean;
@@ -13,16 +12,23 @@ interface UserSelectorProps {
   onUsersSelected: (userIds: string[]) => void;
 }
 
-export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorProps) {
+export function UserSelector({
+  isOpen,
+  onClose,
+  onUsersSelected,
+}: UserSelectorProps) {
   const { users, createChat } = useChatStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [chatName, setChatName] = useState('');
-  const [chatType, setChatType] = useState<'private' | 'group' | 'project'>('group');
+  const [chatType, setChatType] = useState<'private' | 'group' | 'project'>(
+    'group'
+  );
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleUserToggle = (userId: string) => {
@@ -36,9 +42,10 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
   const handleCreateChat = () => {
     if (selectedUsers.length === 0) return;
 
-    const chatName = chatType === 'private' && selectedUsers.length === 1
-      ? users.find(u => u.id === selectedUsers[0])?.name || 'Private Chat'
-      : chatName || 'New Chat';
+    const chatName =
+      chatType === 'private' && selectedUsers.length === 1
+        ? users.find(u => u.id === selectedUsers[0])?.name || 'Private Chat'
+        : chatName || 'New Chat';
 
     createChat({
       name: chatName,
@@ -64,14 +71,16 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div 
+      <div
         className='relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4'
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className='p-6'>
           {/* Header */}
           <div className='flex items-center justify-between mb-4'>
-            <h3 className='text-lg font-semibold text-gray-900'>Start New Chat</h3>
+            <h3 className='text-lg font-semibold text-gray-900'>
+              Start New Chat
+            </h3>
             <Button variant='ghost' size='icon' onClick={onClose}>
               <X className='h-4 w-4' />
             </Button>
@@ -116,7 +125,7 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
               </label>
               <Input
                 value={chatName}
-                onChange={(e) => setChatName(e.target.value)}
+                onChange={e => setChatName(e.target.value)}
                 placeholder='Enter chat name...'
                 className='bg-white border-gray-300 text-gray-900'
               />
@@ -130,7 +139,7 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
               <Input
                 placeholder='Search users...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className='pl-10 bg-white border-gray-300 text-gray-900'
               />
             </div>
@@ -156,17 +165,21 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
                   <p className='text-sm font-medium text-gray-900 truncate'>
                     {user.name}
                   </p>
-                  <p className='text-xs text-gray-500 truncate'>
-                    {user.email}
-                  </p>
+                  <p className='text-xs text-gray-500 truncate'>{user.email}</p>
                 </div>
                 <div className='flex items-center space-x-2'>
-                  <div className={cn(
-                    'w-2 h-2 rounded-full',
-                    user.status === 'online' ? 'bg-green-500' :
-                    user.status === 'away' ? 'bg-yellow-500' :
-                    user.status === 'busy' ? 'bg-red-500' : 'bg-gray-400'
-                  )} />
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      user.status === 'online'
+                        ? 'bg-green-500'
+                        : user.status === 'away'
+                          ? 'bg-yellow-500'
+                          : user.status === 'busy'
+                            ? 'bg-red-500'
+                            : 'bg-gray-400'
+                    )}
+                  />
                   {selectedUsers.includes(user.id) && (
                     <Badge variant='secondary' className='text-xs'>
                       Selected
@@ -187,11 +200,7 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
                 {selectedUsers.map(userId => {
                   const user = users.find(u => u.id === userId);
                   return (
-                    <Badge
-                      key={userId}
-                      variant='secondary'
-                      className='text-xs'
-                    >
+                    <Badge key={userId} variant='secondary' className='text-xs'>
                       {user?.name}
                       <button
                         onClick={() => handleUserToggle(userId)}
@@ -213,7 +222,10 @@ export function UserSelector({ isOpen, onClose, onUsersSelected }: UserSelectorP
             </Button>
             <Button
               onClick={handleCreateChat}
-              disabled={selectedUsers.length === 0 || (chatType !== 'private' && !chatName.trim())}
+              disabled={
+                selectedUsers.length === 0 ||
+                (chatType !== 'private' && !chatName.trim())
+              }
             >
               Create Chat
             </Button>

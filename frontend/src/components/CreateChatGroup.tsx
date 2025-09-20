@@ -73,9 +73,9 @@ export function CreateChatGroup({ isOpen, onClose }: CreateChatGroupProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div 
+      <div
         className='relative w-[600px] max-h-[80vh] bg-white rounded-lg shadow-xl overflow-hidden'
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className='p-6'>
           {/* Header */}

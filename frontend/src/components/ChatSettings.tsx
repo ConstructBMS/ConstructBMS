@@ -78,9 +78,9 @@ export function ChatSettings({ isOpen, onClose }: ChatSettingsProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div 
+      <div
         className='relative w-[800px] h-[600px] bg-white rounded-lg shadow-xl overflow-hidden'
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className='flex h-full'>
           {/* Sidebar */}
