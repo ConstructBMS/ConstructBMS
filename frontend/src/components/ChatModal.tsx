@@ -69,7 +69,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - covers entire screen */}
       <div 
         className='fixed inset-0 bg-black/50 z-50' 
         onClick={onClose} 
@@ -189,7 +189,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           isOpen={showUserSelector}
           onClose={() => setShowUserSelector(false)}
           onUsersSelected={() => {
-            // Create new chat logic here
             setShowUserSelector(false);
           }}
         />
