@@ -28,14 +28,37 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   useEffect(() => {
     if (isOpen) {
+      // Store current scroll position
+      const scrollY = window.scrollY;
+      
       // Prevent body scroll without affecting layout
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+      
+      // Store scroll position for restoration
+      document.body.setAttribute('data-scroll-y', scrollY.toString());
     } else {
-      document.body.style.overflow = '';
+      // Restore scroll position
+      const scrollY = document.body.getAttribute('data-scroll-y');
+      if (scrollY) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.body.removeAttribute('data-scroll-y');
+        window.scrollTo(0, parseInt(scrollY));
+      }
     }
 
     return () => {
+      // Cleanup on unmount
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.removeAttribute('data-scroll-y');
     };
   }, [isOpen]);
 
