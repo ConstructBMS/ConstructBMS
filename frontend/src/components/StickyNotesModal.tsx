@@ -315,21 +315,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div 
-      className='fixed inset-0 z-50 flex'
-      onClick={(e) => {
-        console.log('StickyNotes container clicked!', e.target, e.currentTarget);
+    <div
+      className='fixed inset-0 z-50'
+      onClick={e => {
+        console.log(
+          'StickyNotes container clicked!',
+          e.target,
+          e.currentTarget
+        );
         if (e.target === e.currentTarget) {
-          console.log('StickyNotes container backdrop clicked - closing modal!');
+          console.log(
+            'StickyNotes container backdrop clicked - closing modal!'
+          );
           onClose();
         }
       }}
     >
       {/* Backdrop */}
-      <div 
-        className='fixed inset-0 bg-black/50 pointer-events-auto' 
-        onClick={(e) => {
-          console.log('StickyNotes backdrop clicked!', e.target, e.currentTarget);
+      <div
+        className='absolute inset-0 bg-black/50'
+        onClick={e => {
+          console.log(
+            'StickyNotes backdrop clicked!',
+            e.target,
+            e.currentTarget
+          );
           onClose();
         }}
       />
@@ -338,7 +348,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div
         className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl pointer-events-auto'
         onClick={e => {
-          console.log('StickyNotes modal content clicked - stopping propagation');
+          console.log(
+            'StickyNotes modal content clicked - stopping propagation'
+          );
           e.stopPropagation();
         }}
       >

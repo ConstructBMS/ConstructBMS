@@ -82,9 +82,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div 
-      className='fixed inset-0 z-50 flex'
-      onClick={(e) => {
+    <div
+      className='fixed inset-0 z-50'
+      onClick={e => {
         console.log('Container clicked!', e.target, e.currentTarget);
         if (e.target === e.currentTarget) {
           console.log('Container backdrop clicked - closing modal!');
@@ -93,9 +93,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       }}
     >
       {/* Backdrop */}
-      <div 
-        className='fixed inset-0 bg-black/50 pointer-events-auto' 
-        onClick={(e) => {
+      <div
+        className='absolute inset-0 bg-black/50'
+        onClick={e => {
           console.log('Backdrop clicked!', e.target, e.currentTarget);
           onClose();
         }}
@@ -103,7 +103,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
       {/* Modal */}
       <div
-        className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden pointer-events-auto'
+        className='relative ml-auto w-[900px] h-full bg-gray-900 border-l shadow-xl overflow-hidden pointer-events-auto'
         onClick={e => {
           console.log('Modal content clicked - stopping propagation');
           e.stopPropagation();
