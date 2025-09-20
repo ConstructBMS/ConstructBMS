@@ -1,5 +1,5 @@
 import { Plus, Search, Settings, Users, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useChatStore } from '../app/store/chat.store';
 import { ChatList } from './ChatList';
 import { ChatSettings } from './ChatSettings';
@@ -34,6 +34,20 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   // Get filtered chats based on search query
   const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -144,8 +158,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     </p>
                   </div>
                 </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
