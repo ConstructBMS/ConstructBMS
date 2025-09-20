@@ -72,7 +72,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
     <div className='flex flex-col space-y-2'>
       {/* Rich Text Toolbar */}
       {isRichText && (
-        <div className='flex items-center space-x-1 p-2 bg-gray-50 rounded-lg'>
+        <div className='flex items-center space-x-1 p-2 bg-gray-700 rounded-lg'>
           <Button
             variant='ghost'
             size='sm'
@@ -97,7 +97,7 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
           >
             <Underline className='h-4 w-4' />
           </Button>
-          <div className='w-px h-6 bg-gray-300 mx-1' />
+          <div className='w-px h-6 bg-gray-500 mx-1' />
           <Button
             variant='ghost'
             size='sm'
@@ -125,9 +125,9 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
               ref={richTextRef}
               contentEditable
               className={cn(
-                'min-h-[40px] max-h-[120px] p-3 border border-gray-300 rounded-lg',
+                'min-h-[40px] max-h-[120px] p-3 border border-gray-600 rounded-lg',
                 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'overflow-y-auto resize-none'
+                'overflow-y-auto resize-none bg-gray-700 text-white'
               )}
               onInput={handleRichTextChange}
               onKeyDown={handleKeyDown}
@@ -148,9 +148,9 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
               onKeyDown={handleKeyDown}
               placeholder='Type a message...'
               className={cn(
-                'w-full min-h-[40px] max-h-[120px] p-3 border border-gray-300 rounded-lg',
+                'w-full min-h-[40px] max-h-[120px] p-3 border border-gray-600 rounded-lg',
                 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'resize-none'
+                'resize-none bg-gray-700 text-white placeholder-gray-400'
               )}
               rows={1}
             />
@@ -180,12 +180,12 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             </Button>
 
             {showEmojiPicker && (
-              <div className='absolute bottom-full right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
+              <div className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-2 z-10'>
                 <div className='grid grid-cols-6 gap-1'>
                   {emojis.map(emoji => (
                     <button
                       key={emoji}
-                      className='w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded'
+                      className='w-8 h-8 flex items-center justify-center hover:bg-gray-600 rounded'
                       onClick={() => {
                         if (isRichText && richTextRef.current) {
                           richTextRef.current.innerHTML += emoji;

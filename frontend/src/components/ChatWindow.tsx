@@ -212,7 +212,9 @@ export function ChatWindow({ chat }: ChatWindowProps) {
               <div className='w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4'>
                 <Users className='h-8 w-8 text-gray-400' />
               </div>
-              <h3 className='text-lg font-medium mb-2 text-white'>No messages yet</h3>
+              <h3 className='text-lg font-medium mb-2 text-white'>
+                No messages yet
+              </h3>
               <p className='text-sm text-gray-400'>
                 Start the conversation by sending a message
               </p>
