@@ -1,10 +1,6 @@
-import { Plus, Search, Settings, Users, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useChatStore } from '../app/store/chat.store';
-import { ChatList } from './ChatList';
-import { ChatWindow } from './ChatWindow';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Button } from './ui';
 
 interface ChatModalProps {
   isOpen: boolean;
@@ -12,60 +8,10 @@ interface ChatModalProps {
 }
 
 export function ChatModal({ isOpen, onClose }: ChatModalProps) {
-  const {
-    chats,
-    currentChatId,
-    searchQuery,
-    setCurrentChat,
-    setSearchQuery,
-    getCurrentChat,
-    searchChats,
-  } = useChatStore();
-
-  const [activeTab] = useState<'chats' | 'contacts'>('chats');
-  const currentChat = getCurrentChat();
-  const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
-
-  useEffect(() => {
-    if (isOpen) {
-      // Store current scroll position
-      const scrollY = window.scrollY;
-
-      // Prevent body scroll without affecting layout
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-
-      // Store scroll position for restoration
-      document.body.setAttribute('data-scroll-y', scrollY.toString());
-    } else {
-      // Restore scroll position
-      const scrollY = document.body.getAttribute('data-scroll-y');
-      if (scrollY) {
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-        document.body.removeAttribute('data-scroll-y');
-        window.scrollTo(0, parseInt(scrollY));
-      }
-    }
-
-    return () => {
-      // Cleanup on unmount
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      document.body.removeAttribute('data-scroll-y');
-    };
-  }, [isOpen]);
-
-  // Handle Escape key to close modal
+  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
@@ -79,6 +25,36 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     };
   }, [isOpen, onClose]);
 
+  // Body scroll lock
+  useEffect(() => {
+    if (isOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.body.setAttribute('data-scroll-y', scrollY.toString());
+    } else {
+      const scrollY = document.body.getAttribute('data-scroll-y');
+      if (scrollY) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.body.removeAttribute('data-scroll-y');
+        window.scrollTo(0, parseInt(scrollY));
+      }
+    }
+
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.body.removeAttribute('data-scroll-y');
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -87,109 +63,78 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div
-        className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
-        onClick={e => {
-          e.stopPropagation();
-        }}
-      >
+      <div className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'>
         <div className='flex h-full'>
           <div className='w-1/3 bg-gray-800 border-r flex flex-col'>
             <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
               <h2 className='text-lg font-semibold'>Chat</h2>
-              <div className='flex items-center space-x-2'>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => {
-                    /* TODO: Add new group functionality */
-                  }}
-                  title='New Group'
-                  className='text-white hover:bg-blue-700'
-                >
-                  <Plus className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => {
-                    /* TODO: Add new chat functionality */
-                  }}
-                  title='New Chat'
-                  className='text-white hover:bg-blue-700'
-                >
-                  <Users className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => {
-                    /* TODO: Add settings functionality */
-                  }}
-                  title='Settings'
-                  className='text-white hover:bg-blue-700'
-                >
-                  <Settings className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={onClose}
-                  className='text-white hover:bg-blue-700'
-                >
-                  <X className='h-4 w-4' />
-                </Button>
-              </div>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={onClose}
+                className='text-white hover:bg-blue-700'
+              >
+                <X className='h-4 w-4' />
+              </Button>
             </div>
-
-            <div className='p-3 bg-gray-800 border-b border-gray-700'>
-              <div className='relative'>
-                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-                <Input
-                  placeholder='Search or start new chat'
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className='pl-10 bg-gray-700 border-0 text-white placeholder-gray-400 rounded-full'
-                />
-              </div>
-            </div>
-
-            <div className='flex-1 overflow-y-auto'>
-              {activeTab === 'chats' ? (
-                <ChatList
-                  chats={filteredChats}
-                  currentChatId={currentChatId}
-                  onChatSelect={setCurrentChat}
-                />
-              ) : (
-                <div className='p-4'>
-                  <p className='text-gray-500 text-center'>
-                    Contacts coming soon...
-                  </p>
+            <div className='flex-1 overflow-y-auto p-4'>
+              <div className='space-y-2'>
+                <div className='text-sm text-gray-400'>Recent conversations</div>
+                <div className='space-y-1'>
+                  <div className='p-2 bg-gray-700 rounded text-white text-sm'>
+                    Project Discussion
+                  </div>
+                  <div className='p-2 bg-gray-700 rounded text-white text-sm'>
+                    Team Meeting
+                  </div>
+                  <div className='p-2 bg-gray-700 rounded text-white text-sm'>
+                    Client Update
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-
-          <div className='w-2/3 bg-white flex flex-col'>
-            {currentChat ? (
-              <ChatWindow chat={currentChat} />
-            ) : (
-              <div className='flex-1 flex items-center justify-center bg-gray-50'>
-                <div className='text-center'>
-                  <div className='w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                    <Users className='h-10 w-10 text-blue-600' />
+          <div className='flex-1 flex flex-col'>
+            <div className='bg-gray-800 p-4 border-b'>
+              <div className='text-white font-medium'>Project Discussion</div>
+              <div className='text-gray-400 text-sm'>3 participants</div>
+            </div>
+            <div className='flex-1 overflow-y-auto p-4 space-y-4'>
+              <div className='flex space-x-2'>
+                <div className='w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm'>
+                  JD
+                </div>
+                <div className='flex-1'>
+                  <div className='bg-gray-700 p-3 rounded-lg'>
+                    <div className='text-white text-sm'>Hey team, how's the project going?</div>
+                    <div className='text-gray-400 text-xs mt-1'>2:30 PM</div>
                   </div>
-                  <h3 className='text-xl font-medium mb-2 text-gray-700'>
-                    ConstructBMS Chat
-                  </h3>
-                  <p className='text-gray-500 max-w-sm'>
-                    Send and receive messages with your team. Create project
-                    chats, group discussions, and private conversations.
-                  </p>
                 </div>
               </div>
-            )}
+              <div className='flex space-x-2 justify-end'>
+                <div className='flex-1 max-w-xs'>
+                  <div className='bg-blue-600 p-3 rounded-lg'>
+                    <div className='text-white text-sm'>Everything is on track!</div>
+                    <div className='text-blue-200 text-xs mt-1'>2:32 PM</div>
+                  </div>
+                </div>
+                <div className='w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm'>
+                  ME
+                </div>
+              </div>
+            </div>
+            <div className='p-4 border-t bg-gray-800'>
+              <div className='flex space-x-2'>
+                <input
+                  type='text'
+                  placeholder='Type a message...'
+                  className='flex-1 bg-gray-700 text-white px-3 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500'
+                />
+                <Button className='bg-blue-600 hover:bg-blue-700 text-white'>
+                  Send
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
