@@ -46,6 +46,9 @@ export function Topbar() {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
 
+      // Only handle clicks if org dropdown is open
+      if (!orgDropdownOpen) return;
+
       // Check if clicking on a modal, its backdrop, or any modal-related elements
       const isModalClick =
         target.closest('[role="dialog"]') ||
@@ -55,7 +58,7 @@ export function Topbar() {
         target.closest('[data-modal]') || // Any element with data-modal attribute
         target.closest('.z-50'); // High z-index elements (modals)
 
-      // Only handle org dropdown clicks, ignore all modal interactions
+      // Only close org dropdown if not clicking on org switcher and not on modal
       if (!target.closest('.org-switcher') && !isModalClick) {
         setOrgDropdownOpen(false);
       }
