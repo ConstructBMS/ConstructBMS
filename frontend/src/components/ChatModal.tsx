@@ -22,6 +22,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     setSearchQuery,
     getCurrentChat,
     getTotalUnreadCount,
+    searchChats,
   } = useChatStore();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
@@ -29,6 +30,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   const currentChat = getCurrentChat();
   const totalUnreadCount = getTotalUnreadCount();
+  
+  // Get filtered chats based on search query
+  const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
 
   if (!isOpen) return null;
 
@@ -124,7 +128,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             <div className='w-2/5 border-r bg-white'>
               {activeTab === 'chats' ? (
                 <ChatList
-                  chats={chats}
+                  chats={filteredChats}
                   currentChatId={currentChatId}
                   onChatSelect={setCurrentChat}
                 />

@@ -32,7 +32,10 @@ export function ChatList({
   const sortedChats = [...chats].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-    return b.lastActivity.getTime() - a.lastActivity.getTime();
+    // Ensure lastActivity is a Date object
+    const aDate = a.lastActivity instanceof Date ? a.lastActivity : new Date(a.lastActivity);
+    const bDate = b.lastActivity instanceof Date ? b.lastActivity : new Date(b.lastActivity);
+    return bDate.getTime() - aDate.getTime();
   });
 
   const formatLastMessage = (chat: Chat) => {
@@ -50,7 +53,9 @@ export function ChatList({
 
   const formatTime = (date: Date) => {
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    // Ensure date is a Date object
+    const dateObj = date instanceof Date ? date : new Date(date);
+    const diff = now.getTime() - dateObj.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
 
