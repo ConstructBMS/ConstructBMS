@@ -45,10 +45,14 @@ export function Topbar() {
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
+      
+      // Check if clicking on a modal or its backdrop
+      const isModalClick = target.closest('[role="dialog"]') || 
+                          target.closest('.fixed.inset-0') ||
+                          target.closest('[aria-modal="true"]');
+      
       // Don't close org dropdown if clicking on modals or their backdrops
-      if (!target.closest('.org-switcher') && 
-          !target.closest('[role="dialog"]') && 
-          !target.closest('.fixed.inset-0')) {
+      if (!target.closest('.org-switcher') && !isModalClick) {
         setOrgDropdownOpen(false);
       }
     };

@@ -72,22 +72,16 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex justify-end' role="dialog" aria-modal="true">
-      {/* Backdrop - covers entire screen */}
-      <div 
-        className='fixed inset-0 bg-black/50' 
-        onClick={onClose}
-        aria-hidden="true"
-      />
+    <div className='fixed inset-0 z-50 flex'>
+      {/* Backdrop */}
+      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
-      {/* Modal Container */}
-      <div className='relative z-10 flex items-center justify-center h-full'>
-        <div
-          className='relative w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
-          onClick={e => e.stopPropagation()}
-          role="document"
-        >
-          <div className='flex h-full'>
+      {/* Modal */}
+      <div 
+        className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
+        onClick={e => e.stopPropagation()}
+      >
+        <div className='flex h-full'>
             <div className='w-1/3 bg-gray-800 border-r flex flex-col'>
               <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
                 <h2 className='text-lg font-semibold'>Chat</h2>
