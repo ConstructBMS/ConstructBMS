@@ -100,5 +100,8 @@
     "*.{css,scss}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "browserslist": "^4.26.2"
   }
 }
