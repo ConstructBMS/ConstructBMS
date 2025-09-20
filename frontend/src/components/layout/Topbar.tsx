@@ -43,11 +43,18 @@ export function Topbar() {
       }
     };
 
+    document.addEventListener('keydown', handleKeyDownEvent);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDownEvent);
+    };
+  }, []);
+
+  // Separate effect for org dropdown click handling
+  React.useEffect(() => {
+    if (!orgDropdownOpen) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-
-      // Only handle clicks if org dropdown is open
-      if (!orgDropdownOpen) return;
 
       // Check if clicking on a modal, its backdrop, or any modal-related elements
       const isModalClick =
@@ -64,13 +71,11 @@ export function Topbar() {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDownEvent);
     document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener('keydown', handleKeyDownEvent);
       document.removeEventListener('click', handleClickOutside);
     };
-  }, []);
+  }, [orgDropdownOpen]);
 
   const getThemeIcon = () => {
     // Only show sun for light theme, moon for dark theme
