@@ -86,11 +86,12 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       className='fixed inset-0 z-50 flex'
       data-modal='chat'
       onMouseDown={e => {
-        console.log('ChatModal container mousedown!', e.target);
         const target = e.target as HTMLElement;
         // Check if clicking on the backdrop div or the container itself
-        if (target.classList.contains('bg-black/50') || e.target === e.currentTarget) {
-          console.log('ChatModal backdrop mousedown - closing modal!');
+        if (
+          target.classList.contains('bg-black/50') ||
+          e.target === e.currentTarget
+        ) {
           onClose();
         }
       }}
@@ -102,7 +103,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div
         className='relative ml-auto w-[900px] h-[600px] bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'
         onMouseDown={e => {
-          console.log('ChatModal content mousedown - stopping propagation');
           e.stopPropagation();
         }}
       >

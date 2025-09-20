@@ -46,7 +46,6 @@ export function Topbar() {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
 
-      // TEMPORARILY DISABLED FOR DEBUGGING - Check if this fixes modal click-away
       // Check if clicking on a modal, its backdrop, or any modal-related elements
       const isModalClick =
         target.closest('[role="dialog"]') ||
@@ -56,18 +55,17 @@ export function Topbar() {
         target.closest('[data-modal]') || // Any element with data-modal attribute
         target.closest('.z-50'); // High z-index elements (modals)
 
-      // TEMPORARILY DISABLED - Only handle org dropdown clicks, ignore all modal interactions
+      // Only handle org dropdown clicks, ignore all modal interactions
       if (!target.closest('.org-switcher') && !isModalClick) {
-        // setOrgDropdownOpen(false); // DISABLED FOR TESTING
+        setOrgDropdownOpen(false);
       }
     };
 
     document.addEventListener('keydown', handleKeyDownEvent);
-    // TEMPORARILY REMOVED CLICK HANDLER FOR DEBUGGING
-    // document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('keydown', handleKeyDownEvent);
-      // document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 

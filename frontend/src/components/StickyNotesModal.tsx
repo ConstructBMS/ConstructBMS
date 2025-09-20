@@ -319,11 +319,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       className='fixed inset-0 z-50 flex'
       data-modal='sticky-notes'
       onMouseDown={e => {
-        console.log('StickyNotesModal container mousedown!', e.target);
         const target = e.target as HTMLElement;
         // Check if clicking on the backdrop div or the container itself
-        if (target.classList.contains('bg-black/50') || e.target === e.currentTarget) {
-          console.log('StickyNotesModal backdrop mousedown - closing modal!');
+        if (
+          target.classList.contains('bg-black/50') ||
+          e.target === e.currentTarget
+        ) {
           onClose();
         }
       }}
@@ -335,9 +336,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       <div
         className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'
         onMouseDown={e => {
-          console.log(
-            'StickyNotesModal content mousedown - stopping propagation'
-          );
           e.stopPropagation();
         }}
       >
