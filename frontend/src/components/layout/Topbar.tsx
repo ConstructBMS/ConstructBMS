@@ -15,6 +15,7 @@ import { useThemeStore } from '../../app/store/ui/theme.store';
 import { ChatModal } from '../ChatModal';
 import { NotificationsModal } from '../NotificationsModal';
 import { StickyNotesModal } from '../StickyNotesModal';
+import { TestModal } from '../TestModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 
@@ -26,6 +27,7 @@ export function Topbar() {
   const [stickyNotesOpen, setStickyNotesOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [testModalOpen, setTestModalOpen] = useState(false);
   const { getTotalUnreadCount } = useChatStore();
   const { getUnreadCount, notifications } = useNotificationsStore();
   const totalUnreadCount = getTotalUnreadCount();
@@ -200,6 +202,17 @@ export function Topbar() {
             <StickyNote className='h-5 w-5' />
           </Button>
 
+          {/* Test Modal */}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setTestModalOpen(true)}
+            title='Test Modal'
+            className='bg-red-500 hover:bg-red-600 text-white'
+          >
+            T
+          </Button>
+
           {/* Notifications */}
           <Button
             variant='ghost'
@@ -244,6 +257,12 @@ export function Topbar() {
       <NotificationsModal
         isOpen={notificationsOpen}
         onClose={() => setNotificationsOpen(false)}
+      />
+
+      {/* Test Modal */}
+      <TestModal
+        isOpen={testModalOpen}
+        onClose={() => setTestModalOpen(false)}
       />
     </header>
   );
