@@ -178,7 +178,7 @@ export function Topbar() {
           <Button
             variant='ghost'
             size='icon'
-            onClick={() => setChatOpen(!chatOpen)}
+            onClick={() => setChatOpen(true)}
             title='Chat'
             className='relative'
           >
@@ -194,7 +194,7 @@ export function Topbar() {
           <Button
             variant='ghost'
             size='icon'
-            onClick={() => setStickyNotesOpen(!stickyNotesOpen)}
+            onClick={() => setStickyNotesOpen(true)}
             title='Sticky Notes'
           >
             <StickyNote className='h-5 w-5' />
