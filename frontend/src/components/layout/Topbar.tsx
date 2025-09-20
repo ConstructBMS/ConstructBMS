@@ -16,6 +16,7 @@ import { ChatModal } from '../ChatModal';
 import { NotificationsModal } from '../NotificationsModal';
 import { StickyNotesModal } from '../StickyNotesModal';
 import { TestModal } from '../TestModal';
+import { SimpleTestModal } from '../SimpleTestModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 
@@ -28,6 +29,7 @@ export function Topbar() {
   const [chatOpen, setChatOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [testModalOpen, setTestModalOpen] = useState(false);
+  const [simpleTestModalOpen, setSimpleTestModalOpen] = useState(false);
   const { getTotalUnreadCount } = useChatStore();
   const { getUnreadCount, notifications } = useNotificationsStore();
   const totalUnreadCount = getTotalUnreadCount();
@@ -213,6 +215,17 @@ export function Topbar() {
             T
           </Button>
 
+          {/* Simple Test Modal */}
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setSimpleTestModalOpen(true)}
+            title='Simple Test Modal'
+            className='bg-green-500 hover:bg-green-600 text-white'
+          >
+            S
+          </Button>
+
           {/* Notifications */}
           <Button
             variant='ghost'
@@ -263,6 +276,12 @@ export function Topbar() {
       <TestModal
         isOpen={testModalOpen}
         onClose={() => setTestModalOpen(false)}
+      />
+
+      {/* Simple Test Modal */}
+      <SimpleTestModal
+        isOpen={simpleTestModalOpen}
+        onClose={() => setSimpleTestModalOpen(false)}
       />
     </header>
   );
