@@ -30,7 +30,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   const currentChat = getCurrentChat();
   const totalUnreadCount = getTotalUnreadCount();
-  
+
   // Get filtered chats based on search query
   const filteredChats = searchQuery ? searchChats(searchQuery) : chats;
 
