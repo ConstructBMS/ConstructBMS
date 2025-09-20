@@ -8,7 +8,7 @@ import {
   Smile,
   Underline,
 } from 'lucide-react';
-import { KeyboardEvent, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils/cn';
 import { Button } from './ui/button';
 
@@ -22,6 +22,24 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const richTextRef = useRef<HTMLDivElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -559,7 +577,10 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
             </Button>
 
             {showEmojiPicker && (
-              <div className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-4 z-10 w-80 max-h-48 overflow-y-auto'>
+              <div 
+                ref={emojiPickerRef}
+                className='absolute bottom-full right-0 mb-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-4 z-10 w-80 max-h-48 overflow-y-auto'
+              >
                 <div className='grid grid-cols-8 gap-2'>
                   {emojis.map(emoji => (
                     <button
