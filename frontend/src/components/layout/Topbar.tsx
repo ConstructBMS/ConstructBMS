@@ -49,33 +49,36 @@ export function Topbar() {
     };
   }, []);
 
-  // Org dropdown click handling - only runs when dropdown is open
-  React.useEffect(() => {
-    if (!orgDropdownOpen) return;
+  // TEMPORARILY DISABLED ORG DROPDOWN CLICK HANDLING TO CONFIRM MODAL CLICKS WORK
+  // React.useEffect(() => {
+  //   if (!orgDropdownOpen) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const target = event.target as Element;
 
-      // Check if clicking on a modal, its backdrop, or any modal-related elements
-      const isModalClick =
-        target.closest('[role="dialog"]') ||
-        target.closest('.fixed.inset-0') ||
-        target.closest('[aria-modal="true"]') ||
-        target.closest('.bg-black\\/50') || // Modal backdrop
-        target.closest('[data-modal]') || // Any element with data-modal attribute
-        target.closest('.z-50'); // High z-index elements (modals)
+  //     // Check if clicking on a modal, its backdrop, or any modal-related elements
+  //     const isModalClick =
+  //       target.closest('[role="dialog"]') ||
+  //       target.closest('.fixed.inset-0') ||
+  //       target.closest('[aria-modal="true"]') ||
+  //       target.closest('.bg-black\\/50') || // Modal backdrop
+  //       target.closest('[data-modal]') || // Any element with data-modal attribute
+  //       target.closest('.z-50'); // High z-index elements (modals)
 
-      // Only close org dropdown if not clicking on org switcher and not on modal
-      if (!target.closest('.org-switcher') && !isModalClick) {
-        setOrgDropdownOpen(false);
-      }
-    };
+  //     // Only close org dropdown if not clicking on org switcher and not on modal
+  //     // Also check if clicking on the topbar itself (more specific)
+  //     const isTopbarClick = target.closest('.topbar') || target.closest('[data-topbar]');
+      
+  //     if (!target.closest('.org-switcher') && !isModalClick && !isTopbarClick) {
+  //       setOrgDropdownOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [orgDropdownOpen]);
+  //   document.addEventListener('click', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('click', handleClickOutside);
+  //   };
+  // }, [orgDropdownOpen]);
 
   const getThemeIcon = () => {
     // Only show sun for light theme, moon for dark theme
