@@ -14,9 +14,9 @@ import { useNotificationsStore } from '../../app/store/notifications.store';
 import { useThemeStore } from '../../app/store/ui/theme.store';
 import { ChatModal } from '../ChatModal';
 import { NotificationsModal } from '../NotificationsModal';
+import { SimpleTestModal } from '../SimpleTestModal';
 import { StickyNotesModal } from '../StickyNotesModal';
 import { TestModal } from '../TestModal';
-import { SimpleTestModal } from '../SimpleTestModal';
 import { Button, Input } from '../ui';
 import { UserMenu } from './UserMenu';
 

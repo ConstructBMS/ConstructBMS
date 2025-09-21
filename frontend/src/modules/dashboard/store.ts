@@ -550,113 +550,112 @@ const createFinancialDashboard = (): Dashboard => ({
 });
 
 export const useDashboardStore = create<DashboardStore>()((set, get) => ({
-      dashboards: [createDefaultDashboard(), createFinancialDashboard()],
-      activeDashboardId: 'default-dashboard',
+  dashboards: [createDefaultDashboard(), createFinancialDashboard()],
+  activeDashboardId: 'default-dashboard',
 
-      setActiveDashboard: (id: string) => {
-        set({ activeDashboardId: id });
-      },
+  setActiveDashboard: (id: string) => {
+    set({ activeDashboardId: id });
+  },
 
-      addDashboard: dashboardData => {
-        const newDashboard: Dashboard = {
-          ...dashboardData,
-          id: `dashboard-${Date.now()}`,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
+  addDashboard: dashboardData => {
+    const newDashboard: Dashboard = {
+      ...dashboardData,
+      id: `dashboard-${Date.now()}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-        set(state => ({
-          dashboards: [...state.dashboards, newDashboard],
-          activeDashboardId: newDashboard.id,
-        }));
-      },
+    set(state => ({
+      dashboards: [...state.dashboards, newDashboard],
+      activeDashboardId: newDashboard.id,
+    }));
+  },
 
-      updateDashboard: (id: string, updates: Partial<Dashboard>) => {
-        set(state => ({
-          dashboards: state.dashboards.map(dashboard =>
-            dashboard.id === id
-              ? { ...dashboard, ...updates, updatedAt: new Date() }
-              : dashboard
-          ),
-        }));
-      },
+  updateDashboard: (id: string, updates: Partial<Dashboard>) => {
+    set(state => ({
+      dashboards: state.dashboards.map(dashboard =>
+        dashboard.id === id
+          ? { ...dashboard, ...updates, updatedAt: new Date() }
+          : dashboard
+      ),
+    }));
+  },
 
-      deleteDashboard: (id: string) => {
-        const state = get();
-        const dashboardToDelete = state.dashboards.find(d => d.id === id);
+  deleteDashboard: (id: string) => {
+    const state = get();
+    const dashboardToDelete = state.dashboards.find(d => d.id === id);
 
-        // Don't allow deleting the default dashboard
-        if (dashboardToDelete?.isDefault) {
-          return;
-        }
+    // Don't allow deleting the default dashboard
+    if (dashboardToDelete?.isDefault) {
+      return;
+    }
 
-        set(state => {
-          const newDashboards = state.dashboards.filter(d => d.id !== id);
-          const newActiveId =
-            state.activeDashboardId === id
-              ? newDashboards[0]?.id || 'default-dashboard'
-              : state.activeDashboardId;
+    set(state => {
+      const newDashboards = state.dashboards.filter(d => d.id !== id);
+      const newActiveId =
+        state.activeDashboardId === id
+          ? newDashboards[0]?.id || 'default-dashboard'
+          : state.activeDashboardId;
 
-          return {
-            dashboards: newDashboards,
-            activeDashboardId: newActiveId,
-          };
-        });
-      },
+      return {
+        dashboards: newDashboards,
+        activeDashboardId: newActiveId,
+      };
+    });
+  },
 
-      addWidget: (dashboardId: string, widgetData) => {
-        const newWidget: DashboardWidget = {
-          ...widgetData,
-          id: `widget-${Date.now()}`,
-        };
+  addWidget: (dashboardId: string, widgetData) => {
+    const newWidget: DashboardWidget = {
+      ...widgetData,
+      id: `widget-${Date.now()}`,
+    };
 
-        set(state => ({
-          dashboards: state.dashboards.map(dashboard =>
-            dashboard.id === dashboardId
-              ? {
-                  ...dashboard,
-                  widgets: [...dashboard.widgets, newWidget],
-                  updatedAt: new Date(),
-                }
-              : dashboard
-          ),
-        }));
-      },
+    set(state => ({
+      dashboards: state.dashboards.map(dashboard =>
+        dashboard.id === dashboardId
+          ? {
+              ...dashboard,
+              widgets: [...dashboard.widgets, newWidget],
+              updatedAt: new Date(),
+            }
+          : dashboard
+      ),
+    }));
+  },
 
-      updateWidget: (
-        dashboardId: string,
-        widgetId: string,
-        updates: Partial<DashboardWidget>
-      ) => {
-        set(state => ({
-          dashboards: state.dashboards.map(dashboard =>
-            dashboard.id === dashboardId
-              ? {
-                  ...dashboard,
-                  widgets: dashboard.widgets.map(widget =>
-                    widget.id === widgetId ? { ...widget, ...updates } : widget
-                  ),
-                  updatedAt: new Date(),
-                }
-              : dashboard
-          ),
-        }));
-      },
+  updateWidget: (
+    dashboardId: string,
+    widgetId: string,
+    updates: Partial<DashboardWidget>
+  ) => {
+    set(state => ({
+      dashboards: state.dashboards.map(dashboard =>
+        dashboard.id === dashboardId
+          ? {
+              ...dashboard,
+              widgets: dashboard.widgets.map(widget =>
+                widget.id === widgetId ? { ...widget, ...updates } : widget
+              ),
+              updatedAt: new Date(),
+            }
+          : dashboard
+      ),
+    }));
+  },
 
-      deleteWidget: (dashboardId: string, widgetId: string) => {
-        set(state => ({
-          dashboards: state.dashboards.map(dashboard =>
-            dashboard.id === dashboardId
-              ? {
-                  ...dashboard,
-                  widgets: dashboard.widgets.filter(
-                    widget => widget.id !== widgetId
-                  ),
-                  updatedAt: new Date(),
-                }
-              : dashboard
-          ),
-        }));
-      },
-    })
-);
+  deleteWidget: (dashboardId: string, widgetId: string) => {
+    set(state => ({
+      dashboards: state.dashboards.map(dashboard =>
+        dashboard.id === dashboardId
+          ? {
+              ...dashboard,
+              widgets: dashboard.widgets.filter(
+                widget => widget.id !== widgetId
+              ),
+              updatedAt: new Date(),
+            }
+          : dashboard
+      ),
+    }));
+  },
+}));

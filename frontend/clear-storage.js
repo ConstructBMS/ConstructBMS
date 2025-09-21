@@ -1,1 +1,2 @@
-localStorage.clear(); console.log('LocalStorage cleared!');
+localStorage.clear();
+console.log('LocalStorage cleared!');

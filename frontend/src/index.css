@@ -53,7 +53,8 @@
   * {
     @apply border-border;
   }
-  html, body {
+  html,
+  body {
     @apply bg-background text-foreground;
     scroll-behavior: smooth;
     scroll-padding-top: 0;
@@ -91,11 +92,11 @@
 @layer utilities {
   /* Hide scrollbars by default */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Safari and Chrome */
+    display: none; /* Safari and Chrome */
   }
 
   /* Custom scrollbar - hidden by default, visible on hover/scroll */

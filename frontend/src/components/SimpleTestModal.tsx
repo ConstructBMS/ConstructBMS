@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface SimpleTestModalProps {
   isOpen: boolean;
@@ -8,18 +8,34 @@ interface SimpleTestModalProps {
 export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
   if (!isOpen) return null;
 
+  // Handle ESC key press
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   const handleBackdropClick = (e: React.MouseEvent) => {
-    console.log('Backdrop clicked!', e.target);
-    onClose();
+    // Only close if clicking directly on the backdrop, not on child elements
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   const handleModalClick = (e: React.MouseEvent) => {
-    console.log('Modal clicked!', e.target);
+    // Prevent event bubbling to backdrop
     e.stopPropagation();
   };
 
   return (
-    <div 
+    <div
       style={{
         position: 'fixed',
         top: 0,
@@ -30,28 +46,32 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        cursor: 'pointer',
       }}
       onClick={handleBackdropClick}
     >
-      <div 
+      <div
         style={{
           backgroundColor: 'white',
           padding: '20px',
           borderRadius: '8px',
           maxWidth: '400px',
           width: '90%',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          cursor: 'default',
         }}
         onClick={handleModalClick}
       >
-        <h2 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 'bold' }}>
+        <h2
+          style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 'bold' }}
+        >
           Simple Test Modal
         </h2>
         <p style={{ margin: '0 0 16px 0' }}>
-          This is a simple test modal. Click outside to close.
+          This is a simple test modal. Click outside to close or press ESC.
         </p>
-        <button 
+        <button
           onClick={onClose}
           style={{
             backgroundColor: '#3b82f6',
@@ -59,7 +79,7 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
             padding: '8px 16px',
             borderRadius: '4px',
             border: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           Close
@@ -68,3 +88,4 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
     </div>
   );
 }
+

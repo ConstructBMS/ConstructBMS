@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-20] - ChatModal Click-Outside-to-Close Fix (Updated)
+
+### Fixed
+
+- **ChatModal Click-Outside Functionality**: Resolved issue where clicking outside the chat modal
+  was not closing it:
+  - Fixed modal positioning: use `ml-auto` instead of `justify-end` for proper right alignment
+  - Simplified modal structure to match working NotificationsModal pattern
+  - Improved Topbar click handler to better detect modal clicks
+  - Added Escape key handler for closing modal (common UX pattern)
+  - Ensured backdrop covers entire screen and is properly clickable
+  - Prevented event propagation conflicts between Topbar and modal handlers
+
+### Technical Details
+
+- **Files Modified**: `frontend/src/components/ChatModal.tsx`,
+  `frontend/src/components/layout/Topbar.tsx`
+- **Impact**: Chat modal now properly closes when clicking outside or pressing Escape key
+- **Positioning**: Modal is now properly aligned to the right edge of the screen
+- **UX Improvement**: Added keyboard support (Escape key) for closing modal
+
+## [2025-01-20] - TypeScript Configuration Fixes
+
+### Fixed
+
+- **TypeScript Configuration Errors**: Resolved multiple TypeScript configuration issues:
+  - Removed invalid compiler options `erasableSyntaxOnly` and `noUncheckedSideEffectImports` from
+    `tsconfig.node.json`
+  - Fixed target value from "ES2022" to "es2022" (lowercase required)
+  - Removed invalid `force: true` option from `vite.config.ts` server configuration
+  - Ensured proper TypeScript compilation without errors
+
+### Technical Details
+
+- **Files Modified**: `frontend/tsconfig.node.json`, `frontend/vite.config.ts`
+- **Impact**: Resolves TypeScript compilation errors and improves build stability
+- **Validation**: All TypeScript configuration now passes validation without errors
+
 ## [2025-01-20] - ChatModal JSX Syntax Error Resolution
 
 ### Fixed
