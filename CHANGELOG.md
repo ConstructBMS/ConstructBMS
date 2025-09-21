@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-21] - Test Modal Close Behavior Fix
+
+### Fixed
+
+- **Test Modal Close Behavior**: Fixed issue where test modals could only be closed by clicking the blue close button or clicking on the main search box:
+  - Fixed SimpleTestModal backdrop click handling to properly close modal when clicking outside
+  - Fixed TestModal backdrop click handling to properly close modal when clicking outside
+  - Added ESC key handler to both modals for better user experience
+  - Improved event handling to prevent modal from closing when clicking inside modal content
+  - Updated modal text to inform users about ESC key functionality
+  - Fixed event propagation issues that were preventing proper backdrop click detection
+
+### Technical Details
+
+- **Files Modified**: `frontend/src/components/SimpleTestModal.tsx`, `frontend/src/components/TestModal.tsx`
+- **Key Changes**:
+  - Added `useEffect` hook for ESC key handling in both modals
+  - Improved `handleBackdropClick` to only close when clicking directly on backdrop (`e.target === e.currentTarget`)
+  - Enhanced `handleModalClick` to prevent event bubbling with `e.stopPropagation()`
+  - Added proper cursor styling (pointer for backdrop, default for modal content)
+  - Updated modal descriptions to mention ESC key functionality
+
 ## [2025-01-20] - ChatModal Click-Outside-to-Close Fix (Updated)
 
 ### Fixed
