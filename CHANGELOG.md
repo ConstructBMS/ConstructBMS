@@ -6,23 +6,29 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Test Modal Close Behavior**: Fixed issue where test modals could only be closed by clicking the blue close button or clicking on the main search box:
+- **Test Modal Close Behavior**: Fixed issue where test modals could only be closed by clicking the
+  blue close button or clicking on the main search box:
   - Fixed SimpleTestModal backdrop click handling to properly close modal when clicking outside
   - Fixed TestModal backdrop click handling to properly close modal when clicking outside
   - Added ESC key handler to both modals for better user experience
   - Improved event handling to prevent modal from closing when clicking inside modal content
   - Updated modal text to inform users about ESC key functionality
   - Fixed event propagation issues that were preventing proper backdrop click detection
+  - **React Hooks Rules Violation**: Fixed React internal errors by moving `useEffect` hooks before early return statements
+  - Added proper dependency arrays and guard clauses to prevent stale closures
 
 ### Technical Details
 
-- **Files Modified**: `frontend/src/components/SimpleTestModal.tsx`, `frontend/src/components/TestModal.tsx`
+- **Files Modified**: `frontend/src/components/SimpleTestModal.tsx`,
+  `frontend/src/components/TestModal.tsx`
 - **Key Changes**:
   - Added `useEffect` hook for ESC key handling in both modals
-  - Improved `handleBackdropClick` to only close when clicking directly on backdrop (`e.target === e.currentTarget`)
+  - Improved `handleBackdropClick` to only close when clicking directly on backdrop
+    (`e.target === e.currentTarget`)
   - Enhanced `handleModalClick` to prevent event bubbling with `e.stopPropagation()`
   - Added proper cursor styling (pointer for backdrop, default for modal content)
   - Updated modal descriptions to mention ESC key functionality
+  - **React Hooks Fix**: Moved `useEffect` before early return, added `isOpen` to dependencies, added guard clause
 
 ## [2025-01-20] - ChatModal Click-Outside-to-Close Fix (Updated)
 
