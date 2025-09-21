@@ -6,10 +6,10 @@ interface TestModalProps {
 }
 
 export function TestModal({ isOpen, onClose }: TestModalProps) {
-  if (!isOpen) return null;
-
   // Handle ESC key press
   useEffect(() => {
+    if (!isOpen) return;
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
@@ -20,7 +20,9 @@ export function TestModal({ isOpen, onClose }: TestModalProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose]);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     // Only close if clicking directly on the backdrop, not on child elements
