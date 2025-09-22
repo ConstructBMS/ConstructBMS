@@ -336,6 +336,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             <>
               <div className='w-2/5 bg-gray-800 border-r flex flex-col'>
                 <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
+                  <h2 className='text-lg font-semibold'>Chat</h2>
                   <div className='flex items-center space-x-2'>
                     <Button
                       variant='ghost'
@@ -365,27 +366,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                       <TrendingUp className='h-4 w-4' />
                     </Button>
                   </div>
-                  <div className='flex items-center space-x-2'>
-                    <h2 className='text-lg font-semibold'>Chat</h2>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={() => setShowSettings(!showSettings)}
-                      className='text-white hover:bg-blue-700'
-                      title='Chat Settings & Configuration'
-                    >
-                      <Settings className='h-4 w-4' />
-                    </Button>
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      onClick={onClose}
-                      className='text-white hover:bg-blue-700'
-                      title='Close Chat Modal'
-                    >
-                      <X className='h-4 w-4' />
-                    </Button>
-                  </div>
                 </div>
                 <div className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent hover:scrollbar-thumb-blue-400'>
                   <ChatList
@@ -399,7 +379,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 {currentChat ? (
                   <>
                     {/* Chat Header */}
-                    <div className='bg-gray-800 p-4 border-b border-gray-700'>
+                    <div className='bg-gray-800 p-4 border-b border-gray-700 flex items-center justify-between'>
                       <div className='flex items-center space-x-3'>
                         <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
                           {currentChat.avatar || '💬'}
@@ -417,10 +397,30 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                           </p>
                         </div>
                       </div>
+                      <div className='flex items-center space-x-2'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => setShowSettings(!showSettings)}
+                          className='text-gray-300 hover:text-white hover:bg-gray-700'
+                          title='Chat Settings & Configuration'
+                        >
+                          <Settings className='h-4 w-4' />
+                        </Button>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={onClose}
+                          className='text-gray-300 hover:text-white hover:bg-gray-700'
+                          title='Close Chat Modal'
+                        >
+                          <X className='h-4 w-4' />
+                        </Button>
+                      </div>
                     </div>
 
                     {/* Messages Area */}
-                    <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900'>
+                    <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent hover:scrollbar-thumb-blue-400'>
                       {chatMessages.length === 0 ? (
                         <div className='flex-1 flex items-center justify-center text-gray-400'>
                           <div className='text-center'>

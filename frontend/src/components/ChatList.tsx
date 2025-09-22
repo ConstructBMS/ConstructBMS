@@ -65,7 +65,7 @@ export function ChatList({
 
     // Strip HTML tags for preview
     const textContent = content.replace(/<[^>]*>/g, '');
-    
+
     if (textContent.length > maxLength) {
       return textContent.substring(0, maxLength) + '...';
     }
@@ -177,12 +177,8 @@ export function ChatList({
                           className={cn(
                             'text-sm font-medium truncate',
                             isSelected
-                              ? theme === 'dark'
-                                ? 'text-white'
-                                : 'text-gray-900'
-                              : theme === 'dark'
-                                ? 'text-white'
-                                : 'text-gray-900'
+                              ? 'text-white'
+                              : 'text-white group-hover:text-gray-900'
                           )}
                         >
                           {chat.name}
@@ -227,12 +223,8 @@ export function ChatList({
                         className={cn(
                           'text-sm flex-1',
                           isSelected 
-                            ? theme === 'dark'
-                              ? 'text-blue-100'
-                              : 'text-blue-600'
-                            : theme === 'dark'
-                              ? 'text-gray-300'
-                              : 'text-gray-600',
+                            ? 'text-blue-100'
+                            : 'text-gray-300 group-hover:text-gray-600',
                           'line-clamp-2'
                         )}
                       >
