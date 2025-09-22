@@ -1,37 +1,49 @@
 import { Check, CheckCheck } from 'lucide-react';
+import { Message } from '../app/store/chat.store';
 
 interface MessageStatusProps {
-  status: 'sending' | 'sent' | 'delivered' | 'read';
-  timestamp: Date;
-  showTimestamp?: boolean;
-  isOwn?: boolean;
+  message: Message;
+  isOwn: boolean;
 }
 
-export function MessageStatus({
-  status,
-  timestamp,
-  showTimestamp = true,
-  isOwn = false,
-}: MessageStatusProps) {
+export function MessageStatus({ message, isOwn }: MessageStatusProps) {
+  if (!isOwn) return null;
+
   const getStatusIcon = () => {
-    switch (status) {
+    switch (message.status) {
       case 'sending':
         return (
-          <div className='w-3 h-3 border border-gray-400 rounded-full animate-pulse' />
+          <div className='flex items-center space-x-1'>
+            <div className='w-2 h-2 bg-gray-400 rounded-full animate-pulse' />
+          </div>
         );
       case 'sent':
-        return <Check className='h-3 w-3 text-gray-500' />;
+        return (
+          <div className='flex items-center space-x-1'>
+            <Check className='h-3 w-3 text-gray-400' />
+          </div>
+        );
       case 'delivered':
-        return <CheckCheck className='h-3 w-3 text-gray-500' />;
+        return (
+          <div className='flex items-center space-x-1'>
+            <Check className='h-3 w-3 text-gray-400' />
+            <Check className='h-3 w-3 text-gray-400' />
+          </div>
+        );
       case 'read':
-        return <CheckCheck className='h-3 w-3 text-blue-500' />;
+        return (
+          <div className='flex items-center space-x-1'>
+            <CheckCheck className='h-3 w-3 text-green-500' />
+            <CheckCheck className='h-3 w-3 text-green-500' />
+          </div>
+        );
       default:
         return null;
     }
   };
 
   const getStatusText = () => {
-    switch (status) {
+    switch (message.status) {
       case 'sending':
         return 'Sending...';
       case 'sent':
@@ -39,37 +51,16 @@ export function MessageStatus({
       case 'delivered':
         return 'Delivered';
       case 'read':
-        return 'Read';
+        const readCount = Object.keys(message.readBy).length;
+        return `Read by ${readCount} ${readCount === 1 ? 'person' : 'people'}`;
       default:
         return '';
     }
   };
 
-  const formatTime = (date: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (minutes < 1) return 'now';
-    if (minutes < 60) return `${minutes}m`;
-    if (hours < 24) return `${hours}h`;
-    if (days < 7) return `${days}d`;
-    return date.toLocaleDateString();
-  };
-
   return (
-    <div
-      className={`flex items-center space-x-1 text-xs ${isOwn ? 'text-white' : 'text-gray-500'}`}
-    >
+    <div className='flex items-center space-x-1' title={getStatusText()}>
       {getStatusIcon()}
-      {showTimestamp && <span className='ml-1'>{formatTime(timestamp)}</span>}
-      <span
-        className={`ml-1 transition-opacity ${isOwn ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-      >
-        {getStatusText()}
-      </span>
     </div>
   );
 }

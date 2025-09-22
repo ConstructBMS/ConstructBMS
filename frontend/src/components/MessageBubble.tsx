@@ -121,13 +121,11 @@ export function MessageBubble({
 
                 {/* Timestamp and Status */}
                 {isOwn && (
-                  <div className='flex items-center justify-end mt-1'>
-                    <MessageStatus
-                      status={message.isRead ? 'read' : 'sent'}
-                      timestamp={message.timestamp}
-                      showTimestamp={true}
-                      isOwn={isOwn}
-                    />
+                  <div className='flex items-center justify-end mt-1 space-x-1'>
+                    <span className='text-xs text-gray-500'>
+                      {formatTime(message.timestamp)}
+                    </span>
+                    <MessageStatus message={message} isOwn={isOwn} />
                   </div>
                 )}
                 {!isOwn && (

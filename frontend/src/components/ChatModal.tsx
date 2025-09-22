@@ -1,4 +1,4 @@
-import { X, Settings, Users, Plus, FolderOpen, TrendingUp } from 'lucide-react';
+import { FolderOpen, Plus, Settings, TrendingUp, Users, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useChatStore } from '../app/store/chat.store';
@@ -14,7 +14,7 @@ interface ChatModalProps {
 
 export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   const [showSettings, setShowSettings] = useState(false);
-  
+
   const {
     chats,
     currentChatId,
@@ -27,6 +27,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     updateChat,
     deleteChat,
     archiveChat,
+    updateMessageStatus,
+    markMessageAsRead,
   } = useChatStore();
 
   const currentChat = getCurrentChat();
@@ -51,7 +53,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-    }, [isOpen, onClose, showSettings]);
+  }, [isOpen, onClose, showSettings]);
 
   // Body scroll lock
   useEffect(() => {
@@ -90,7 +92,10 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     }
   }, [currentChat, isOpen, markChatAsRead]);
 
-  const handleSendMessage = (content: string, contentType: 'text' | 'rich' = 'text') => {
+  const handleSendMessage = (
+    content: string,
+    contentType: 'text' | 'rich' = 'text'
+  ) => {
     if (!content.trim() || !currentChat) return;
 
     sendMessage({
@@ -99,8 +104,27 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       senderId: 'user-1', // Current user ID - in real app, get from auth context
       chatId: currentChat.id,
     });
-  };
 
+    // Simulate message status progression
+    setTimeout(() => {
+      // Find the latest message and update its status
+      const latestMessage = chatMessages[chatMessages.length - 1];
+      if (latestMessage) {
+        updateMessageStatus(latestMessage.id, 'sent');
+        
+        // Simulate delivery after 1 second
+        setTimeout(() => {
+          updateMessageStatus(latestMessage.id, 'delivered');
+          
+          // Simulate read status after 2 more seconds
+          setTimeout(() => {
+            updateMessageStatus(latestMessage.id, 'read');
+            markMessageAsRead(latestMessage.id, 'user-2'); // Simulate another user reading
+          }, 2000);
+        }, 1000);
+      }
+    }, 500);
+  };
 
   const handleCreateGroup = () => {
     createChat({
@@ -152,7 +176,6 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     }
   };
 
-
   if (!isOpen) return null;
 
   return createPortal(
@@ -191,7 +214,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     <p className='text-gray-300 text-sm mb-4'>
                       Create a new chat group for team collaboration
                     </p>
-                    <Button 
+                    <Button
                       onClick={handleCreateGroup}
                       className='bg-blue-600 hover:bg-blue-700 text-white'
                     >
@@ -209,7 +232,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     <p className='text-gray-300 text-sm mb-4'>
                       Link this chat to an existing project
                     </p>
-                    <Button 
+                    <Button
                       onClick={handleLinkToProject}
                       className='bg-green-600 hover:bg-green-700 text-white'
                     >
@@ -222,12 +245,14 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   <div className='bg-gray-700 rounded-lg p-4'>
                     <div className='flex items-center space-x-3 mb-3'>
                       <TrendingUp className='h-5 w-5 text-purple-400' />
-                      <h3 className='text-white font-medium'>Add to Sales Opportunity</h3>
+                      <h3 className='text-white font-medium'>
+                        Add to Sales Opportunity
+                      </h3>
                     </div>
                     <p className='text-gray-300 text-sm mb-4'>
                       Connect this chat to a sales opportunity
                     </p>
-                    <Button 
+                    <Button
                       onClick={handleLinkToOpportunity}
                       className='bg-purple-600 hover:bg-purple-700 text-white'
                     >
@@ -239,24 +264,28 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   {/* Chat Actions */}
                   {currentChat && (
                     <div className='bg-gray-700 rounded-lg p-4'>
-                      <h3 className='text-white font-medium mb-3'>Chat Actions</h3>
+                      <h3 className='text-white font-medium mb-3'>
+                        Chat Actions
+                      </h3>
                       <div className='space-y-2'>
-                        <Button 
-                          variant='outline' 
+                        <Button
+                          variant='outline'
                           onClick={handleExportChat}
                           className='w-full justify-start text-gray-300 border-gray-600 hover:bg-gray-600'
                         >
                           Export Chat History
                         </Button>
-                        <Button 
-                          variant='outline' 
+                        <Button
+                          variant='outline'
                           onClick={handleArchiveChat}
                           className='w-full justify-start text-gray-300 border-gray-600 hover:bg-gray-600'
                         >
-                          {currentChat.isArchived ? 'Unarchive Chat' : 'Archive Chat'}
+                          {currentChat.isArchived
+                            ? 'Unarchive Chat'
+                            : 'Archive Chat'}
                         </Button>
-                        <Button 
-                          variant='outline' 
+                        <Button
+                          variant='outline'
                           onClick={handleDeleteChat}
                           className='w-full justify-start text-red-400 border-red-600 hover:bg-red-900'
                         >
@@ -312,10 +341,15 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                           {currentChat.avatar || '💬'}
                         </div>
                         <div>
-                          <h3 className='font-medium text-white'>{currentChat.name}</h3>
+                          <h3 className='font-medium text-white'>
+                            {currentChat.name}
+                          </h3>
                           <p className='text-sm text-gray-400'>
-                            {currentChat.type === 'project' ? 'Project Chat' : 
-                             currentChat.type === 'group' ? 'Group Chat' : 'Private Chat'}
+                            {currentChat.type === 'project'
+                              ? 'Project Chat'
+                              : currentChat.type === 'group'
+                                ? 'Group Chat'
+                                : 'Private Chat'}
                           </p>
                         </div>
                       </div>
@@ -340,7 +374,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                       ) : (
                         <>
                           {chatMessages.map((message, index) => {
-                            const prevMessage = index > 0 ? chatMessages[index - 1] : null;
+                            const prevMessage =
+                              index > 0 ? chatMessages[index - 1] : null;
                             const showAvatar =
                               !prevMessage ||
                               prevMessage.senderId !== message.senderId ||
@@ -376,7 +411,8 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                         Select a chat to start messaging
                       </h3>
                       <p className='text-sm text-gray-400'>
-                        Choose from your existing chats or start a new conversation
+                        Choose from your existing chats or start a new
+                        conversation
                       </p>
                     </div>
                   </div>

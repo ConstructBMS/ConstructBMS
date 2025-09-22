@@ -21,6 +21,8 @@ export interface Message {
   replyTo?: string;
   reactions: { [userId: string]: string };
   isRead: boolean;
+  status: 'sending' | 'sent' | 'delivered' | 'read';
+  readBy: { [userId: string]: Date };
   attachments?: {
     id: string;
     name: string;
@@ -82,7 +84,7 @@ interface ChatStore {
 
   // Message Management
   sendMessage: (
-    message: Omit<Message, 'id' | 'timestamp' | 'reactions' | 'isRead'>
+    message: Omit<Message, 'id' | 'timestamp' | 'reactions' | 'isRead' | 'status' | 'readBy'>
   ) => void;
   editMessage: (messageId: string, content: string) => void;
   deleteMessage: (messageId: string) => void;
@@ -90,6 +92,8 @@ interface ChatStore {
   removeReaction: (messageId: string, userId: string) => void;
   markAsRead: (chatId: string, messageId: string) => void;
   markChatAsRead: (chatId: string) => void;
+  updateMessageStatus: (messageId: string, status: 'sent' | 'delivered' | 'read') => void;
+  markMessageAsRead: (messageId: string, userId: string) => void;
 
   // User Management
   addUserToChat: (chatId: string, userId: string) => void;
@@ -175,6 +179,8 @@ export const useChatStore = create<ChatStore>()(
             timestamp: new Date(Date.now() - 86400000 * 7),
             reactions: {},
             isRead: true,
+            status: 'read',
+            readBy: { 'user-2': new Date(Date.now() - 86400000 * 6), 'user-3': new Date(Date.now() - 86400000 * 5) },
           },
           {
             id: 'msg-2',
@@ -186,6 +192,8 @@ export const useChatStore = create<ChatStore>()(
             timestamp: new Date(Date.now() - 86400000 * 6),
             reactions: { 'user-1': '👍' },
             isRead: true,
+            status: 'read',
+            readBy: { 'user-1': new Date(Date.now() - 86400000 * 5), 'user-3': new Date(Date.now() - 86400000 * 4) },
           },
           {
             id: 'msg-3',
@@ -196,6 +204,8 @@ export const useChatStore = create<ChatStore>()(
             timestamp: new Date(Date.now() - 3600000),
             reactions: { 'user-1': '✅', 'user-2': '👍' },
             isRead: false,
+            status: 'delivered',
+            readBy: {},
           },
         ],
         'chat-2': [
@@ -208,6 +218,8 @@ export const useChatStore = create<ChatStore>()(
             timestamp: new Date(Date.now() - 7200000),
             reactions: {},
             isRead: true,
+            status: 'read',
+            readBy: { 'user-2': new Date(Date.now() - 7000000) },
           },
         ],
         'chat-3': [
@@ -220,6 +232,8 @@ export const useChatStore = create<ChatStore>()(
             timestamp: new Date(Date.now() - 14400000),
             reactions: { 'user-2': '👋', 'user-3': '👋' },
             isRead: true,
+            status: 'read',
+            readBy: { 'user-2': new Date(Date.now() - 14000000), 'user-3': new Date(Date.now() - 13800000), 'user-4': new Date(Date.now() - 13600000) },
           },
         ],
       },
@@ -335,6 +349,8 @@ export const useChatStore = create<ChatStore>()(
           timestamp: new Date(),
           reactions: {},
           isRead: false,
+          status: 'sending',
+          readBy: {},
         };
 
         set(state => ({
@@ -437,6 +453,44 @@ export const useChatStore = create<ChatStore>()(
               isRead: true,
             })),
           },
+        }));
+      },
+
+      updateMessageStatus: (messageId, status) => {
+        set(state => ({
+          messages: Object.fromEntries(
+            Object.entries(state.messages).map(([chatId, messages]) => [
+              chatId,
+              messages.map(msg =>
+                msg.id === messageId
+                  ? { ...msg, status }
+                  : msg
+              ),
+            ])
+          ),
+        }));
+      },
+
+      markMessageAsRead: (messageId, userId) => {
+        set(state => ({
+          messages: Object.fromEntries(
+            Object.entries(state.messages).map(([chatId, messages]) => [
+              chatId,
+              messages.map(msg => {
+                if (msg.id === messageId) {
+                  return {
+                    ...msg,
+                    status: 'read',
+                    readBy: {
+                      ...msg.readBy,
+                      [userId]: new Date(),
+                    },
+                  };
+                }
+                return msg;
+              }),
+            ])
+          ),
         }));
       },
 

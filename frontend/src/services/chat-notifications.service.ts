@@ -63,10 +63,11 @@ export class ChatNotificationsService {
       // If there are new messages
       if (currentChatMessages.length > prevChatMessages.length) {
         const newMessages = currentChatMessages.slice(prevChatMessages.length);
-        
+
         // Create notifications for new messages (excluding messages from current user)
         newMessages.forEach(message => {
-          if (message.senderId !== 'user-1') { // Current user ID
+          if (message.senderId !== 'user-1') {
+            // Current user ID
             this.createChatNotification(chatId, message);
           }
         });
