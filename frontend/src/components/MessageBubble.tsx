@@ -50,12 +50,28 @@ export function MessageBubble({
   };
 
   const reactions = Object.entries(message.reactions);
-  const commonReactions = ['👍', '❤️', '😂', '😮', '😢', '😡', '👏', '🔥', '💯', '🎉', '😍', '🤔'];
+  const commonReactions = [
+    '👍',
+    '❤️',
+    '😂',
+    '😮',
+    '😢',
+    '😡',
+    '👏',
+    '🔥',
+    '💯',
+    '🎉',
+    '😍',
+    '🤔',
+  ];
 
   // Close reaction picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (reactionRef.current && !reactionRef.current.contains(event.target as Node)) {
+      if (
+        reactionRef.current &&
+        !reactionRef.current.contains(event.target as Node)
+      ) {
         setShowReactions(false);
       }
     };
@@ -224,7 +240,7 @@ export function MessageBubble({
                 ))}
               </div>
             )}
-            
+
             {/* Quick Reaction Button */}
             <Button
               variant='ghost'
@@ -239,7 +255,7 @@ export function MessageBubble({
 
           {/* Reaction Picker */}
           {showReactions && (
-            <div 
+            <div
               ref={reactionRef}
               className={cn(
                 'absolute mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-20',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { getThemeColors } from '../config/themes';
 import { ThemeContext } from './ThemeContext.ts';
 
@@ -35,4 +35,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
+};
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 };
