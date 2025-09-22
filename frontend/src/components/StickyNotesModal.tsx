@@ -13,7 +13,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
@@ -347,6 +347,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   }));
 
   if (!isOpen) return null;
+
+  // Suppress react-beautiful-dnd deprecation warnings in development
+  React.useEffect(() => {
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (args[0] && typeof args[0] === 'string' && args[0].includes('defaultProps will be removed')) {
+        return; // Suppress this specific warning
+      }
+      originalWarn.apply(console, args);
+    };
+    
+    return () => {
+      console.warn = originalWarn;
+    };
+  }, []);
 
   return createPortal(
     <>
