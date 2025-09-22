@@ -1,5 +1,6 @@
 import { Plus, Search, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
 interface StickyNotesModalProps {
@@ -87,7 +88,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
@@ -169,6 +170,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

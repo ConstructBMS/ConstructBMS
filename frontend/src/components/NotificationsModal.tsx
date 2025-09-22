@@ -1,5 +1,6 @@
 import { Bell, Check, Filter, Search, Settings, X } from 'lucide-react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNotificationsStore } from '../app/store/notifications.store';
 import { NotificationItem } from './NotificationItem';
 import { NotificationSettings } from './NotificationSettings';
@@ -69,7 +70,7 @@ export function NotificationsModal({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
@@ -259,6 +260,7 @@ export function NotificationsModal({
           </Tabs>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

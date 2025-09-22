@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from './ui';
 
 interface ChatModalProps {
@@ -57,7 +58,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
@@ -138,6 +139,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
