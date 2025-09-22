@@ -374,6 +374,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           .react-grid-layout .react-grid-item.react-draggable-dragging + * {
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
           }
+          .react-grid-item.react-draggable-dragging {
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+          }
+          .react-grid-item.react-draggable-dragging * {
+            color: white !important;
+          }
         `}
       </style>
     <div className='fixed inset-0 z-50 flex'>
