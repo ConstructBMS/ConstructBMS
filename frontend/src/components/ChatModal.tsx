@@ -80,7 +80,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             </div>
             <div className='flex-1 overflow-y-auto p-4'>
               <div className='space-y-2'>
-                <div className='text-sm text-gray-400'>Recent conversations</div>
+                <div className='text-sm text-gray-400'>
+                  Recent conversations
+                </div>
                 <div className='space-y-1'>
                   <div className='p-2 bg-gray-700 rounded text-white text-sm'>
                     Project Discussion
@@ -107,7 +109,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 </div>
                 <div className='flex-1'>
                   <div className='bg-gray-700 p-3 rounded-lg'>
-                    <div className='text-white text-sm'>Hey team, how's the project going?</div>
+                    <div className='text-white text-sm'>
+                      Hey team, how's the project going?
+                    </div>
                     <div className='text-gray-400 text-xs mt-1'>2:30 PM</div>
                   </div>
                 </div>
@@ -115,7 +119,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
               <div className='flex space-x-2 justify-end'>
                 <div className='flex-1 max-w-xs'>
                   <div className='bg-blue-600 p-3 rounded-lg'>
-                    <div className='text-white text-sm'>Everything is on track!</div>
+                    <div className='text-white text-sm'>
+                      Everything is on track!
+                    </div>
                     <div className='text-blue-200 text-xs mt-1'>2:32 PM</div>
                   </div>
                 </div>

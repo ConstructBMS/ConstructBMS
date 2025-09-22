@@ -17,12 +17,13 @@ All notable changes to this project will be documented in this file.
   - **React Hooks Rules Violation**: Fixed React internal errors by moving `useEffect` hooks before
     early return statements
   - Added proper dependency arrays and guard clauses to prevent stale closures
-  - **React Portal Implementation**: Converted all modals to use `ReactDOM.createPortal` to
-    render directly to `document.body`
+  - **React Portal Implementation**: Converted all modals to use `ReactDOM.createPortal` to render
+    directly to `document.body`
   - Prevents "header closes but content doesn't" issues by rendering modals outside the header
     subtree
   - Improves modal isolation and event handling consistency across all modals
-  - **Comprehensive Portal Coverage**: ChatModal, StickyNotesModal, NotificationsModal, TestModal, and SimpleTestModal all now use portals
+  - **Comprehensive Portal Coverage**: ChatModal, StickyNotesModal, NotificationsModal, TestModal,
+    and SimpleTestModal all now use portals
 
 ### Technical Details
 

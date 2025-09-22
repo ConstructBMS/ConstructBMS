@@ -1,5 +1,5 @@
 import { Plus, Search, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
@@ -81,9 +81,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     };
   }, [isOpen]);
 
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredNotes = notes.filter(
+    note =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (!isOpen) return null;
@@ -98,7 +99,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
-            <h2 className='text-lg font-semibold text-gray-900'>Sticky Notes</h2>
+            <h2 className='text-lg font-semibold text-gray-900'>
+              Sticky Notes
+            </h2>
             <div className='flex items-center space-x-2'>
               <Button
                 variant='outline'
@@ -108,11 +111,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 <Plus className='h-4 w-4' />
                 <span>New Note</span>
               </Button>
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={onClose}
-              >
+              <Button variant='ghost' size='icon' onClick={onClose}>
                 <X className='h-4 w-4' />
               </Button>
             </div>
@@ -141,14 +140,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                     <div
                       key={note.id}
                       className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-50 ${
-                        note.color === 'yellow' ? 'border-yellow-400 bg-yellow-50' :
-                        note.color === 'pink' ? 'border-pink-400 bg-pink-50' :
-                        note.color === 'blue' ? 'border-blue-400 bg-blue-50' :
-                        'border-gray-400 bg-gray-50'
+                        note.color === 'yellow'
+                          ? 'border-yellow-400 bg-yellow-50'
+                          : note.color === 'pink'
+                            ? 'border-pink-400 bg-pink-50'
+                            : note.color === 'blue'
+                              ? 'border-blue-400 bg-blue-50'
+                              : 'border-gray-400 bg-gray-50'
                       }`}
                     >
-                      <div className='font-medium text-gray-900'>{note.title}</div>
-                      <div className='text-sm text-gray-600 mt-1'>{note.content}</div>
+                      <div className='font-medium text-gray-900'>
+                        {note.title}
+                      </div>
+                      <div className='text-sm text-gray-600 mt-1'>
+                        {note.content}
+                      </div>
                       <div className='text-xs text-gray-400 mt-2'>
                         {note.createdAt.toLocaleDateString()}
                       </div>
@@ -162,8 +168,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             <div className='flex-1 bg-white'>
               <div className='p-4'>
                 <div className='text-center text-gray-500 py-8'>
-                  <div className='text-lg font-medium mb-2'>Select a note to edit</div>
-                  <div className='text-sm'>Choose a note from the list to view and edit its content</div>
+                  <div className='text-lg font-medium mb-2'>
+                    Select a note to edit
+                  </div>
+                  <div className='text-sm'>
+                    Choose a note from the list to view and edit its content
+                  </div>
                 </div>
               </div>
             </div>
