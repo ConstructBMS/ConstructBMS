@@ -46,7 +46,9 @@ try {
 try {
   const grid = require('react-grid-layout');
   const { Responsive, WidthProvider } = grid;
-  ResponsiveGridLayout = WidthProvider(Responsive);
+  if (Responsive && WidthProvider) {
+    ResponsiveGridLayout = WidthProvider(Responsive);
+  }
   require('react-grid-layout/css/styles.css');
   require('react-resizable/css/styles.css');
 } catch (e) {
@@ -222,30 +224,34 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   ];
 
   // Rich text editor configuration
-  const quillModules = ReactQuill ? {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      [{ color: [] }, { background: [] }],
-      ['clean'],
-    ],
-  } : null;
+  const quillModules = ReactQuill
+    ? {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link', 'image'],
+          [{ color: [] }, { background: [] }],
+          ['clean'],
+        ],
+      }
+    : null;
 
-  const quillFormats = ReactQuill ? [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'list',
-    'bullet',
-    'link',
-    'image',
-    'color',
-    'background',
-  ] : [];
+  const quillFormats = ReactQuill
+    ? [
+        'header',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'list',
+        'bullet',
+        'link',
+        'image',
+        'color',
+        'background',
+      ]
+    : [];
 
   const handleNoteClick = (noteId: number) => {
     setSelectedNote(noteId);
@@ -324,7 +330,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Grid layout handlers
   const handleLayoutChange = (layout: any) => {
     if (!ResponsiveGridLayout) return;
-    
+
     setNotes(prevNotes =>
       prevNotes.map(note => {
         const layoutItem = layout.find(
@@ -347,7 +353,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // File upload handler
   const onDrop = (acceptedFiles: File[], noteId: number) => {
     if (!useDropzone) return;
-    
+
     const newAttachments = acceptedFiles.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       name: file.name,
@@ -827,95 +833,101 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   <ResponsiveGridLayout
                     className='layout'
                     layouts={{ lg: gridLayout }}
-                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    breakpoints={{
+                      lg: 1200,
+                      md: 996,
+                      sm: 768,
+                      xs: 480,
+                      xxs: 0,
+                    }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     onLayoutChange={handleLayoutChange}
                   >
-                      {filteredNotes.map(note => (
+                    {filteredNotes.map(note => (
+                      <div
+                        key={note.id}
+                        className='bg-gray-800 rounded-lg p-4 border border-gray-600'
+                      >
                         <div
-                          key={note.id}
-                          className='bg-gray-800 rounded-lg p-4 border border-gray-600'
+                          className={`p-3 rounded-lg border-l-4 ${
+                            note.color === 'yellow'
+                              ? 'border-yellow-400 bg-yellow-100'
+                              : note.color === 'pink'
+                                ? 'border-pink-400 bg-pink-100'
+                                : note.color === 'blue'
+                                  ? 'border-blue-400 bg-blue-100'
+                                  : 'border-gray-400 bg-gray-100'
+                          }`}
                         >
-                          <div
-                            className={`p-3 rounded-lg border-l-4 ${
-                              note.color === 'yellow'
-                                ? 'border-yellow-400 bg-yellow-100'
-                                : note.color === 'pink'
-                                  ? 'border-pink-400 bg-pink-100'
-                                  : note.color === 'blue'
-                                    ? 'border-blue-400 bg-blue-100'
-                                    : 'border-gray-400 bg-gray-100'
-                            }`}
-                          >
-                            <div className='font-medium text-gray-900'>
-                              {note.title}
-                            </div>
-                            <div className='text-sm text-gray-700 mt-1'>
-                              {note.content}
-                            </div>
-                            <div className='text-xs text-gray-500 mt-2'>
-                              {note.createdAt.toLocaleDateString()}
-                            </div>
-                            {note.tags && note.tags.length > 0 && (
-                              <div className='flex flex-wrap gap-1 mt-2'>
-                                {note.tags.map(tag => (
-                                  <span
-                                    key={tag}
-                                    className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
+                          <div className='font-medium text-gray-900'>
+                            {note.title}
                           </div>
+                          <div className='text-sm text-gray-700 mt-1'>
+                            {note.content}
+                          </div>
+                          <div className='text-xs text-gray-500 mt-2'>
+                            {note.createdAt.toLocaleDateString()}
+                          </div>
+                          {note.tags && note.tags.length > 0 && (
+                            <div className='flex flex-wrap gap-1 mt-2'>
+                              {note.tags.map(tag => (
+                                <span
+                                  key={tag}
+                                  className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </ResponsiveGridLayout>
-                  ) : (
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                      {filteredNotes.map(note => (
+                      </div>
+                    ))}
+                  </ResponsiveGridLayout>
+                ) : (
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                    {filteredNotes.map(note => (
+                      <div
+                        key={note.id}
+                        className='bg-gray-800 rounded-lg p-4 border border-gray-600'
+                      >
                         <div
-                          key={note.id}
-                          className='bg-gray-800 rounded-lg p-4 border border-gray-600'
+                          className={`p-3 rounded-lg border-l-4 ${
+                            note.color === 'yellow'
+                              ? 'border-yellow-400 bg-yellow-100'
+                              : note.color === 'pink'
+                                ? 'border-pink-400 bg-pink-100'
+                                : note.color === 'blue'
+                                  ? 'border-blue-400 bg-blue-100'
+                                  : 'border-gray-400 bg-gray-100'
+                          }`}
                         >
-                          <div
-                            className={`p-3 rounded-lg border-l-4 ${
-                              note.color === 'yellow'
-                                ? 'border-yellow-400 bg-yellow-100'
-                                : note.color === 'pink'
-                                  ? 'border-pink-400 bg-pink-100'
-                                  : note.color === 'blue'
-                                    ? 'border-blue-400 bg-blue-100'
-                                    : 'border-gray-400 bg-gray-100'
-                            }`}
-                          >
-                            <div className='font-medium text-gray-900'>
-                              {note.title}
-                            </div>
-                            <div className='text-sm text-gray-700 mt-1'>
-                              {note.content}
-                            </div>
-                            <div className='text-xs text-gray-500 mt-2'>
-                              {note.createdAt.toLocaleDateString()}
-                            </div>
-                            {note.tags && note.tags.length > 0 && (
-                              <div className='flex flex-wrap gap-1 mt-2'>
-                                {note.tags.map(tag => (
-                                  <span
-                                    key={tag}
-                                    className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
+                          <div className='font-medium text-gray-900'>
+                            {note.title}
                           </div>
+                          <div className='text-sm text-gray-700 mt-1'>
+                            {note.content}
+                          </div>
+                          <div className='text-xs text-gray-500 mt-2'>
+                            {note.createdAt.toLocaleDateString()}
+                          </div>
+                          {note.tags && note.tags.length > 0 && (
+                            <div className='flex flex-wrap gap-1 mt-2'>
+                              {note.tags.map(tag => (
+                                <span
+                                  key={tag}
+                                  className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1026,9 +1038,7 @@ function FileUploadZone({ noteId, onDrop }: FileUploadZoneProps) {
     return (
       <div className='border-2 border-dashed rounded-lg p-6 text-center border-gray-600 bg-gray-700'>
         <Upload className='mx-auto h-8 w-8 text-gray-400 mb-2' />
-        <p className='text-sm text-gray-300'>
-          File upload not available
-        </p>
+        <p className='text-sm text-gray-300'>File upload not available</p>
         <p className='text-xs text-gray-400 mt-1'>
           Please install react-dropzone for file upload functionality
         </p>
