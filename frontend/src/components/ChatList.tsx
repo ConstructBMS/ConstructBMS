@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Chat, useChatStore } from '../app/store/chat.store';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext.tsx';
 import { cn } from '../lib/utils/cn';
 import { Button } from './ui/button';
 
