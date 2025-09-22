@@ -350,7 +350,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   return createPortal(
     <>
-      {/* Custom CSS for white drag shadow */}
+      {/* Custom CSS for white drag shadow and drop zones */}
       <style>
         {`
           .react-grid-item.react-draggable-dragging {
@@ -358,6 +358,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           }
           .react-grid-item.react-resizable-resizing {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
+          }
+          .react-grid-item.react-draggable-dragging ~ .react-grid-item {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+          }
+          .react-grid-item.react-draggable-dragging + .react-grid-item {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+          }
+          .react-grid-layout .react-grid-item.react-draggable-dragging {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
+          }
+          .react-grid-layout .react-grid-item.react-draggable-dragging ~ * {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
+          }
+          .react-grid-layout .react-grid-item.react-draggable-dragging + * {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
           }
         `}
       </style>
