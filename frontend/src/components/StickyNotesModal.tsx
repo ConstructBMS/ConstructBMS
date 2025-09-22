@@ -349,6 +349,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
+    <>
+      {/* Custom CSS for white drag shadow */}
+      <style>
+        {`
+          .react-grid-item.react-draggable-dragging {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
+          }
+          .react-grid-item.react-resizable-resizing {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
+          }
+        `}
+      </style>
     <div className='fixed inset-0 z-50 flex'>
       {/* Backdrop */}
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
@@ -748,23 +760,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                     {filteredNotes.map(note => (
                       <div
                         key={note.id}
-                        className='bg-gray-800 rounded-lg p-4 border border-gray-600'
+                        className={`h-full w-full rounded-lg border-l-4 ${
+                          note.color === 'yellow'
+                            ? 'border-yellow-400 bg-yellow-100'
+                            : note.color === 'pink'
+                              ? 'border-pink-400 bg-pink-100'
+                              : note.color === 'blue'
+                                ? 'border-blue-400 bg-blue-100'
+                                : 'border-gray-400 bg-gray-100'
+                        }`}
                       >
-                        <div
-                          className={`p-3 rounded-lg border-l-4 ${
-                            note.color === 'yellow'
-                              ? 'border-yellow-400 bg-yellow-100'
-                              : note.color === 'pink'
-                                ? 'border-pink-400 bg-pink-100'
-                                : note.color === 'blue'
-                                  ? 'border-blue-400 bg-blue-100'
-                                  : 'border-gray-400 bg-gray-100'
-                          }`}
-                        >
+                        <div className='p-3 h-full flex flex-col'>
                           <div className='font-medium text-gray-900'>
                             {note.title}
                           </div>
-                          <div className='text-sm text-gray-700 mt-1'>
+                          <div className='text-sm text-gray-700 mt-1 flex-1'>
                             {note.content}
                           </div>
                           <div className='text-xs text-gray-500 mt-2'>
@@ -880,7 +890,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           </div>
         </div>
       </div>
-    </div>,
+    </div>
+    </>,
     document.body
   );
 }
