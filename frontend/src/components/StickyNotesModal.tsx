@@ -17,70 +17,16 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
-// Dynamic imports to handle potential loading issues
-let ReactQuill: any = null;
-let DragDropContext: any = null;
-let Draggable: any = null;
-let Droppable: any = null;
-let ResponsiveGridLayout: any = null;
-let useDropzone: any = null;
+// Import dependencies directly - they should be available since they're in package.json
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import { useDropzone } from 'react-dropzone';
 
-// Lazy load dependencies only when needed
-const loadReactQuill = async () => {
-  if (ReactQuill) return ReactQuill;
-  try {
-    const quill = await import('react-quill');
-    ReactQuill = quill.default || quill;
-    await import('react-quill/dist/quill.snow.css');
-    return ReactQuill;
-  } catch (e) {
-    console.warn('ReactQuill not available:', e);
-    return null;
-  }
-};
-
-const loadDragDrop = async () => {
-  if (DragDropContext) return { DragDropContext, Draggable, Droppable };
-  try {
-    const dnd = await import('react-beautiful-dnd');
-    DragDropContext = dnd.DragDropContext;
-    Draggable = dnd.Draggable;
-    Droppable = dnd.Droppable;
-    return { DragDropContext, Draggable, Droppable };
-  } catch (e) {
-    console.warn('React Beautiful DnD not available:', e);
-    return null;
-  }
-};
-
-const loadGridLayout = async () => {
-  if (ResponsiveGridLayout) return ResponsiveGridLayout;
-  try {
-    const grid = await import('react-grid-layout');
-    const { Responsive, WidthProvider } = grid;
-    if (Responsive && WidthProvider) {
-      ResponsiveGridLayout = WidthProvider(Responsive);
-    }
-    await import('react-grid-layout/css/styles.css');
-    await import('react-resizable/css/styles.css');
-    return ResponsiveGridLayout;
-  } catch (e) {
-    console.warn('React Grid Layout not available:', e);
-    return null;
-  }
-};
-
-const loadDropzone = async () => {
-  if (useDropzone) return useDropzone;
-  try {
-    const dropzone = await import('react-dropzone');
-    useDropzone = dropzone.useDropzone;
-    return useDropzone;
-  } catch (e) {
-    console.warn('React Dropzone not available:', e);
-    return null;
-  }
-};
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface StickyNotesModalProps {
   isOpen: boolean;
@@ -109,7 +55,6 @@ interface StickyNote {
   h?: number;
 }
 
-
 export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
@@ -121,7 +66,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [filterTag, setFilterTag] = useState<string>('all');
   const [filterProject, setFilterProject] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [dependenciesLoaded, setDependenciesLoaded] = useState(false);
   const [notes, setNotes] = useState<StickyNote[]>([
     {
       id: 1,
@@ -166,26 +110,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       h: 2,
     },
   ]);
-
-  // Load dependencies when component mounts
-  useEffect(() => {
-    const loadDependencies = async () => {
-      try {
-        await Promise.all([
-          loadReactQuill(),
-          loadDragDrop(),
-          loadGridLayout(),
-          loadDropzone()
-        ]);
-        setDependenciesLoaded(true);
-      } catch (error) {
-        console.warn('Some dependencies failed to load:', error);
-        setDependenciesLoaded(true); // Still allow component to work
-      }
-    };
-    
-    loadDependencies();
-  }, []);
 
   // Handle escape key
   useEffect(() => {
@@ -264,34 +188,30 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   ];
 
   // Rich text editor configuration
-  const quillModules = ReactQuill
-    ? {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['link', 'image'],
-          [{ color: [] }, { background: [] }],
-          ['clean'],
-        ],
-      }
-    : null;
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'image'],
+      [{ color: [] }, { background: [] }],
+      ['clean'],
+    ],
+  };
 
-  const quillFormats = ReactQuill
-    ? [
-        'header',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'list',
-        'bullet',
-        'link',
-        'image',
-        'color',
-        'background',
-      ]
-    : [];
+  const quillFormats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'list',
+    'bullet',
+    'link',
+    'image',
+    'color',
+    'background',
+  ];
 
   const handleNoteClick = (noteId: number) => {
     setSelectedNote(noteId);
@@ -342,7 +262,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Drag and drop handlers
   const handleDragEnd = (result: any) => {
-    if (!result.destination || !DragDropContext) return;
+    if (!result.destination) return;
 
     const items = Array.from(filteredNotes);
     const [reorderedItem] = items.splice(result.source.index, 1);
@@ -369,7 +289,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Grid layout handlers
   const handleLayoutChange = (layout: any) => {
-    if (!ResponsiveGridLayout) return;
 
     setNotes(prevNotes =>
       prevNotes.map(note => {
@@ -392,7 +311,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // File upload handler
   const onDrop = (acceptedFiles: File[], noteId: number) => {
-    if (!useDropzone) return;
 
     const newAttachments = acceptedFiles.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
@@ -429,25 +347,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   }));
 
   if (!isOpen) return null;
-
-  // Show loading state while dependencies are loading
-  if (!dependenciesLoaded) {
-    return createPortal(
-      <div className='fixed inset-0 z-50 flex'>
-        <div className='fixed inset-0 bg-black/50' onClick={onClose} />
-        <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
-          <div className='flex items-center justify-center h-full'>
-            <div className='text-center text-gray-400'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4'></div>
-              <div className='text-lg font-medium mb-2'>Loading Sticky Notes</div>
-              <div className='text-sm'>Loading dependencies...</div>
-            </div>
-          </div>
-        </div>
-      </div>,
-      document.body
-    );
-  }
 
   return createPortal(
     <div className='fixed inset-0 z-50 flex'>
@@ -608,8 +507,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 {/* Notes List */}
                 <div className='w-1/2 border-r bg-gray-800 border-gray-700'>
                   <div className='p-4 bg-gray-800'>
-                    {DragDropContext && Droppable && Draggable ? (
-                      <DragDropContext onDragEnd={handleDragEnd}>
+                    <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId='notes-list'>
                           {provided => (
                             <div
@@ -673,51 +571,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                           )}
                         </Droppable>
                       </DragDropContext>
-                    ) : (
-                      <div className='space-y-3'>
-                        {filteredNotes.map(note => (
-                          <div
-                            key={note.id}
-                            onClick={() => handleNoteClick(note.id)}
-                            className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-700 group ${
-                              selectedNote === note.id
-                                ? 'ring-2 ring-blue-500 bg-blue-50'
-                                : ''
-                            } ${
-                              note.color === 'yellow'
-                                ? 'border-yellow-400 bg-yellow-100'
-                                : note.color === 'pink'
-                                  ? 'border-pink-400 bg-pink-100'
-                                  : note.color === 'blue'
-                                    ? 'border-blue-400 bg-blue-100'
-                                    : 'border-gray-400 bg-gray-100'
-                            }`}
-                          >
-                            <div className='font-medium text-gray-900 group-hover:text-white'>
-                              {note.title}
-                            </div>
-                            <div className='text-sm text-gray-700 group-hover:text-gray-200 mt-1'>
-                              {note.content}
-                            </div>
-                            <div className='text-xs text-gray-500 group-hover:text-gray-300 mt-2'>
-                              {note.createdAt.toLocaleDateString()}
-                            </div>
-                            {note.tags && note.tags.length > 0 && (
-                              <div className='flex flex-wrap gap-1 mt-2'>
-                                {note.tags.map(tag => (
-                                  <span
-                                    key={tag}
-                                    className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -797,26 +650,17 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             Content
                           </label>
                           {editingNote ? (
-                            ReactQuill ? (
-                              <div className='bg-gray-800 rounded-md'>
-                                <ReactQuill
-                                  theme='snow'
-                                  value={editContent}
-                                  onChange={setEditContent}
-                                  modules={quillModules}
-                                  formats={quillFormats}
-                                  className='bg-gray-800 text-white'
-                                  style={{ backgroundColor: '#1f2937' }}
-                                />
-                              </div>
-                            ) : (
-                              <textarea
+                            <div className='bg-gray-800 rounded-md'>
+                              <ReactQuill
+                                theme='snow'
                                 value={editContent}
-                                onChange={e => setEditContent(e.target.value)}
-                                className='w-full h-64 p-3 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 resize-none'
-                                placeholder='Enter note content'
+                                onChange={setEditContent}
+                                modules={quillModules}
+                                formats={quillFormats}
+                                className='bg-gray-800 text-white'
+                                style={{ backgroundColor: '#1f2937' }}
                               />
-                            )
+                            </div>
                           ) : (
                             <div
                               className='p-3 bg-gray-800 rounded-md text-white min-h-64'
@@ -888,20 +732,19 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
             {viewMode === 'grid' && (
               <div className='flex-1 bg-gray-900 p-4'>
-                {ResponsiveGridLayout ? (
-                  <ResponsiveGridLayout
-                    className='layout'
-                    layouts={{ lg: gridLayout }}
-                    breakpoints={{
-                      lg: 1200,
-                      md: 996,
-                      sm: 768,
-                      xs: 480,
-                      xxs: 0,
-                    }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    onLayoutChange={handleLayoutChange}
-                  >
+                <ResponsiveGridLayout
+                  className='layout'
+                  layouts={{ lg: gridLayout }}
+                  breakpoints={{
+                    lg: 1200,
+                    md: 996,
+                    sm: 768,
+                    xs: 480,
+                    xxs: 0,
+                  }}
+                  cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                  onLayoutChange={handleLayoutChange}
+                >
                     {filteredNotes.map(note => (
                       <div
                         key={note.id}
@@ -942,51 +785,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                         </div>
                       </div>
                     ))}
-                  </ResponsiveGridLayout>
-                ) : (
-                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {filteredNotes.map(note => (
-                      <div
-                        key={note.id}
-                        className='bg-gray-800 rounded-lg p-4 border border-gray-600'
-                      >
-                        <div
-                          className={`p-3 rounded-lg border-l-4 ${
-                            note.color === 'yellow'
-                              ? 'border-yellow-400 bg-yellow-100'
-                              : note.color === 'pink'
-                                ? 'border-pink-400 bg-pink-100'
-                                : note.color === 'blue'
-                                  ? 'border-blue-400 bg-blue-100'
-                                  : 'border-gray-400 bg-gray-100'
-                          }`}
-                        >
-                          <div className='font-medium text-gray-900'>
-                            {note.title}
-                          </div>
-                          <div className='text-sm text-gray-700 mt-1'>
-                            {note.content}
-                          </div>
-                          <div className='text-xs text-gray-500 mt-2'>
-                            {note.createdAt.toLocaleDateString()}
-                          </div>
-                          {note.tags && note.tags.length > 0 && (
-                            <div className='flex flex-wrap gap-1 mt-2'>
-                              {note.tags.map(tag => (
-                                <span
-                                  key={tag}
-                                  className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                </ResponsiveGridLayout>
               </div>
             )}
 
@@ -1093,18 +892,6 @@ interface FileUploadZoneProps {
 }
 
 function FileUploadZone({ noteId, onDrop }: FileUploadZoneProps) {
-  if (!useDropzone) {
-    return (
-      <div className='border-2 border-dashed rounded-lg p-6 text-center border-gray-600 bg-gray-700'>
-        <Upload className='mx-auto h-8 w-8 text-gray-400 mb-2' />
-        <p className='text-sm text-gray-300'>File upload not available</p>
-        <p className='text-xs text-gray-400 mt-1'>
-          Please install react-dropzone for file upload functionality
-        </p>
-      </div>
-    );
-  }
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: acceptedFiles => onDrop(acceptedFiles, noteId),
     accept: {
