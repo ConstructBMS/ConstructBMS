@@ -312,9 +312,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   useEffect(() => {
     const handleDragStart = () => {
       // Find all dragged items and force their colors
-      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
+      const draggedItems = document.querySelectorAll(
+        '.react-grid-item.react-draggable-dragging'
+      );
       draggedItems.forEach((item: any) => {
-        const stickyNote = item.querySelector('[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]');
+        const stickyNote = item.querySelector(
+          '[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]'
+        );
         if (stickyNote) {
           // Force the sticky note to keep its color
           stickyNote.style.background = '';
@@ -327,9 +331,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
     const handleDragEnd = () => {
       // Clean up any forced styles
-      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
+      const draggedItems = document.querySelectorAll(
+        '.react-grid-item.react-draggable-dragging'
+      );
       draggedItems.forEach((item: any) => {
-        const stickyNote = item.querySelector('[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]');
+        const stickyNote = item.querySelector(
+          '[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]'
+        );
         if (stickyNote) {
           stickyNote.style.background = '';
           stickyNote.style.backgroundColor = '';
@@ -589,7 +597,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* OVERRIDE: Any red drop zone indicators - target the drop zone specifically */
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"],
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background-color"] {
@@ -598,7 +606,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* AGGRESSIVE: Override any red/burgundy drop zone indicators */
           .react-grid-layout .react-grid-item.react-draggable-dragging,
           .react-grid-layout .react-grid-item.react-draggable-dragging *,
@@ -609,7 +617,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* FORCE: Override any inline styles that might be setting red colors */
           .react-grid-layout .react-grid-item.react-draggable-dragging[style] {
             background: transparent !important;
@@ -831,6 +839,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               ? 'border-blue-400 bg-blue-100'
                                               : 'border-gray-400 bg-gray-100'
                                       }`}
+                                      style={{
+                                        backgroundColor: note.color === 'yellow' ? '#fef3c7' : 
+                                                      note.color === 'pink' ? '#fce7f3' : 
+                                                      note.color === 'blue' ? '#dbeafe' : '#f3f4f6',
+                                        borderLeftColor: note.color === 'yellow' ? '#fbbf24' : 
+                                                      note.color === 'pink' ? '#f472b6' : 
+                                                      note.color === 'blue' ? '#60a5fa' : '#9ca3af'
+                                      }}
                                     >
                                       <div className='font-medium text-gray-900 group-hover:text-white'>
                                         {note.title}
@@ -1050,6 +1066,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 ? 'border-blue-400 bg-blue-100'
                                 : 'border-gray-400 bg-gray-100'
                         }`}
+                        style={{
+                          backgroundColor: note.color === 'yellow' ? '#fef3c7' : 
+                                        note.color === 'pink' ? '#fce7f3' : 
+                                        note.color === 'blue' ? '#dbeafe' : '#f3f4f6',
+                          borderLeftColor: note.color === 'yellow' ? '#fbbf24' : 
+                                        note.color === 'pink' ? '#f472b6' : 
+                                        note.color === 'blue' ? '#60a5fa' : '#9ca3af'
+                        }}
                       >
                         <div className='p-3 h-full flex flex-col'>
                           <div className='font-medium text-gray-900'>
