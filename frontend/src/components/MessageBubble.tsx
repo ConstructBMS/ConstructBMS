@@ -1,5 +1,5 @@
 import { Edit, MoreVertical, Reply, Smile, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Message, useChatStore } from '../app/store/chat.store';
 import { cn } from '../lib/utils/cn';
 import { MessageStatus } from './MessageStatus';
@@ -23,6 +23,7 @@ export function MessageBubble({
   const [showReactions, setShowReactions] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
+  const reactionRef = useRef<HTMLDivElement>(null);
 
   const formatTime = (date: Date) => {
     return new Date(date).toLocaleTimeString([], {
@@ -49,7 +50,24 @@ export function MessageBubble({
   };
 
   const reactions = Object.entries(message.reactions);
-  const commonReactions = ['👍', '❤️', '😂', '😮', '😢', '😡'];
+  const commonReactions = ['👍', '❤️', '😂', '😮', '😢', '😡', '👏', '🔥', '💯', '🎉', '😍', '🤔'];
+
+  // Close reaction picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (reactionRef.current && !reactionRef.current.contains(event.target as Node)) {
+        setShowReactions(false);
+      }
+    };
+
+    if (showReactions) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showReactions]);
 
   return (
     <div className={cn('flex', isOwn ? 'justify-end' : 'justify-start')}>
@@ -191,29 +209,50 @@ export function MessageBubble({
           </div>
 
           {/* Reactions */}
-          {reactions.length > 0 && (
-            <div className='flex flex-wrap gap-1 mt-1'>
-              {reactions.map(([userId, emoji]) => (
-                <Badge
-                  key={userId}
-                  variant='secondary'
-                  className='text-xs px-1.5 py-0.5'
-                >
-                  {emoji}
-                </Badge>
-              ))}
-            </div>
-          )}
+          <div className='flex items-center justify-between mt-1'>
+            {reactions.length > 0 && (
+              <div className='flex flex-wrap gap-1'>
+                {reactions.map(([userId, emoji]) => (
+                  <Badge
+                    key={userId}
+                    variant='secondary'
+                    className='text-xs px-1.5 py-0.5 cursor-pointer hover:bg-gray-200'
+                    onClick={() => handleReaction(emoji)}
+                  >
+                    {emoji}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            
+            {/* Quick Reaction Button */}
+            <Button
+              variant='ghost'
+              size='sm'
+              className='h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity'
+              onClick={() => setShowReactions(!showReactions)}
+              title='Add Reaction'
+            >
+              <Smile className='h-3 w-3' />
+            </Button>
+          </div>
 
           {/* Reaction Picker */}
           {showReactions && (
-            <div className='absolute bottom-full left-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10'>
-              <div className='flex space-x-1'>
+            <div 
+              ref={reactionRef}
+              className={cn(
+                'absolute mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-20',
+                isOwn ? 'bottom-full right-0' : 'bottom-full left-0'
+              )}
+            >
+              <div className='flex flex-wrap gap-1 max-w-48'>
                 {commonReactions.map(emoji => (
                   <button
                     key={emoji}
-                    className='w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded'
+                    className='w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full text-lg transition-colors'
                     onClick={() => handleReaction(emoji)}
+                    title={`React with ${emoji}`}
                   >
                     {emoji}
                   </button>
