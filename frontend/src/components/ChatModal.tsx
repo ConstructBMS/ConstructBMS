@@ -14,6 +14,9 @@ interface ChatModalProps {
 
 export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   const [showSettings, setShowSettings] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const {
     chats,
@@ -29,6 +32,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
     archiveChat,
     updateMessageStatus,
     markMessageAsRead,
+    users,
   } = useChatStore();
 
   const currentChat = getCurrentChat();
@@ -127,15 +131,34 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
   };
 
   const handleCreateGroup = () => {
-    createChat({
-      name: 'New Group Chat',
-      type: 'group',
-      participants: ['user-1'], // Current user
-      isArchived: false,
-      isMuted: false,
-      isPinned: false,
-      createdBy: 'user-1',
-    });
+    setShowCreateGroup(true);
+  };
+
+  const handleCreateGroupSubmit = () => {
+    if (groupName.trim() && selectedUsers.length > 0) {
+      // Create the group chat
+      createChat({
+        name: groupName.trim(),
+        type: 'group',
+        participants: selectedUsers,
+        isArchived: false,
+        isMuted: false,
+        isPinned: false,
+        createdBy: 'user-1',
+      });
+
+      setShowCreateGroup(false);
+      setGroupName('');
+      setSelectedUsers([]);
+    }
+  };
+
+  const handleUserToggle = (userId: string) => {
+    setSelectedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   const handleLinkToProject = () => {
@@ -184,7 +207,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[800px] h-full bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'>
+      <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl rounded-lg overflow-hidden'>
         <div className='flex h-full'>
           {showSettings ? (
             /* Settings Panel */
@@ -207,24 +230,36 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                 <div className='space-y-6'>
                   {/* Chat Settings */}
                   <div className='bg-gray-700 rounded-lg p-4'>
-                    <h3 className='text-white font-medium mb-4'>Chat Settings</h3>
+                    <h3 className='text-white font-medium mb-4'>
+                      Chat Settings
+                    </h3>
                     <div className='space-y-4'>
                       <div className='flex items-center justify-between'>
                         <span className='text-gray-300'>Notifications</span>
                         <label className='relative inline-flex items-center cursor-pointer'>
-                          <input type='checkbox' className='sr-only peer' defaultChecked />
+                          <input
+                            type='checkbox'
+                            className='sr-only peer'
+                            defaultChecked
+                          />
                           <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                         </label>
                       </div>
                       <div className='flex items-center justify-between'>
                         <span className='text-gray-300'>Sound Alerts</span>
                         <label className='relative inline-flex items-center cursor-pointer'>
-                          <input type='checkbox' className='sr-only peer' defaultChecked />
+                          <input
+                            type='checkbox'
+                            className='sr-only peer'
+                            defaultChecked
+                          />
                           <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                         </label>
                       </div>
                       <div className='flex items-center justify-between'>
-                        <span className='text-gray-300'>Auto-download Media</span>
+                        <span className='text-gray-300'>
+                          Auto-download Media
+                        </span>
                         <label className='relative inline-flex items-center cursor-pointer'>
                           <input type='checkbox' className='sr-only peer' />
                           <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -272,7 +307,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     <h3 className='text-white font-medium mb-4'>Appearance</h3>
                     <div className='space-y-3'>
                       <div>
-                        <label className='text-gray-300 text-sm'>Font Size</label>
+                        <label className='text-gray-300 text-sm'>
+                          Font Size
+                        </label>
                         <select className='w-full mt-1 bg-gray-600 text-white border border-gray-500 rounded px-3 py-2'>
                           <option>Small</option>
                           <option selected>Medium</option>
@@ -280,7 +317,9 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                         </select>
                       </div>
                       <div>
-                        <label className='text-gray-300 text-sm'>Message Density</label>
+                        <label className='text-gray-300 text-sm'>
+                          Message Density
+                        </label>
                         <select className='w-full mt-1 bg-gray-600 text-white border border-gray-500 rounded px-3 py-2'>
                           <option>Compact</option>
                           <option selected>Comfortable</option>
@@ -295,7 +334,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           ) : (
             /* Normal Chat View */
             <>
-              <div className='w-1/3 bg-gray-800 border-r flex flex-col'>
+              <div className='w-2/5 bg-gray-800 border-r flex flex-col'>
                 <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
                   <h2 className='text-lg font-semibold'>Chat</h2>
                   <div className='flex items-center space-x-2'>
@@ -304,7 +343,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                       size='icon'
                       onClick={() => setShowSettings(!showSettings)}
                       className='text-white hover:bg-blue-700'
-                      title='Chat Settings'
+                      title='Chat Settings & Configuration'
                     >
                       <Settings className='h-4 w-4' />
                     </Button>
@@ -313,6 +352,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                       size='icon'
                       onClick={onClose}
                       className='text-white hover:bg-blue-700'
+                      title='Close Chat Modal'
                     >
                       <X className='h-4 w-4' />
                     </Button>
@@ -326,7 +366,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   />
                 </div>
               </div>
-              <div className='flex-1 flex flex-col'>
+              <div className='flex-1 flex flex-col w-3/5'>
                 {currentChat ? (
                   <>
                     {/* Chat Header */}
@@ -349,38 +389,35 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                             </p>
                           </div>
                         </div>
-                        
+
                         {/* Action Buttons */}
-                        <div className='flex items-center space-x-2'>
+                        <div className='flex items-center space-x-1'>
                           <Button
                             variant='ghost'
-                            size='sm'
+                            size='icon'
                             onClick={handleCreateGroup}
                             className='text-gray-300 hover:text-white hover:bg-gray-700'
-                            title='Create Group'
+                            title='Create Group Chat'
                           >
-                            <Users className='h-4 w-4 mr-1' />
-                            Group
+                            <Users className='h-4 w-4' />
                           </Button>
                           <Button
                             variant='ghost'
-                            size='sm'
+                            size='icon'
                             onClick={handleLinkToProject}
                             className='text-gray-300 hover:text-white hover:bg-gray-700'
                             title='Link to Project'
                           >
-                            <FolderOpen className='h-4 w-4 mr-1' />
-                            Project
+                            <FolderOpen className='h-4 w-4' />
                           </Button>
                           <Button
                             variant='ghost'
-                            size='sm'
+                            size='icon'
                             onClick={handleLinkToOpportunity}
                             className='text-gray-300 hover:text-white hover:bg-gray-700'
-                            title='Link to Opportunity'
+                            title='Link to Sales Opportunity'
                           >
-                            <TrendingUp className='h-4 w-4 mr-1' />
-                            Opportunity
+                            <TrendingUp className='h-4 w-4' />
                           </Button>
                         </div>
                       </div>
@@ -453,6 +490,87 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
           )}
         </div>
       </div>
+
+      {/* Create Group Modal */}
+      {showCreateGroup && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <div className='bg-gray-800 rounded-lg p-6 w-96 max-w-md'>
+            <div className='flex items-center justify-between mb-4'>
+              <h3 className='text-lg font-semibold text-white'>
+                Create Group Chat
+              </h3>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setShowCreateGroup(false)}
+                className='text-gray-400 hover:text-white'
+              >
+                <X className='h-4 w-4' />
+              </Button>
+            </div>
+
+            <div className='space-y-4'>
+              <div>
+                <label className='block text-sm font-medium text-gray-300 mb-2'>
+                  Group Name
+                </label>
+                <input
+                  type='text'
+                  value={groupName}
+                  onChange={e => setGroupName(e.target.value)}
+                  placeholder='Enter group name'
+                  className='w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                />
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-300 mb-2'>
+                  Select Members
+                </label>
+                <div className='space-y-2 max-h-40 overflow-y-auto'>
+                  {users.map((user: any) => (
+                    <div key={user.id} className='flex items-center space-x-3'>
+                      <input
+                        type='checkbox'
+                        id={`user-${user.id}`}
+                        checked={selectedUsers.includes(user.id)}
+                        onChange={() => handleUserToggle(user.id)}
+                        className='rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500'
+                      />
+                      <label
+                        htmlFor={`user-${user.id}`}
+                        className='flex items-center space-x-2 cursor-pointer'
+                      >
+                        <div className='w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium'>
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className='text-gray-300'>{user.name}</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className='flex justify-end space-x-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setShowCreateGroup(false)}
+                  className='text-gray-300 border-gray-600 hover:bg-gray-700'
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateGroupSubmit}
+                  disabled={!groupName.trim() || selectedUsers.length === 0}
+                  className='bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50'
+                >
+                  Create Group
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>,
     document.body
   );

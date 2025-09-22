@@ -2,6 +2,7 @@ import {
   Archive,
   Bell,
   BellOff,
+  Building2,
   MoreVertical,
   Pin,
   PinOff,
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Chat, useChatStore } from '../app/store/chat.store';
+import { useTheme } from '../contexts/ThemeContext';
 import { cn } from '../lib/utils/cn';
 import { Button } from './ui/button';
 
@@ -33,6 +35,7 @@ export function ChatList({
     markChatAsRead,
   } = useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
+  const { theme } = useTheme();
 
   // Sort chats: pinned first, then by last activity
   const sortedChats = [...chats].sort((a, b) => {
@@ -80,6 +83,17 @@ export function ChatList({
     }
   };
 
+  const getChatTypeTag = (chat: Chat) => {
+    switch (chat.type) {
+      case 'group':
+        return { label: 'Group', icon: Users, color: 'bg-blue-500' };
+      case 'project':
+        return { label: 'Project', icon: Building2, color: 'bg-green-500' };
+      default:
+        return { label: 'Internal', icon: Users, color: 'bg-gray-500' };
+    }
+  };
+
   const handleMenuAction = (chatId: string, action: string) => {
     switch (action) {
       case 'pin':
@@ -110,13 +124,22 @@ export function ChatList({
           {sortedChats.map(chat => {
             const unreadCount = getUnreadCount(chat.id);
             const isSelected = currentChatId === chat.id;
+            const typeTag = getChatTypeTag(chat);
+            const IconComponent = typeTag.icon;
 
             return (
               <div
                 key={chat.id}
                 className={cn(
-                  'relative group p-3 cursor-pointer transition-colors border-b border-gray-700',
-                  isSelected ? 'bg-blue-600' : 'hover:bg-gray-700'
+                  'relative group p-3 cursor-pointer transition-colors border-b',
+                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200',
+                  isSelected
+                    ? theme === 'dark'
+                      ? 'bg-blue-600'
+                      : 'bg-blue-100'
+                    : theme === 'dark'
+                      ? 'hover:bg-gray-700'
+                      : 'hover:bg-gray-50'
                 )}
                 onClick={() => {
                   onChatSelect(chat.id);
@@ -142,12 +165,30 @@ export function ChatList({
                   {/* Content */}
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-center justify-between mb-1'>
-                      <h3 className={cn(
-                        'text-sm font-medium truncate',
-                        isSelected ? 'text-white' : 'text-white'
-                      )}>
-                        {chat.name}
-                      </h3>
+                      <div className='flex items-center space-x-2 flex-1 min-w-0'>
+                        <h3
+                          className={cn(
+                            'text-sm font-medium truncate',
+                            isSelected
+                              ? 'text-white'
+                              : theme === 'dark'
+                                ? 'text-white'
+                                : 'text-gray-900'
+                          )}
+                        >
+                          {chat.name}
+                        </h3>
+                        <div
+                          className={cn(
+                            'flex items-center space-x-1 px-2 py-0.5 rounded-full text-xs font-medium',
+                            typeTag.color,
+                            'text-white'
+                          )}
+                        >
+                          <IconComponent className='h-3 w-3' />
+                          <span>{typeTag.label}</span>
+                        </div>
+                      </div>
                       <div className='flex items-center space-x-1'>
                         {chat.isPinned && (
                           <Pin className='h-3 w-3 text-blue-600' />
@@ -155,20 +196,31 @@ export function ChatList({
                         {chat.isMuted && (
                           <BellOff className='h-3 w-3 text-gray-400' />
                         )}
-                        <span className={cn(
-                          'text-xs',
-                          isSelected ? 'text-blue-200' : 'text-gray-400'
-                        )}>
+                        <span
+                          className={cn(
+                            'text-xs',
+                            isSelected
+                              ? theme === 'dark'
+                                ? 'text-blue-200'
+                                : 'text-blue-600'
+                              : theme === 'dark'
+                                ? 'text-gray-400'
+                                : 'text-gray-500'
+                          )}
+                        >
                           {formatTime(chat.lastActivity)}
                         </span>
                       </div>
                     </div>
 
                     <div className='flex items-center justify-between'>
-                      <p className={cn(
-                        'text-sm truncate flex-1',
-                        isSelected ? 'text-blue-100' : 'text-gray-300'
-                      )}>
+                      <p
+                        className={cn(
+                          'text-sm flex-1',
+                          isSelected ? 'text-blue-100' : 'text-gray-300',
+                          'line-clamp-2'
+                        )}
+                      >
                         {formatLastMessage(chat)}
                       </p>
                       {unreadCount > 0 && (
@@ -189,6 +241,7 @@ export function ChatList({
                         e.stopPropagation();
                         setShowMenu(showMenu === chat.id ? null : chat.id);
                       }}
+                      title='Chat Options'
                     >
                       <MoreVertical className='h-3 w-3' />
                     </Button>
@@ -197,10 +250,10 @@ export function ChatList({
 
                 {/* Dropdown Menu */}
                 {showMenu === chat.id && (
-                  <div className='absolute right-2 top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[150px]'>
+                  <div className='absolute right-2 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10 min-w-[150px]'>
                     <div className='py-1'>
                       <button
-                        className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                        className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                         onClick={() => handleMenuAction(chat.id, 'pin')}
                       >
                         {chat.isPinned ? (
@@ -216,7 +269,7 @@ export function ChatList({
                         )}
                       </button>
                       <button
-                        className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                        className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                         onClick={() => handleMenuAction(chat.id, 'mute')}
                       >
                         {chat.isMuted ? (
@@ -232,15 +285,15 @@ export function ChatList({
                         )}
                       </button>
                       <button
-                        className='flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50'
+                        className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
                         onClick={() => handleMenuAction(chat.id, 'archive')}
                       >
                         <Archive className='h-4 w-4 mr-2' />
                         {chat.isArchived ? 'Unarchive' : 'Archive'}
                       </button>
-                      <div className='border-t border-gray-200 my-1' />
+                      <div className='border-t border-gray-600 my-1' />
                       <button
-                        className='flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50'
+                        className='flex items-center w-full px-3 py-2 text-sm text-red-400 hover:bg-red-900'
                         onClick={() => handleMenuAction(chat.id, 'delete')}
                       >
                         <Trash2 className='h-4 w-4 mr-2' />
