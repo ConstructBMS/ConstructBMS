@@ -10,6 +10,10 @@ interface StickyNotesModalProps {
 
 export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedNote, setSelectedNote] = useState<number | null>(null);
+  const [editingNote, setEditingNote] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
   const [notes, setNotes] = useState([
     {
       id: 1,
@@ -87,6 +91,53 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleNoteClick = (noteId: number) => {
+    setSelectedNote(noteId);
+    const note = notes.find(n => n.id === noteId);
+    if (note) {
+      setEditTitle(note.title);
+      setEditContent(note.content);
+    }
+  };
+
+  const handleEdit = () => {
+    if (selectedNote) {
+      setEditingNote(selectedNote);
+    }
+  };
+
+  const handleSave = () => {
+    if (editingNote) {
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === editingNote
+            ? { ...note, title: editTitle, content: editContent }
+            : note
+        )
+      );
+      setEditingNote(null);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingNote(null);
+    if (selectedNote) {
+      const note = notes.find(n => n.id === selectedNote);
+      if (note) {
+        setEditTitle(note.title);
+        setEditContent(note.content);
+      }
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedNote) {
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== selectedNote));
+      setSelectedNote(null);
+      setEditingNote(null);
+    }
+  };
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -142,7 +193,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   {filteredNotes.map(note => (
                     <div
                       key={note.id}
+                      onClick={() => handleNoteClick(note.id)}
                       className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-700 group ${
+                        selectedNote === note.id
+                          ? 'ring-2 ring-blue-500 bg-blue-50'
+                          : ''
+                      } ${
                         note.color === 'yellow'
                           ? 'border-yellow-400 bg-yellow-100'
                           : note.color === 'pink'
@@ -170,14 +226,102 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             {/* Note Editor */}
             <div className='flex-1 bg-gray-900'>
               <div className='p-4'>
-                <div className='text-center text-gray-400 py-8'>
-                  <div className='text-lg font-medium mb-2'>
-                    Select a note to edit
+                {selectedNote ? (
+                  <div className='space-y-4'>
+                    {/* Editor Header */}
+                    <div className='flex items-center justify-between'>
+                      <h3 className='text-lg font-semibold text-white'>
+                        {editingNote ? 'Edit Note' : 'View Note'}
+                      </h3>
+                      <div className='flex space-x-2'>
+                        {editingNote ? (
+                          <>
+                            <Button
+                              onClick={handleSave}
+                              size='sm'
+                              className='bg-green-600 hover:bg-green-700 text-white'
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              onClick={handleCancel}
+                              variant='outline'
+                              size='sm'
+                              className='border-gray-600 text-gray-300 hover:bg-gray-700'
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              onClick={handleEdit}
+                              size='sm'
+                              className='bg-blue-600 hover:bg-blue-700 text-white'
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              onClick={handleDelete}
+                              variant='outline'
+                              size='sm'
+                              className='border-red-600 text-red-400 hover:bg-red-900'
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label className='block text-sm font-medium text-gray-300 mb-2'>
+                        Title
+                      </label>
+                      {editingNote ? (
+                        <Input
+                          value={editTitle}
+                          onChange={e => setEditTitle(e.target.value)}
+                          className='bg-gray-700 border-gray-600 text-white'
+                          placeholder='Enter note title'
+                        />
+                      ) : (
+                        <div className='p-3 bg-gray-800 rounded-md text-white'>
+                          {editTitle}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <label className='block text-sm font-medium text-gray-300 mb-2'>
+                        Content
+                      </label>
+                      {editingNote ? (
+                        <textarea
+                          value={editContent}
+                          onChange={e => setEditContent(e.target.value)}
+                          className='w-full h-64 p-3 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 resize-none'
+                          placeholder='Enter note content'
+                        />
+                      ) : (
+                        <div className='p-3 bg-gray-800 rounded-md text-white min-h-64 whitespace-pre-wrap'>
+                          {editContent}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className='text-sm'>
-                    Choose a note from the list to view and edit its content
+                ) : (
+                  <div className='text-center text-gray-400 py-8'>
+                    <div className='text-lg font-medium mb-2'>
+                      Select a note to edit
+                    </div>
+                    <div className='text-sm'>
+                      Choose a note from the list to view and edit its content
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
