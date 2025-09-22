@@ -76,7 +76,7 @@ export function NotificationsModal({
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[600px] h-full bg-white border-l shadow-xl'>
+      <div className='relative ml-auto w-[800px] h-full bg-white border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-white'>
