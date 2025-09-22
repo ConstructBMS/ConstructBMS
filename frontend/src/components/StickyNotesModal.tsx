@@ -394,8 +394,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             color: #1f2937 !important; /* Dark text for readability */
             opacity: 1 !important;
             visibility: visible !important;
+            background: #fef3c7 !important; /* Force background */
+            background-color: #fef3c7 !important; /* Force background color */
           }
-          
+
           /* FORCE: Pink sticky notes stay pink - target the sticky note content */
           .react-grid-item.react-draggable-dragging .border-pink-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging .border-pink-400 {
@@ -404,8 +406,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             color: #1f2937 !important; /* Dark text for readability */
             opacity: 1 !important;
             visibility: visible !important;
+            background: #fce7f3 !important; /* Force background */
+            background-color: #fce7f3 !important; /* Force background color */
           }
-          
+
           /* FORCE: Blue sticky notes stay blue - target the sticky note content */
           .react-grid-item.react-draggable-dragging .border-blue-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging .border-blue-400 {
@@ -414,8 +418,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             color: #1f2937 !important; /* Dark text for readability */
             opacity: 1 !important;
             visibility: visible !important;
+            background: #dbeafe !important; /* Force background */
+            background-color: #dbeafe !important; /* Force background color */
           }
-          
+
           /* FORCE: Gray sticky notes stay gray - target the sticky note content */
           .react-grid-item.react-draggable-dragging .border-gray-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging .border-gray-400 {
@@ -424,6 +430,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             color: #1f2937 !important; /* Dark text for readability */
             opacity: 1 !important;
             visibility: visible !important;
+            background: #f3f4f6 !important; /* Force background */
+            background-color: #f3f4f6 !important; /* Force background color */
           }
 
           /* FORCE: Remove any overlays or pseudo-elements */
@@ -450,7 +458,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             z-index: 10;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* DROP ZONE INDICATOR: Target the actual drop zone indicator */
           .react-grid-layout .react-grid-item.react-draggable-dragging {
             background: transparent !important;
