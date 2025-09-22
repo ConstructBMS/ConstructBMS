@@ -370,52 +370,51 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       {/* Custom CSS for white drag shadow and drop zones */}
       <style>
         {`
-          /* Force override all react-grid-layout drag styling */
+          /* DRAGGED ITEM: Keep original colors and make fully visible */
           .react-grid-item.react-draggable-dragging,
           .react-grid-layout .react-grid-item.react-draggable-dragging {
-            background: rgba(255, 255, 255, 0.1) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            border-radius: 8px !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
           }
           
-          /* Make sure dragged content is fully visible */
+          /* DRAGGED ITEM: Ensure content is fully visible and colorful */
           .react-grid-item.react-draggable-dragging *,
           .react-grid-layout .react-grid-item.react-draggable-dragging * {
             opacity: 1 !important;
             visibility: visible !important;
-          }
-          
-          /* Override any default library styling */
-          .react-grid-item.react-draggable-dragging {
-            background: rgba(255, 255, 255, 0.1) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-          }
-          
-          /* Ensure sticky note colors are preserved */
-          .react-grid-item.react-draggable-dragging > div,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div {
-            opacity: 1 !important;
             background: inherit !important;
             color: inherit !important;
           }
           
-          /* Drop zone indicator */
+          /* DRAGGED ITEM: Remove any overlay that might be making it transparent */
           .react-grid-item.react-draggable-dragging::before,
           .react-grid-layout .react-grid-item.react-draggable-dragging::before {
+            display: none !important;
+          }
+          
+          /* DROP ZONE INDICATOR: This is the placeholder where the item will land */
+          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.1) !important;
+            background: transparent !important;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             border-radius: 8px !important;
             pointer-events: none;
             z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+          }
+          
+          /* OVERRIDE: Remove any default library styling that makes items transparent */
+          .react-grid-item.react-draggable-dragging[style] {
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
           }
           
           /* Resize styling */
@@ -433,18 +432,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           .react-grid-item.react-draggable-dragging + .react-grid-item,
           .react-grid-layout .react-grid-item.react-draggable-dragging + .react-grid-item {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
-          }
-          
-          /* Debug: Add a bright border to see if our CSS is working */
-          .react-grid-item.react-draggable-dragging {
-            outline: 3px solid lime !important;
-          }
-          
-          /* Force override any inline styles */
-          .react-grid-item.react-draggable-dragging[style] {
-            background: rgba(255, 255, 255, 0.1) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
           }
         `}
       </style>
