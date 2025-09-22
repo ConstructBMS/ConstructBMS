@@ -142,7 +142,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   {filteredNotes.map(note => (
                     <div
                       key={note.id}
-                      className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-700 ${
+                      className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-700 group ${
                         note.color === 'yellow'
                           ? 'border-yellow-400 bg-yellow-100'
                           : note.color === 'pink'
@@ -152,11 +152,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               : 'border-gray-400 bg-gray-100'
                       }`}
                     >
-                      <div className='font-medium text-gray-900'>{note.title}</div>
-                      <div className='text-sm text-gray-700 mt-1'>
+                      <div className='font-medium text-gray-900 group-hover:text-white'>
+                        {note.title}
+                      </div>
+                      <div className='text-sm text-gray-700 group-hover:text-gray-200 mt-1'>
                         {note.content}
                       </div>
-                      <div className='text-xs text-gray-500 mt-2'>
+                      <div className='text-xs text-gray-500 group-hover:text-gray-300 mt-2'>
                         {note.createdAt.toLocaleDateString()}
                       </div>
                     </div>
