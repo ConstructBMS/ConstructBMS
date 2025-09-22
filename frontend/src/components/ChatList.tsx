@@ -177,7 +177,7 @@ export function ChatList({
                           className={cn(
                             'text-sm font-medium truncate',
                             isSelected
-                              ? 'text-white'
+                              ? 'text-gray-900'
                               : 'text-white group-hover:text-gray-900'
                           )}
                         >
@@ -205,12 +205,8 @@ export function ChatList({
                           className={cn(
                             'text-xs',
                             isSelected
-                              ? theme === 'dark'
-                                ? 'text-blue-200'
-                                : 'text-blue-600'
-                              : theme === 'dark'
-                                ? 'text-gray-400'
-                                : 'text-gray-500'
+                              ? 'text-gray-500'
+                              : 'text-gray-400'
                           )}
                         >
                           {formatTime(chat.lastActivity)}
@@ -223,7 +219,7 @@ export function ChatList({
                         className={cn(
                           'text-sm flex-1',
                           isSelected 
-                            ? 'text-blue-100'
+                            ? 'text-gray-600'
                             : 'text-gray-300 group-hover:text-gray-600',
                           'line-clamp-2'
                         )}
