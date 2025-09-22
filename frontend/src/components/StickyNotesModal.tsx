@@ -351,9 +351,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       if (
         args[0] &&
         typeof args[0] === 'string' &&
-        args[0].includes('defaultProps will be removed')
+        (args[0].includes('defaultProps will be removed') ||
+         args[0].includes('Support for defaultProps will be removed') ||
+         args[0].includes('Connect(Droppable)') ||
+         args[0].includes('react-beautiful-dnd'))
       ) {
-        return; // Suppress this specific warning
+        return; // Suppress these specific warnings
       }
       originalWarn.apply(console, args);
     };
@@ -378,7 +381,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: none !important;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
           }
-          
+
           /* DRAGGED ITEM: Target the actual sticky note content (the colorful div) */
           .react-grid-item.react-draggable-dragging > div,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div {
@@ -389,35 +392,35 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             /* Force the sticky note to keep its original background */
             background-color: inherit !important;
           }
-          
+
           /* DRAGGED ITEM: Specifically target yellow sticky notes */
           .react-grid-item.react-draggable-dragging > div.border-yellow-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-yellow-400 {
             background-color: #fef3c7 !important; /* bg-yellow-100 */
             border-left: 4px solid #fbbf24 !important; /* border-yellow-400 */
           }
-          
+
           /* DRAGGED ITEM: Specifically target pink sticky notes */
           .react-grid-item.react-draggable-dragging > div.border-pink-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-pink-400 {
             background-color: #fce7f3 !important; /* bg-pink-100 */
             border-left: 4px solid #f472b6 !important; /* border-pink-400 */
           }
-          
+
           /* DRAGGED ITEM: Specifically target blue sticky notes */
           .react-grid-item.react-draggable-dragging > div.border-blue-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-blue-400 {
             background-color: #dbeafe !important; /* bg-blue-100 */
             border-left: 4px solid #60a5fa !important; /* border-blue-400 */
           }
-          
+
           /* DRAGGED ITEM: Specifically target gray sticky notes */
           .react-grid-item.react-draggable-dragging > div.border-gray-400,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-gray-400 {
             background-color: #f3f4f6 !important; /* bg-gray-100 */
             border-left: 4px solid #9ca3af !important; /* border-gray-400 */
           }
-          
+
           /* DRAGGED ITEM: Ensure all nested content is visible */
           .react-grid-item.react-draggable-dragging *,
           .react-grid-layout .react-grid-item.react-draggable-dragging * {
