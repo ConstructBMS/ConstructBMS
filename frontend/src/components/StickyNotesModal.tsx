@@ -374,24 +374,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           .react-grid-layout .react-grid-item.react-draggable-dragging + * {
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
           }
-          /* Drop zone indicator styling */
-          .react-grid-item.react-draggable-dragging::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            background-color: transparent !important;
-            border-radius: 8px;
-            pointer-events: none;
-            z-index: 10;
-          }
-          /* Override any red drop zone styling */
+          /* Drop zone indicator styling - transparent with white border */
           .react-grid-item.react-draggable-dragging {
             background-color: transparent !important;
-            border: none !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+            border-radius: 8px !important;
+          }
+          /* Ensure the actual sticky note content remains opaque */
+          .react-grid-item.react-draggable-dragging > * {
+            opacity: 0.3 !important;
           }
         `}
       </style>
