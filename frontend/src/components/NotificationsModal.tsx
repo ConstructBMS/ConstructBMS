@@ -76,12 +76,12 @@ export function NotificationsModal({
       <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
       {/* Modal */}
-      <div className='relative ml-auto w-[1000px] h-full bg-white border-l shadow-xl'>
+      <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
         <div className='flex flex-col h-full'>
           {/* Header */}
-          <div className='flex items-center justify-between p-4 border-b bg-white'>
+          <div className='flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
             <div className='flex items-center space-x-4'>
-              <h2 className='text-lg font-semibold text-gray-900'>
+              <h2 className='text-lg font-semibold text-white'>
                 Notifications
               </h2>
               {unreadCount > 0 && (
@@ -96,7 +96,7 @@ export function NotificationsModal({
                 size='icon'
                 onClick={() => setShowFilters(!showFilters)}
                 title='Filters'
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                className='text-gray-400 hover:text-white hover:bg-gray-700'
               >
                 <Filter className='h-4 w-4' />
               </Button>
@@ -105,7 +105,7 @@ export function NotificationsModal({
                 size='icon'
                 onClick={() => setActiveTab('settings')}
                 title='Settings'
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                className='text-gray-400 hover:text-white hover:bg-gray-700'
               >
                 <Settings className='h-4 w-4' />
               </Button>
@@ -113,7 +113,7 @@ export function NotificationsModal({
                 variant='ghost'
                 size='icon'
                 onClick={onClose}
-                className='text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                className='text-gray-400 hover:text-white hover:bg-gray-700'
               >
                 <X className='h-4 w-4' />
               </Button>
@@ -220,9 +220,9 @@ export function NotificationsModal({
               value='notifications'
               className='flex-1 overflow-hidden'
             >
-              <div className='flex-1 overflow-y-auto p-4'>
+              <div className='flex-1 overflow-y-auto p-4 bg-gray-900'>
                 {filteredNotifications.length === 0 ? (
-                  <div className='flex-1 flex items-center justify-center text-gray-500'>
+                  <div className='flex-1 flex items-center justify-center text-gray-400'>
                     <div className='text-center'>
                       <Bell className='h-12 w-12 mx-auto mb-4 opacity-50' />
                       <h3 className='text-lg font-medium mb-2'>
@@ -253,7 +253,7 @@ export function NotificationsModal({
 
             {/* Settings Tab */}
             <TabsContent value='settings' className='flex-1 overflow-hidden'>
-              <div className='flex-1 overflow-y-auto p-4'>
+              <div className='flex-1 overflow-y-auto p-4 bg-gray-900'>
                 <NotificationSettings />
               </div>
             </TabsContent>
