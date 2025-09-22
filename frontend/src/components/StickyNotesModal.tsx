@@ -352,70 +352,59 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       {/* Custom CSS for white drag shadow and drop zones */}
       <style>
         {`
-          /* DRAGGED ITEM: Keep original colors and make fully visible */
+          /* AGGRESSIVE OVERRIDE: Force all dragged items to be visible and colorful */
           .react-grid-item.react-draggable-dragging,
-          .react-grid-layout .react-grid-item.react-draggable-dragging {
+          .react-grid-layout .react-grid-item.react-draggable-dragging,
+          .react-grid-item.react-draggable-dragging[style],
+          .react-grid-layout .react-grid-item.react-draggable-dragging[style] {
             background: transparent !important;
             background-color: transparent !important;
             border: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
           }
-
-          /* DRAGGED ITEM: Target the actual sticky note content (the colorful div) */
+          
+          /* FORCE: Make all content inside dragged items fully visible */
+          .react-grid-item.react-draggable-dragging *,
+          .react-grid-layout .react-grid-item.react-draggable-dragging *,
+          .react-grid-item.react-draggable-dragging > *,
+          .react-grid-layout .react-grid-item.react-draggable-dragging > * {
+            opacity: 1 !important;
+            visibility: visible !important;
+            background: inherit !important;
+            color: inherit !important;
+            background-color: inherit !important;
+          }
+          
+          /* FORCE: Override any library styling that makes items transparent */
           .react-grid-item.react-draggable-dragging > div,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div {
             opacity: 1 !important;
             visibility: visible !important;
             background: inherit !important;
-            color: inherit !important;
-            /* Force the sticky note to keep its original background */
             background-color: inherit !important;
-          }
-
-          /* DRAGGED ITEM: Specifically target yellow sticky notes */
-          .react-grid-item.react-draggable-dragging > div.border-yellow-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-yellow-400 {
-            background-color: #fef3c7 !important; /* bg-yellow-100 */
-            border-left: 4px solid #fbbf24 !important; /* border-yellow-400 */
-          }
-
-          /* DRAGGED ITEM: Specifically target pink sticky notes */
-          .react-grid-item.react-draggable-dragging > div.border-pink-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-pink-400 {
-            background-color: #fce7f3 !important; /* bg-pink-100 */
-            border-left: 4px solid #f472b6 !important; /* border-pink-400 */
-          }
-
-          /* DRAGGED ITEM: Specifically target blue sticky notes */
-          .react-grid-item.react-draggable-dragging > div.border-blue-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-blue-400 {
-            background-color: #dbeafe !important; /* bg-blue-100 */
-            border-left: 4px solid #60a5fa !important; /* border-blue-400 */
-          }
-
-          /* DRAGGED ITEM: Specifically target gray sticky notes */
-          .react-grid-item.react-draggable-dragging > div.border-gray-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-gray-400 {
-            background-color: #f3f4f6 !important; /* bg-gray-100 */
-            border-left: 4px solid #9ca3af !important; /* border-gray-400 */
-          }
-
-          /* DRAGGED ITEM: Ensure all nested content is visible */
-          .react-grid-item.react-draggable-dragging *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging * {
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: inherit !important;
             color: inherit !important;
           }
-
-          /* DRAGGED ITEM: Remove any overlay that might be making it transparent */
-          .react-grid-item.react-draggable-dragging::before,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before {
-            display: none !important;
+          
+          /* FORCE: Yellow sticky notes stay yellow */
+          .react-grid-item.react-draggable-dragging > div,
+          .react-grid-layout .react-grid-item.react-draggable-dragging > div {
+            background-color: #fef3c7 !important; /* Force yellow background */
+            border-left: 4px solid #fbbf24 !important;
+            color: #1f2937 !important; /* Dark text for readability */
           }
-
-          /* DROP ZONE INDICATOR: This is the placeholder where the item will land */
+          
+          /* FORCE: Remove any overlays or pseudo-elements */
+          .react-grid-item.react-draggable-dragging::before,
+          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
+          .react-grid-item.react-draggable-dragging::after,
+          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
+            display: none !important;
+            content: none !important;
+          }
+          
+          /* DROP ZONE: Make it transparent with white border */
           .react-grid-layout .react-grid-item.react-draggable-dragging::after {
             content: '';
             position: absolute;
@@ -430,29 +419,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             z-index: 10;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-
-          /* OVERRIDE: Remove any default library styling that makes items transparent */
-          .react-grid-item.react-draggable-dragging[style] {
+          
+          /* OVERRIDE: Any inline styles */
+          .react-grid-item.react-draggable-dragging[style*="background"],
+          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"] {
             background: transparent !important;
             background-color: transparent !important;
-            border: none !important;
           }
-
-          /* Resize styling */
-          .react-grid-item.react-resizable-resizing,
-          .react-grid-layout .react-grid-item.react-resizable-resizing {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
-          }
-
-          /* Adjacent items */
-          .react-grid-item.react-draggable-dragging ~ .react-grid-item,
-          .react-grid-layout .react-grid-item.react-draggable-dragging ~ .react-grid-item {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
-          }
-
-          .react-grid-item.react-draggable-dragging + .react-grid-item,
-          .react-grid-layout .react-grid-item.react-draggable-dragging + .react-grid-item {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+          
+          /* OVERRIDE: Any opacity styles */
+          .react-grid-item.react-draggable-dragging[style*="opacity"],
+          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="opacity"] {
+            opacity: 1 !important;
           }
         `}
       </style>
