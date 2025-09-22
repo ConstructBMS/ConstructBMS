@@ -258,8 +258,8 @@ export function MessageBubble({
             <div
               ref={reactionRef}
               className={cn(
-                'absolute mb-2 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-20',
-                isOwn ? 'bottom-full right-0' : 'bottom-full left-0'
+                'absolute bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-50',
+                isOwn ? 'top-full right-0 mt-1' : 'top-full left-0 mt-1'
               )}
             >
               <div className='flex flex-wrap gap-1 max-w-48'>

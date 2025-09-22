@@ -254,7 +254,7 @@ export function ChatList({
 
                 {/* Dropdown Menu */}
                 {showMenu === chat.id && (
-                  <div className='absolute right-2 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-10 min-w-[150px]'>
+                  <div className='absolute right-2 top-12 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-50 min-w-[150px]'>
                     <div className='py-1'>
                       <button
                         className='flex items-center w-full px-3 py-2 text-sm text-gray-300 hover:bg-gray-700'
