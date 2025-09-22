@@ -370,9 +370,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       {/* Custom CSS for white drag shadow and drop zones */}
       <style>
         {`
-          /* Drop zone indicator styling - transparent with white border */
+          /* Drop zone indicator styling - light color with white border */
           .react-grid-item.react-draggable-dragging {
-            background-color: transparent !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             border-radius: 8px !important;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
@@ -395,23 +395,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           .react-grid-layout .react-grid-item.react-draggable-dragging + * {
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
           }
-          /* Make the dragged item semi-transparent */
+          /* Keep the dragged sticky note colorful and opaque */
           .react-grid-item.react-draggable-dragging > * {
-            opacity: 0.3 !important;
+            opacity: 1 !important;
           }
           /* Override any default drop zone styling */
           .react-grid-item.react-draggable-dragging {
-            background: transparent !important;
-            background-color: transparent !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
           }
           /* Target the drop zone placeholder specifically */
           .react-grid-layout .react-grid-item.react-draggable-dragging {
-            background: transparent !important;
-            background-color: transparent !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             border-radius: 8px !important;
           }
-          /* Ensure drop zone is transparent with white border */
+          /* Ensure drop zone is light with white border */
           .react-grid-layout .react-grid-item.react-draggable-dragging::before {
             content: '';
             position: absolute;
@@ -419,7 +419,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             left: 0;
             right: 0;
             bottom: 0;
-            background: transparent !important;
+            background: rgba(255, 255, 255, 0.1) !important;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             border-radius: 8px !important;
             pointer-events: none;
