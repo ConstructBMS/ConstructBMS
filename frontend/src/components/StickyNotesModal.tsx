@@ -99,9 +99,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         <div className='flex flex-col h-full'>
           {/* Header */}
           <div className='flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
-            <h2 className='text-lg font-semibold text-white'>
-              Sticky Notes
-            </h2>
+            <h2 className='text-lg font-semibold text-white'>Sticky Notes</h2>
             <div className='flex items-center space-x-2'>
               <Button
                 variant='outline'
@@ -111,9 +109,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 <Plus className='h-4 w-4' />
                 <span>New Note</span>
               </Button>
-              <Button 
-                variant='ghost' 
-                size='icon' 
+              <Button
+                variant='ghost'
+                size='icon'
                 onClick={onClose}
                 className='text-gray-400 hover:text-white hover:bg-gray-700'
               >
@@ -146,21 +144,19 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                       key={note.id}
                       className={`p-3 rounded-lg border-l-4 cursor-pointer hover:bg-gray-700 ${
                         note.color === 'yellow'
-                          ? 'border-yellow-400 bg-yellow-900/20'
+                          ? 'border-yellow-400 bg-yellow-100'
                           : note.color === 'pink'
-                            ? 'border-pink-400 bg-pink-900/20'
+                            ? 'border-pink-400 bg-pink-100'
                             : note.color === 'blue'
-                              ? 'border-blue-400 bg-blue-900/20'
-                              : 'border-gray-400 bg-gray-700'
+                              ? 'border-blue-400 bg-blue-100'
+                              : 'border-gray-400 bg-gray-100'
                       }`}
                     >
-                      <div className='font-medium text-white'>
-                        {note.title}
-                      </div>
-                      <div className='text-sm text-gray-300 mt-1'>
+                      <div className='font-medium text-gray-900'>{note.title}</div>
+                      <div className='text-sm text-gray-700 mt-1'>
                         {note.content}
                       </div>
-                      <div className='text-xs text-gray-400 mt-2'>
+                      <div className='text-xs text-gray-500 mt-2'>
                         {note.createdAt.toLocaleDateString()}
                       </div>
                     </div>
