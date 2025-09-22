@@ -161,7 +161,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Enhanced filtering logic
   const filteredNotes = notes.filter(note => {
     const matchesSearch =
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
       note.tags?.some(tag =>
         tag.toLowerCase().includes(searchQuery.toLowerCase())
@@ -310,48 +310,56 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Force sticky note colors during drag using JavaScript
   useEffect(() => {
-    const handleDragStart = () => {
-      // Find all dragged items and force their colors
-      const draggedItems = document.querySelectorAll(
-        '.react-grid-item.react-draggable-dragging'
-      );
+    const forceColors = () => {
+      // Find all dragged items
+      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
+      
       draggedItems.forEach((item: any) => {
-        const stickyNote = item.querySelector(
-          '[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]'
-        );
+        // Force the container to not be transparent
+        item.style.background = 'transparent';
+        item.style.backgroundColor = 'transparent';
+        item.style.border = '2px solid rgba(255, 255, 255, 0.8)';
+        item.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
+        
+        // Find sticky note content and force colors
+        const stickyNote = item.querySelector('[class*="sticky-note-"]');
         if (stickyNote) {
-          // Force the sticky note to keep its color
-          stickyNote.style.background = '';
-          stickyNote.style.backgroundColor = '';
+          const colorClass = stickyNote.className.match(/sticky-note-(\w+)/)?.[1];
+          
+          if (colorClass === 'yellow') {
+            stickyNote.style.backgroundColor = '#fef3c7';
+            stickyNote.style.borderLeftColor = '#fbbf24';
+          } else if (colorClass === 'pink') {
+            stickyNote.style.backgroundColor = '#fce7f3';
+            stickyNote.style.borderLeftColor = '#f472b6';
+          } else if (colorClass === 'blue') {
+            stickyNote.style.backgroundColor = '#dbeafe';
+            stickyNote.style.borderLeftColor = '#60a5fa';
+          } else if (colorClass === 'gray') {
+            stickyNote.style.backgroundColor = '#f3f4f6';
+            stickyNote.style.borderLeftColor = '#9ca3af';
+          }
+          
           stickyNote.style.opacity = '1';
           stickyNote.style.visibility = 'visible';
         }
       });
     };
 
-    const handleDragEnd = () => {
-      // Clean up any forced styles
-      const draggedItems = document.querySelectorAll(
-        '.react-grid-item.react-draggable-dragging'
-      );
-      draggedItems.forEach((item: any) => {
-        const stickyNote = item.querySelector(
-          '[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]'
-        );
-        if (stickyNote) {
-          stickyNote.style.background = '';
-          stickyNote.style.backgroundColor = '';
-        }
-      });
-    };
-
-    // Add event listeners
-    document.addEventListener('dragstart', handleDragStart);
-    document.addEventListener('dragend', handleDragEnd);
+    // Use a more frequent interval to force colors
+    const interval = setInterval(forceColors, 50);
+    
+    // Also use mutation observer
+    const observer = new MutationObserver(forceColors);
+    observer.observe(document.body, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['style', 'class']
+    });
 
     return () => {
-      document.removeEventListener('dragstart', handleDragStart);
-      document.removeEventListener('dragend', handleDragEnd);
+      clearInterval(interval);
+      observer.disconnect();
     };
   }, []);
 
@@ -424,7 +432,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             background-color: inherit !important;
             color: inherit !important;
           }
-          
+
           /* NUCLEAR OPTION: Force sticky note colors during drag */
           .react-grid-item.react-draggable-dragging .sticky-note-yellow,
           .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-yellow,
@@ -669,7 +677,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* FORCE: Override any red colors in the drop zone */
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background: rgb"],
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background: rgba"],
@@ -679,7 +687,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
-          
+
           /* NUCLEAR OPTION: Override ALL possible red drop zone indicators */
           .react-grid-layout .react-grid-item.react-draggable-dragging,
           .react-grid-layout .react-grid-item.react-draggable-dragging *,
@@ -721,17 +729,17 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           }
         `}
       </style>
-    <div className='fixed inset-0 z-50 flex'>
-      {/* Backdrop */}
-      <div className='fixed inset-0 bg-black/50' onClick={onClose} />
+      <div className='fixed inset-0 z-50 flex'>
+        {/* Backdrop */}
+        <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
-      {/* Modal */}
+        {/* Modal */}
         <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
-        <div className='flex flex-col h-full'>
-          {/* Header */}
+          <div className='flex flex-col h-full'>
+            {/* Header */}
             <div className='flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
               <h2 className='text-lg font-semibold text-white'>Sticky Notes</h2>
-            <div className='flex items-center space-x-2'>
+              <div className='flex items-center space-x-2'>
                 {/* View Mode Toggle */}
                 <div className='flex items-center space-x-1 bg-gray-700 rounded-lg p-1'>
                   <Button
@@ -783,34 +791,34 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   <span>Filters</span>
                 </Button>
 
-              <Button
-                variant='outline'
-                size='sm'
+                <Button
+                  variant='outline'
+                  size='sm'
                   className='flex items-center space-x-1 border-gray-600 text-gray-300 hover:bg-gray-700'
-              >
-                <Plus className='h-4 w-4' />
-                <span>New Note</span>
-              </Button>
+                >
+                  <Plus className='h-4 w-4' />
+                  <span>New Note</span>
+                </Button>
 
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={onClose}
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={onClose}
                   className='text-gray-400 hover:text-white hover:bg-gray-700'
-              >
-                <X className='h-4 w-4' />
-              </Button>
+                >
+                  <X className='h-4 w-4' />
+                </Button>
+              </div>
             </div>
-          </div>
 
             {/* Search and Filters */}
             <div className='p-4 border-b bg-gray-800 border-gray-700 space-y-4'>
-            <div className='relative'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-              <Input
-                placeholder='Search notes...'
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+                <Input
+                  placeholder='Search notes...'
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className='pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                 />
               </div>
@@ -1032,9 +1040,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 {editTitle}
                               </div>
                             )}
-          </div>
+                          </div>
 
-          {/* Content */}
+                          {/* Content */}
                           <div>
                             <label className='block text-sm font-medium text-gray-300 mb-2'>
                               Content
@@ -1137,9 +1145,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     onLayoutChange={handleLayoutChange}
                   >
-                  {filteredNotes.map(note => (
-                    <div
-                      key={note.id}
+                    {filteredNotes.map(note => (
+                      <div
+                        key={note.id}
                         className={`h-full w-full rounded-lg border-l-4 sticky-note-${note.color} ${
                           note.color === 'yellow'
                             ? 'border-yellow-400 bg-yellow-100'
@@ -1176,7 +1184,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             {note.content}
                           </div>
                           <div className='text-xs text-gray-500 mt-2'>
-                        {note.createdAt.toLocaleDateString()}
+                            {note.createdAt.toLocaleDateString()}
                           </div>
                           {note.tags && note.tags.length > 0 && (
                             <div className='flex flex-wrap gap-1 mt-2'>
@@ -1273,16 +1281,16 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       <span className='text-sm text-gray-300'>
                                         {attachment.name}
                                       </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </div>
                       );
                     })()}
-            </div>
+                  </div>
                 </div>
               )}
             </div>
