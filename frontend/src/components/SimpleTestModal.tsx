@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface SimpleTestModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
   // Handle ESC key press
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
@@ -36,7 +37,7 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
     e.stopPropagation();
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -87,7 +88,7 @@ export function SimpleTestModal({ isOpen, onClose }: SimpleTestModalProps) {
           Close
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
-

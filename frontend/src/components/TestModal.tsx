@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface TestModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ export function TestModal({ isOpen, onClose }: TestModalProps) {
   // Handle ESC key press
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
@@ -36,7 +37,7 @@ export function TestModal({ isOpen, onClose }: TestModalProps) {
     e.stopPropagation();
   };
 
-  return (
+  return createPortal(
     <div 
       className='fixed inset-0 z-50 flex items-center justify-center'
       onClick={handleBackdropClick}
@@ -64,7 +65,7 @@ export function TestModal({ isOpen, onClose }: TestModalProps) {
           Close
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
-
