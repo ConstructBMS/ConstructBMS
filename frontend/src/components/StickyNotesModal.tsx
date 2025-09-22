@@ -386,36 +386,44 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             color: inherit !important;
           }
 
-          /* FORCE: Yellow sticky notes stay yellow */
-          .react-grid-item.react-draggable-dragging > div.border-yellow-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-yellow-400 {
+          /* FORCE: Yellow sticky notes stay yellow - target the sticky note content */
+          .react-grid-item.react-draggable-dragging .border-yellow-400,
+          .react-grid-layout .react-grid-item.react-draggable-dragging .border-yellow-400 {
             background-color: #fef3c7 !important; /* bg-yellow-100 */
             border-left: 4px solid #fbbf24 !important; /* border-yellow-400 */
             color: #1f2937 !important; /* Dark text for readability */
+            opacity: 1 !important;
+            visibility: visible !important;
           }
           
-          /* FORCE: Pink sticky notes stay pink */
-          .react-grid-item.react-draggable-dragging > div.border-pink-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-pink-400 {
+          /* FORCE: Pink sticky notes stay pink - target the sticky note content */
+          .react-grid-item.react-draggable-dragging .border-pink-400,
+          .react-grid-layout .react-grid-item.react-draggable-dragging .border-pink-400 {
             background-color: #fce7f3 !important; /* bg-pink-100 */
             border-left: 4px solid #f472b6 !important; /* border-pink-400 */
             color: #1f2937 !important; /* Dark text for readability */
+            opacity: 1 !important;
+            visibility: visible !important;
           }
           
-          /* FORCE: Blue sticky notes stay blue */
-          .react-grid-item.react-draggable-dragging > div.border-blue-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-blue-400 {
+          /* FORCE: Blue sticky notes stay blue - target the sticky note content */
+          .react-grid-item.react-draggable-dragging .border-blue-400,
+          .react-grid-layout .react-grid-item.react-draggable-dragging .border-blue-400 {
             background-color: #dbeafe !important; /* bg-blue-100 */
             border-left: 4px solid #60a5fa !important; /* border-blue-400 */
             color: #1f2937 !important; /* Dark text for readability */
+            opacity: 1 !important;
+            visibility: visible !important;
           }
           
-          /* FORCE: Gray sticky notes stay gray */
-          .react-grid-item.react-draggable-dragging > div.border-gray-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div.border-gray-400 {
+          /* FORCE: Gray sticky notes stay gray - target the sticky note content */
+          .react-grid-item.react-draggable-dragging .border-gray-400,
+          .react-grid-layout .react-grid-item.react-draggable-dragging .border-gray-400 {
             background-color: #f3f4f6 !important; /* bg-gray-100 */
             border-left: 4px solid #9ca3af !important; /* border-gray-400 */
             color: #1f2937 !important; /* Dark text for readability */
+            opacity: 1 !important;
+            visibility: visible !important;
           }
 
           /* FORCE: Remove any overlays or pseudo-elements */
@@ -440,6 +448,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border-radius: 8px !important;
             pointer-events: none;
             z-index: 10;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+          }
+          
+          /* DROP ZONE INDICATOR: Target the actual drop zone indicator */
+          .react-grid-layout .react-grid-item.react-draggable-dragging {
+            background: transparent !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+            border-radius: 8px !important;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
           }
 
