@@ -14,8 +14,12 @@ All notable changes to this project will be documented in this file.
   - Improved event handling to prevent modal from closing when clicking inside modal content
   - Updated modal text to inform users about ESC key functionality
   - Fixed event propagation issues that were preventing proper backdrop click detection
-  - **React Hooks Rules Violation**: Fixed React internal errors by moving `useEffect` hooks before early return statements
+  - **React Hooks Rules Violation**: Fixed React internal errors by moving `useEffect` hooks before
+    early return statements
   - Added proper dependency arrays and guard clauses to prevent stale closures
+  - **React Portal Implementation**: Converted both test modals to use `ReactDOM.createPortal` to render directly to `document.body`
+  - Prevents "header closes but content doesn't" issues by rendering modals outside the header subtree
+  - Improves modal isolation and event handling
 
 ### Technical Details
 
@@ -28,7 +32,9 @@ All notable changes to this project will be documented in this file.
   - Enhanced `handleModalClick` to prevent event bubbling with `e.stopPropagation()`
   - Added proper cursor styling (pointer for backdrop, default for modal content)
   - Updated modal descriptions to mention ESC key functionality
-  - **React Hooks Fix**: Moved `useEffect` before early return, added `isOpen` to dependencies, added guard clause
+  - **React Hooks Fix**: Moved `useEffect` before early return, added `isOpen` to dependencies,
+    added guard clause
+  - **Portal Implementation**: Added `createPortal` import and wrapped modal JSX with `createPortal(modalJSX, document.body)`
 
 ## [2025-01-20] - ChatModal Click-Outside-to-Close Fix (Updated)
 
