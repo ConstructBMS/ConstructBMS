@@ -374,12 +374,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           .react-grid-layout .react-grid-item.react-draggable-dragging + * {
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5) !important;
           }
-          .react-grid-item.react-draggable-dragging {
+          /* Drop zone indicator styling */
+          .react-grid-item.react-draggable-dragging::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
+            background-color: transparent !important;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 10;
           }
-          .react-grid-item.react-draggable-dragging * {
-            color: white !important;
+          /* Override any red drop zone styling */
+          .react-grid-item.react-draggable-dragging {
+            background-color: transparent !important;
+            border: none !important;
           }
         `}
       </style>
@@ -782,21 +794,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                     {filteredNotes.map(note => (
                       <div
                         key={note.id}
-                        className={`h-full w-full rounded-lg border-l-4 ${
-                          note.color === 'yellow'
-                            ? 'border-yellow-400 bg-yellow-100'
-                            : note.color === 'pink'
-                              ? 'border-pink-400 bg-pink-100'
-                              : note.color === 'blue'
-                                ? 'border-blue-400 bg-blue-100'
-                                : 'border-gray-400 bg-gray-100'
-                        }`}
+                        className='bg-gray-800 rounded-lg p-4 border border-gray-600'
                       >
-                        <div className='p-3 h-full flex flex-col'>
+                        <div
+                          className={`p-3 rounded-lg border-l-4 ${
+                            note.color === 'yellow'
+                              ? 'border-yellow-400 bg-yellow-100'
+                              : note.color === 'pink'
+                                ? 'border-pink-400 bg-pink-100'
+                                : note.color === 'blue'
+                                  ? 'border-blue-400 bg-blue-100'
+                                  : 'border-gray-400 bg-gray-100'
+                          }`}
+                        >
                           <div className='font-medium text-gray-900'>
                             {note.title}
                           </div>
-                          <div className='text-sm text-gray-700 mt-1 flex-1'>
+                          <div className='text-sm text-gray-700 mt-1'>
                             {note.content}
                           </div>
                           <div className='text-xs text-gray-500 mt-2'>
