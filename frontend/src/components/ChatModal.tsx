@@ -1,4 +1,4 @@
-import { FolderOpen, Plus, Settings, TrendingUp, Users, X } from 'lucide-react';
+import { FolderOpen, Settings, TrendingUp, Users, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useChatStore } from '../app/store/chat.store';
@@ -111,11 +111,11 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
       const latestMessage = chatMessages[chatMessages.length - 1];
       if (latestMessage) {
         updateMessageStatus(latestMessage.id, 'sent');
-        
+
         // Simulate delivery after 1 second
         setTimeout(() => {
           updateMessageStatus(latestMessage.id, 'delivered');
-          
+
           // Simulate read status after 2 more seconds
           setTimeout(() => {
             updateMessageStatus(latestMessage.id, 'read');
@@ -205,60 +205,32 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
               </div>
               <div className='flex-1 overflow-y-auto p-6'>
                 <div className='space-y-6'>
-                  {/* Create Group */}
+                  {/* Chat Settings */}
                   <div className='bg-gray-700 rounded-lg p-4'>
-                    <div className='flex items-center space-x-3 mb-3'>
-                      <Users className='h-5 w-5 text-blue-400' />
-                      <h3 className='text-white font-medium'>Create Group</h3>
+                    <h3 className='text-white font-medium mb-4'>Chat Settings</h3>
+                    <div className='space-y-4'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-gray-300'>Notifications</span>
+                        <label className='relative inline-flex items-center cursor-pointer'>
+                          <input type='checkbox' className='sr-only peer' defaultChecked />
+                          <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-gray-300'>Sound Alerts</span>
+                        <label className='relative inline-flex items-center cursor-pointer'>
+                          <input type='checkbox' className='sr-only peer' defaultChecked />
+                          <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-gray-300'>Auto-download Media</span>
+                        <label className='relative inline-flex items-center cursor-pointer'>
+                          <input type='checkbox' className='sr-only peer' />
+                          <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                      </div>
                     </div>
-                    <p className='text-gray-300 text-sm mb-4'>
-                      Create a new chat group for team collaboration
-                    </p>
-                    <Button
-                      onClick={handleCreateGroup}
-                      className='bg-blue-600 hover:bg-blue-700 text-white'
-                    >
-                      <Plus className='h-4 w-4 mr-2' />
-                      Create Group
-                    </Button>
-                  </div>
-
-                  {/* Add to Project */}
-                  <div className='bg-gray-700 rounded-lg p-4'>
-                    <div className='flex items-center space-x-3 mb-3'>
-                      <FolderOpen className='h-5 w-5 text-green-400' />
-                      <h3 className='text-white font-medium'>Add to Project</h3>
-                    </div>
-                    <p className='text-gray-300 text-sm mb-4'>
-                      Link this chat to an existing project
-                    </p>
-                    <Button
-                      onClick={handleLinkToProject}
-                      className='bg-green-600 hover:bg-green-700 text-white'
-                    >
-                      <FolderOpen className='h-4 w-4 mr-2' />
-                      Link to Project
-                    </Button>
-                  </div>
-
-                  {/* Add to Sales Opportunity */}
-                  <div className='bg-gray-700 rounded-lg p-4'>
-                    <div className='flex items-center space-x-3 mb-3'>
-                      <TrendingUp className='h-5 w-5 text-purple-400' />
-                      <h3 className='text-white font-medium'>
-                        Add to Sales Opportunity
-                      </h3>
-                    </div>
-                    <p className='text-gray-300 text-sm mb-4'>
-                      Connect this chat to a sales opportunity
-                    </p>
-                    <Button
-                      onClick={handleLinkToOpportunity}
-                      className='bg-purple-600 hover:bg-purple-700 text-white'
-                    >
-                      <TrendingUp className='h-4 w-4 mr-2' />
-                      Link to Opportunity
-                    </Button>
                   </div>
 
                   {/* Chat Actions */}
@@ -294,6 +266,29 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                       </div>
                     </div>
                   )}
+
+                  {/* Theme Settings */}
+                  <div className='bg-gray-700 rounded-lg p-4'>
+                    <h3 className='text-white font-medium mb-4'>Appearance</h3>
+                    <div className='space-y-3'>
+                      <div>
+                        <label className='text-gray-300 text-sm'>Font Size</label>
+                        <select className='w-full mt-1 bg-gray-600 text-white border border-gray-500 rounded px-3 py-2'>
+                          <option>Small</option>
+                          <option selected>Medium</option>
+                          <option>Large</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className='text-gray-300 text-sm'>Message Density</label>
+                        <select className='w-full mt-1 bg-gray-600 text-white border border-gray-500 rounded px-3 py-2'>
+                          <option>Compact</option>
+                          <option selected>Comfortable</option>
+                          <option>Relaxed</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -336,21 +331,57 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   <>
                     {/* Chat Header */}
                     <div className='bg-gray-800 p-4 border-b border-gray-700'>
-                      <div className='flex items-center space-x-3'>
-                        <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
-                          {currentChat.avatar || '💬'}
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center space-x-3'>
+                          <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
+                            {currentChat.avatar || '💬'}
+                          </div>
+                          <div>
+                            <h3 className='font-medium text-white'>
+                              {currentChat.name}
+                            </h3>
+                            <p className='text-sm text-gray-400'>
+                              {currentChat.type === 'project'
+                                ? 'Project Chat'
+                                : currentChat.type === 'group'
+                                  ? 'Group Chat'
+                                  : 'Private Chat'}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className='font-medium text-white'>
-                            {currentChat.name}
-                          </h3>
-                          <p className='text-sm text-gray-400'>
-                            {currentChat.type === 'project'
-                              ? 'Project Chat'
-                              : currentChat.type === 'group'
-                                ? 'Group Chat'
-                                : 'Private Chat'}
-                          </p>
+                        
+                        {/* Action Buttons */}
+                        <div className='flex items-center space-x-2'>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={handleCreateGroup}
+                            className='text-gray-300 hover:text-white hover:bg-gray-700'
+                            title='Create Group'
+                          >
+                            <Users className='h-4 w-4 mr-1' />
+                            Group
+                          </Button>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={handleLinkToProject}
+                            className='text-gray-300 hover:text-white hover:bg-gray-700'
+                            title='Link to Project'
+                          >
+                            <FolderOpen className='h-4 w-4 mr-1' />
+                            Project
+                          </Button>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={handleLinkToOpportunity}
+                            className='text-gray-300 hover:text-white hover:bg-gray-700'
+                            title='Link to Opportunity'
+                          >
+                            <TrendingUp className='h-4 w-4 mr-1' />
+                            Opportunity
+                          </Button>
                         </div>
                       </div>
                     </div>

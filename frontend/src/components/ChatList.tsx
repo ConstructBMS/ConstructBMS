@@ -115,8 +115,8 @@ export function ChatList({
               <div
                 key={chat.id}
                 className={cn(
-                  'relative group p-3 cursor-pointer transition-colors border-b border-gray-100',
-                  isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'
+                  'relative group p-3 cursor-pointer transition-colors border-b border-gray-700',
+                  isSelected ? 'bg-blue-600' : 'hover:bg-gray-700'
                 )}
                 onClick={() => {
                   onChatSelect(chat.id);
@@ -142,7 +142,10 @@ export function ChatList({
                   {/* Content */}
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-center justify-between mb-1'>
-                      <h3 className='text-sm font-medium text-gray-900 truncate'>
+                      <h3 className={cn(
+                        'text-sm font-medium truncate',
+                        isSelected ? 'text-white' : 'text-white'
+                      )}>
                         {chat.name}
                       </h3>
                       <div className='flex items-center space-x-1'>
@@ -152,14 +155,20 @@ export function ChatList({
                         {chat.isMuted && (
                           <BellOff className='h-3 w-3 text-gray-400' />
                         )}
-                        <span className='text-xs text-gray-500'>
+                        <span className={cn(
+                          'text-xs',
+                          isSelected ? 'text-blue-200' : 'text-gray-400'
+                        )}>
                           {formatTime(chat.lastActivity)}
                         </span>
                       </div>
                     </div>
 
                     <div className='flex items-center justify-between'>
-                      <p className='text-sm text-gray-600 truncate flex-1'>
+                      <p className={cn(
+                        'text-sm truncate flex-1',
+                        isSelected ? 'text-blue-100' : 'text-gray-300'
+                      )}>
                         {formatLastMessage(chat)}
                       </p>
                       {unreadCount > 0 && (
