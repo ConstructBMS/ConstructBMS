@@ -370,7 +370,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       {/* Custom CSS for white drag shadow and drop zones */}
       <style>
         {`
-          /* Comprehensive styling for react-grid-layout drag operations */
+          /* Force override all react-grid-layout drag styling */
+          .react-grid-item.react-draggable-dragging,
           .react-grid-layout .react-grid-item.react-draggable-dragging {
             background: rgba(255, 255, 255, 0.1) !important;
             background-color: rgba(255, 255, 255, 0.1) !important;
@@ -379,20 +380,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
           }
           
-          /* Keep dragged sticky note content visible and colorful */
+          /* Make sure dragged content is fully visible */
+          .react-grid-item.react-draggable-dragging *,
+          .react-grid-layout .react-grid-item.react-draggable-dragging * {
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+          
+          /* Override any default library styling */
+          .react-grid-item.react-draggable-dragging {
+            background: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+          }
+          
+          /* Ensure sticky note colors are preserved */
+          .react-grid-item.react-draggable-dragging > div,
           .react-grid-layout .react-grid-item.react-draggable-dragging > div {
             opacity: 1 !important;
             background: inherit !important;
+            color: inherit !important;
           }
           
-          /* Ensure sticky note colors are preserved during drag */
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div > div {
-            opacity: 1 !important;
-            background: inherit !important;
-          }
-          
-          /* Drop zone placeholder styling */
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
+          /* Drop zone indicator */
+          .react-grid-item.react-draggable-dragging::before,
+          .react-grid-layout .react-grid-item.react-draggable-dragging::before {
             content: '';
             position: absolute;
             top: 0;
@@ -403,32 +415,36 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
             border-radius: 8px !important;
             pointer-events: none;
-            z-index: 5;
-          }
-          
-          /* Override any default red/burgundy styling */
-          .react-grid-layout .react-grid-item.react-draggable-dragging {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            border-color: rgba(255, 255, 255, 0.8) !important;
-          }
-          
-          /* Ensure content inside dragged items is visible */
-          .react-grid-layout .react-grid-item.react-draggable-dragging * {
-            opacity: 1 !important;
+            z-index: 10;
           }
           
           /* Resize styling */
+          .react-grid-item.react-resizable-resizing,
           .react-grid-layout .react-grid-item.react-resizable-resizing {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
           }
           
-          /* Adjacent items styling */
+          /* Adjacent items */
+          .react-grid-item.react-draggable-dragging ~ .react-grid-item,
           .react-grid-layout .react-grid-item.react-draggable-dragging ~ .react-grid-item {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
           }
           
+          .react-grid-item.react-draggable-dragging + .react-grid-item,
           .react-grid-layout .react-grid-item.react-draggable-dragging + .react-grid-item {
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.6) !important;
+          }
+          
+          /* Debug: Add a bright border to see if our CSS is working */
+          .react-grid-item.react-draggable-dragging {
+            outline: 3px solid lime !important;
+          }
+          
+          /* Force override any inline styles */
+          .react-grid-item.react-draggable-dragging[style] {
+            background: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
           }
         `}
       </style>
