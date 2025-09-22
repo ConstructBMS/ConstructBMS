@@ -204,9 +204,7 @@ export function ChatList({
                         <span
                           className={cn(
                             'text-xs',
-                            isSelected
-                              ? 'text-gray-500'
-                              : 'text-gray-400'
+                            isSelected ? 'text-gray-500' : 'text-gray-400'
                           )}
                         >
                           {formatTime(chat.lastActivity)}
@@ -218,7 +216,7 @@ export function ChatList({
                       <p
                         className={cn(
                           'text-sm flex-1',
-                          isSelected 
+                          isSelected
                             ? 'text-gray-600'
                             : 'text-gray-300 group-hover:text-gray-600',
                           'line-clamp-2'
@@ -239,7 +237,10 @@ export function ChatList({
                     <Button
                       variant='ghost'
                       size='icon'
-                      className='h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity'
+                      className={cn(
+                        'h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity',
+                        isSelected ? 'text-gray-600' : 'text-gray-400'
+                      )}
                       onClick={e => {
                         e.stopPropagation();
                         setShowMenu(showMenu === chat.id ? null : chat.id);
