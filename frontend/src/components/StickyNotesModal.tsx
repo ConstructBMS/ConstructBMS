@@ -308,6 +308,45 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     );
   };
 
+  // Force sticky note colors during drag using JavaScript
+  useEffect(() => {
+    const handleDragStart = () => {
+      // Find all dragged items and force their colors
+      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
+      draggedItems.forEach((item: any) => {
+        const stickyNote = item.querySelector('[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]');
+        if (stickyNote) {
+          // Force the sticky note to keep its color
+          stickyNote.style.background = '';
+          stickyNote.style.backgroundColor = '';
+          stickyNote.style.opacity = '1';
+          stickyNote.style.visibility = 'visible';
+        }
+      });
+    };
+
+    const handleDragEnd = () => {
+      // Clean up any forced styles
+      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
+      draggedItems.forEach((item: any) => {
+        const stickyNote = item.querySelector('[class*="border-yellow"], [class*="border-pink"], [class*="border-blue"], [class*="border-gray"]');
+        if (stickyNote) {
+          stickyNote.style.background = '';
+          stickyNote.style.backgroundColor = '';
+        }
+      });
+    };
+
+    // Add event listeners
+    document.addEventListener('dragstart', handleDragStart);
+    document.addEventListener('dragend', handleDragEnd);
+
+    return () => {
+      document.removeEventListener('dragstart', handleDragStart);
+      document.removeEventListener('dragend', handleDragEnd);
+    };
+  }, []);
+
   // File upload handler
   const onDrop = (acceptedFiles: File[], noteId: number) => {
     const newAttachments = acceptedFiles.map(file => ({
@@ -554,6 +593,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
           /* OVERRIDE: Any red drop zone indicators - target the drop zone specifically */
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"],
           .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background-color"] {
+            background: transparent !important;
+            background-color: transparent !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+          }
+          
+          /* AGGRESSIVE: Override any red/burgundy drop zone indicators */
+          .react-grid-layout .react-grid-item.react-draggable-dragging,
+          .react-grid-layout .react-grid-item.react-draggable-dragging *,
+          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
+          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
+            background: transparent !important;
+            background-color: transparent !important;
+            border: 2px solid rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
+          }
+          
+          /* FORCE: Override any inline styles that might be setting red colors */
+          .react-grid-layout .react-grid-item.react-draggable-dragging[style] {
             background: transparent !important;
             background-color: transparent !important;
             border: 2px solid rgba(255, 255, 255, 0.8) !important;
