@@ -10,6 +10,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext.tsx';
 import type { KeyboardShortcut } from '../lib/types/core';
 import { loadDefaultRoles } from '../modules/permissions/store';
+import { chatNotificationsService } from '../services/chat-notifications.service';
 import { AppRoutes } from './routes';
 import { useFooterStore } from './store/ui/footer.store';
 import { useSidebarStore } from './store/ui/sidebar.store';
@@ -27,6 +28,11 @@ const queryClient = new QueryClient({
 function AppLayout() {
   const { toggle } = useSidebarStore();
   const { config: footerConfig } = useFooterStore();
+
+  // Initialize chat notifications service
+  useEffect(() => {
+    chatNotificationsService.initialize();
+  }, []);
 
   // Ensure scroll position is at top when layout mounts
   useEffect(() => {
