@@ -344,27 +344,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     maxH: 4,
   }));
 
-  // Suppress react-beautiful-dnd deprecation warnings in development
-  React.useEffect(() => {
-    const originalWarn = console.warn;
-    console.warn = (...args) => {
-      if (
-        args[0] &&
-        typeof args[0] === 'string' &&
-        (args[0].includes('defaultProps will be removed') ||
-         args[0].includes('Support for defaultProps will be removed') ||
-         args[0].includes('Connect(Droppable)') ||
-         args[0].includes('react-beautiful-dnd'))
-      ) {
-        return; // Suppress these specific warnings
-      }
-      originalWarn.apply(console, args);
-    };
-
-    return () => {
-      console.warn = originalWarn;
-    };
-  }, []);
 
   if (!isOpen) return null;
 
