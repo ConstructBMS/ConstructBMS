@@ -25,42 +25,62 @@ let Droppable: any = null;
 let ResponsiveGridLayout: any = null;
 let useDropzone: any = null;
 
-// Try to import dependencies with error handling
-try {
-  const quill = require('react-quill');
-  ReactQuill = quill.default || quill;
-  require('react-quill/dist/quill.snow.css');
-} catch (e) {
-  console.warn('ReactQuill not available:', e);
-}
-
-try {
-  const dnd = require('react-beautiful-dnd');
-  DragDropContext = dnd.DragDropContext;
-  Draggable = dnd.Draggable;
-  Droppable = dnd.Droppable;
-} catch (e) {
-  console.warn('React Beautiful DnD not available:', e);
-}
-
-try {
-  const grid = require('react-grid-layout');
-  const { Responsive, WidthProvider } = grid;
-  if (Responsive && WidthProvider) {
-    ResponsiveGridLayout = WidthProvider(Responsive);
+// Lazy load dependencies only when needed
+const loadReactQuill = async () => {
+  if (ReactQuill) return ReactQuill;
+  try {
+    const quill = await import('react-quill');
+    ReactQuill = quill.default || quill;
+    await import('react-quill/dist/quill.snow.css');
+    return ReactQuill;
+  } catch (e) {
+    console.warn('ReactQuill not available:', e);
+    return null;
   }
-  require('react-grid-layout/css/styles.css');
-  require('react-resizable/css/styles.css');
-} catch (e) {
-  console.warn('React Grid Layout not available:', e);
-}
+};
 
-try {
-  const dropzone = require('react-dropzone');
-  useDropzone = dropzone.useDropzone;
-} catch (e) {
-  console.warn('React Dropzone not available:', e);
-}
+const loadDragDrop = async () => {
+  if (DragDropContext) return { DragDropContext, Draggable, Droppable };
+  try {
+    const dnd = await import('react-beautiful-dnd');
+    DragDropContext = dnd.DragDropContext;
+    Draggable = dnd.Draggable;
+    Droppable = dnd.Droppable;
+    return { DragDropContext, Draggable, Droppable };
+  } catch (e) {
+    console.warn('React Beautiful DnD not available:', e);
+    return null;
+  }
+};
+
+const loadGridLayout = async () => {
+  if (ResponsiveGridLayout) return ResponsiveGridLayout;
+  try {
+    const grid = await import('react-grid-layout');
+    const { Responsive, WidthProvider } = grid;
+    if (Responsive && WidthProvider) {
+      ResponsiveGridLayout = WidthProvider(Responsive);
+    }
+    await import('react-grid-layout/css/styles.css');
+    await import('react-resizable/css/styles.css');
+    return ResponsiveGridLayout;
+  } catch (e) {
+    console.warn('React Grid Layout not available:', e);
+    return null;
+  }
+};
+
+const loadDropzone = async () => {
+  if (useDropzone) return useDropzone;
+  try {
+    const dropzone = await import('react-dropzone');
+    useDropzone = dropzone.useDropzone;
+    return useDropzone;
+  } catch (e) {
+    console.warn('React Dropzone not available:', e);
+    return null;
+  }
+};
 
 interface StickyNotesModalProps {
   isOpen: boolean;
@@ -89,7 +109,6 @@ interface StickyNote {
   h?: number;
 }
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -102,6 +121,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [filterTag, setFilterTag] = useState<string>('all');
   const [filterProject, setFilterProject] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [dependenciesLoaded, setDependenciesLoaded] = useState(false);
   const [notes, setNotes] = useState<StickyNote[]>([
     {
       id: 1,
@@ -146,6 +166,26 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       h: 2,
     },
   ]);
+
+  // Load dependencies when component mounts
+  useEffect(() => {
+    const loadDependencies = async () => {
+      try {
+        await Promise.all([
+          loadReactQuill(),
+          loadDragDrop(),
+          loadGridLayout(),
+          loadDropzone()
+        ]);
+        setDependenciesLoaded(true);
+      } catch (error) {
+        console.warn('Some dependencies failed to load:', error);
+        setDependenciesLoaded(true); // Still allow component to work
+      }
+    };
+    
+    loadDependencies();
+  }, []);
 
   // Handle escape key
   useEffect(() => {
@@ -389,6 +429,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   }));
 
   if (!isOpen) return null;
+
+  // Show loading state while dependencies are loading
+  if (!dependenciesLoaded) {
+    return createPortal(
+      <div className='fixed inset-0 z-50 flex'>
+        <div className='fixed inset-0 bg-black/50' onClick={onClose} />
+        <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
+          <div className='flex items-center justify-center h-full'>
+            <div className='text-center text-gray-400'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4'></div>
+              <div className='text-lg font-medium mb-2'>Loading Sticky Notes</div>
+              <div className='text-sm'>Loading dependencies...</div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  }
 
   return createPortal(
     <div className='fixed inset-0 z-50 flex'>
