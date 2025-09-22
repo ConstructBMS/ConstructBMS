@@ -33,6 +33,7 @@ export function ChatList({
     deleteChat,
     getUnreadCount,
     markChatAsRead,
+    getChatMessages,
   } = useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
   const { theme } = useTheme();
@@ -54,16 +55,22 @@ export function ChatList({
   });
 
   const formatLastMessage = (chat: Chat) => {
-    if (!chat.lastMessage) return 'No messages yet';
+    // Get the last message from the messages store
+    const chatMessages = getChatMessages(chat.id);
+    if (chatMessages.length === 0) return 'No messages yet';
 
-    const content = chat.lastMessage.content;
+    const lastMessage = chatMessages[chatMessages.length - 1];
+    const content = lastMessage.content;
     const maxLength = 50;
 
-    if (content.length > maxLength) {
-      return content.substring(0, maxLength) + '...';
+    // Strip HTML tags for preview
+    const textContent = content.replace(/<[^>]*>/g, '');
+    
+    if (textContent.length > maxLength) {
+      return textContent.substring(0, maxLength) + '...';
     }
 
-    return content;
+    return textContent;
   };
 
   const formatTime = (date: Date) => {
@@ -170,7 +177,9 @@ export function ChatList({
                           className={cn(
                             'text-sm font-medium truncate',
                             isSelected
-                              ? 'text-white'
+                              ? theme === 'dark'
+                                ? 'text-white'
+                                : 'text-gray-900'
                               : theme === 'dark'
                                 ? 'text-white'
                                 : 'text-gray-900'
@@ -217,7 +226,13 @@ export function ChatList({
                       <p
                         className={cn(
                           'text-sm flex-1',
-                          isSelected ? 'text-blue-100' : 'text-gray-300',
+                          isSelected 
+                            ? theme === 'dark'
+                              ? 'text-blue-100'
+                              : 'text-blue-600'
+                            : theme === 'dark'
+                              ? 'text-gray-300'
+                              : 'text-gray-600',
                           'line-clamp-2'
                         )}
                       >

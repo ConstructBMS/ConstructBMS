@@ -336,8 +336,37 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
             <>
               <div className='w-2/5 bg-gray-800 border-r flex flex-col'>
                 <div className='bg-blue-600 text-white p-4 flex items-center justify-between'>
-                  <h2 className='text-lg font-semibold'>Chat</h2>
                   <div className='flex items-center space-x-2'>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={handleCreateGroup}
+                      className='text-white hover:bg-blue-700'
+                      title='Create Group Chat'
+                    >
+                      <Users className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={handleLinkToProject}
+                      className='text-white hover:bg-blue-700'
+                      title='Link to Project'
+                    >
+                      <FolderOpen className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={handleLinkToOpportunity}
+                      className='text-white hover:bg-blue-700'
+                      title='Link to Sales Opportunity'
+                    >
+                      <TrendingUp className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  <div className='flex items-center space-x-2'>
+                    <h2 className='text-lg font-semibold'>Chat</h2>
                     <Button
                       variant='ghost'
                       size='icon'
@@ -358,7 +387,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     </Button>
                   </div>
                 </div>
-                <div className='flex-1 overflow-y-auto'>
+                <div className='flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent hover:scrollbar-thumb-blue-400'>
                   <ChatList
                     chats={chats}
                     currentChatId={currentChatId}
@@ -371,54 +400,21 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   <>
                     {/* Chat Header */}
                     <div className='bg-gray-800 p-4 border-b border-gray-700'>
-                      <div className='flex items-center justify-between'>
-                        <div className='flex items-center space-x-3'>
-                          <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
-                            {currentChat.avatar || '💬'}
-                          </div>
-                          <div>
-                            <h3 className='font-medium text-white'>
-                              {currentChat.name}
-                            </h3>
-                            <p className='text-sm text-gray-400'>
-                              {currentChat.type === 'project'
-                                ? 'Project Chat'
-                                : currentChat.type === 'group'
-                                  ? 'Group Chat'
-                                  : 'Private Chat'}
-                            </p>
-                          </div>
+                      <div className='flex items-center space-x-3'>
+                        <div className='w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-lg'>
+                          {currentChat.avatar || '💬'}
                         </div>
-
-                        {/* Action Buttons */}
-                        <div className='flex items-center space-x-1'>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={handleCreateGroup}
-                            className='text-gray-300 hover:text-white hover:bg-gray-700'
-                            title='Create Group Chat'
-                          >
-                            <Users className='h-4 w-4' />
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={handleLinkToProject}
-                            className='text-gray-300 hover:text-white hover:bg-gray-700'
-                            title='Link to Project'
-                          >
-                            <FolderOpen className='h-4 w-4' />
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={handleLinkToOpportunity}
-                            className='text-gray-300 hover:text-white hover:bg-gray-700'
-                            title='Link to Sales Opportunity'
-                          >
-                            <TrendingUp className='h-4 w-4' />
-                          </Button>
+                        <div>
+                          <h3 className='font-medium text-white'>
+                            {currentChat.name}
+                          </h3>
+                          <p className='text-sm text-gray-400'>
+                            {currentChat.type === 'project'
+                              ? 'Project Chat'
+                              : currentChat.type === 'group'
+                                ? 'Group Chat'
+                                : 'Private Chat'}
+                          </p>
                         </div>
                       </div>
                     </div>
