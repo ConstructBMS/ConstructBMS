@@ -17,14 +17,18 @@ All notable changes to this project will be documented in this file.
   - **React Hooks Rules Violation**: Fixed React internal errors by moving `useEffect` hooks before
     early return statements
   - Added proper dependency arrays and guard clauses to prevent stale closures
-  - **React Portal Implementation**: Converted both test modals to use `ReactDOM.createPortal` to render directly to `document.body`
-  - Prevents "header closes but content doesn't" issues by rendering modals outside the header subtree
-  - Improves modal isolation and event handling
+  - **React Portal Implementation**: Converted all modals to use `ReactDOM.createPortal` to
+    render directly to `document.body`
+  - Prevents "header closes but content doesn't" issues by rendering modals outside the header
+    subtree
+  - Improves modal isolation and event handling consistency across all modals
+  - **Comprehensive Portal Coverage**: ChatModal, StickyNotesModal, NotificationsModal, TestModal, and SimpleTestModal all now use portals
 
 ### Technical Details
 
 - **Files Modified**: `frontend/src/components/SimpleTestModal.tsx`,
-  `frontend/src/components/TestModal.tsx`
+  `frontend/src/components/TestModal.tsx`, `frontend/src/components/ChatModal.tsx`,
+  `frontend/src/components/StickyNotesModal.tsx`, `frontend/src/components/NotificationsModal.tsx`
 - **Key Changes**:
   - Added `useEffect` hook for ESC key handling in both modals
   - Improved `handleBackdropClick` to only close when clicking directly on backdrop
@@ -34,7 +38,8 @@ All notable changes to this project will be documented in this file.
   - Updated modal descriptions to mention ESC key functionality
   - **React Hooks Fix**: Moved `useEffect` before early return, added `isOpen` to dependencies,
     added guard clause
-  - **Portal Implementation**: Added `createPortal` import and wrapped modal JSX with `createPortal(modalJSX, document.body)`
+  - **Portal Implementation**: Added `createPortal` import and wrapped modal JSX with
+    `createPortal(modalJSX, document.body)`
 
 ## [2025-01-20] - ChatModal Click-Outside-to-Close Fix (Updated)
 
