@@ -815,9 +815,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               : 'bg-gray-900'
                           }`}
                           style={{
-                            minHeight: '600px',
-                            gridTemplateRows: 'repeat(2, minmax(250px, 1fr))',
-                            gridAutoRows: 'minmax(250px, 1fr)',
+                            minHeight: '700px',
+                            gridTemplateRows: 'repeat(2, minmax(300px, 1fr))',
+                            gridAutoRows: 'minmax(300px, 1fr)',
                           }}
                         >
                           {filteredNotes.map((note, index) => (
@@ -835,7 +835,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   onDoubleClick={() =>
                                     handleNoteDoubleClick(note.id)
                                   }
-                                  className={`aspect-square h-56 w-56 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
+                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
                                     note.color === 'yellow'
                                       ? 'border-yellow-400 bg-yellow-100'
                                       : note.color === 'pink'
