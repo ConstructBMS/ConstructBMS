@@ -883,6 +883,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             colorKey as keyof typeof colorConfig
                                           );
                                         }}
+                                        onMouseDown={e => e.stopPropagation()}
                                         className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
                                           notes.find(n => n.id === editingNote)
                                             ?.color === colorKey
@@ -1294,13 +1295,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Always present drag handle - positioned to avoid color picker interference */}
+                                  {/* Always present drag handle - completely hidden when editing */}
                                   <div
-                                    {...provided.dragHandleProps}
+                                    {...(inlineEditingNote === note.id ? {} : provided.dragHandleProps)}
                                     onClick={e => e.stopPropagation()}
                                     className={`absolute top-2 left-2 text-gray-500 ${
                                       inlineEditingNote === note.id
-                                        ? 'invisible cursor-default'
+                                        ? 'hidden'
                                         : 'cursor-move'
                                     }`}
                                     data-rbd-drag-handle-draggable-id={note.id}
@@ -1343,7 +1344,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
 
                                         {/* Color picker for inline editing */}
-                                        <div className='flex flex-wrap gap-1'>
+                                        <div 
+                                          className='flex flex-wrap gap-1'
+                                          onMouseDown={e => e.stopPropagation()}
+                                          onClick={e => e.stopPropagation()}
+                                        >
                                           {Object.entries(colorConfig).map(
                                             ([colorKey, colorData]) => (
                                               <button
@@ -1355,6 +1360,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     colorKey as keyof typeof colorConfig
                                                   );
                                                 }}
+                                                onMouseDown={e => e.stopPropagation()}
                                                 className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-1 ring-gray-600'
@@ -1453,6 +1459,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     colorKey as keyof typeof colorConfig
                                                   );
                                                 }}
+                                                onMouseDown={e => e.stopPropagation()}
                                                 className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-2 ring-gray-400'
