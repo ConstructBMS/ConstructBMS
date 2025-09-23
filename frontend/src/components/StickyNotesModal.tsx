@@ -1254,14 +1254,124 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             gridAutoRows: 'minmax(300px, 1fr)',
                           }}
                         >
-                          {filteredNotes.map((note, index) => (
-                            <Draggable
-                              key={note.id}
-                              draggableId={note.id.toString()}
-                              index={index}
-                              isDragDisabled={inlineEditingNote === note.id}
-                            >
-                              {(provided, snapshot) => (
+                          {filteredNotes.map((note, index) => {
+                            // If this note is being edited, render it without drag functionality
+                            if (inlineEditingNote === note.id) {
+                              return (
+                                <div
+                                  key={note.id}
+                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-default ring-2 ring-blue-500`}
+                                  style={{
+                                    backgroundColor:
+                                      colorConfig[
+                                        note.color as keyof typeof colorConfig
+                                      ]?.bg || '#f3f4f6',
+                                    borderLeftColor:
+                                      colorConfig[
+                                        note.color as keyof typeof colorConfig
+                                      ]?.border || '#9ca3af',
+                                  }}
+                                >
+                                  <div className='p-3 h-full flex flex-col'>
+                                    {/* Inline editing mode */}
+                                    <div className='space-y-3'>
+                                      {/* Title editing */}
+                                      <div>
+                                        <input
+                                          type='text'
+                                          value={inlineEditTitle}
+                                          onChange={e =>
+                                            setInlineEditTitle(e.target.value)
+                                          }
+                                          className='w-full px-2 py-1 text-sm font-medium bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-900'
+                                          placeholder='Note title...'
+                                          autoFocus
+                                        />
+                                      </div>
+
+                                      {/* Content editing */}
+                                      <div>
+                                        <textarea
+                                          value={inlineEditContent}
+                                          onChange={e =>
+                                            setInlineEditContent(
+                                              e.target.value
+                                            )
+                                          }
+                                          className='w-full px-2 py-1 text-sm bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-700 resize-none'
+                                          placeholder='Note content...'
+                                          rows={4}
+                                        />
+                                      </div>
+
+                                      {/* Color picker for inline editing */}
+                                      <div 
+                                        className='flex flex-wrap gap-1'
+                                        onMouseDown={e => e.stopPropagation()}
+                                        onClick={e => e.stopPropagation()}
+                                      >
+                                        {Object.entries(colorConfig).map(
+                                          ([colorKey, colorData]) => (
+                                            <button
+                                              key={colorKey}
+                                              onClick={e => {
+                                                e.stopPropagation();
+                                                handleColorChange(
+                                                  note.id,
+                                                  colorKey as keyof typeof colorConfig
+                                                );
+                                              }}
+                                              onMouseDown={e => e.stopPropagation()}
+                                              className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
+                                                note.color === colorKey
+                                                  ? 'border-gray-800 ring-1 ring-gray-600'
+                                                  : 'border-gray-400 hover:border-gray-600'
+                                              }`}
+                                              style={{
+                                                backgroundColor:
+                                                  colorData.border,
+                                              }}
+                                              title={colorData.name}
+                                            />
+                                          )
+                                        )}
+                                      </div>
+
+                                      {/* Action buttons */}
+                                      <div className='flex justify-end space-x-2'>
+                                        <button
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            saveInlineEdit();
+                                          }}
+                                          className='px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded'
+                                        >
+                                          Save
+                                        </button>
+                                        <button
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            cancelInlineEdit();
+                                          }}
+                                          className='px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded'
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            // Normal draggable note
+                            return (
+                              <Draggable
+                                key={note.id}
+                                draggableId={note.id.toString()}
+                                index={index}
+                              >
+                                {(provided, snapshot) => (
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
@@ -1297,7 +1407,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 >
                                   {/* Always present drag handle - completely hidden when editing */}
                                   <div
-                                    {...(inlineEditingNote === note.id ? {} : provided.dragHandleProps)}
+                                    {...(inlineEditingNote === note.id
+                                      ? {}
+                                      : provided.dragHandleProps)}
                                     onClick={e => e.stopPropagation()}
                                     className={`absolute top-2 left-2 text-gray-500 ${
                                       inlineEditingNote === note.id
@@ -1344,7 +1456,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
 
                                         {/* Color picker for inline editing */}
-                                        <div 
+                                        <div
                                           className='flex flex-wrap gap-1'
                                           onMouseDown={e => e.stopPropagation()}
                                           onClick={e => e.stopPropagation()}
@@ -1360,7 +1472,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     colorKey as keyof typeof colorConfig
                                                   );
                                                 }}
-                                                onMouseDown={e => e.stopPropagation()}
+                                                onMouseDown={e =>
+                                                  e.stopPropagation()
+                                                }
                                                 className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-1 ring-gray-600'
@@ -1459,7 +1573,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     colorKey as keyof typeof colorConfig
                                                   );
                                                 }}
-                                                onMouseDown={e => e.stopPropagation()}
+                                                onMouseDown={e =>
+                                                  e.stopPropagation()
+                                                }
                                                 className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-2 ring-gray-400'
@@ -1487,7 +1603,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 </div>
                               )}
                             </Draggable>
-                          ))}
+                            );
+                          })}
                           {provided.placeholder}
                         </div>
                       )}
