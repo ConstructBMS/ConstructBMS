@@ -18,15 +18,10 @@ import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
 // Import dependencies directly - they should be available since they're in package.json
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { useDropzone } from 'react-dropzone';
-import { Responsive, WidthProvider } from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import 'react-resizable/css/styles.css';
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface StickyNotesModalProps {
   isOpen: boolean;
@@ -61,11 +56,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [editingNote, setEditingNote] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterTag, setFilterTag] = useState<string>('all');
   const [filterProject, setFilterProject] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showFormatting, setShowFormatting] = useState(false);
   const [notes, setNotes] = useState<StickyNote[]>([
     {
       id: 1,
@@ -222,6 +219,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
+  const handleNoteDoubleClick = (noteId: number) => {
+    setSelectedNote(noteId);
+    setEditingNote(noteId);
+    const note = notes.find(n => n.id === noteId);
+    if (note) {
+      setEditTitle(note.title);
+      setEditContent(note.content);
+    }
+  };
+
+  const handleColorChange = (noteId: number, color: string) => {
+    setNotes(prevNotes =>
+      prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
+    );
+    setShowColorPicker(false);
+  };
+
   const handleEdit = () => {
     if (selectedNote) {
       setEditingNote(selectedNote);
@@ -264,104 +278,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
+    // Simple approach: just reorder the filteredNotes array
     const items = Array.from(filteredNotes);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update notes with new order
+    // Update the notes state by reordering based on the new order
     setNotes(prevNotes => {
-      const newNotes = [...prevNotes];
-      const sourceIndex = prevNotes.findIndex(
-        note => note.id === result.draggableId
-      );
-      const destIndex = prevNotes.findIndex(
-        note => note.id === result.destination.draggableId
-      );
+      // Create a map of note IDs to their new positions
+      const newOrder = items.map((note, index) => ({
+        id: note.id,
+        order: index,
+      }));
 
-      if (sourceIndex !== -1 && destIndex !== -1) {
-        const [movedNote] = newNotes.splice(sourceIndex, 1);
-        newNotes.splice(destIndex, 0, movedNote);
-      }
-
-      return newNotes;
-    });
-  };
-
-  // Grid layout handlers
-  const handleLayoutChange = (layout: any) => {
-    setNotes(prevNotes =>
-      prevNotes.map(note => {
-        const layoutItem = layout.find(
-          (item: any) => item.i === note.id.toString()
-        );
-        if (layoutItem) {
-          return {
-            ...note,
-            x: layoutItem.x,
-            y: layoutItem.y,
-            w: layoutItem.w,
-            h: layoutItem.h,
-          };
-        }
-        return note;
-      })
-    );
-  };
-
-  // Force sticky note colors during drag using JavaScript
-  useEffect(() => {
-    const forceColors = () => {
-      // Find all dragged items
-      const draggedItems = document.querySelectorAll('.react-grid-item.react-draggable-dragging');
-      
-      draggedItems.forEach((item: any) => {
-        // Force the container to not be transparent
-        item.style.background = 'transparent';
-        item.style.backgroundColor = 'transparent';
-        item.style.border = '2px solid rgba(255, 255, 255, 0.8)';
-        item.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
-        
-        // Find sticky note content and force colors
-        const stickyNote = item.querySelector('[class*="sticky-note-"]');
-        if (stickyNote) {
-          const colorClass = stickyNote.className.match(/sticky-note-(\w+)/)?.[1];
-          
-          if (colorClass === 'yellow') {
-            stickyNote.style.backgroundColor = '#fef3c7';
-            stickyNote.style.borderLeftColor = '#fbbf24';
-          } else if (colorClass === 'pink') {
-            stickyNote.style.backgroundColor = '#fce7f3';
-            stickyNote.style.borderLeftColor = '#f472b6';
-          } else if (colorClass === 'blue') {
-            stickyNote.style.backgroundColor = '#dbeafe';
-            stickyNote.style.borderLeftColor = '#60a5fa';
-          } else if (colorClass === 'gray') {
-            stickyNote.style.backgroundColor = '#f3f4f6';
-            stickyNote.style.borderLeftColor = '#9ca3af';
-          }
-          
-          stickyNote.style.opacity = '1';
-          stickyNote.style.visibility = 'visible';
-        }
+      // Sort the notes array based on the new order
+      return [...prevNotes].sort((a, b) => {
+        const aOrder = newOrder.find(item => item.id === a.id)?.order ?? 999;
+        const bOrder = newOrder.find(item => item.id === b.id)?.order ?? 999;
+        return aOrder - bOrder;
       });
-    };
-
-    // Use a more frequent interval to force colors
-    const interval = setInterval(forceColors, 50);
-    
-    // Also use mutation observer
-    const observer = new MutationObserver(forceColors);
-    observer.observe(document.body, {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ['style', 'class']
     });
+  };
 
-    return () => {
-      clearInterval(interval);
-      observer.disconnect();
-    };
-  }, []);
+  // Note: Removed react-grid-layout handlers - using @hello-pangea/dnd instead
+
+  // Note: Removed complex JavaScript drag styling - using @hello-pangea/dnd instead
 
   // File upload handler
   const onDrop = (acceptedFiles: File[], noteId: number) => {
@@ -403,331 +344,43 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   return createPortal(
     <>
-      {/* Custom CSS for white drag shadow and drop zones */}
+      {/* Simple drag and drop - minimal animations */}
       <style>
         {`
-          /* AGGRESSIVE OVERRIDE: Force all dragged items to be visible and colorful */
-          .react-grid-item.react-draggable-dragging,
-          .react-grid-layout .react-grid-item.react-draggable-dragging,
-          .react-grid-item.react-draggable-dragging[style],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style] {
-            /* REMOVED: background: transparent !important; - this was making the card transparent */
-            /* REMOVED: background-color: transparent !important; - this was making the card transparent */
-            border: none !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
-          }
+            /* Disable all drag animations for simple experience */
+            [data-rbd-draggable-id],
+            .react-beautiful-dnd-dragging,
+            .react-beautiful-dnd-dragging * {
+              transition: none !important;
+              animation: none !important;
+            }
 
-          /* FORCE: Override any library styling that makes dragged items transparent */
-          .react-grid-item.react-draggable-dragging *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging *,
-          .react-grid-item.react-draggable-dragging > *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > *,
-          .react-grid-item.react-draggable-dragging div,
-          .react-grid-layout .react-grid-item.react-draggable-dragging div {
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: inherit !important;
-            background-color: inherit !important;
-            color: inherit !important;
-          }
+            /* Keep only hover effects */
+            .grid > div:hover {
+              transform: scale(1.02);
+              transition: transform 0.2s ease-out;
+            }
 
-          /* NUCLEAR OPTION: Force sticky note colors during drag */
-          .react-grid-item.react-draggable-dragging .sticky-note-yellow,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-yellow,
-          .react-grid-item.react-draggable-dragging .sticky-note-pink,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-pink,
-          .react-grid-item.react-draggable-dragging .sticky-note-blue,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-blue,
-          .react-grid-item.react-draggable-dragging .sticky-note-gray,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-gray {
-            background: inherit !important;
-            background-color: inherit !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            color: inherit !important;
-          }
+            /* Dropzone indicator */
+            .dropzone-indicator {
+              border: 2px dashed #ffffff;
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 8px;
+              position: relative;
+            }
 
-          /* FORCE: Make the dragged sticky note content visible and colorful */
-          .react-grid-item.react-draggable-dragging > *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > *,
-          .react-grid-item.react-draggable-dragging div,
-          .react-grid-layout .react-grid-item.react-draggable-dragging div {
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: inherit !important;
-            background-color: inherit !important;
-            color: inherit !important;
-          }
-
-          /* FORCE: Make all content inside dragged items fully visible */
-          .react-grid-item.react-draggable-dragging *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging *,
-          .react-grid-item.react-draggable-dragging > *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > * {
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: inherit !important;
-            color: inherit !important;
-            background-color: inherit !important;
-          }
-
-          /* FORCE: Override any library styling that makes items transparent */
-          .react-grid-item.react-draggable-dragging > div,
-          .react-grid-layout .react-grid-item.react-draggable-dragging > div {
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: inherit !important;
-            background-color: inherit !important;
-            color: inherit !important;
-          }
-
-          /* FORCE: Yellow sticky notes stay yellow - target the sticky note content */
-          .react-grid-item.react-draggable-dragging .border-yellow-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .border-yellow-400,
-          .react-grid-item.react-draggable-dragging [class*="border-yellow"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="border-yellow"],
-          .react-grid-item.react-draggable-dragging [class*="bg-yellow"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="bg-yellow"],
-          .react-grid-item.react-draggable-dragging .sticky-note-yellow,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-yellow {
-            background-color: #fef3c7 !important; /* bg-yellow-100 */
-            border-left: 4px solid #fbbf24 !important; /* border-yellow-400 */
-            color: #1f2937 !important; /* Dark text for readability */
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: #fef3c7 !important; /* Force background */
-            background-color: #fef3c7 !important; /* Force background color */
-          }
-
-          /* FORCE: Any yellow sticky note content */
-          .react-grid-item.react-draggable-dragging *[class*="yellow"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging *[class*="yellow"],
-          .react-grid-item.react-draggable-dragging .sticky-note-yellow,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-yellow {
-            background-color: #fef3c7 !important;
-            background: #fef3c7 !important;
-            color: #1f2937 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-          }
-
-          /* FORCE: Pink sticky notes stay pink - target the sticky note content */
-          .react-grid-item.react-draggable-dragging .border-pink-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .border-pink-400,
-          .react-grid-item.react-draggable-dragging [class*="border-pink"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="border-pink"],
-          .react-grid-item.react-draggable-dragging [class*="bg-pink"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="bg-pink"],
-          .react-grid-item.react-draggable-dragging .sticky-note-pink,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-pink {
-            background-color: #fce7f3 !important; /* bg-pink-100 */
-            border-left: 4px solid #f472b6 !important; /* border-pink-400 */
-            color: #1f2937 !important; /* Dark text for readability */
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: #fce7f3 !important; /* Force background */
-            background-color: #fce7f3 !important; /* Force background color */
-          }
-
-          /* FORCE: Any pink sticky note content */
-          .react-grid-item.react-draggable-dragging *[class*="pink"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging *[class*="pink"],
-          .react-grid-item.react-draggable-dragging .sticky-note-pink,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-pink {
-            background-color: #fce7f3 !important;
-            background: #fce7f3 !important;
-            color: #1f2937 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-          }
-
-          /* FORCE: Blue sticky notes stay blue - target the sticky note content */
-          .react-grid-item.react-draggable-dragging .border-blue-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .border-blue-400,
-          .react-grid-item.react-draggable-dragging [class*="border-blue"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="border-blue"],
-          .react-grid-item.react-draggable-dragging [class*="bg-blue"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="bg-blue"],
-          .react-grid-item.react-draggable-dragging .sticky-note-blue,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-blue {
-            background-color: #dbeafe !important; /* bg-blue-100 */
-            border-left: 4px solid #60a5fa !important; /* border-blue-400 */
-            color: #1f2937 !important; /* Dark text for readability */
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: #dbeafe !important; /* Force background */
-            background-color: #dbeafe !important; /* Force background color */
-          }
-
-          /* FORCE: Any blue sticky note content */
-          .react-grid-item.react-draggable-dragging *[class*="blue"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging *[class*="blue"],
-          .react-grid-item.react-draggable-dragging .sticky-note-blue,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-blue {
-            background-color: #dbeafe !important;
-            background: #dbeafe !important;
-            color: #1f2937 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-          }
-
-          /* FORCE: Gray sticky notes stay gray - target the sticky note content */
-          .react-grid-item.react-draggable-dragging .border-gray-400,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .border-gray-400,
-          .react-grid-item.react-draggable-dragging [class*="border-gray"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="border-gray"],
-          .react-grid-item.react-draggable-dragging [class*="bg-gray"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging [class*="bg-gray"],
-          .react-grid-item.react-draggable-dragging .sticky-note-gray,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-gray {
-            background-color: #f3f4f6 !important; /* bg-gray-100 */
-            border-left: 4px solid #9ca3af !important; /* border-gray-400 */
-            color: #1f2937 !important; /* Dark text for readability */
-            opacity: 1 !important;
-            visibility: visible !important;
-            background: #f3f4f6 !important; /* Force background */
-            background-color: #f3f4f6 !important; /* Force background color */
-          }
-
-          /* FORCE: Any gray sticky note content */
-          .react-grid-item.react-draggable-dragging *[class*="gray"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging *[class*="gray"],
-          .react-grid-item.react-draggable-dragging .sticky-note-gray,
-          .react-grid-layout .react-grid-item.react-draggable-dragging .sticky-note-gray {
-            background-color: #f3f4f6 !important;
-            background: #f3f4f6 !important;
-            color: #1f2937 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-          }
-
-          /* FORCE: Remove any overlays or pseudo-elements */
-          .react-grid-item.react-draggable-dragging::before,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
-          .react-grid-item.react-draggable-dragging::after,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
-            display: none !important;
-            content: none !important;
-          }
-
-          /* DROP ZONE: Make it transparent with white border */
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            border-radius: 8px !important;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* DROP ZONE INDICATOR: Make the drop zone transparent with white border */
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* OVERRIDE: Any red drop zone indicators - target the drop zone specifically */
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background-color"] {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* AGGRESSIVE: Override any red/burgundy drop zone indicators */
-          .react-grid-layout .react-grid-item.react-draggable-dragging,
-          .react-grid-layout .react-grid-item.react-draggable-dragging *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* FORCE: Override any inline styles that might be setting red colors */
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style] {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* ULTRA AGGRESSIVE: Target any element with red/burgundy colors */
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="rgb"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="rgba"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="#"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="red"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="burgundy"] {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* FORCE: Override any red colors in the drop zone */
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background: rgb"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background: rgba"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background: #"] {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* NUCLEAR OPTION: Override ALL possible red drop zone indicators */
-          .react-grid-layout .react-grid-item.react-draggable-dragging,
-          .react-grid-layout .react-grid-item.react-draggable-dragging *,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::before,
-          .react-grid-layout .react-grid-item.react-draggable-dragging::after,
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background-color"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="rgb"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="rgba"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="#"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="red"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="burgundy"] {
-            background: transparent !important;
-            background-color: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* DROP ZONE INDICATOR: Target the actual drop zone indicator */
-          .react-grid-layout .react-grid-item.react-draggable-dragging {
-            background: transparent !important;
-            border: 2px solid rgba(255, 255, 255, 0.8) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-          }
-
-          /* OVERRIDE: Any inline styles */
-          .react-grid-item.react-draggable-dragging[style*="background"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="background"] {
-            background: transparent !important;
-            background-color: transparent !important;
-          }
-
-          /* OVERRIDE: Any opacity styles */
-          .react-grid-item.react-draggable-dragging[style*="opacity"],
-          .react-grid-layout .react-grid-item.react-draggable-dragging[style*="opacity"] {
-            opacity: 1 !important;
-          }
-        `}
+            .dropzone-indicator::before {
+              content: '';
+              position: absolute;
+              top: -2px;
+              left: -2px;
+              right: -2px;
+              bottom: -2px;
+              border: 2px solid #ffffff;
+              border-radius: 8px;
+              box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            }
+          `}
       </style>
       <div className='fixed inset-0 z-50 flex'>
         {/* Backdrop */}
@@ -794,6 +447,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 <Button
                   variant='outline'
                   size='sm'
+                  onClick={() => {
+                    const newNote: StickyNote = {
+                      id: Date.now(),
+                      title: 'New Note',
+                      content: 'Click to edit...',
+                      color: 'yellow',
+                      createdAt: new Date(),
+                      tags: [],
+                    };
+                    setNotes(prev => [...prev, newNote]);
+                    setSelectedNote(newNote);
+                    setEditingNote(newNote);
+                    setEditTitle(newNote.title);
+                    setEditContent(newNote.content);
+                  }}
                   className='flex items-center space-x-1 border-gray-600 text-gray-300 hover:bg-gray-700'
                 >
                   <Plus className='h-4 w-4' />
@@ -1131,77 +799,245 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               )}
 
               {viewMode === 'grid' && (
-                <div className='flex-1 bg-gray-900 p-4'>
-                  <ResponsiveGridLayout
-                    className='layout'
-                    layouts={{ lg: gridLayout }}
-                    breakpoints={{
-                      lg: 1200,
-                      md: 996,
-                      sm: 768,
-                      xs: 480,
-                      xxs: 0,
-                    }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    onLayoutChange={handleLayoutChange}
-                  >
-                    {filteredNotes.map(note => (
-                      <div
-                        key={note.id}
-                        className={`h-full w-full rounded-lg border-l-4 sticky-note-${note.color} ${
-                          note.color === 'yellow'
-                            ? 'border-yellow-400 bg-yellow-100'
-                            : note.color === 'pink'
-                              ? 'border-pink-400 bg-pink-100'
-                              : note.color === 'blue'
-                                ? 'border-blue-400 bg-blue-100'
-                                : 'border-gray-400 bg-gray-100'
-                        }`}
-                        style={{
-                          backgroundColor:
-                            note.color === 'yellow'
-                              ? '#fef3c7'
-                              : note.color === 'pink'
-                                ? '#fce7f3'
-                                : note.color === 'blue'
-                                  ? '#dbeafe'
-                                  : '#f3f4f6',
-                          borderLeftColor:
-                            note.color === 'yellow'
-                              ? '#fbbf24'
-                              : note.color === 'pink'
-                                ? '#f472b6'
-                                : note.color === 'blue'
-                                  ? '#60a5fa'
-                                  : '#9ca3af',
-                        }}
-                      >
-                        <div className='p-3 h-full flex flex-col'>
-                          <div className='font-medium text-gray-900'>
-                            {note.title}
-                          </div>
-                          <div className='text-sm text-gray-700 mt-1 flex-1'>
-                            {note.content}
-                          </div>
-                          <div className='text-xs text-gray-500 mt-2'>
-                            {note.createdAt.toLocaleDateString()}
-                          </div>
-                          {note.tags && note.tags.length > 0 && (
-                            <div className='flex flex-wrap gap-1 mt-2'>
-                              {note.tags.map(tag => (
-                                <span
-                                  key={tag}
-                                  className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
+                <div className='flex-1 bg-gray-900 overflow-auto max-h-[calc(100vh-200px)]'>
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable
+                      droppableId='sticky-notes-grid'
+                      direction='horizontal'
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className={`grid grid-cols-3 gap-6 p-6 min-w-max ${
+                            snapshot.isDraggingOver
+                              ? 'bg-gray-800 dropzone-indicator'
+                              : 'bg-gray-900'
+                          }`}
+                          style={{
+                            minHeight: '400px',
+                            gridTemplateRows:
+                              'repeat(auto-fit, minmax(288px, 1fr))',
+                            gridAutoRows: '288px',
+                          }}
+                        >
+                          {filteredNotes.map((note, index) => (
+                            <Draggable
+                              key={note.id}
+                              draggableId={note.id.toString()}
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  onClick={() => handleNoteClick(note.id)}
+                                  onDoubleClick={() =>
+                                    handleNoteDoubleClick(note.id)
+                                  }
+                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
+                                    note.color === 'yellow'
+                                      ? 'border-yellow-400 bg-yellow-100'
+                                      : note.color === 'pink'
+                                        ? 'border-pink-400 bg-pink-100'
+                                        : note.color === 'blue'
+                                          ? 'border-blue-400 bg-blue-100'
+                                          : 'border-gray-400 bg-gray-100'
+                                  } ${
+                                    snapshot.isDragging
+                                      ? 'shadow-lg z-50'
+                                      : 'hover:shadow-md'
+                                  }`}
+                                  style={{
+                                    backgroundColor:
+                                      note.color === 'yellow'
+                                        ? '#fef3c7'
+                                        : note.color === 'pink'
+                                          ? '#fce7f3'
+                                          : note.color === 'blue'
+                                            ? '#dbeafe'
+                                            : '#f3f4f6',
+                                    borderLeftColor:
+                                      note.color === 'yellow'
+                                        ? '#fbbf24'
+                                        : note.color === 'pink'
+                                          ? '#f472b6'
+                                          : note.color === 'blue'
+                                            ? '#60a5fa'
+                                            : '#9ca3af',
+                                    ...provided.draggableProps.style,
+                                  }}
                                 >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                                  <div className='p-3 h-full flex flex-col'>
+                                    <div className='flex items-center justify-between mb-2'>
+                                      <div className='font-medium text-gray-900'>
+                                        {note.title}
+                                      </div>
+                                      <div className='flex items-center space-x-1'>
+                                        <button
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            setShowColorPicker(
+                                              !showColorPicker
+                                            );
+                                          }}
+                                          className='w-4 h-4 rounded-full border-2 border-gray-300 hover:border-gray-500'
+                                          style={{
+                                            backgroundColor:
+                                              note.color === 'yellow'
+                                                ? '#fbbf24'
+                                                : note.color === 'pink'
+                                                  ? '#f472b6'
+                                                  : note.color === 'blue'
+                                                    ? '#60a5fa'
+                                                    : '#9ca3af',
+                                          }}
+                                          title='Change color'
+                                        />
+                                        <button
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            setShowFormatting(!showFormatting);
+                                          }}
+                                          className='text-gray-500 hover:text-gray-700 text-xs'
+                                          title='Formatting'
+                                        >
+                                          Aa
+                                        </button>
+                                        <div className='text-gray-500 cursor-move'>
+                                          ⋮⋮
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className='text-sm text-gray-700 mt-1 flex-1'>
+                                      {note.content}
+                                    </div>
+                                    <div className='text-xs text-gray-500 mt-2'>
+                                      {note.createdAt.toLocaleDateString()}
+                                    </div>
+                                    {note.tags && note.tags.length > 0 && (
+                                      <div className='flex flex-wrap gap-1 mt-2'>
+                                        {note.tags.map(tag => (
+                                          <span
+                                            key={tag}
+                                            className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full'
+                                          >
+                                            {tag}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    {/* Color Picker */}
+                                    {showColorPicker && (
+                                      <div className='absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
+                                        <div className='flex space-x-2'>
+                                          {[
+                                            'yellow',
+                                            'pink',
+                                            'blue',
+                                            'gray',
+                                          ].map(color => (
+                                            <button
+                                              key={color}
+                                              onClick={() =>
+                                                handleColorChange(
+                                                  note.id,
+                                                  color
+                                                )
+                                              }
+                                              className={`w-6 h-6 rounded-full border-2 ${
+                                                note.color === color
+                                                  ? 'border-gray-800'
+                                                  : 'border-gray-300'
+                                              }`}
+                                              style={{
+                                                backgroundColor:
+                                                  color === 'yellow'
+                                                    ? '#fbbf24'
+                                                    : color === 'pink'
+                                                      ? '#f472b6'
+                                                      : color === 'blue'
+                                                        ? '#60a5fa'
+                                                        : '#9ca3af',
+                                              }}
+                                              title={color}
+                                            />
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Formatting Panel */}
+                                    {showFormatting && (
+                                      <div className='absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
+                                        <div className='flex space-x-1'>
+                                          <button
+                                            onClick={() => {
+                                              // Bold formatting
+                                              setEditContent(
+                                                prev => prev + ' **bold** '
+                                              );
+                                              setShowFormatting(false);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                            title='Bold'
+                                          >
+                                            B
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              // Italic formatting
+                                              setEditContent(
+                                                prev => prev + ' *italic* '
+                                              );
+                                              setShowFormatting(false);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                            title='Italic'
+                                          >
+                                            I
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              // Bullet list
+                                              setEditContent(
+                                                prev => prev + '\n• '
+                                              );
+                                              setShowFormatting(false);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                            title='Bullet List'
+                                          >
+                                            •
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              // Numbered list
+                                              setEditContent(
+                                                prev => prev + '\n1. '
+                                              );
+                                              setShowFormatting(false);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                            title='Numbered List'
+                                          >
+                                            1.
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
                         </div>
-                      </div>
-                    ))}
-                  </ResponsiveGridLayout>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
                 </div>
               )}
 
