@@ -22,7 +22,7 @@ import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { useDropzone } from 'react-dropzone';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { stickyNotesService, StickyNote as APIStickyNote } from '../services/sticky-notes.service';
+import { stickyNotesService } from '../services/sticky-notes.service';
 
 interface StickyNotesModalProps {
   isOpen: boolean;
@@ -703,7 +703,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   <div className='text-gray-500'>Loading notes...</div>
                 </div>
               )}
-              
+
               {error && (
                 <div className='bg-red-50 border border-red-200 rounded-lg p-4 m-4'>
                   <div className='text-red-800'>{error}</div>
@@ -764,7 +764,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.content}
                                       </div>
                                       <div className='text-xs text-gray-500 group-hover:text-gray-300 mt-2'>
-                                        {new Date(note.created_at).toLocaleDateString()}
+                                        {new Date(
+                                          note.created_at
+                                        ).toLocaleDateString()}
                                       </div>
                                       {note.tags && note.tags.length > 0 && (
                                         <div className='flex flex-wrap gap-1 mt-2'>
@@ -1392,7 +1394,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       </>
                                     )}
                                     <div className='text-xs text-gray-500 mt-2'>
-                                      {new Date(note.created_at).toLocaleDateString()}
+                                      {new Date(
+                                        note.created_at
+                                      ).toLocaleDateString()}
                                     </div>
                                     {note.tags && note.tags.length > 0 && (
                                       <div className='flex flex-wrap gap-1 mt-2'>
@@ -1495,7 +1499,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                           <div className='flex items-center space-x-4 text-gray-400'>
                             <div className='flex items-center space-x-1'>
                               <Calendar className='h-4 w-4' />
-                              <span>{new Date(note.created_at).toLocaleDateString()}</span>
+                              <span>
+                                {new Date(note.created_at).toLocaleDateString()}
+                              </span>
                             </div>
                             {note.category && (
                               <div className='flex items-center space-x-1'>
