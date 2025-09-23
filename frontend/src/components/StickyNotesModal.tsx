@@ -282,16 +282,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     setNotes(prevNotes =>
       prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
     );
-    setShowColorPicker(null);
   };
 
   // Enhanced formatting functions
   const applyFormatting = (noteId: number, format: string) => {
-    const note = notes.find(n => n.id === noteId);
-    if (!note) return;
+    let newContent = editContent;
 
-    let newContent = note.content;
-    
     switch (format) {
       case 'bold':
         newContent += ' **bold text** ';
@@ -339,22 +335,20 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         newContent += '\n---\n';
         break;
       case 'left':
-        newContent += '\n<div style="text-align: left;">Left aligned text</div>\n';
+        newContent +=
+          '\n<div style="text-align: left;">Left aligned text</div>\n';
         break;
       case 'center':
-        newContent += '\n<div style="text-align: center;">Center aligned text</div>\n';
+        newContent +=
+          '\n<div style="text-align: center;">Center aligned text</div>\n';
         break;
       case 'right':
-        newContent += '\n<div style="text-align: right;">Right aligned text</div>\n';
+        newContent +=
+          '\n<div style="text-align: right;">Right aligned text</div>\n';
         break;
     }
 
-    setNotes(prevNotes =>
-      prevNotes.map(n => 
-        n.id === noteId ? { ...n, content: newContent } : n
-      )
-    );
-    setShowFormatting(null);
+    setEditContent(newContent);
   };
 
   const handleEdit = () => {
@@ -815,6 +809,207 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             )}
                           </div>
 
+                          {/* Color Picker and Formatting Tools - Only in Edit Mode */}
+                          {editingNote && (
+                            <div className='space-y-4'>
+                              {/* Color Picker */}
+                              <div>
+                                <label className='block text-sm font-medium text-gray-300 mb-2'>
+                                  Note Color
+                                </label>
+                                <div className='flex flex-wrap gap-2'>
+                                  {Object.entries(colorConfig).map(([colorKey, colorData]) => (
+                                    <button
+                                      key={colorKey}
+                                      onClick={() => handleColorChange(editingNote, colorKey as keyof typeof colorConfig)}
+                                      className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                                        notes.find(n => n.id === editingNote)?.color === colorKey
+                                          ? 'border-white ring-2 ring-blue-400'
+                                          : 'border-gray-400 hover:border-gray-200'
+                                      }`}
+                                      style={{
+                                        backgroundColor: colorData.border,
+                                      }}
+                                      title={colorData.name}
+                                    />
+                                  ))}
+                                </div>
+                                <div className='text-xs text-gray-400 mt-1'>
+                                  Current: {colorConfig[notes.find(n => n.id === editingNote)?.color as keyof typeof colorConfig]?.name}
+                                </div>
+                              </div>
+
+                              {/* Formatting Tools */}
+                              <div>
+                                <label className='block text-sm font-medium text-gray-300 mb-2'>
+                                  Quick Formatting
+                                </label>
+                                <div className='bg-gray-800 rounded-lg p-3 space-y-3'>
+                                  {/* Text Formatting */}
+                                  <div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>Text Style</div>
+                                    <div className='flex flex-wrap gap-1'>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'bold')}
+                                        className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded font-bold text-white'
+                                        title='Bold'
+                                      >
+                                        B
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'italic')}
+                                        className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded italic text-white'
+                                        title='Italic'
+                                      >
+                                        I
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'underline')}
+                                        className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded underline text-white'
+                                        title='Underline'
+                                      >
+                                        U
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'strikethrough')}
+                                        className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded line-through text-white'
+                                        title='Strikethrough'
+                                      >
+                                        S
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Headings */}
+                                  <div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>Headings</div>
+                                    <div className='flex flex-wrap gap-1'>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'h1')}
+                                        className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
+                                        title='Heading 1'
+                                      >
+                                        H1
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'h2')}
+                                        className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
+                                        title='Heading 2'
+                                      >
+                                        H2
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'h3')}
+                                        className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
+                                        title='Heading 3'
+                                      >
+                                        H3
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Lists */}
+                                  <div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>Lists</div>
+                                    <div className='flex flex-wrap gap-1'>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'bullet')}
+                                        className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
+                                        title='Bullet List'
+                                      >
+                                        •
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'numbered')}
+                                        className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
+                                        title='Numbered List'
+                                      >
+                                        1.
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'checkbox')}
+                                        className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
+                                        title='Checkbox List'
+                                      >
+                                        ☐
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Special Formatting */}
+                                  <div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>Special</div>
+                                    <div className='flex flex-wrap gap-1'>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'quote')}
+                                        className='px-2 py-1 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white'
+                                        title='Quote'
+                                      >
+                                        "
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'code')}
+                                        className='px-2 py-1 text-xs bg-orange-600 hover:bg-orange-500 rounded font-mono text-white'
+                                        title='Inline Code'
+                                      >
+                                        &lt;/&gt;
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'codeblock')}
+                                        className='px-2 py-1 text-xs bg-orange-600 hover:bg-orange-500 rounded font-mono text-white'
+                                        title='Code Block'
+                                      >
+                                        {}
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'link')}
+                                        className='px-2 py-1 text-xs bg-cyan-600 hover:bg-cyan-500 rounded text-white'
+                                        title='Link'
+                                      >
+                                        🔗
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Alignment */}
+                                  <div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>Alignment</div>
+                                    <div className='flex flex-wrap gap-1'>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'left')}
+                                        className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
+                                        title='Left Align'
+                                      >
+                                        ⬅
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'center')}
+                                        className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
+                                        title='Center Align'
+                                      >
+                                        ↔
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'right')}
+                                        className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
+                                        title='Right Align'
+                                      >
+                                        ➡
+                                      </button>
+                                      <button
+                                        onClick={() => applyFormatting(editingNote, 'divider')}
+                                        className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
+                                        title='Divider'
+                                      >
+                                        ─
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
                           {/* Content */}
                           <div>
                             <label className='block text-sm font-medium text-gray-300 mb-2'>
@@ -966,32 +1161,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         <button
                                           onClick={e => {
                                             e.stopPropagation();
-                                            setShowColorPicker(
-                                              showColorPicker === note.id
-                                                ? null
-                                                : note.id
-                                            );
+                                            setSelectedNote(note.id);
+                                            setEditingNote(note.id);
+                                            setEditTitle(note.title);
+                                            setEditContent(note.content);
                                           }}
-                                          className='w-4 h-4 rounded-full border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-110'
-                                          style={{
-                                            backgroundColor:
-                                              colorConfig[
-                                                note.color as keyof typeof colorConfig
-                                              ]?.border || '#9ca3af',
-                                          }}
-                                          title='Change color'
-                                        />
-                                        <button
-                                          onClick={e => {
-                                            e.stopPropagation();
-                                            setShowFormatting(
-                                              showFormatting === note.id
-                                                ? null
-                                                : note.id
-                                            );
-                                          }}
-                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110 font-bold'
-                                          title='Formatting Tools'
+                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                          title='Edit Note'
                                         >
                                           ✏️
                                         </button>
@@ -1060,173 +1236,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       </div>
                                     )}
 
-                                    {/* Enhanced Formatting Panel */}
-                                    {showFormatting === note.id && (
-                                      <div className='formatting-panel absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-xl p-3 z-20 min-w-[280px] max-w-[320px]'>
-                                        <div className='text-xs font-medium text-gray-600 mb-3'>Formatting Tools</div>
-                                        
-                                        {/* Text Formatting */}
-                                        <div className='mb-3'>
-                                          <div className='text-xs font-medium text-gray-500 mb-2'>Text Style</div>
-                                          <div className='flex flex-wrap gap-1'>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'bold')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded font-bold'
-                                              title='Bold'
-                                            >
-                                              B
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'italic')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded italic'
-                                              title='Italic'
-                                            >
-                                              I
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'underline')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded underline'
-                                              title='Underline'
-                                            >
-                                              U
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'strikethrough')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded line-through'
-                                              title='Strikethrough'
-                                            >
-                                              S
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Headings */}
-                                        <div className='mb-3'>
-                                          <div className='text-xs font-medium text-gray-500 mb-2'>Headings</div>
-                                          <div className='flex flex-wrap gap-1'>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'h1')}
-                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
-                                              title='Heading 1'
-                                            >
-                                              H1
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'h2')}
-                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
-                                              title='Heading 2'
-                                            >
-                                              H2
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'h3')}
-                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
-                                              title='Heading 3'
-                                            >
-                                              H3
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Lists */}
-                                        <div className='mb-3'>
-                                          <div className='text-xs font-medium text-gray-500 mb-2'>Lists</div>
-                                          <div className='flex flex-wrap gap-1'>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'bullet')}
-                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
-                                              title='Bullet List'
-                                            >
-                                              •
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'numbered')}
-                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
-                                              title='Numbered List'
-                                            >
-                                              1.
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'checkbox')}
-                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
-                                              title='Checkbox List'
-                                            >
-                                              ☐
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Special Formatting */}
-                                        <div className='mb-3'>
-                                          <div className='text-xs font-medium text-gray-500 mb-2'>Special</div>
-                                          <div className='flex flex-wrap gap-1'>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'quote')}
-                                              className='px-2 py-1 text-xs bg-purple-100 hover:bg-purple-200 rounded'
-                                              title='Quote'
-                                            >
-                                              "
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'code')}
-                                              className='px-2 py-1 text-xs bg-orange-100 hover:bg-orange-200 rounded font-mono'
-                                              title='Inline Code'
-                                            >
-                                              &lt;/&gt;
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'codeblock')}
-                                              className='px-2 py-1 text-xs bg-orange-100 hover:bg-orange-200 rounded font-mono'
-                                              title='Code Block'
-                                            >
-                                              { }
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'link')}
-                                              className='px-2 py-1 text-xs bg-cyan-100 hover:bg-cyan-200 rounded'
-                                              title='Link'
-                                            >
-                                              🔗
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Alignment */}
-                                        <div className='mb-3'>
-                                          <div className='text-xs font-medium text-gray-500 mb-2'>Alignment</div>
-                                          <div className='flex flex-wrap gap-1'>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'left')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                              title='Left Align'
-                                            >
-                                              ⬅
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'center')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                              title='Center Align'
-                                            >
-                                              ↔
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'right')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                              title='Right Align'
-                                            >
-                                              ➡
-                                            </button>
-                                            <button
-                                              onClick={() => applyFormatting(note.id, 'divider')}
-                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                              title='Divider'
-                                            >
-                                              ─
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
                                   </div>
                                 </div>
                               )}
