@@ -1393,12 +1393,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               ✏️
                                             </button>
                                              <div
-                                               {...(inlineEditingNote !== note.id ? provided.dragHandleProps : {})}
+                                               {...provided.dragHandleProps}
                                                onClick={(e) => e.stopPropagation()}
-                                               className={`text-gray-500 cursor-move ${
+                                               className={`text-gray-500 ${
                                                  inlineEditingNote === note.id
-                                                   ? 'invisible'
-                                                   : ''
+                                                   ? 'invisible cursor-default'
+                                                   : 'cursor-move'
                                                }`}
                                                data-rbd-drag-handle-draggable-id={
                                                  note.id
