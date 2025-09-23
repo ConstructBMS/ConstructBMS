@@ -75,6 +75,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState<number | null>(null);
   const [showFormatting, setShowFormatting] = useState<number | null>(null);
+  const [inlineEditingNote, setInlineEditingNote] = useState<number | null>(null);
+  const [inlineEditTitle, setInlineEditTitle] = useState('');
+  const [inlineEditContent, setInlineEditContent] = useState('');
   const [notes, setNotes] = useState<StickyNote[]>([
     {
       id: 1,
@@ -250,15 +253,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   };
 
   const handleNoteDoubleClick = (noteId: number) => {
-    setSelectedNote(noteId);
-    setEditingNote(noteId);
-    const note = notes.find(n => n.id === noteId);
-    if (note) {
-      setEditTitle(note.title);
-      setEditContent(note.content);
-    }
-    // Switch to list view for editing
-    setViewMode('list');
+    startInlineEdit(noteId);
   };
 
   // Color configuration with expanded options
@@ -286,9 +281,40 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     );
   };
 
+  // Inline editing functions
+  const startInlineEdit = (noteId: number) => {
+    const note = notes.find(n => n.id === noteId);
+    if (note) {
+      setInlineEditingNote(noteId);
+      setInlineEditTitle(note.title);
+      setInlineEditContent(note.content);
+    }
+  };
+
+  const saveInlineEdit = () => {
+    if (inlineEditingNote) {
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === inlineEditingNote
+            ? { ...note, title: inlineEditTitle, content: inlineEditContent }
+            : note
+        )
+      );
+      setInlineEditingNote(null);
+      setInlineEditTitle('');
+      setInlineEditContent('');
+    }
+  };
+
+  const cancelInlineEdit = () => {
+    setInlineEditingNote(null);
+    setInlineEditTitle('');
+    setInlineEditContent('');
+  };
+
   // Enhanced formatting functions
   const applyFormatting = (noteId: number, format: string) => {
-    let newContent = editContent;
+    let newContent = inlineEditingNote === noteId ? inlineEditContent : editContent;
 
     switch (format) {
       case 'bold':
@@ -350,7 +376,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         break;
     }
 
-    setEditContent(newContent);
+    if (inlineEditingNote === noteId) {
+      setInlineEditContent(newContent);
+    } else {
+      setEditContent(newContent);
+    }
   };
 
   const handleEdit = () => {
@@ -1233,34 +1263,99 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   }}
                                 >
                                   <div className='p-3 h-full flex flex-col'>
-                                    <div className='flex items-center justify-between mb-2'>
-                                      <div className='font-medium text-gray-900'>
-                                        {note.title}
-                                      </div>
-                                      <div className='flex items-center space-x-1'>
-                                        <button
-                                          onClick={e => {
-                                            e.stopPropagation();
-                                            setSelectedNote(note.id);
-                                            setEditingNote(note.id);
-                                            setEditTitle(note.title);
-                                            setEditContent(note.content);
-                                            // Switch to list view for editing
-                                            setViewMode('list');
-                                          }}
-                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
-                                          title='Edit Note'
-                                        >
-                                          ✏️
-                                        </button>
-                                        <div className='text-gray-500 cursor-move'>
-                                          ⋮⋮
+                                    {inlineEditingNote === note.id ? (
+                                      // Inline editing mode
+                                      <div className='space-y-3'>
+                                        {/* Title editing */}
+                                        <div>
+                                          <input
+                                            type='text'
+                                            value={inlineEditTitle}
+                                            onChange={e => setInlineEditTitle(e.target.value)}
+                                            className='w-full px-2 py-1 text-sm font-medium bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-900'
+                                            placeholder='Note title...'
+                                            autoFocus
+                                          />
+                                        </div>
+                                        
+                                        {/* Content editing */}
+                                        <div>
+                                          <textarea
+                                            value={inlineEditContent}
+                                            onChange={e => setInlineEditContent(e.target.value)}
+                                            className='w-full px-2 py-1 text-sm bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-700 resize-none'
+                                            placeholder='Note content...'
+                                            rows={4}
+                                          />
+                                        </div>
+
+                                        {/* Color picker for inline editing */}
+                                        <div className='flex flex-wrap gap-1'>
+                                          {Object.entries(colorConfig).map(([colorKey, colorData]) => (
+                                            <button
+                                              key={colorKey}
+                                              onClick={() => handleColorChange(note.id, colorKey as keyof typeof colorConfig)}
+                                              className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
+                                                note.color === colorKey
+                                                  ? 'border-gray-800 ring-1 ring-gray-600'
+                                                  : 'border-gray-400 hover:border-gray-600'
+                                              }`}
+                                              style={{ backgroundColor: colorData.border }}
+                                              title={colorData.name}
+                                            />
+                                          ))}
+                                        </div>
+
+                                        {/* Action buttons */}
+                                        <div className='flex justify-end space-x-2'>
+                                          <button
+                                            onClick={e => {
+                                              e.stopPropagation();
+                                              saveInlineEdit();
+                                            }}
+                                            className='px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded'
+                                          >
+                                            Save
+                                          </button>
+                                          <button
+                                            onClick={e => {
+                                              e.stopPropagation();
+                                              cancelInlineEdit();
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded'
+                                          >
+                                            Cancel
+                                          </button>
                                         </div>
                                       </div>
-                                    </div>
-                                    <div className='text-sm text-gray-700 mt-1 flex-1'>
-                                      {note.content}
-                                    </div>
+                                    ) : (
+                                      // Normal display mode
+                                      <>
+                                        <div className='flex items-center justify-between mb-2'>
+                                          <div className='font-medium text-gray-900'>
+                                            {note.title}
+                                          </div>
+                                          <div className='flex items-center space-x-1'>
+                                            <button
+                                              onClick={e => {
+                                                e.stopPropagation();
+                                                startInlineEdit(note.id);
+                                              }}
+                                              className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                              title='Edit Note'
+                                            >
+                                              ✏️
+                                            </button>
+                                            <div className='text-gray-500 cursor-move'>
+                                              ⋮⋮
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className='text-sm text-gray-700 mt-1 flex-1'>
+                                          {note.content}
+                                        </div>
+                                      </>
+                                    )}
                                     <div className='text-xs text-gray-500 mt-2'>
                                       {note.createdAt.toLocaleDateString()}
                                     </div>
