@@ -734,6 +734,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   key={note.id}
                                   draggableId={note.id.toString()}
                                   index={index}
+                                  isDragDisabled={inlineEditingNote === note.id}
                                 >
                                   {provided => (
                                     <div
@@ -1261,15 +1262,26 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  onClick={() => handleNoteClick(note.id)}
-                                  onDoubleClick={() =>
-                                    handleNoteDoubleClick(note.id)
-                                  }
-                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
+                                  {...(inlineEditingNote !== note.id ? provided.dragHandleProps : {})}
+                                  onClick={() => {
+                                    if (inlineEditingNote !== note.id) {
+                                      handleNoteClick(note.id);
+                                    }
+                                  }}
+                                  onDoubleClick={(e) => {
+                                    e.preventDefault();
+                                    if (inlineEditingNote !== note.id) {
+                                      handleNoteDoubleClick(note.id);
+                                    }
+                                  }}
+                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
+                                    inlineEditingNote === note.id 
+                                      ? 'cursor-default ring-2 ring-blue-500' 
+                                      : 'cursor-pointer hover:shadow-md'
+                                  } ${
                                     snapshot.isDragging
                                       ? 'shadow-lg z-50'
-                                      : 'hover:shadow-md'
+                                      : ''
                                   }`}
                                   style={{
                                     backgroundColor:
@@ -1383,9 +1395,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             >
                                               ✏️
                                             </button>
-                                            <div className='text-gray-500 cursor-move'>
-                                              ⋮⋮
-                                            </div>
+                                        {inlineEditingNote !== note.id && (
+                                          <div className='text-gray-500 cursor-move'>
+                                            ⋮⋮
+                                          </div>
+                                        )}
                                           </div>
                                         </div>
                                         <div className='text-sm text-gray-700 mt-1 flex-1'>
