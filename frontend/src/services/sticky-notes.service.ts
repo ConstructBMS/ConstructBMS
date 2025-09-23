@@ -1,190 +1,195 @@
-import { StickyNote } from '../app/store/sticky-notes.store';
 import { supabase } from './supabase';
 
-export class StickyNotesService {
-  static async getNotes(): Promise<StickyNote[]> {
+export interface StickyNote {
+  id: string;
+  title: string;
+  content: string;
+  color: 'yellow' | 'pink' | 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'indigo' | 'lime' | 'rose';
+  position_x: number;
+  position_y: number;
+  width: number;
+  height: number;
+  category?: string;
+  tags: string[];
+  project_id?: string;
+  opportunity_id?: string;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  note_attachments?: Array<{
+    id: string;
+    name: string;
+    type: 'image' | 'document';
+    url: string;
+  }>;
+}
+
+export interface CreateStickyNoteData {
+  title: string;
+  content: string;
+  color?: string;
+  position_x?: number;
+  position_y?: number;
+  width?: number;
+  height?: number;
+  category?: string;
+  tags?: string[];
+  project_id?: string;
+  opportunity_id?: string;
+}
+
+export interface UpdateStickyNoteData {
+  title?: string;
+  content?: string;
+  color?: string;
+  position_x?: number;
+  position_y?: number;
+  width?: number;
+  height?: number;
+  category?: string;
+  tags?: string[];
+  project_id?: string;
+  opportunity_id?: string;
+}
+
+class StickyNotesService {
+  private baseUrl = '/api/sticky-notes';
+
+  async getStickyNotes(): Promise<StickyNote[]> {
     try {
       const { data, error } = await supabase
-        .from('sticky_notes')
-        .select('*')
-        .order('updated_at', { ascending: false });
+        .from('notes')
+        .select(`
+          id,
+          title,
+          content,
+          color,
+          position_x,
+          position_y,
+          width,
+          height,
+          category,
+          tags,
+          project_id,
+          opportunity_id,
+          author_id,
+          created_at,
+          updated_at,
+          note_attachments (
+            id,
+            name,
+            type,
+            url
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      return (
-        data?.map(note => ({
-          id: note.id,
-          title: note.title,
-          content: note.content,
-          color: note.color,
-          projectId: note.project_id,
-          contactId: note.contact_id,
-          createdAt: new Date(note.created_at),
-          updatedAt: new Date(note.updated_at),
-          isPinned: note.is_pinned,
-          tags: note.tags || [],
-        })) || []
-      );
+      return data || [];
     } catch (error) {
       console.error('Error fetching sticky notes:', error);
-      return [];
+      throw error;
     }
   }
 
-  static async createNote(
-    note: Omit<StickyNote, 'id' | 'createdAt' | 'updatedAt'>
-  ): Promise<StickyNote> {
+  async createStickyNote(noteData: CreateStickyNoteData): Promise<StickyNote> {
     try {
       const { data, error } = await supabase
-        .from('sticky_notes')
+        .from('notes')
         .insert({
-          title: note.title,
-          content: note.content,
-          color: note.color,
-          project_id: note.projectId,
-          contact_id: note.contactId,
-          is_pinned: note.isPinned,
-          tags: note.tags,
+          ...noteData,
+          author_id: (await supabase.auth.getUser()).data.user?.id
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      return {
-        id: data.id,
-        title: data.title,
-        content: data.content,
-        color: data.color,
-        projectId: data.project_id,
-        contactId: data.contact_id,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at),
-        isPinned: data.is_pinned,
-        tags: data.tags || [],
-      };
+      return data;
     } catch (error) {
       console.error('Error creating sticky note:', error);
       throw error;
     }
   }
 
-  static async updateNote(
-    id: string,
-    updates: Partial<StickyNote>
-  ): Promise<StickyNote> {
+  async updateStickyNote(id: string, noteData: UpdateStickyNoteData): Promise<StickyNote> {
     try {
-      const updateData: any = {};
-
-      if (updates.title !== undefined) updateData.title = updates.title;
-      if (updates.content !== undefined) updateData.content = updates.content;
-      if (updates.color !== undefined) updateData.color = updates.color;
-      if (updates.projectId !== undefined)
-        updateData.project_id = updates.projectId;
-      if (updates.contactId !== undefined)
-        updateData.contact_id = updates.contactId;
-      if (updates.isPinned !== undefined)
-        updateData.is_pinned = updates.isPinned;
-      if (updates.tags !== undefined) updateData.tags = updates.tags;
-
       const { data, error } = await supabase
-        .from('sticky_notes')
-        .update(updateData)
+        .from('notes')
+        .update({
+          ...noteData,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      return {
-        id: data.id,
-        title: data.title,
-        content: data.content,
-        color: data.color,
-        projectId: data.project_id,
-        contactId: data.contact_id,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at),
-        isPinned: data.is_pinned,
-        tags: data.tags || [],
-      };
+      return data;
     } catch (error) {
       console.error('Error updating sticky note:', error);
       throw error;
     }
   }
 
-  static async deleteNote(id: string): Promise<void> {
+  async deleteStickyNote(id: string): Promise<void> {
     try {
       const { error } = await supabase
-        .from('sticky_notes')
+        .from('notes')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error) {
       console.error('Error deleting sticky note:', error);
       throw error;
     }
   }
 
-  static async getNotesByProject(projectId: string): Promise<StickyNote[]> {
+  async addAttachment(noteId: string, attachment: { name: string; type: 'image' | 'document'; url: string }): Promise<void> {
     try {
-      const { data, error } = await supabase
-        .from('sticky_notes')
-        .select('*')
-        .eq('project_id', projectId)
-        .order('updated_at', { ascending: false });
+      const { error } = await supabase
+        .from('note_attachments')
+        .insert({
+          note_id: noteId,
+          ...attachment
+        });
 
-      if (error) throw error;
-
-      return (
-        data?.map(note => ({
-          id: note.id,
-          title: note.title,
-          content: note.content,
-          color: note.color,
-          projectId: note.project_id,
-          contactId: note.contact_id,
-          createdAt: new Date(note.created_at),
-          updatedAt: new Date(note.updated_at),
-          isPinned: note.is_pinned,
-          tags: note.tags || [],
-        })) || []
-      );
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error) {
-      console.error('Error fetching notes by project:', error);
-      return [];
+      console.error('Error adding attachment:', error);
+      throw error;
     }
   }
 
-  static async getNotesByContact(contactId: string): Promise<StickyNote[]> {
+  async removeAttachment(noteId: string, attachmentId: string): Promise<void> {
     try {
-      const { data, error } = await supabase
-        .from('sticky_notes')
-        .select('*')
-        .eq('contact_id', contactId)
-        .order('updated_at', { ascending: false });
+      const { error } = await supabase
+        .from('note_attachments')
+        .delete()
+        .eq('id', attachmentId)
+        .eq('note_id', noteId);
 
-      if (error) throw error;
-
-      return (
-        data?.map(note => ({
-          id: note.id,
-          title: note.title,
-          content: note.content,
-          color: note.color,
-          projectId: note.project_id,
-          contactId: note.contact_id,
-          createdAt: new Date(note.created_at),
-          updatedAt: new Date(note.updated_at),
-          isPinned: note.is_pinned,
-          tags: note.tags || [],
-        })) || []
-      );
+      if (error) {
+        throw new Error(error.message);
+      }
     } catch (error) {
-      console.error('Error fetching notes by contact:', error);
-      return [];
+      console.error('Error removing attachment:', error);
+      throw error;
     }
   }
 }
+
+export const stickyNotesService = new StickyNotesService();

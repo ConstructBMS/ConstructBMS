@@ -9,6 +9,7 @@ import { clientRoutes } from './routes/clients';
 import { moduleRoutes } from './routes/modules';
 import { projectRoutes } from './routes/projects';
 import { roleRoutes } from './routes/roles';
+import stickyNotesRoutes from './routes/stickyNotes';
 import { taskRoutes } from './routes/tasks';
 import { userRoutes } from './routes/users';
 
@@ -47,6 +48,7 @@ app.use('/api/modules', moduleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/sticky-notes', stickyNotesRoutes);
 
 // 404 handler
 app.use('*', (_req, res) => {

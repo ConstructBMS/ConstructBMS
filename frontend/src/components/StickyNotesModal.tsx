@@ -22,6 +22,7 @@ import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { useDropzone } from 'react-dropzone';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { stickyNotesService, StickyNote as APIStickyNote } from '../services/sticky-notes.service';
 
 interface StickyNotesModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ interface StickyNotesModalProps {
 }
 
 interface StickyNote {
-  id: number;
+  id: string;
   title: string;
   content: string;
   color:
@@ -75,53 +76,36 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState<number | null>(null);
   const [showFormatting, setShowFormatting] = useState<number | null>(null);
-  const [inlineEditingNote, setInlineEditingNote] = useState<number | null>(null);
+  const [inlineEditingNote, setInlineEditingNote] = useState<string | null>(
+    null
+  );
   const [inlineEditTitle, setInlineEditTitle] = useState('');
   const [inlineEditContent, setInlineEditContent] = useState('');
-  const [notes, setNotes] = useState<StickyNote[]>([
-    {
-      id: 1,
-      title: 'Project Ideas',
-      content: 'Brainstorm new features for the dashboard',
-      color: 'yellow',
-      createdAt: new Date('2024-01-15'),
-      category: 'Development',
-      tags: ['ideas', 'features'],
-      projectId: 'proj-1',
-      x: 0,
-      y: 0,
-      w: 2,
-      h: 2,
-    },
-    {
-      id: 2,
-      title: 'Meeting Notes',
-      content: 'Discuss budget allocation for Q1',
-      color: 'pink',
-      createdAt: new Date('2024-01-14'),
-      category: 'Meeting',
-      tags: ['budget', 'planning'],
-      projectId: 'proj-2',
-      x: 2,
-      y: 0,
-      w: 2,
-      h: 2,
-    },
-    {
-      id: 3,
-      title: 'Reminder',
-      content: 'Call client about project updates',
-      color: 'blue',
-      createdAt: new Date('2024-01-13'),
-      category: 'Task',
-      tags: ['client', 'follow-up'],
-      opportunityId: 'opp-1',
-      x: 0,
-      y: 2,
-      w: 2,
-      h: 2,
-    },
-  ]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notes, setNotes] = useState<StickyNote[]>([]);
+
+  // Load notes from API
+  const loadNotes = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await stickyNotesService.getStickyNotes();
+      setNotes(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load notes');
+      console.error('Error loading notes:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load notes when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      loadNotes();
+    }
+  }, [isOpen]);
 
   // Handle escape key and click outside
   useEffect(() => {
@@ -201,7 +185,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       filterCategory === 'all' || note.category === filterCategory;
     const matchesTag = filterTag === 'all' || note.tags?.includes(filterTag);
     const matchesProject =
-      filterProject === 'all' || note.projectId === filterProject;
+      filterProject === 'all' || note.project_id === filterProject;
 
     return matchesSearch && matchesCategory && matchesTag && matchesProject;
   });
@@ -214,7 +198,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const tags = ['all', ...new Set(notes.flatMap(note => note.tags || []))];
   const projects = [
     'all',
-    ...new Set(notes.map(note => note.projectId).filter(Boolean)),
+    ...new Set(notes.map(note => note.project_id).filter(Boolean)),
   ];
 
   // Rich text editor configuration
@@ -252,7 +236,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
-  const handleNoteDoubleClick = (noteId: number) => {
+  const handleNoteDoubleClick = (noteId: string) => {
     startInlineEdit(noteId);
   };
 
@@ -272,17 +256,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     rose: { bg: '#ffe4e6', border: '#f43f5e', name: 'Rose' },
   };
 
-  const handleColorChange = (
-    noteId: number,
+  const handleColorChange = async (
+    noteId: string,
     color: keyof typeof colorConfig
   ) => {
-    setNotes(prevNotes =>
-      prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
-    );
+    try {
+      setLoading(true);
+      setError(null);
+      await stickyNotesService.updateStickyNote(noteId, { color });
+      await loadNotes(); // Reload notes to get updated data
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update color');
+      console.error('Error updating color:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Inline editing functions
-  const startInlineEdit = (noteId: number) => {
+  const startInlineEdit = (noteId: string) => {
     const note = notes.find(n => n.id === noteId);
     if (note) {
       setInlineEditingNote(noteId);
@@ -291,18 +283,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
-  const saveInlineEdit = () => {
+  const saveInlineEdit = async () => {
     if (inlineEditingNote) {
-      setNotes(prevNotes =>
-        prevNotes.map(note =>
-          note.id === inlineEditingNote
-            ? { ...note, title: inlineEditTitle, content: inlineEditContent }
-            : note
-        )
-      );
-      setInlineEditingNote(null);
-      setInlineEditTitle('');
-      setInlineEditContent('');
+      try {
+        setLoading(true);
+        setError(null);
+        await stickyNotesService.updateStickyNote(inlineEditingNote, {
+          title: inlineEditTitle,
+          content: inlineEditContent,
+        });
+        await loadNotes(); // Reload notes to get updated data
+        setInlineEditingNote(null);
+        setInlineEditTitle('');
+        setInlineEditContent('');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to save note');
+        console.error('Error saving note:', err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -313,8 +312,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   };
 
   // Enhanced formatting functions
-  const applyFormatting = (noteId: number, format: string) => {
-    let newContent = inlineEditingNote === noteId ? inlineEditContent : editContent;
+  const applyFormatting = (noteId: string, format: string) => {
+    let newContent =
+      inlineEditingNote === noteId ? inlineEditContent : editContent;
 
     switch (format) {
       case 'bold':
@@ -697,6 +697,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
             {/* Content */}
             <div className='flex-1 flex'>
+              {/* Loading and Error States */}
+              {loading && (
+                <div className='flex items-center justify-center py-8'>
+                  <div className='text-gray-500'>Loading notes...</div>
+                </div>
+              )}
+              
+              {error && (
+                <div className='bg-red-50 border border-red-200 rounded-lg p-4 m-4'>
+                  <div className='text-red-800'>{error}</div>
+                  <button
+                    onClick={loadNotes}
+                    className='mt-2 text-sm text-red-600 hover:text-red-800 underline'
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+
               {viewMode === 'list' && (
                 <>
                   {/* Notes List */}
@@ -745,7 +764,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.content}
                                       </div>
                                       <div className='text-xs text-gray-500 group-hover:text-gray-300 mt-2'>
-                                        {note.createdAt.toLocaleDateString()}
+                                        {new Date(note.created_at).toLocaleDateString()}
                                       </div>
                                       {note.tags && note.tags.length > 0 && (
                                         <div className='flex flex-wrap gap-1 mt-2'>
@@ -1271,18 +1290,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           <input
                                             type='text'
                                             value={inlineEditTitle}
-                                            onChange={e => setInlineEditTitle(e.target.value)}
+                                            onChange={e =>
+                                              setInlineEditTitle(e.target.value)
+                                            }
                                             className='w-full px-2 py-1 text-sm font-medium bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-900'
                                             placeholder='Note title...'
                                             autoFocus
                                           />
                                         </div>
-                                        
+
                                         {/* Content editing */}
                                         <div>
                                           <textarea
                                             value={inlineEditContent}
-                                            onChange={e => setInlineEditContent(e.target.value)}
+                                            onChange={e =>
+                                              setInlineEditContent(
+                                                e.target.value
+                                              )
+                                            }
                                             className='w-full px-2 py-1 text-sm bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-700 resize-none'
                                             placeholder='Note content...'
                                             rows={4}
@@ -1291,19 +1316,29 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                         {/* Color picker for inline editing */}
                                         <div className='flex flex-wrap gap-1'>
-                                          {Object.entries(colorConfig).map(([colorKey, colorData]) => (
-                                            <button
-                                              key={colorKey}
-                                              onClick={() => handleColorChange(note.id, colorKey as keyof typeof colorConfig)}
-                                              className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
-                                                note.color === colorKey
-                                                  ? 'border-gray-800 ring-1 ring-gray-600'
-                                                  : 'border-gray-400 hover:border-gray-600'
-                                              }`}
-                                              style={{ backgroundColor: colorData.border }}
-                                              title={colorData.name}
-                                            />
-                                          ))}
+                                          {Object.entries(colorConfig).map(
+                                            ([colorKey, colorData]) => (
+                                              <button
+                                                key={colorKey}
+                                                onClick={() =>
+                                                  handleColorChange(
+                                                    note.id,
+                                                    colorKey as keyof typeof colorConfig
+                                                  )
+                                                }
+                                                className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
+                                                  note.color === colorKey
+                                                    ? 'border-gray-800 ring-1 ring-gray-600'
+                                                    : 'border-gray-400 hover:border-gray-600'
+                                                }`}
+                                                style={{
+                                                  backgroundColor:
+                                                    colorData.border,
+                                                }}
+                                                title={colorData.name}
+                                              />
+                                            )
+                                          )}
                                         </div>
 
                                         {/* Action buttons */}
@@ -1357,7 +1392,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       </>
                                     )}
                                     <div className='text-xs text-gray-500 mt-2'>
-                                      {note.createdAt.toLocaleDateString()}
+                                      {new Date(note.created_at).toLocaleDateString()}
                                     </div>
                                     {note.tags && note.tags.length > 0 && (
                                       <div className='flex flex-wrap gap-1 mt-2'>
@@ -1460,7 +1495,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                           <div className='flex items-center space-x-4 text-gray-400'>
                             <div className='flex items-center space-x-1'>
                               <Calendar className='h-4 w-4' />
-                              <span>{note.createdAt.toLocaleDateString()}</span>
+                              <span>{new Date(note.created_at).toLocaleDateString()}</span>
                             </div>
                             {note.category && (
                               <div className='flex items-center space-x-1'>
