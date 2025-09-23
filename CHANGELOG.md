@@ -2,16 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2025-01-21] - Sticky Notes Grid Layout Configuration
+## [2025-01-21] - Sticky Notes Enhanced Color System
+
+### Enhanced
+
+- **Sticky Notes Color Picker**: Completely redesigned color picker system with expanded options:
+  - Expanded color options from 4 to 12 colors (yellow, pink, blue, gray, green, orange, purple, red, teal, indigo, lime, rose)
+  - Created comprehensive color configuration object with background and border colors
+  - Improved color picker UI with 4x3 grid layout and better visual design
+  - Fixed state management to track which note's color picker is open (per-note instead of global)
+  - Added click-outside and ESC key handlers to close color pickers properly
+  - Enhanced color picker with hover effects, current color display, and better positioning
+  - Updated all color styling throughout component to use new color configuration
+  - Improved formatting panel state management to match color picker behavior
+  - Added transition animations and better visual feedback
+  - Color picker now shows current color name and has improved accessibility
 
 ### Changed
 
 - **Sticky Notes Modal**: Configured grid layout as 2 rows by 3 columns by default:
   - Removed conflicting grid-rows-2 class that was interfering with drag-and-drop functionality
-  - Updated gridTemplateRows to 'repeat(2, minmax(250px, 1fr))' for better 2-row layout
-  - Set gridAutoRows to 'minmax(250px, 1fr)' for consistent row heights
-  - Reduced note size to h-56 w-56 (224px) for better fit in 2-row layout
-  - Increased minHeight to 600px to accommodate 2 rows properly
+  - Updated gridTemplateRows to 'repeat(2, minmax(300px, 1fr))' for better 2-row layout
+  - Set gridAutoRows to 'minmax(300px, 1fr)' for consistent row heights
+  - Maintained original note size h-72 w-72 (288px) for proper 2-row layout
+  - Increased minHeight to 700px to accommodate 2 rows properly
   - Grid now displays 2 rows by 3 columns with proper drag-and-drop support
   - Made grid view the default view when opening the sticky notes modal
   - Users will now see the organized 2x3 grid layout by default
