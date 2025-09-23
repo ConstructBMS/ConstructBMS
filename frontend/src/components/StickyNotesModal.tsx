@@ -1262,7 +1262,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
                                   onClick={() => {
                                     if (inlineEditingNote !== note.id) {
                                       handleNoteClick(note.id);
@@ -1393,12 +1392,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             >
                                               ✏️
                                             </button>
-                                             <div 
+                                             <div
+                                               {...(inlineEditingNote !== note.id ? provided.dragHandleProps : {})}
+                                               onClick={(e) => e.stopPropagation()}
                                                className={`text-gray-500 cursor-move ${
-                                                 inlineEditingNote === note.id ? 'invisible' : ''
+                                                 inlineEditingNote === note.id
+                                                   ? 'invisible'
+                                                   : ''
                                                }`}
-                                               data-rbd-drag-handle-draggable-id={note.id}
-                                               data-rbd-drag-handle-context-id="0"
+                                               data-rbd-drag-handle-draggable-id={
+                                                 note.id
+                                               }
+                                               data-rbd-drag-handle-context-id='0'
                                              >
                                                ⋮⋮
                                              </div>
