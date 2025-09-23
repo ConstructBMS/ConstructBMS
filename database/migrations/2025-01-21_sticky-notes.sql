@@ -13,9 +13,9 @@ ALTER TABLE notes ADD COLUMN height INTEGER DEFAULT 2;
 -- Add category for organization
 ALTER TABLE notes ADD COLUMN category VARCHAR(100);
 
--- Add project and opportunity references
-ALTER TABLE notes ADD COLUMN project_id UUID REFERENCES projects(id) ON DELETE SET NULL;
-ALTER TABLE notes ADD COLUMN opportunity_id UUID REFERENCES opportunities(id) ON DELETE SET NULL;
+-- Add project and opportunity references (optional, tables may not exist yet)
+ALTER TABLE notes ADD COLUMN project_id UUID;
+ALTER TABLE notes ADD COLUMN opportunity_id UUID;
 
 -- Add attachments support
 CREATE TABLE note_attachments (
