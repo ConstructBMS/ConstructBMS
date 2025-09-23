@@ -876,12 +876,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ([colorKey, colorData]) => (
                                       <button
                                         key={colorKey}
-                                        onClick={() =>
+                                        onClick={e => {
+                                          e.stopPropagation();
                                           handleColorChange(
                                             editingNote,
                                             colorKey as keyof typeof colorConfig
-                                          )
-                                        }
+                                          );
+                                        }}
                                         className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
                                           notes.find(n => n.id === editingNote)
                                             ?.color === colorKey
@@ -1293,11 +1294,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Always present drag handle - outside conditional rendering */}
+                                  {/* Always present drag handle - positioned to avoid color picker interference */}
                                   <div
                                     {...provided.dragHandleProps}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={`absolute top-2 right-2 text-gray-500 ${
+                                    onClick={e => e.stopPropagation()}
+                                    className={`absolute top-2 left-2 text-gray-500 ${
                                       inlineEditingNote === note.id
                                         ? 'invisible cursor-default'
                                         : 'cursor-move'
@@ -1347,12 +1348,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             ([colorKey, colorData]) => (
                                               <button
                                                 key={colorKey}
-                                                onClick={() =>
+                                                onClick={e => {
+                                                  e.stopPropagation();
                                                   handleColorChange(
                                                     note.id,
                                                     colorKey as keyof typeof colorConfig
-                                                  )
-                                                }
+                                                  );
+                                                }}
                                                 className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-1 ring-gray-600'
@@ -1444,12 +1446,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             ([colorKey, colorData]) => (
                                               <button
                                                 key={colorKey}
-                                                onClick={() =>
+                                                onClick={e => {
+                                                  e.stopPropagation();
                                                   handleColorChange(
                                                     note.id,
                                                     colorKey as keyof typeof colorConfig
-                                                  )
-                                                }
+                                                  );
+                                                }}
                                                 className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-2 ring-gray-400'
