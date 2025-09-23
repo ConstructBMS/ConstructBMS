@@ -1257,6 +1257,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               key={note.id}
                               draggableId={note.id.toString()}
                               index={index}
+                              isDragDisabled={inlineEditingNote === note.id}
                             >
                               {(provided, snapshot) => (
                                 <div
@@ -1292,6 +1293,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
+                                  {/* Always present drag handle - outside conditional rendering */}
+                                  <div
+                                    {...provided.dragHandleProps}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={`absolute top-2 right-2 text-gray-500 ${
+                                      inlineEditingNote === note.id
+                                        ? 'invisible cursor-default'
+                                        : 'cursor-move'
+                                    }`}
+                                    data-rbd-drag-handle-draggable-id={note.id}
+                                    data-rbd-drag-handle-context-id='0'
+                                  >
+                                    ⋮⋮
+                                  </div>
+
                                   <div className='p-3 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
                                       // Inline editing mode
@@ -1392,21 +1408,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             >
                                               ✏️
                                             </button>
-                                             <div
-                                               {...provided.dragHandleProps}
-                                               onClick={(e) => e.stopPropagation()}
-                                               className={`text-gray-500 ${
-                                                 inlineEditingNote === note.id
-                                                   ? 'invisible cursor-default'
-                                                   : 'cursor-move'
-                                               }`}
-                                               data-rbd-drag-handle-draggable-id={
-                                                 note.id
-                                               }
-                                               data-rbd-drag-handle-context-id='0'
-                                             >
-                                               ⋮⋮
-                                             </div>
                                           </div>
                                         </div>
                                         <div className='text-sm text-gray-700 mt-1 flex-1'>
