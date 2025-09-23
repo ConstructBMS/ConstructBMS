@@ -257,6 +257,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       setEditTitle(note.title);
       setEditContent(note.content);
     }
+    // Switch to list view for editing
+    setViewMode('list');
   };
 
   // Color configuration with expanded options
@@ -818,24 +820,38 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   Note Color
                                 </label>
                                 <div className='flex flex-wrap gap-2'>
-                                  {Object.entries(colorConfig).map(([colorKey, colorData]) => (
-                                    <button
-                                      key={colorKey}
-                                      onClick={() => handleColorChange(editingNote, colorKey as keyof typeof colorConfig)}
-                                      className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
-                                        notes.find(n => n.id === editingNote)?.color === colorKey
-                                          ? 'border-white ring-2 ring-blue-400'
-                                          : 'border-gray-400 hover:border-gray-200'
-                                      }`}
-                                      style={{
-                                        backgroundColor: colorData.border,
-                                      }}
-                                      title={colorData.name}
-                                    />
-                                  ))}
+                                  {Object.entries(colorConfig).map(
+                                    ([colorKey, colorData]) => (
+                                      <button
+                                        key={colorKey}
+                                        onClick={() =>
+                                          handleColorChange(
+                                            editingNote,
+                                            colorKey as keyof typeof colorConfig
+                                          )
+                                        }
+                                        className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                                          notes.find(n => n.id === editingNote)
+                                            ?.color === colorKey
+                                            ? 'border-white ring-2 ring-blue-400'
+                                            : 'border-gray-400 hover:border-gray-200'
+                                        }`}
+                                        style={{
+                                          backgroundColor: colorData.border,
+                                        }}
+                                        title={colorData.name}
+                                      />
+                                    )
+                                  )}
                                 </div>
                                 <div className='text-xs text-gray-400 mt-1'>
-                                  Current: {colorConfig[notes.find(n => n.id === editingNote)?.color as keyof typeof colorConfig]?.name}
+                                  Current:{' '}
+                                  {
+                                    colorConfig[
+                                      notes.find(n => n.id === editingNote)
+                                        ?.color as keyof typeof colorConfig
+                                    ]?.name
+                                  }
                                 </div>
                               </div>
 
@@ -847,31 +863,47 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 <div className='bg-gray-800 rounded-lg p-3 space-y-3'>
                                   {/* Text Formatting */}
                                   <div>
-                                    <div className='text-xs font-medium text-gray-400 mb-2'>Text Style</div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>
+                                      Text Style
+                                    </div>
                                     <div className='flex flex-wrap gap-1'>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'bold')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'bold')
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded font-bold text-white'
                                         title='Bold'
                                       >
                                         B
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'italic')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'italic')
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded italic text-white'
                                         title='Italic'
                                       >
                                         I
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'underline')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'underline'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded underline text-white'
                                         title='Underline'
                                       >
                                         U
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'strikethrough')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'strikethrough'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded line-through text-white'
                                         title='Strikethrough'
                                       >
@@ -882,24 +914,32 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                   {/* Headings */}
                                   <div>
-                                    <div className='text-xs font-medium text-gray-400 mb-2'>Headings</div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>
+                                      Headings
+                                    </div>
                                     <div className='flex flex-wrap gap-1'>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'h1')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'h1')
+                                        }
                                         className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
                                         title='Heading 1'
                                       >
                                         H1
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'h2')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'h2')
+                                        }
                                         className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
                                         title='Heading 2'
                                       >
                                         H2
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'h3')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'h3')
+                                        }
                                         className='px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 rounded text-white'
                                         title='Heading 3'
                                       >
@@ -910,24 +950,38 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                   {/* Lists */}
                                   <div>
-                                    <div className='text-xs font-medium text-gray-400 mb-2'>Lists</div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>
+                                      Lists
+                                    </div>
                                     <div className='flex flex-wrap gap-1'>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'bullet')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'bullet')
+                                        }
                                         className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
                                         title='Bullet List'
                                       >
                                         •
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'numbered')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'numbered'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
                                         title='Numbered List'
                                       >
                                         1.
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'checkbox')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'checkbox'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white'
                                         title='Checkbox List'
                                       >
@@ -938,31 +992,44 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                   {/* Special Formatting */}
                                   <div>
-                                    <div className='text-xs font-medium text-gray-400 mb-2'>Special</div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>
+                                      Special
+                                    </div>
                                     <div className='flex flex-wrap gap-1'>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'quote')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'quote')
+                                        }
                                         className='px-2 py-1 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white'
                                         title='Quote'
                                       >
                                         "
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'code')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'code')
+                                        }
                                         className='px-2 py-1 text-xs bg-orange-600 hover:bg-orange-500 rounded font-mono text-white'
                                         title='Inline Code'
                                       >
                                         &lt;/&gt;
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'codeblock')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'codeblock'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-orange-600 hover:bg-orange-500 rounded font-mono text-white'
                                         title='Code Block'
                                       >
                                         {}
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'link')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'link')
+                                        }
                                         className='px-2 py-1 text-xs bg-cyan-600 hover:bg-cyan-500 rounded text-white'
                                         title='Link'
                                       >
@@ -973,31 +1040,44 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                   {/* Alignment */}
                                   <div>
-                                    <div className='text-xs font-medium text-gray-400 mb-2'>Alignment</div>
+                                    <div className='text-xs font-medium text-gray-400 mb-2'>
+                                      Alignment
+                                    </div>
                                     <div className='flex flex-wrap gap-1'>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'left')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'left')
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
                                         title='Left Align'
                                       >
                                         ⬅
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'center')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'center')
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
                                         title='Center Align'
                                       >
                                         ↔
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'right')}
+                                        onClick={() =>
+                                          applyFormatting(editingNote, 'right')
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
                                         title='Right Align'
                                       >
                                         ➡
                                       </button>
                                       <button
-                                        onClick={() => applyFormatting(editingNote, 'divider')}
+                                        onClick={() =>
+                                          applyFormatting(
+                                            editingNote,
+                                            'divider'
+                                          )
+                                        }
                                         className='px-2 py-1 text-xs bg-gray-600 hover:bg-gray-500 rounded text-white'
                                         title='Divider'
                                       >
@@ -1165,6 +1245,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             setEditingNote(note.id);
                                             setEditTitle(note.title);
                                             setEditContent(note.content);
+                                            // Switch to list view for editing
+                                            setViewMode('list');
                                           }}
                                           className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
                                           title='Edit Note'
@@ -1235,7 +1317,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
                                       </div>
                                     )}
-
                                   </div>
                                 </div>
                               )}
