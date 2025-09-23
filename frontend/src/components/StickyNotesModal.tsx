@@ -32,7 +32,19 @@ interface StickyNote {
   id: number;
   title: string;
   content: string;
-  color: 'yellow' | 'pink' | 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'indigo' | 'lime' | 'rose';
+  color:
+    | 'yellow'
+    | 'pink'
+    | 'blue'
+    | 'gray'
+    | 'green'
+    | 'orange'
+    | 'purple'
+    | 'red'
+    | 'teal'
+    | 'indigo'
+    | 'lime'
+    | 'rose';
   createdAt: Date;
   category?: string;
   tags?: string[];
@@ -123,7 +135,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (!target.closest('.color-picker') && !target.closest('.formatting-panel')) {
+      if (
+        !target.closest('.color-picker') &&
+        !target.closest('.formatting-panel')
+      ) {
         setShowColorPicker(null);
         setShowFormatting(null);
       }
@@ -260,11 +275,86 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     rose: { bg: '#ffe4e6', border: '#f43f5e', name: 'Rose' },
   };
 
-  const handleColorChange = (noteId: number, color: keyof typeof colorConfig) => {
+  const handleColorChange = (
+    noteId: number,
+    color: keyof typeof colorConfig
+  ) => {
     setNotes(prevNotes =>
       prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
     );
     setShowColorPicker(null);
+  };
+
+  // Enhanced formatting functions
+  const applyFormatting = (noteId: number, format: string) => {
+    const note = notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    let newContent = note.content;
+    
+    switch (format) {
+      case 'bold':
+        newContent += ' **bold text** ';
+        break;
+      case 'italic':
+        newContent += ' *italic text* ';
+        break;
+      case 'underline':
+        newContent += ' <u>underlined text</u> ';
+        break;
+      case 'strikethrough':
+        newContent += ' ~~strikethrough text~~ ';
+        break;
+      case 'h1':
+        newContent += '\n# Heading 1\n';
+        break;
+      case 'h2':
+        newContent += '\n## Heading 2\n';
+        break;
+      case 'h3':
+        newContent += '\n### Heading 3\n';
+        break;
+      case 'bullet':
+        newContent += '\n• Bullet point\n';
+        break;
+      case 'numbered':
+        newContent += '\n1. Numbered item\n';
+        break;
+      case 'checkbox':
+        newContent += '\n- [ ] Checkbox item\n';
+        break;
+      case 'quote':
+        newContent += '\n> Quote text\n';
+        break;
+      case 'code':
+        newContent += '\n`code snippet`\n';
+        break;
+      case 'codeblock':
+        newContent += '\n```\ncode block\n```\n';
+        break;
+      case 'link':
+        newContent += ' [link text](url) ';
+        break;
+      case 'divider':
+        newContent += '\n---\n';
+        break;
+      case 'left':
+        newContent += '\n<div style="text-align: left;">Left aligned text</div>\n';
+        break;
+      case 'center':
+        newContent += '\n<div style="text-align: center;">Center aligned text</div>\n';
+        break;
+      case 'right':
+        newContent += '\n<div style="text-align: right;">Right aligned text</div>\n';
+        break;
+    }
+
+    setNotes(prevNotes =>
+      prevNotes.map(n => 
+        n.id === noteId ? { ...n, content: newContent } : n
+      )
+    );
+    setShowFormatting(null);
   };
 
   const handleEdit = () => {
@@ -612,8 +702,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           : ''
                                       }`}
                                       style={{
-                                        backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.bg || '#f3f4f6',
-                                        borderLeftColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
+                                        backgroundColor:
+                                          colorConfig[
+                                            note.color as keyof typeof colorConfig
+                                          ]?.bg || '#f3f4f6',
+                                        borderLeftColor:
+                                          colorConfig[
+                                            note.color as keyof typeof colorConfig
+                                          ]?.border || '#9ca3af',
                                       }}
                                     >
                                       <div className='font-medium text-gray-900 group-hover:text-white'>
@@ -850,8 +946,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       : 'hover:shadow-md'
                                   }`}
                                   style={{
-                                    backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.bg || '#f3f4f6',
-                                    borderLeftColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
+                                    backgroundColor:
+                                      colorConfig[
+                                        note.color as keyof typeof colorConfig
+                                      ]?.bg || '#f3f4f6',
+                                    borderLeftColor:
+                                      colorConfig[
+                                        note.color as keyof typeof colorConfig
+                                      ]?.border || '#9ca3af',
                                     ...provided.draggableProps.style,
                                   }}
                                 >
@@ -865,12 +967,17 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           onClick={e => {
                                             e.stopPropagation();
                                             setShowColorPicker(
-                                              showColorPicker === note.id ? null : note.id
+                                              showColorPicker === note.id
+                                                ? null
+                                                : note.id
                                             );
                                           }}
                                           className='w-4 h-4 rounded-full border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-110'
                                           style={{
-                                            backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
+                                            backgroundColor:
+                                              colorConfig[
+                                                note.color as keyof typeof colorConfig
+                                              ]?.border || '#9ca3af',
                                           }}
                                           title='Change color'
                                         />
@@ -878,13 +985,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           onClick={e => {
                                             e.stopPropagation();
                                             setShowFormatting(
-                                              showFormatting === note.id ? null : note.id
+                                              showFormatting === note.id
+                                                ? null
+                                                : note.id
                                             );
                                           }}
-                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
-                                          title='Formatting'
+                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110 font-bold'
+                                          title='Formatting Tools'
                                         >
-                                          Aa
+                                          ✏️
                                         </button>
                                         <div className='text-gray-500 cursor-move'>
                                           ⋮⋮
@@ -913,91 +1022,208 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     {/* Enhanced Color Picker */}
                                     {showColorPicker === note.id && (
                                       <div className='color-picker absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-xl p-3 z-20 min-w-[200px]'>
-                                        <div className='text-xs font-medium text-gray-600 mb-2'>Choose Color</div>
+                                        <div className='text-xs font-medium text-gray-600 mb-2'>
+                                          Choose Color
+                                        </div>
                                         <div className='grid grid-cols-4 gap-2'>
-                                          {Object.entries(colorConfig).map(([colorKey, colorData]) => (
-                                            <button
-                                              key={colorKey}
-                                              onClick={() =>
-                                                handleColorChange(
-                                                  note.id,
-                                                  colorKey as keyof typeof colorConfig
-                                                )
-                                              }
-                                              className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
-                                                note.color === colorKey
-                                                  ? 'border-gray-800 ring-2 ring-gray-400'
-                                                  : 'border-gray-300 hover:border-gray-500'
-                                              }`}
-                                              style={{
-                                                backgroundColor: colorData.border,
-                                              }}
-                                              title={colorData.name}
-                                            />
-                                          ))}
+                                          {Object.entries(colorConfig).map(
+                                            ([colorKey, colorData]) => (
+                                              <button
+                                                key={colorKey}
+                                                onClick={() =>
+                                                  handleColorChange(
+                                                    note.id,
+                                                    colorKey as keyof typeof colorConfig
+                                                  )
+                                                }
+                                                className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                                                  note.color === colorKey
+                                                    ? 'border-gray-800 ring-2 ring-gray-400'
+                                                    : 'border-gray-300 hover:border-gray-500'
+                                                }`}
+                                                style={{
+                                                  backgroundColor:
+                                                    colorData.border,
+                                                }}
+                                                title={colorData.name}
+                                              />
+                                            )
+                                          )}
                                         </div>
                                         <div className='mt-2 text-xs text-gray-500 text-center'>
-                                          {colorConfig[note.color as keyof typeof colorConfig]?.name}
+                                          {
+                                            colorConfig[
+                                              note.color as keyof typeof colorConfig
+                                            ]?.name
+                                          }
                                         </div>
                                       </div>
                                     )}
 
-                                    {/* Formatting Panel */}
+                                    {/* Enhanced Formatting Panel */}
                                     {showFormatting === note.id && (
-                                      <div className='formatting-panel absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
-                                        <div className='flex space-x-1'>
-                                          <button
-                                            onClick={() => {
-                                              // Bold formatting
-                                              setEditContent(
-                                                prev => prev + ' **bold** '
-                                              );
-                                              setShowFormatting(false);
-                                            }}
-                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                            title='Bold'
-                                          >
-                                            B
-                                          </button>
-                                          <button
-                                            onClick={() => {
-                                              // Italic formatting
-                                              setEditContent(
-                                                prev => prev + ' *italic* '
-                                              );
-                                              setShowFormatting(false);
-                                            }}
-                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                            title='Italic'
-                                          >
-                                            I
-                                          </button>
-                                          <button
-                                            onClick={() => {
-                                              // Bullet list
-                                              setEditContent(
-                                                prev => prev + '\n• '
-                                              );
-                                              setShowFormatting(false);
-                                            }}
-                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                            title='Bullet List'
-                                          >
-                                            •
-                                          </button>
-                                          <button
-                                            onClick={() => {
-                                              // Numbered list
-                                              setEditContent(
-                                                prev => prev + '\n1. '
-                                              );
-                                              setShowFormatting(false);
-                                            }}
-                                            className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
-                                            title='Numbered List'
-                                          >
-                                            1.
-                                          </button>
+                                      <div className='formatting-panel absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-xl p-3 z-20 min-w-[280px] max-w-[320px]'>
+                                        <div className='text-xs font-medium text-gray-600 mb-3'>Formatting Tools</div>
+                                        
+                                        {/* Text Formatting */}
+                                        <div className='mb-3'>
+                                          <div className='text-xs font-medium text-gray-500 mb-2'>Text Style</div>
+                                          <div className='flex flex-wrap gap-1'>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'bold')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded font-bold'
+                                              title='Bold'
+                                            >
+                                              B
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'italic')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded italic'
+                                              title='Italic'
+                                            >
+                                              I
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'underline')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded underline'
+                                              title='Underline'
+                                            >
+                                              U
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'strikethrough')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded line-through'
+                                              title='Strikethrough'
+                                            >
+                                              S
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* Headings */}
+                                        <div className='mb-3'>
+                                          <div className='text-xs font-medium text-gray-500 mb-2'>Headings</div>
+                                          <div className='flex flex-wrap gap-1'>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'h1')}
+                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
+                                              title='Heading 1'
+                                            >
+                                              H1
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'h2')}
+                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
+                                              title='Heading 2'
+                                            >
+                                              H2
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'h3')}
+                                              className='px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded'
+                                              title='Heading 3'
+                                            >
+                                              H3
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* Lists */}
+                                        <div className='mb-3'>
+                                          <div className='text-xs font-medium text-gray-500 mb-2'>Lists</div>
+                                          <div className='flex flex-wrap gap-1'>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'bullet')}
+                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
+                                              title='Bullet List'
+                                            >
+                                              •
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'numbered')}
+                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
+                                              title='Numbered List'
+                                            >
+                                              1.
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'checkbox')}
+                                              className='px-2 py-1 text-xs bg-green-100 hover:bg-green-200 rounded'
+                                              title='Checkbox List'
+                                            >
+                                              ☐
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* Special Formatting */}
+                                        <div className='mb-3'>
+                                          <div className='text-xs font-medium text-gray-500 mb-2'>Special</div>
+                                          <div className='flex flex-wrap gap-1'>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'quote')}
+                                              className='px-2 py-1 text-xs bg-purple-100 hover:bg-purple-200 rounded'
+                                              title='Quote'
+                                            >
+                                              "
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'code')}
+                                              className='px-2 py-1 text-xs bg-orange-100 hover:bg-orange-200 rounded font-mono'
+                                              title='Inline Code'
+                                            >
+                                              &lt;/&gt;
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'codeblock')}
+                                              className='px-2 py-1 text-xs bg-orange-100 hover:bg-orange-200 rounded font-mono'
+                                              title='Code Block'
+                                            >
+                                              { }
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'link')}
+                                              className='px-2 py-1 text-xs bg-cyan-100 hover:bg-cyan-200 rounded'
+                                              title='Link'
+                                            >
+                                              🔗
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* Alignment */}
+                                        <div className='mb-3'>
+                                          <div className='text-xs font-medium text-gray-500 mb-2'>Alignment</div>
+                                          <div className='flex flex-wrap gap-1'>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'left')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                              title='Left Align'
+                                            >
+                                              ⬅
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'center')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                              title='Center Align'
+                                            >
+                                              ↔
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'right')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                              title='Right Align'
+                                            >
+                                              ➡
+                                            </button>
+                                            <button
+                                              onClick={() => applyFormatting(note.id, 'divider')}
+                                              className='px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded'
+                                              title='Divider'
+                                            >
+                                              ─
+                                            </button>
+                                          </div>
                                         </div>
                                       </div>
                                     )}
