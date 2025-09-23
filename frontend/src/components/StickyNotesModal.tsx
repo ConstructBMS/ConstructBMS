@@ -32,7 +32,7 @@ interface StickyNote {
   id: number;
   title: string;
   content: string;
-  color: 'yellow' | 'pink' | 'blue' | 'gray';
+  color: 'yellow' | 'pink' | 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'indigo' | 'lime' | 'rose';
   createdAt: Date;
   category?: string;
   tags?: string[];
@@ -61,8 +61,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [filterTag, setFilterTag] = useState<string>('all');
   const [filterProject, setFilterProject] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [showFormatting, setShowFormatting] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState<number | null>(null);
+  const [showFormatting, setShowFormatting] = useState<number | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([
     {
       id: 1,
@@ -108,22 +108,37 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     },
   ]);
 
-  // Handle escape key
+  // Handle escape key and click outside
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        if (showColorPicker || showFormatting) {
+          setShowColorPicker(null);
+          setShowFormatting(null);
+        } else {
+          onClose();
+        }
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.color-picker') && !target.closest('.formatting-panel')) {
+        setShowColorPicker(null);
+        setShowFormatting(null);
       }
     };
 
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, showColorPicker, showFormatting]);
 
   // Body scroll lock
   useEffect(() => {
@@ -229,11 +244,27 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
-  const handleColorChange = (noteId: number, color: string) => {
+  // Color configuration with expanded options
+  const colorConfig = {
+    yellow: { bg: '#fef3c7', border: '#fbbf24', name: 'Yellow' },
+    pink: { bg: '#fce7f3', border: '#f472b6', name: 'Pink' },
+    blue: { bg: '#dbeafe', border: '#60a5fa', name: 'Blue' },
+    gray: { bg: '#f3f4f6', border: '#9ca3af', name: 'Gray' },
+    green: { bg: '#dcfce7', border: '#22c55e', name: 'Green' },
+    orange: { bg: '#fed7aa', border: '#f97316', name: 'Orange' },
+    purple: { bg: '#e9d5ff', border: '#a855f7', name: 'Purple' },
+    red: { bg: '#fee2e2', border: '#ef4444', name: 'Red' },
+    teal: { bg: '#ccfbf1', border: '#14b8a6', name: 'Teal' },
+    indigo: { bg: '#e0e7ff', border: '#6366f1', name: 'Indigo' },
+    lime: { bg: '#ecfccb', border: '#84cc16', name: 'Lime' },
+    rose: { bg: '#ffe4e6', border: '#f43f5e', name: 'Rose' },
+  };
+
+  const handleColorChange = (noteId: number, color: keyof typeof colorConfig) => {
     setNotes(prevNotes =>
       prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
     );
-    setShowColorPicker(false);
+    setShowColorPicker(null);
   };
 
   const handleEdit = () => {
@@ -579,32 +610,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         selectedNote === note.id
                                           ? 'ring-2 ring-blue-500 bg-blue-50'
                                           : ''
-                                      } ${
-                                        note.color === 'yellow'
-                                          ? 'border-yellow-400 bg-yellow-100'
-                                          : note.color === 'pink'
-                                            ? 'border-pink-400 bg-pink-100'
-                                            : note.color === 'blue'
-                                              ? 'border-blue-400 bg-blue-100'
-                                              : 'border-gray-400 bg-gray-100'
                                       }`}
                                       style={{
-                                        backgroundColor:
-                                          note.color === 'yellow'
-                                            ? '#fef3c7'
-                                            : note.color === 'pink'
-                                              ? '#fce7f3'
-                                              : note.color === 'blue'
-                                                ? '#dbeafe'
-                                                : '#f3f4f6',
-                                        borderLeftColor:
-                                          note.color === 'yellow'
-                                            ? '#fbbf24'
-                                            : note.color === 'pink'
-                                              ? '#f472b6'
-                                              : note.color === 'blue'
-                                                ? '#60a5fa'
-                                                : '#9ca3af',
+                                        backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.bg || '#f3f4f6',
+                                        borderLeftColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
                                       }}
                                     >
                                       <div className='font-medium text-gray-900 group-hover:text-white'>
@@ -836,35 +845,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     handleNoteDoubleClick(note.id)
                                   }
                                   className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
-                                    note.color === 'yellow'
-                                      ? 'border-yellow-400 bg-yellow-100'
-                                      : note.color === 'pink'
-                                        ? 'border-pink-400 bg-pink-100'
-                                        : note.color === 'blue'
-                                          ? 'border-blue-400 bg-blue-100'
-                                          : 'border-gray-400 bg-gray-100'
-                                  } ${
                                     snapshot.isDragging
                                       ? 'shadow-lg z-50'
                                       : 'hover:shadow-md'
                                   }`}
                                   style={{
-                                    backgroundColor:
-                                      note.color === 'yellow'
-                                        ? '#fef3c7'
-                                        : note.color === 'pink'
-                                          ? '#fce7f3'
-                                          : note.color === 'blue'
-                                            ? '#dbeafe'
-                                            : '#f3f4f6',
-                                    borderLeftColor:
-                                      note.color === 'yellow'
-                                        ? '#fbbf24'
-                                        : note.color === 'pink'
-                                          ? '#f472b6'
-                                          : note.color === 'blue'
-                                            ? '#60a5fa'
-                                            : '#9ca3af',
+                                    backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.bg || '#f3f4f6',
+                                    borderLeftColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
                                     ...provided.draggableProps.style,
                                   }}
                                 >
@@ -878,28 +865,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           onClick={e => {
                                             e.stopPropagation();
                                             setShowColorPicker(
-                                              !showColorPicker
+                                              showColorPicker === note.id ? null : note.id
                                             );
                                           }}
-                                          className='w-4 h-4 rounded-full border-2 border-gray-300 hover:border-gray-500'
+                                          className='w-4 h-4 rounded-full border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-110'
                                           style={{
-                                            backgroundColor:
-                                              note.color === 'yellow'
-                                                ? '#fbbf24'
-                                                : note.color === 'pink'
-                                                  ? '#f472b6'
-                                                  : note.color === 'blue'
-                                                    ? '#60a5fa'
-                                                    : '#9ca3af',
+                                            backgroundColor: colorConfig[note.color as keyof typeof colorConfig]?.border || '#9ca3af',
                                           }}
                                           title='Change color'
                                         />
                                         <button
                                           onClick={e => {
                                             e.stopPropagation();
-                                            setShowFormatting(!showFormatting);
+                                            setShowFormatting(
+                                              showFormatting === note.id ? null : note.id
+                                            );
                                           }}
-                                          className='text-gray-500 hover:text-gray-700 text-xs'
+                                          className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
                                           title='Formatting'
                                         >
                                           Aa
@@ -928,49 +910,41 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       </div>
                                     )}
 
-                                    {/* Color Picker */}
-                                    {showColorPicker && (
-                                      <div className='absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
-                                        <div className='flex space-x-2'>
-                                          {[
-                                            'yellow',
-                                            'pink',
-                                            'blue',
-                                            'gray',
-                                          ].map(color => (
+                                    {/* Enhanced Color Picker */}
+                                    {showColorPicker === note.id && (
+                                      <div className='color-picker absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-xl p-3 z-20 min-w-[200px]'>
+                                        <div className='text-xs font-medium text-gray-600 mb-2'>Choose Color</div>
+                                        <div className='grid grid-cols-4 gap-2'>
+                                          {Object.entries(colorConfig).map(([colorKey, colorData]) => (
                                             <button
-                                              key={color}
+                                              key={colorKey}
                                               onClick={() =>
                                                 handleColorChange(
                                                   note.id,
-                                                  color
+                                                  colorKey as keyof typeof colorConfig
                                                 )
                                               }
-                                              className={`w-6 h-6 rounded-full border-2 ${
-                                                note.color === color
-                                                  ? 'border-gray-800'
-                                                  : 'border-gray-300'
+                                              className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                                                note.color === colorKey
+                                                  ? 'border-gray-800 ring-2 ring-gray-400'
+                                                  : 'border-gray-300 hover:border-gray-500'
                                               }`}
                                               style={{
-                                                backgroundColor:
-                                                  color === 'yellow'
-                                                    ? '#fbbf24'
-                                                    : color === 'pink'
-                                                      ? '#f472b6'
-                                                      : color === 'blue'
-                                                        ? '#60a5fa'
-                                                        : '#9ca3af',
+                                                backgroundColor: colorData.border,
                                               }}
-                                              title={color}
+                                              title={colorData.name}
                                             />
                                           ))}
+                                        </div>
+                                        <div className='mt-2 text-xs text-gray-500 text-center'>
+                                          {colorConfig[note.color as keyof typeof colorConfig]?.name}
                                         </div>
                                       </div>
                                     )}
 
                                     {/* Formatting Panel */}
-                                    {showFormatting && (
-                                      <div className='absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
+                                    {showFormatting === note.id && (
+                                      <div className='formatting-panel absolute top-12 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 z-10'>
                                         <div className='flex space-x-1'>
                                           <button
                                             onClick={() => {
