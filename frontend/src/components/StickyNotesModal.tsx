@@ -1294,23 +1294,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Always present drag handle - positioned to avoid color picker interference */}
-                                  <div
-                                    {...provided.dragHandleProps}
-                                    onClick={e => e.stopPropagation()}
-                                    className={`absolute top-2 left-2 text-gray-500 ${
-                                      inlineEditingNote === note.id
-                                        ? 'invisible cursor-default'
-                                        : 'cursor-move'
-                                    }`}
-                                    style={{
-                                      pointerEvents: inlineEditingNote === note.id ? 'none' : 'auto'
-                                    }}
-                                    data-rbd-drag-handle-draggable-id={note.id}
-                                    data-rbd-drag-handle-context-id='0'
-                                  >
-                                    ⋮⋮
-                                  </div>
+                                  {/* Drag handle - only present when not editing */}
+                                  {inlineEditingNote !== note.id && (
+                                    <div
+                                      {...provided.dragHandleProps}
+                                      onClick={e => e.stopPropagation()}
+                                      className='absolute top-2 left-2 text-gray-500 cursor-move'
+                                      data-rbd-drag-handle-draggable-id={note.id}
+                                      data-rbd-drag-handle-context-id='0'
+                                    >
+                                      ⋮⋮
+                                    </div>
+                                  )}
 
                                   <div className='p-3 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
@@ -1346,11 +1341,20 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
 
                                         {/* Color picker for inline editing */}
-                                        <div 
+                                        <div
                                           className='flex flex-wrap gap-1'
-                                          style={{ pointerEvents: 'auto' }}
-                                          onMouseDown={e => e.stopPropagation()}
+                                          style={{ 
+                                            pointerEvents: 'auto',
+                                            position: 'relative',
+                                            zIndex: 10
+                                          }}
+                                          onMouseDown={e => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                          }}
                                           onClick={e => e.stopPropagation()}
+                                          onDragStart={e => e.preventDefault()}
+                                          onDrag={e => e.preventDefault()}
                                         >
                                           {Object.entries(colorConfig).map(
                                             ([colorKey, colorData]) => (
@@ -1363,7 +1367,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     colorKey as keyof typeof colorConfig
                                                   );
                                                 }}
-                                                onMouseDown={e => e.stopPropagation()}
+                                                onMouseDown={e => {
+                                                  e.stopPropagation();
+                                                  e.preventDefault();
+                                                }}
+                                                onDragStart={e => e.preventDefault()}
+                                                onDrag={e => e.preventDefault()}
                                                 className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-1 ring-gray-600'
