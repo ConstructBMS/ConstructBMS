@@ -7,11 +7,12 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - **Sticky Notes Modal**: Configured grid layout as 2 rows by 3 columns by default:
-  - Changed grid layout from auto-fit to fixed 2x3 grid (grid-cols-3 grid-rows-2)
-  - Updated gridTemplateRows to 'repeat(2, 1fr)' for consistent 2-row layout
-  - Reduced note size from h-72 w-72 to h-64 w-64 for better fit in 2-row layout
+  - Removed conflicting grid-rows-2 class that was interfering with drag-and-drop functionality
+  - Updated gridTemplateRows to 'repeat(2, minmax(250px, 1fr))' for better 2-row layout
+  - Set gridAutoRows to 'minmax(250px, 1fr)' for consistent row heights
+  - Reduced note size to h-56 w-56 (224px) for better fit in 2-row layout
   - Increased minHeight to 600px to accommodate 2 rows properly
-  - Grid now displays exactly 2 rows by 3 columns by default
+  - Grid now displays 2 rows by 3 columns with proper drag-and-drop support
   - Made grid view the default view when opening the sticky notes modal
   - Users will now see the organized 2x3 grid layout by default
   - List and full view options remain available via toggle buttons
