@@ -809,16 +809,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                         <div
                           {...provided.droppableProps}
                           ref={provided.innerRef}
-                          className={`grid grid-cols-3 gap-6 p-6 min-w-max ${
+                          className={`grid grid-cols-3 grid-rows-2 gap-6 p-6 min-w-max ${
                             snapshot.isDraggingOver
                               ? 'bg-gray-800 dropzone-indicator'
                               : 'bg-gray-900'
                           }`}
                           style={{
-                            minHeight: '400px',
-                            gridTemplateRows:
-                              'repeat(auto-fit, minmax(288px, 1fr))',
-                            gridAutoRows: '288px',
+                            minHeight: '600px',
+                            gridTemplateRows: 'repeat(2, 1fr)',
+                            gridAutoRows: 'auto',
                           }}
                         >
                           {filteredNotes.map((note, index) => (
@@ -836,7 +835,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   onDoubleClick={() =>
                                     handleNoteDoubleClick(note.id)
                                   }
-                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
+                                  className={`aspect-square h-64 w-64 rounded-lg border-l-4 sticky-note-${note.color} cursor-pointer ${
                                     note.color === 'yellow'
                                       ? 'border-yellow-400 bg-yellow-100'
                                       : note.color === 'pink'
