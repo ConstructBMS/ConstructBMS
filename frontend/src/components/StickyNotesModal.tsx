@@ -83,6 +83,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [inlineEditContent, setInlineEditContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savingNotes, setSavingNotes] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState<StickyNote[]>([]);
 
   // Load notes from API
@@ -266,15 +267,30 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     color: keyof typeof colorConfig
   ) => {
     try {
-      setLoading(true);
       setError(null);
+      setSavingNotes(prev => new Set(prev).add(noteId));
+      
+      // Update local state immediately for smooth UI
+      setNotes(prevNotes => 
+        prevNotes.map(note => 
+          note.id === noteId ? { ...note, color } : note
+        )
+      );
+      
+      // Update database in background
       await stickyNotesService.updateStickyNote(noteId, { color });
-      await loadNotes(); // Reload notes to get updated data
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update color');
       console.error('Error updating color:', err);
+      
+      // Revert local state on error
+      await loadNotes();
     } finally {
-      setLoading(false);
+      setSavingNotes(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(noteId);
+        return newSet;
+      });
     }
   };
 
@@ -293,17 +309,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       try {
         setLoading(true);
         setError(null);
+        
+        // Update local state immediately for smooth UI
+        setNotes(prevNotes => 
+          prevNotes.map(note => 
+            note.id === inlineEditingNote 
+              ? { ...note, title: inlineEditTitle, content: inlineEditContent }
+              : note
+          )
+        );
+        
+        // Update database in background
         await stickyNotesService.updateStickyNote(inlineEditingNote, {
           title: inlineEditTitle,
           content: inlineEditContent,
         });
-        await loadNotes(); // Reload notes to get updated data
+        
         setInlineEditingNote(null);
         setInlineEditTitle('');
         setInlineEditContent('');
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to save note');
         console.error('Error saving note:', err);
+        
+        // Revert local state on error
+        await loadNotes();
       } finally {
         setLoading(false);
       }
@@ -1298,6 +1328,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       ⋮⋮
                                     </div>
                                   )}
+                                  
+                                  {/* Saving indicator */}
+                                  {savingNotes.has(note.id) && (
+                                    <div className='absolute top-2 right-2 text-blue-500'>
+                                      <div className='animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full'></div>
+                                    </div>
+                                  )}
+                                  
                                   <div className='p-3 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
                               // Inline editing mode
