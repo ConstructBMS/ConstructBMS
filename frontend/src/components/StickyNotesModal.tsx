@@ -1286,6 +1286,38 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
+                                  {/* Top right controls - drag handle and edit button */}
+                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-10'>
+                                    {/* Edit button */}
+                                    {inlineEditingNote !== note.id && (
+                                      <button
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          startInlineEdit(note.id);
+                                        }}
+                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                        title='Edit Note'
+                                      >
+                                        ✏️
+                                      </button>
+                                    )}
+
+                                    {/* Drag handle */}
+                                    {inlineEditingNote !== note.id && (
+                                      <div
+                                        {...provided.dragHandleProps}
+                                        onClick={e => e.stopPropagation()}
+                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors'
+                                        data-rbd-drag-handle-draggable-id={
+                                          note.id
+                                        }
+                                        data-rbd-drag-handle-context-id='0'
+                                        title='Drag to move'
+                                      >
+                                        ⋮⋮
+                                      </div>
+                                    )}
+                                  </div>
 
                                   <div className='p-3 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
