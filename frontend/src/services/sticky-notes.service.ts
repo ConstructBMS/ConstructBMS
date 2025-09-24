@@ -177,38 +177,48 @@ class StickyNotesService {
         throw new Error('Invalid note ID format');
       }
 
-      // Try with all new columns first
+      // Build update object with only the fields that are provided
+      const updateData: any = {
+        updated_at: new Date().toISOString()
+      };
+      
+      if (noteData.title !== undefined) updateData.title = noteData.title;
+      if (noteData.content !== undefined) updateData.content = noteData.content;
+      if (noteData.color !== undefined) updateData.color = noteData.color;
+      if (noteData.category !== undefined) updateData.category = noteData.category;
+      if (noteData.tags !== undefined) updateData.tags = noteData.tags;
+
       let { data, error } = await supabase
         .from('notes')
-        .update({
-          ...noteData,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
 
-      // If new columns don't exist, try with basic fields only
-      if (error && (error.message.includes('column') || error.message.includes('does not exist'))) {
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('notes')
-          .update({
-            title: noteData.title,
-            content: noteData.content,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', id)
-          .select()
-          .single();
-
-        if (fallbackError) {
-          throw new Error(fallbackError.message);
-        }
-
-        return fallbackData;
-      }
-
+      // Handle any errors
       if (error) {
+        console.error('Supabase update error:', error);
+        
+        // If color column doesn't exist, try without it
+        if (error.message.includes('color') || error.message.includes('column')) {
+          const fallbackData: any = { updated_at: new Date().toISOString() };
+          if (noteData.title !== undefined) fallbackData.title = noteData.title;
+          if (noteData.content !== undefined) fallbackData.content = noteData.content;
+          
+          const { data: fallbackResult, error: fallbackError } = await supabase
+            .from('notes')
+            .update(fallbackData)
+            .eq('id', id)
+            .select()
+            .single();
+            
+          if (fallbackError) {
+            throw new Error(fallbackError.message);
+          }
+          
+          return fallbackResult;
+        }
+        
         throw new Error(error.message);
       }
 
