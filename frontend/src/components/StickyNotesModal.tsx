@@ -62,8 +62,8 @@ interface StickyNote {
 
 export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedNote, setSelectedNote] = useState<number | null>(null);
-  const [editingNote, setEditingNote] = useState<number | null>(null);
+  const [selectedNote, setSelectedNote] = useState<string | null>(null);
+  const [editingNote, setEditingNote] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
@@ -230,7 +230,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     'background',
   ];
 
-  const handleNoteClick = (noteId: number) => {
+  const handleNoteClick = (noteId: string) => {
     setSelectedNote(noteId);
     const note = notes.find(n => n.id === noteId);
     if (note) {
@@ -469,7 +469,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Note: Removed complex JavaScript drag styling - using @hello-pangea/dnd instead
 
   // File upload handler
-  const onDrop = (acceptedFiles: File[], noteId: number) => {
+  const onDrop = (acceptedFiles: File[], noteId: string) => {
     const newAttachments = acceptedFiles.map(file => ({
       id: Math.random().toString(36).substr(2, 9),
       name: file.name,
@@ -1318,7 +1318,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         ✏️
                                       </button>
                                     )}
-                                    
+
                                     {/* Drag handle */}
                                     {inlineEditingNote !== note.id && (
                                       <div
@@ -1549,8 +1549,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
 // File Upload Zone Component
 interface FileUploadZoneProps {
-  noteId: number;
-  onDrop: (acceptedFiles: File[], noteId: number) => void;
+  noteId: string;
+  onDrop: (acceptedFiles: File[], noteId: string) => void;
 }
 
 function FileUploadZone({ noteId, onDrop }: FileUploadZoneProps) {

@@ -4,7 +4,19 @@ export interface StickyNote {
   id: string;
   title: string;
   content: string;
-  color: 'yellow' | 'pink' | 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'indigo' | 'lime' | 'rose';
+  color:
+    | 'yellow'
+    | 'pink'
+    | 'blue'
+    | 'gray'
+    | 'green'
+    | 'orange'
+    | 'purple'
+    | 'red'
+    | 'teal'
+    | 'indigo'
+    | 'lime'
+    | 'rose';
   position_x: number;
   position_y: number;
   width: number;
@@ -60,7 +72,8 @@ class StickyNotesService {
       // First try with attachments (if table exists)
       let { data, error } = await supabase
         .from('notes')
-        .select(`
+        .select(
+          `
           id,
           title,
           content,
@@ -82,14 +95,16 @@ class StickyNotesService {
             type,
             url
           )
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       // If attachments table doesn't exist, try without it
       if (error && error.message.includes('relationship')) {
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('notes')
-          .select(`
+          .select(
+            `
             id,
             title,
             content,
@@ -105,7 +120,8 @@ class StickyNotesService {
             author_id,
             created_at,
             updated_at
-          `)
+          `
+          )
           .order('created_at', { ascending: false });
 
         if (fallbackError) {
@@ -133,19 +149,23 @@ class StickyNotesService {
         .from('notes')
         .insert({
           ...noteData,
-          author_id: (await supabase.auth.getUser()).data.user?.id
+          author_id: (await supabase.auth.getUser()).data.user?.id,
         })
         .select()
         .single();
 
       // If new columns don't exist, try with basic fields only
-      if (error && (error.message.includes('column') || error.message.includes('does not exist'))) {
+      if (
+        error &&
+        (error.message.includes('column') ||
+          error.message.includes('does not exist'))
+      ) {
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('notes')
           .insert({
             title: noteData.title,
             content: noteData.content,
-            author_id: (await supabase.auth.getUser()).data.user?.id
+            author_id: (await supabase.auth.getUser()).data.user?.id,
           })
           .select()
           .single();
@@ -168,24 +188,22 @@ class StickyNotesService {
     }
   }
 
-  async updateStickyNote(id: string, noteData: UpdateStickyNoteData): Promise<StickyNote> {
+  async updateStickyNote(
+    id: string,
+    noteData: UpdateStickyNoteData
+  ): Promise<StickyNote> {
     try {
-      // Check if the ID is a valid UUID, if not, skip database update
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!uuidRegex.test(id)) {
-        console.warn('Invalid UUID format for note ID:', id);
-        throw new Error('Invalid note ID format');
-      }
 
       // Build update object with only the fields that are provided
       const updateData: any = {
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
-      
+
       if (noteData.title !== undefined) updateData.title = noteData.title;
       if (noteData.content !== undefined) updateData.content = noteData.content;
       if (noteData.color !== undefined) updateData.color = noteData.color;
-      if (noteData.category !== undefined) updateData.category = noteData.category;
+      if (noteData.category !== undefined)
+        updateData.category = noteData.category;
       if (noteData.tags !== undefined) updateData.tags = noteData.tags;
 
       let { data, error } = await supabase
@@ -198,27 +216,31 @@ class StickyNotesService {
       // Handle any errors
       if (error) {
         console.error('Supabase update error:', error);
-        
+
         // If color column doesn't exist, try without it
-        if (error.message.includes('color') || error.message.includes('column')) {
+        if (
+          error.message.includes('color') ||
+          error.message.includes('column')
+        ) {
           const fallbackData: any = { updated_at: new Date().toISOString() };
           if (noteData.title !== undefined) fallbackData.title = noteData.title;
-          if (noteData.content !== undefined) fallbackData.content = noteData.content;
-          
+          if (noteData.content !== undefined)
+            fallbackData.content = noteData.content;
+
           const { data: fallbackResult, error: fallbackError } = await supabase
             .from('notes')
             .update(fallbackData)
             .eq('id', id)
             .select()
             .single();
-            
+
           if (fallbackError) {
             throw new Error(fallbackError.message);
           }
-          
+
           return fallbackResult;
         }
-        
+
         throw new Error(error.message);
       }
 
@@ -235,17 +257,8 @@ class StickyNotesService {
 
   async deleteStickyNote(id: string): Promise<void> {
     try {
-      // Check if the ID is a valid UUID, if not, skip database update
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!uuidRegex.test(id)) {
-        console.warn('Invalid UUID format for note ID:', id);
-        throw new Error('Invalid note ID format');
-      }
 
-      const { error } = await supabase
-        .from('notes')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('notes').delete().eq('id', id);
 
       if (error) {
         throw new Error(error.message);
@@ -256,14 +269,15 @@ class StickyNotesService {
     }
   }
 
-  async addAttachment(noteId: string, attachment: { name: string; type: 'image' | 'document'; url: string }): Promise<void> {
+  async addAttachment(
+    noteId: string,
+    attachment: { name: string; type: 'image' | 'document'; url: string }
+  ): Promise<void> {
     try {
-      const { error } = await supabase
-        .from('note_attachments')
-        .insert({
-          note_id: noteId,
-          ...attachment
-        });
+      const { error } = await supabase.from('note_attachments').insert({
+        note_id: noteId,
+        ...attachment,
+      });
 
       if (error) {
         throw new Error(error.message);
