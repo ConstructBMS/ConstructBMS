@@ -1286,8 +1286,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Top right controls - drag handle and edit button */}
-                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-10'>
+                                  {/* Controls positioned relative to this specific card only */}
+                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-20 pointer-events-auto'>
                                     {/* Edit button */}
                                     {inlineEditingNote !== note.id && (
                                       <button
@@ -1295,7 +1295,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           e.stopPropagation();
                                           startInlineEdit(note.id);
                                         }}
-                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110 bg-white/80 rounded px-1 py-0.5'
                                         title='Edit Note'
                                       >
                                         ✏️
@@ -1307,7 +1307,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       <div
                                         {...provided.dragHandleProps}
                                         onClick={e => e.stopPropagation()}
-                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors'
+                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors bg-white/80 rounded px-1 py-0.5'
                                         data-rbd-drag-handle-draggable-id={
                                           note.id
                                         }
