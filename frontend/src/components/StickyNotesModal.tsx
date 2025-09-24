@@ -1295,7 +1295,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           e.stopPropagation();
                                           startInlineEdit(note.id);
                                         }}
-                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110 bg-white/80 rounded px-1 py-0.5'
+                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
                                         title='Edit Note'
                                       >
                                         ✏️
@@ -1307,7 +1307,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       <div
                                         {...provided.dragHandleProps}
                                         onClick={e => e.stopPropagation()}
-                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors bg-white/80 rounded px-1 py-0.5'
+                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors'
                                         data-rbd-drag-handle-draggable-id={
                                           note.id
                                         }
