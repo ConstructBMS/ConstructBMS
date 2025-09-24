@@ -532,6 +532,27 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               border-radius: 8px;
               box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
             }
+
+            /* Ensure sticky note controls are scoped to individual cards only */
+            .sticky-note-card .sticky-note-controls {
+              position: absolute !important;
+              top: 8px !important;
+              right: 8px !important;
+              z-index: 30 !important;
+            }
+
+            /* Prevent controls from appearing in modal header */
+            .sticky-notes-modal-header .sticky-note-controls {
+              display: none !important;
+            }
+
+            /* Ensure controls only appear on individual sticky note cards */
+            .sticky-note-controls {
+              position: absolute !important;
+              top: 8px !important;
+              right: 8px !important;
+              z-index: 30 !important;
+            }
           `}
       </style>
       <div className='fixed inset-0 z-50 flex'>
@@ -542,7 +563,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
           <div className='flex flex-col h-full'>
             {/* Header */}
-            <div className='flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
+            <div className='sticky-notes-modal-header flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
               <h2 className='text-lg font-semibold text-white'>Sticky Notes</h2>
               <div className='flex items-center space-x-2'>
                 {/* View Mode Toggle */}
@@ -1264,7 +1285,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  className={`aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
+                                  className={`sticky-note-card aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
                                     inlineEditingNote === note.id
                                       ? 'cursor-default ring-2 ring-blue-500'
                                       : 'cursor-pointer hover:shadow-md'
@@ -1287,7 +1308,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   }}
                                 >
                                   {/* Controls positioned relative to this specific card only */}
-                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-20 pointer-events-auto'>
+                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-20 pointer-events-auto sticky-note-controls'>
                                     {/* Edit button */}
                                     {inlineEditingNote !== note.id && (
                                       <button
@@ -1298,7 +1319,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
                                         title='Edit Note'
                                       >
-🔧
+                                        🔧
                                       </button>
                                     )}
 
@@ -1314,7 +1335,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         data-rbd-drag-handle-context-id='0'
                                         title='Drag to move'
                                       >
-🔄
+                                        🔄
                                       </div>
                                     )}
                                   </div>
