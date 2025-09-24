@@ -1298,7 +1298,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
                                         title='Edit Note'
                                       >
-                                        ✏️
+🔧
                                       </button>
                                     )}
 
@@ -1314,7 +1314,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         data-rbd-drag-handle-context-id='0'
                                         title='Drag to move'
                                       >
-                                        ⋮⋮
+🔄
                                       </div>
                                     )}
                                   </div>
