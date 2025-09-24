@@ -212,6 +212,10 @@ class StickyNotesService {
         throw new Error(error.message);
       }
 
+      if (!data) {
+        throw new Error('Note not found');
+      }
+
       return data;
     } catch (error) {
       console.error('Error updating sticky note:', error);
