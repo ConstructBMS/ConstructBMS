@@ -91,7 +91,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       setLoading(true);
       setError(null);
       const data = await stickyNotesService.getStickyNotes();
-      setNotes(data);
+      // Filter out notes with invalid UUIDs (timestamp IDs)
+      const validNotes = data.filter(note => {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        return uuidRegex.test(note.id);
+      });
+      setNotes(validNotes);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notes');
       console.error('Error loading notes:', err);

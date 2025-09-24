@@ -170,6 +170,13 @@ class StickyNotesService {
 
   async updateStickyNote(id: string, noteData: UpdateStickyNoteData): Promise<StickyNote> {
     try {
+      // Check if the ID is a valid UUID, if not, skip database update
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        console.warn('Invalid UUID format for note ID:', id);
+        throw new Error('Invalid note ID format');
+      }
+
       // Try with all new columns first
       let { data, error } = await supabase
         .from('notes')
@@ -214,6 +221,13 @@ class StickyNotesService {
 
   async deleteStickyNote(id: string): Promise<void> {
     try {
+      // Check if the ID is a valid UUID, if not, skip database update
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        console.warn('Invalid UUID format for note ID:', id);
+        throw new Error('Invalid note ID format');
+      }
+
       const { error } = await supabase
         .from('notes')
         .delete()
