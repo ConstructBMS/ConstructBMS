@@ -85,21 +85,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Load notes from API
   const loadNotes = async () => {
     try {
-      setLoading(true);
       setError(null);
       const data = await stickyNotesService.getStickyNotes();
-      // Filter out notes with invalid UUIDs (timestamp IDs)
-      const validNotes = data.filter(note => {
-        const uuidRegex =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        return uuidRegex.test(note.id);
-      });
-      setNotes(validNotes);
+      // Use all notes without filtering by UUID format
+      setNotes(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notes');
       console.error('Error loading notes:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -292,7 +284,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const saveInlineEdit = async () => {
     if (inlineEditingNote) {
       try {
-        setLoading(true);
         setError(null);
 
         // Update local state immediately for smooth UI
@@ -316,8 +307,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       } catch (err) {
         console.error('Error saving note:', err);
         // Silently fail - no error display
-      } finally {
-        setLoading(false);
       }
     }
   };
@@ -714,12 +703,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
             {/* Content */}
             <div className='flex-1 flex'>
-              {/* Loading and Error States */}
-              {loading && (
-                <div className='flex items-center justify-center py-8'>
-                  <div className='text-gray-500'>Loading notes...</div>
-                </div>
-              )}
+              {/* Error States */}
 
               {error && (
                 <div className='fixed top-4 right-4 bg-red-100 border border-red-300 rounded-lg p-3 shadow-lg z-50 max-w-sm'>
