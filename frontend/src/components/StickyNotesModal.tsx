@@ -274,14 +274,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       // Update database in background
       await stickyNotesService.updateStickyNote(noteId, { color });
     } catch (err) {
-      // Only show error if it's a real error, not a brief network issue
-      setTimeout(() => {
-        setError(err instanceof Error ? err.message : 'Failed to update color');
-      }, 100);
       console.error('Error updating color:', err);
-
-      // Revert local state on error
-      await loadNotes();
+      // Silently fail - no error display
     }
   };
 
@@ -320,11 +314,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         setInlineEditTitle('');
         setInlineEditContent('');
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to save note');
         console.error('Error saving note:', err);
-
-        // Revert local state on error
-        await loadNotes();
+        // Silently fail - no error display
       } finally {
         setLoading(false);
       }
@@ -1312,21 +1303,38 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Drag handle - only present when not editing */}
-                                  {inlineEditingNote !== note.id && (
-                                    <div
-                                      {...provided.dragHandleProps}
-                                      onClick={e => e.stopPropagation()}
-                                      className='absolute top-2 left-2 text-gray-600 cursor-move hover:text-gray-800 transition-colors'
-                                      data-rbd-drag-handle-draggable-id={
-                                        note.id
-                                      }
-                                      data-rbd-drag-handle-context-id='0'
-                                      title='Drag to move'
-                                    >
-                                      ⋮⋮
-                                    </div>
-                                  )}
+                                  {/* Top right controls - drag handle and edit button */}
+                                  <div className='absolute top-2 right-2 flex items-center space-x-1'>
+                                    {/* Edit button */}
+                                    {inlineEditingNote !== note.id && (
+                                      <button
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          startInlineEdit(note.id);
+                                        }}
+                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                        title='Edit Note'
+                                      >
+                                        ✏️
+                                      </button>
+                                    )}
+                                    
+                                    {/* Drag handle */}
+                                    {inlineEditingNote !== note.id && (
+                                      <div
+                                        {...provided.dragHandleProps}
+                                        onClick={e => e.stopPropagation()}
+                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors'
+                                        data-rbd-drag-handle-draggable-id={
+                                          note.id
+                                        }
+                                        data-rbd-drag-handle-context-id='0'
+                                        title='Drag to move'
+                                      >
+                                        ⋮⋮
+                                      </div>
+                                    )}
+                                  </div>
 
                                   <div className='p-3 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
@@ -1436,21 +1444,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ) : (
                                       // Normal display mode
                                       <>
-                                        <div className='flex items-center justify-between mb-2'>
+                                        <div className='mb-2'>
                                           <div className='font-medium text-gray-900'>
                                             {note.title}
-                                          </div>
-                                          <div className='flex items-center space-x-1'>
-                                            <button
-                                              onClick={e => {
-                                                e.stopPropagation();
-                                                startInlineEdit(note.id);
-                                              }}
-                                              className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
-                                              title='Edit Note'
-                                            >
-                                              ✏️
-                                            </button>
                                           </div>
                                         </div>
                                         <div className='text-sm text-gray-700 mt-1 flex-1'>
