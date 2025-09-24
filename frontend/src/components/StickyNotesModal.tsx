@@ -78,7 +78,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   );
   const [inlineEditTitle, setInlineEditTitle] = useState('');
   const [inlineEditContent, setInlineEditContent] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
 
