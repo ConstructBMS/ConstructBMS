@@ -274,7 +274,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       // Update database in background
       await stickyNotesService.updateStickyNote(noteId, { color });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update color');
+      // Only show error if it's a real error, not a brief network issue
+      setTimeout(() => {
+        setError(err instanceof Error ? err.message : 'Failed to update color');
+      }, 100);
       console.error('Error updating color:', err);
 
       // Revert local state on error
@@ -728,13 +731,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               )}
 
               {error && (
-                <div className='bg-red-50 border border-red-200 rounded-lg p-4 m-4'>
-                  <div className='text-red-800'>{error}</div>
+                <div className='fixed top-4 right-4 bg-red-100 border border-red-300 rounded-lg p-3 shadow-lg z-50 max-w-sm'>
+                  <div className='text-red-800 text-sm'>{error}</div>
                   <button
-                    onClick={loadNotes}
-                    className='mt-2 text-sm text-red-600 hover:text-red-800 underline'
+                    onClick={() => setError(null)}
+                    className='mt-1 text-xs text-red-600 hover:text-red-800 underline'
                   >
-                    Try again
+                    Dismiss
                   </button>
                 </div>
               )}
@@ -1314,7 +1317,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     <div
                                       {...provided.dragHandleProps}
                                       onClick={e => e.stopPropagation()}
-                                      className='absolute top-2 right-2 text-gray-600 cursor-move hover:text-gray-800 transition-colors'
+                                      className='absolute top-2 left-2 text-gray-600 cursor-move hover:text-gray-800 transition-colors'
                                       data-rbd-drag-handle-draggable-id={
                                         note.id
                                       }
