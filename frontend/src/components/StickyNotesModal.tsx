@@ -86,31 +86,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     try {
       setError(null);
       const data = await stickyNotesService.getStickyNotes();
-      
+
       // Add colors to existing notes if they don't have them
       const notesWithColors = data.map((note, index) => ({
         ...note,
-        color: note.color || ['yellow', 'pink', 'blue', 'green'][index % 4] as any
+        color:
+          note.color || (['yellow', 'pink', 'blue', 'green'][index % 4] as any),
       }));
-      
+
       setNotes(notesWithColors);
     } catch (err) {
-      // If API fails, try to load demo notes from localStorage
-      const savedDemoNotes = localStorage.getItem('demo-sticky-notes');
-      if (savedDemoNotes) {
-        try {
-          const demoNotes = JSON.parse(savedDemoNotes);
-          setNotes(demoNotes);
-        } catch (parseError) {
-          console.error('Error parsing saved demo notes:', parseError);
-        }
-      }
-      
-      // Only show error if no demo notes are available
-      if (!savedDemoNotes) {
-        setError(err instanceof Error ? err.message : 'Failed to load notes');
-        console.error('Error loading notes:', err);
-      }
+      setError(err instanceof Error ? err.message : 'Failed to load notes');
+      console.error('Error loading notes:', err);
     }
   };
 
@@ -277,23 +264,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     try {
       setError(null);
 
-      // Check if it's a demo note
-      if (noteId.startsWith('demo-')) {
-        // Update demo note in localStorage
-        setNotes(prevNotes => {
-          const updatedNotes = prevNotes.map(note => (note.id === noteId ? { ...note, color } : note));
-          localStorage.setItem('demo-sticky-notes', JSON.stringify(updatedNotes));
-          return updatedNotes;
-        });
-      } else {
-        // Update local state immediately for smooth UI
-        setNotes(prevNotes =>
-          prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
-        );
+      // Update local state immediately for smooth UI
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === noteId ? { ...note, color } : note
+        )
+      );
 
-        // Update database in background
-        await stickyNotesService.updateStickyNote(noteId, { color });
-      }
+      // Update database in background
+      await stickyNotesService.updateStickyNote(noteId, { color });
     } catch (err) {
       console.error('Error updating color:', err);
       // Silently fail - no error display
@@ -315,34 +294,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       try {
         setError(null);
 
-        // Check if it's a demo note
-        if (inlineEditingNote.startsWith('demo-')) {
-          // Update demo note in localStorage
-          setNotes(prevNotes => {
-            const updatedNotes = prevNotes.map(note =>
-              note.id === inlineEditingNote
-                ? { ...note, title: inlineEditTitle, content: inlineEditContent }
-                : note
-            );
-            localStorage.setItem('demo-sticky-notes', JSON.stringify(updatedNotes));
-            return updatedNotes;
-          });
-        } else {
-          // Update local state immediately for smooth UI
-          setNotes(prevNotes =>
-            prevNotes.map(note =>
-              note.id === inlineEditingNote
-                ? { ...note, title: inlineEditTitle, content: inlineEditContent }
-                : note
-            )
-          );
+        // Update local state immediately for smooth UI
+        setNotes(prevNotes =>
+          prevNotes.map(note =>
+            note.id === inlineEditingNote
+              ? {
+                  ...note,
+                  title: inlineEditTitle,
+                  content: inlineEditContent,
+                }
+              : note
+          )
+        );
 
-          // Update database in background
-          await stickyNotesService.updateStickyNote(inlineEditingNote, {
-            title: inlineEditTitle,
-            content: inlineEditContent,
-          });
-        }
+        // Update database in background
+        await stickyNotesService.updateStickyNote(inlineEditingNote, {
+          title: inlineEditTitle,
+          content: inlineEditContent,
+        });
 
         setInlineEditingNote(null);
         setInlineEditTitle('');
@@ -663,37 +632,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                       setEditTitle(newNote.title);
                       setEditContent(newNote.content);
                     } catch (error) {
-                      // Only log if it's not a demo mode error
-                      if (error.message !== 'DEMO_MODE') {
-                        console.error('Error creating note:', error);
-                      }
-                      
-                      // Fallback: create note in memory with localStorage persistence
-                      const demoNote: StickyNote = {
-                        id: `demo-${crypto.randomUUID()}`,
-                        title: 'New Note',
-                        content: 'Click to edit...',
-                        color: 'yellow',
-                        position_x: 0,
-                        position_y: 0,
-                        width: 2,
-                        height: 2,
-                        tags: [],
-                        author_id: 'demo-user',
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString(),
-                      };
-                      
-                      setNotes(prev => {
-                        const newNotes = [...prev, demoNote];
-                        // Save to localStorage for persistence
-                        localStorage.setItem('demo-sticky-notes', JSON.stringify(newNotes));
-                        return newNotes;
-                      });
-                      setSelectedNote(demoNote);
-                      setEditingNote(demoNote);
-                      setEditTitle(demoNote.title);
-                      setEditContent(demoNote.content);
+                      console.error('Error creating note:', error);
+                      setError('Failed to create note. Please try again.');
                     }
                   }}
                   className='flex items-center space-x-1 border-gray-600 text-gray-300 hover:bg-gray-700'
