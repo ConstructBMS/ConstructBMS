@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Sticky Notes Loading Issue**: Resolved "Loading notes..." problem that prevented notes from displaying:
+- **Sticky Notes Loading Issue**: Resolved "Loading notes..." problem that prevented notes from
+  displaying:
   - Removed overly strict UUID validation that was filtering out valid notes
   - Fixed type mismatches between string and number IDs in StickyNotesModal component
   - Updated function signatures to use string IDs consistently throughout the component

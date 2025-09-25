@@ -77,24 +77,10 @@ class StickyNotesService {
           id,
           title,
           content,
-          color,
-          position_x,
-          position_y,
-          width,
-          height,
-          category,
           tags,
-          project_id,
-          opportunity_id,
           author_id,
           created_at,
-          updated_at,
-          note_attachments (
-            id,
-            name,
-            type,
-            url
-          )
+          updated_at
         `
         )
         .order('created_at', { ascending: false });
@@ -108,15 +94,7 @@ class StickyNotesService {
             id,
             title,
             content,
-            color,
-            position_x,
-            position_y,
-            width,
-            height,
-            category,
             tags,
-            project_id,
-            opportunity_id,
             author_id,
             created_at,
             updated_at
@@ -144,38 +122,28 @@ class StickyNotesService {
 
   async createStickyNote(noteData: CreateStickyNoteData): Promise<StickyNote> {
     try {
-      // Try with all new columns first
+      // Get the current user
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        // Silently fail for demo mode - don't log as error
+        throw new Error('DEMO_MODE');
+      }
+
+      // Use only basic columns that exist in notes table
       let { data, error } = await supabase
         .from('notes')
         .insert({
-          ...noteData,
-          author_id: (await supabase.auth.getUser()).data.user?.id,
+          title: noteData.title,
+          content: noteData.content,
+          tags: noteData.tags || [],
+          author_id: user.id,
         })
         .select()
         .single();
-
-      // If new columns don't exist, try with basic fields only
-      if (
-        error &&
-        (error.message.includes('column') ||
-          error.message.includes('does not exist'))
-      ) {
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('notes')
-          .insert({
-            title: noteData.title,
-            content: noteData.content,
-            author_id: (await supabase.auth.getUser()).data.user?.id,
-          })
-          .select()
-          .single();
-
-        if (fallbackError) {
-          throw new Error(fallbackError.message);
-        }
-
-        return fallbackData;
-      }
 
       if (error) {
         throw new Error(error.message);
@@ -193,6 +161,24 @@ class StickyNotesService {
     noteData: UpdateStickyNoteData
   ): Promise<StickyNote> {
     try {
+      // Check if this is a demo note (in memory only)
+      if (id.startsWith('demo-') || id.includes('demo')) {
+        // Return a mock response for demo notes
+        return {
+          id,
+          title: noteData.title || 'Demo Note',
+          content: noteData.content || 'Demo content',
+          color: 'yellow' as const,
+          position_x: 0,
+          position_y: 0,
+          width: 2,
+          height: 2,
+          tags: noteData.tags || [],
+          author_id: 'demo-user',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+      }
 
       // Build update object with only the fields that are provided
       const updateData: any = {
@@ -201,9 +187,6 @@ class StickyNotesService {
 
       if (noteData.title !== undefined) updateData.title = noteData.title;
       if (noteData.content !== undefined) updateData.content = noteData.content;
-      if (noteData.color !== undefined) updateData.color = noteData.color;
-      if (noteData.category !== undefined)
-        updateData.category = noteData.category;
       if (noteData.tags !== undefined) updateData.tags = noteData.tags;
 
       let { data, error } = await supabase
@@ -217,15 +200,16 @@ class StickyNotesService {
       if (error) {
         console.error('Supabase update error:', error);
 
-        // If color column doesn't exist, try without it
+        // If any column doesn't exist, try with only basic columns
         if (
-          error.message.includes('color') ||
-          error.message.includes('column')
+          error.message.includes('column') ||
+          error.message.includes('does not exist')
         ) {
           const fallbackData: any = { updated_at: new Date().toISOString() };
           if (noteData.title !== undefined) fallbackData.title = noteData.title;
           if (noteData.content !== undefined)
             fallbackData.content = noteData.content;
+          if (noteData.tags !== undefined) fallbackData.tags = noteData.tags;
 
           const { data: fallbackResult, error: fallbackError } = await supabase
             .from('notes')
@@ -257,7 +241,6 @@ class StickyNotesService {
 
   async deleteStickyNote(id: string): Promise<void> {
     try {
-
       const { error } = await supabase.from('notes').delete().eq('id', id);
 
       if (error) {

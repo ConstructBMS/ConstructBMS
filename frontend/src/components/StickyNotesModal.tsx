@@ -86,11 +86,31 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     try {
       setError(null);
       const data = await stickyNotesService.getStickyNotes();
-      // Use all notes without filtering by UUID format
-      setNotes(data);
+      
+      // Add colors to existing notes if they don't have them
+      const notesWithColors = data.map((note, index) => ({
+        ...note,
+        color: note.color || ['yellow', 'pink', 'blue', 'green'][index % 4] as any
+      }));
+      
+      setNotes(notesWithColors);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load notes');
-      console.error('Error loading notes:', err);
+      // If API fails, try to load demo notes from localStorage
+      const savedDemoNotes = localStorage.getItem('demo-sticky-notes');
+      if (savedDemoNotes) {
+        try {
+          const demoNotes = JSON.parse(savedDemoNotes);
+          setNotes(demoNotes);
+        } catch (parseError) {
+          console.error('Error parsing saved demo notes:', parseError);
+        }
+      }
+      
+      // Only show error if no demo notes are available
+      if (!savedDemoNotes) {
+        setError(err instanceof Error ? err.message : 'Failed to load notes');
+        console.error('Error loading notes:', err);
+      }
     }
   };
 
@@ -257,13 +277,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     try {
       setError(null);
 
-      // Update local state immediately for smooth UI
-      setNotes(prevNotes =>
-        prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
-      );
+      // Check if it's a demo note
+      if (noteId.startsWith('demo-')) {
+        // Update demo note in localStorage
+        setNotes(prevNotes => {
+          const updatedNotes = prevNotes.map(note => (note.id === noteId ? { ...note, color } : note));
+          localStorage.setItem('demo-sticky-notes', JSON.stringify(updatedNotes));
+          return updatedNotes;
+        });
+      } else {
+        // Update local state immediately for smooth UI
+        setNotes(prevNotes =>
+          prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
+        );
 
-      // Update database in background
-      await stickyNotesService.updateStickyNote(noteId, { color });
+        // Update database in background
+        await stickyNotesService.updateStickyNote(noteId, { color });
+      }
     } catch (err) {
       console.error('Error updating color:', err);
       // Silently fail - no error display
@@ -285,20 +315,34 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       try {
         setError(null);
 
-        // Update local state immediately for smooth UI
-        setNotes(prevNotes =>
-          prevNotes.map(note =>
-            note.id === inlineEditingNote
-              ? { ...note, title: inlineEditTitle, content: inlineEditContent }
-              : note
-          )
-        );
+        // Check if it's a demo note
+        if (inlineEditingNote.startsWith('demo-')) {
+          // Update demo note in localStorage
+          setNotes(prevNotes => {
+            const updatedNotes = prevNotes.map(note =>
+              note.id === inlineEditingNote
+                ? { ...note, title: inlineEditTitle, content: inlineEditContent }
+                : note
+            );
+            localStorage.setItem('demo-sticky-notes', JSON.stringify(updatedNotes));
+            return updatedNotes;
+          });
+        } else {
+          // Update local state immediately for smooth UI
+          setNotes(prevNotes =>
+            prevNotes.map(note =>
+              note.id === inlineEditingNote
+                ? { ...note, title: inlineEditTitle, content: inlineEditContent }
+                : note
+            )
+          );
 
-        // Update database in background
-        await stickyNotesService.updateStickyNote(inlineEditingNote, {
-          title: inlineEditTitle,
-          content: inlineEditContent,
-        });
+          // Update database in background
+          await stickyNotesService.updateStickyNote(inlineEditingNote, {
+            title: inlineEditTitle,
+            content: inlineEditContent,
+          });
+        }
 
         setInlineEditingNote(null);
         setInlineEditTitle('');
@@ -533,25 +577,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
             }
 
-            /* Ensure sticky note controls are scoped to individual cards only */
-            .sticky-note-card .sticky-note-controls {
-              position: absolute !important;
-              top: 8px !important;
-              right: 8px !important;
-              z-index: 30 !important;
-            }
-
-            /* Prevent controls from appearing in modal header */
-            .sticky-notes-modal-header .sticky-note-controls {
-              display: none !important;
-            }
-
-            /* Ensure controls only appear on individual sticky note cards */
-            .sticky-note-controls {
-              position: absolute !important;
-              top: 8px !important;
-              right: 8px !important;
-              z-index: 30 !important;
+            /* Simple controls styling */
+            .notes-cards {
+              position: relative;
             }
           `}
       </style>
@@ -560,7 +588,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         <div className='fixed inset-0 bg-black/50' onClick={onClose} />
 
         {/* Modal */}
-        <div className='relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
+        <div className='notes-main-modal relative ml-auto w-[1000px] h-full bg-gray-900 border-l shadow-xl'>
           <div className='flex flex-col h-full'>
             {/* Header */}
             <div className='sticky-notes-modal-header flex items-center justify-between p-4 border-b bg-gray-800 border-gray-700'>
@@ -620,20 +648,53 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 <Button
                   variant='outline'
                   size='sm'
-                  onClick={() => {
-                    const newNote: StickyNote = {
-                      id: crypto.randomUUID(),
-                      title: 'New Note',
-                      content: 'Click to edit...',
-                      color: 'yellow',
-                      created_at: new Date().toISOString(),
-                      tags: [],
-                    };
-                    setNotes(prev => [...prev, newNote]);
-                    setSelectedNote(newNote);
-                    setEditingNote(newNote);
-                    setEditTitle(newNote.title);
-                    setEditContent(newNote.content);
+                  onClick={async () => {
+                    try {
+                      const newNote = await stickyNotesService.createStickyNote(
+                        {
+                          title: 'New Note',
+                          content: 'Click to edit...',
+                          tags: [],
+                        }
+                      );
+                      setNotes(prev => [...prev, newNote]);
+                      setSelectedNote(newNote);
+                      setEditingNote(newNote);
+                      setEditTitle(newNote.title);
+                      setEditContent(newNote.content);
+                    } catch (error) {
+                      // Only log if it's not a demo mode error
+                      if (error.message !== 'DEMO_MODE') {
+                        console.error('Error creating note:', error);
+                      }
+                      
+                      // Fallback: create note in memory with localStorage persistence
+                      const demoNote: StickyNote = {
+                        id: `demo-${crypto.randomUUID()}`,
+                        title: 'New Note',
+                        content: 'Click to edit...',
+                        color: 'yellow',
+                        position_x: 0,
+                        position_y: 0,
+                        width: 2,
+                        height: 2,
+                        tags: [],
+                        author_id: 'demo-user',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                      };
+                      
+                      setNotes(prev => {
+                        const newNotes = [...prev, demoNote];
+                        // Save to localStorage for persistence
+                        localStorage.setItem('demo-sticky-notes', JSON.stringify(newNotes));
+                        return newNotes;
+                      });
+                      setSelectedNote(demoNote);
+                      setEditingNote(demoNote);
+                      setEditTitle(demoNote.title);
+                      setEditContent(demoNote.content);
+                    }
                   }}
                   className='flex items-center space-x-1 border-gray-600 text-gray-300 hover:bg-gray-700'
                 >
@@ -1285,7 +1346,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
-                                  className={`sticky-note-card aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
+                                  className={`notes-cards aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
                                     inlineEditingNote === note.id
                                       ? 'cursor-default ring-2 ring-blue-500'
                                       : 'cursor-pointer hover:shadow-md'
@@ -1307,35 +1368,34 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ...provided.draggableProps.style,
                                   }}
                                 >
-                                  {/* Controls positioned relative to this specific card only */}
-                                  <div className='absolute top-2 right-2 flex items-center space-x-1 z-20 pointer-events-auto sticky-note-controls'>
-                                    {/* Edit button */}
+                                  {/* Controls - Icons only */}
+                                  <div className='absolute top-2 right-2 z-50 flex gap-1'>
+                                    {/* Edit Button */}
                                     {inlineEditingNote !== note.id && (
                                       <button
                                         onClick={e => {
                                           e.stopPropagation();
                                           startInlineEdit(note.id);
                                         }}
-                                        className='text-gray-500 hover:text-gray-700 text-xs transition-all hover:scale-110'
+                                        className='text-gray-600 hover:text-gray-800 text-lg'
                                         title='Edit Note'
                                       >
-                                        🔧
+                                        ✏️
                                       </button>
                                     )}
 
-                                    {/* Drag handle */}
+                                    {/* Move Handle */}
                                     {inlineEditingNote !== note.id && (
                                       <div
                                         {...provided.dragHandleProps}
-                                        onClick={e => e.stopPropagation()}
-                                        className='text-gray-600 cursor-move hover:text-gray-800 transition-colors'
+                                        className='text-gray-600 hover:text-gray-800 cursor-move text-lg'
+                                        title='Drag to move'
                                         data-rbd-drag-handle-draggable-id={
                                           note.id
                                         }
                                         data-rbd-drag-handle-context-id='0'
-                                        title='Drag to move'
                                       >
-                                        🔄
+                                        ⋮⋮
                                       </div>
                                     )}
                                   </div>
