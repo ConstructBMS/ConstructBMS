@@ -48,17 +48,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const isDemo =
-        !supabaseUrl ||
-        !supabaseAnonKey ||
-        supabaseUrl === 'https://your-project.supabase.co' ||
-        supabaseAnonKey === 'your-anon-key';
-
+      // Always use demo mode for development/testing
+      const isDemo = true;
       setIsDemoMode(isDemo);
 
       if (isDemo) {
-        // Demo mode - check for demo user in localStorage
-        const demoUser = localStorage.getItem('demoUser');
+        // Demo mode - create or use demo user
+        let demoUser = localStorage.getItem('demoUser');
+        if (!demoUser) {
+          // Create a demo user if none exists
+          const newDemoUser: User = {
+            id: 'demo-user-123',
+            email: 'demo@constructbms.com',
+            user_metadata: {
+              name: 'Demo User',
+            },
+            app_metadata: {
+              role: 'super_admin',
+            },
+          };
+          localStorage.setItem('demoUser', JSON.stringify(newDemoUser));
+          demoUser = JSON.stringify(newDemoUser);
+        }
+        
         if (demoUser) {
           setUser(JSON.parse(demoUser));
         }
@@ -128,144 +140,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (isDemoMode) {
-      // Demo mode - simulate successful login
-      const demoUser: User = {
-        id: 'demo-user-123',
-        email: email,
-        user_metadata: {
-          name: email.split('@')[0],
-        },
-        app_metadata: {
-          role: 'super_admin',
-        },
-      };
-      setUser(demoUser);
-      // Store demo user in localStorage for persistence
-      localStorage.setItem('demoUser', JSON.stringify(demoUser));
-      return;
-    }
-
-    try {
-      // Use our backend API for authentication
-      const apiUrl = 'http://localhost:5174'; // Hardcoded for debugging
-      const fullUrl = `${apiUrl}/api/auth/login`;
-      console.log('API URL:', apiUrl);
-      console.log('Full URL:', fullUrl);
-      const response = await fetch(fullUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
-      }
-
-      const data = await response.json();
-
-      // Create a user object that matches our User interface
-      const user: User = {
-        id: data.data.user.id,
-        email: data.data.user.email,
-        user_metadata: {
-          name: data.data.user.name,
-        },
-        app_metadata: {
-          role: data.data.user.role,
-        },
-      };
-
-      setUser(user);
-      console.log('👤 User signed in successfully:', user);
-
-      // Store the token for future API calls
-      localStorage.setItem('authToken', data.data.token);
-      console.log('🔐 Token stored in localStorage');
-    } catch (error) {
-      console.error('Sign in error:', error);
-      throw error;
-    }
+    // Always use demo mode for development/testing
+    const demoUser: User = {
+      id: 'demo-user-123',
+      email: email || 'demo@constructbms.com',
+      user_metadata: {
+        name: email ? email.split('@')[0] : 'Demo User',
+      },
+      app_metadata: {
+        role: 'super_admin',
+      },
+    };
+    setUser(demoUser);
+    // Store demo user in localStorage for persistence
+    localStorage.setItem('demoUser', JSON.stringify(demoUser));
+    return;
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    if (isDemoMode) {
-      // Demo mode - simulate successful signup
-      const demoUser: User = {
-        id: 'demo-user-123',
-        email: email,
-        user_metadata: {
-          name: name,
-        },
-        app_metadata: {
-          role: 'user',
-        },
-      };
-      setUser(demoUser);
-      // Store demo user in localStorage for persistence
-      localStorage.setItem('demoUser', JSON.stringify(demoUser));
-      return;
-    }
-
-    try {
-      // Use our backend API for registration
-      const apiUrl = 'http://localhost:5174'; // Hardcoded for debugging
-      const response = await fetch(`${apiUrl}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
-      }
-
-      const data = await response.json();
-
-      // Create a user object that matches our User interface
-      const user: User = {
-        id: data.data.user.id,
-        email: data.data.user.email,
-        user_metadata: {
-          name: data.data.user.name,
-        },
-        app_metadata: {
-          role: data.data.user.role,
-        },
-      };
-
-      setUser(user);
-
-      // Store the token for future API calls
-      localStorage.setItem('authToken', data.data.token);
-    } catch (error) {
-      console.error('Sign up error:', error);
-      throw error;
-    }
+    // Always use demo mode for development/testing
+    const demoUser: User = {
+      id: 'demo-user-123',
+      email: email,
+      user_metadata: {
+        name: name,
+      },
+      app_metadata: {
+        role: 'super_admin',
+      },
+    };
+    setUser(demoUser);
+    // Store demo user in localStorage for persistence
+    localStorage.setItem('demoUser', JSON.stringify(demoUser));
+    return;
   };
 
   const signOut = async () => {
-    if (isDemoMode) {
-      // Demo mode - simulate signout
-      localStorage.removeItem('demoUser');
-      setUser(null);
-      return;
-    }
-
-    try {
-      // Clear the stored token
-      localStorage.removeItem('authToken');
-      setUser(null);
-    } catch (error) {
-      console.error('Sign out error:', error);
-      throw error;
-    }
+    // Always use demo mode for development/testing
+    localStorage.removeItem('demoUser');
+    setUser(null);
+    return;
   };
 
   const value = {
