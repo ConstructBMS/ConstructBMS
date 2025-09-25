@@ -266,9 +266,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
       // Update local state immediately for smooth UI
       setNotes(prevNotes =>
-        prevNotes.map(note =>
-          note.id === noteId ? { ...note, color } : note
-        )
+        prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
       );
 
       // Update database in background

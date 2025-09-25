@@ -69,17 +69,40 @@ class StickyNotesService {
 
   async getStickyNotes(): Promise<StickyNote[]> {
     try {
-      // Use notes table with sticky note columns
-      let { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Check if we're in demo mode
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      const isDemo = !supabaseUrl || !supabaseAnonKey || 
+        supabaseUrl === 'https://your-project.supabase.co' || 
+        supabaseAnonKey === 'your-anon-key';
 
-      if (error) {
-        throw new Error(error.message);
+      if (isDemo) {
+        // Demo mode - get notes for demo user
+        const { data, error } = await supabase
+          .from('notes')
+          .select('*')
+          .eq('author_id', 'demo-user-123')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return data || [];
+      } else {
+        // Production mode - get all notes
+        const { data, error } = await supabase
+          .from('notes')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return data || [];
       }
-
-      return data || [];
     } catch (error) {
       console.error('Error fetching sticky notes:', error);
       throw error;
@@ -95,8 +118,40 @@ class StickyNotesService {
       } = await supabase.auth.getUser();
 
       if (authError || !user) {
-        // Silently fail for demo mode - don't log as error
-        throw new Error('DEMO_MODE');
+        // Check if we're in demo mode
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        const isDemo = !supabaseUrl || !supabaseAnonKey || 
+          supabaseUrl === 'https://your-project.supabase.co' || 
+          supabaseAnonKey === 'your-anon-key';
+          
+        if (isDemo) {
+          // Demo mode - use a demo user ID
+          const demoUserId = 'demo-user-123';
+          
+          // Use notes table with demo user
+          let { data, error } = await supabase
+            .from('notes')
+            .insert({
+              title: noteData.title,
+              content: noteData.content,
+              color: noteData.color || 'yellow',
+              tags: noteData.tags || [],
+              author_id: demoUserId,
+            })
+            .select()
+            .single();
+
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          return data;
+        } else {
+          // Production mode - require authentication
+          throw new Error('User must be authenticated to create notes');
+        }
       }
 
       // Use notes table with sticky note columns
@@ -128,6 +183,14 @@ class StickyNotesService {
     noteData: UpdateStickyNoteData
   ): Promise<StickyNote> {
     try {
+      // Check if we're in demo mode
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      const isDemo = !supabaseUrl || !supabaseAnonKey || 
+        supabaseUrl === 'https://your-project.supabase.co' || 
+        supabaseAnonKey === 'your-anon-key';
+
       // Build update object with all provided fields
       const updateData: any = {
         updated_at: new Date().toISOString(),
@@ -137,17 +200,24 @@ class StickyNotesService {
       if (noteData.content !== undefined) updateData.content = noteData.content;
       if (noteData.color !== undefined) updateData.color = noteData.color;
       if (noteData.tags !== undefined) updateData.tags = noteData.tags;
-      if (noteData.position_x !== undefined) updateData.position_x = noteData.position_x;
-      if (noteData.position_y !== undefined) updateData.position_y = noteData.position_y;
+      if (noteData.position_x !== undefined)
+        updateData.position_x = noteData.position_x;
+      if (noteData.position_y !== undefined)
+        updateData.position_y = noteData.position_y;
       if (noteData.width !== undefined) updateData.width = noteData.width;
       if (noteData.height !== undefined) updateData.height = noteData.height;
 
-      let { data, error } = await supabase
+      let query = supabase
         .from('notes')
         .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq('id', id);
+
+      // In demo mode, also filter by demo user
+      if (isDemo) {
+        query = query.eq('author_id', 'demo-user-123');
+      }
+
+      let { data, error } = await query.select().single();
 
       // Handle any errors
       if (error) {
