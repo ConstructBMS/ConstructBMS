@@ -21,9 +21,9 @@ import {
   General,
   Integrations,
   Permissions,
-  Tags,
   UsersAndRoles,
 } from './sections';
+import { Tags } from './sections/Tags';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general');
@@ -104,7 +104,7 @@ export default function SettingsPage() {
               Configure your application settings and preferences.
             </p>
           </div>
-          
+
           <nav className='flex-1 p-4 space-y-1 overflow-y-auto'>
             {tabs.map(tab => {
               const Icon = tab.icon;
