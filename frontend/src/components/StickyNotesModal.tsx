@@ -1756,6 +1756,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   selection.addRange(range);
                                                 }
                                               }
+                                              // Handle Delete and Backspace keys properly
+                                              if (e.key === 'Delete' || e.key === 'Backspace') {
+                                                // Let the default behavior happen, but update state after
+                                                setTimeout(() => {
+                                                  const target = e.target as HTMLDivElement;
+                                                  setInlineEditContent(target.innerHTML);
+                                                }, 0);
+                                              }
                                             }}
                                             onBlur={e => {
                                               const target =
