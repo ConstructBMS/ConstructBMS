@@ -86,23 +86,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     return cleanHtml;
   };
 
-  // Helper function to clean HTML content for ReactQuill
+  // Helper function to clean HTML content for ReactQuill - convert to plain text
   const cleanHtmlForQuill = (html: string) => {
     if (!html) return '';
 
-    // Clean up the HTML for ReactQuill
-    let cleanHtml = html
-      .replace(/<br\s*\/?>/gi, '<br>')
-      .replace(/<p><\/p>/gi, '')
-      .replace(/<p>\s*<\/p>/gi, '')
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Convert to plain text with proper line breaks
+    let textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Clean up extra whitespace and normalize line breaks
+    textContent = textContent
+      .replace(/\n\s*\n/g, '\n') // Remove multiple line breaks
+      .replace(/^\s+|\s+$/g, '') // Trim start/end
+      .replace(/\s+/g, ' ') // Normalize spaces
       .trim();
 
-    // If content is empty after cleaning, return empty string
-    if (!cleanHtml || cleanHtml.trim() === '') {
-      return '';
-    }
-
-    return cleanHtml;
+    return textContent;
   };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
@@ -493,7 +495,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     // Clear drag state
     setDraggedNoteId(null);
     setDragOverIndex(null);
-    
+
     if (!result.destination) return;
 
     // Simple reorder without complex state updates
@@ -1586,18 +1588,55 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           />
                                         </div>
 
-                                        {/* Content editing */}
-                                        <div>
-                                          <textarea
+                                        {/* Content editing with ReactQuill */}
+                                        <div className='bg-gray-800 rounded-md'>
+                                          <style>
+                                            {`
+                                              .ql-toolbar {
+                                                display: block !important;
+                                                background-color: #374151 !important;
+                                                border-color: #4b5563 !important;
+                                                color: white !important;
+                                              }
+                                              .ql-toolbar .ql-stroke {
+                                                stroke: white !important;
+                                              }
+                                              .ql-toolbar .ql-fill {
+                                                fill: white !important;
+                                              }
+                                              .ql-toolbar .ql-picker-label {
+                                                color: white !important;
+                                              }
+                                              .ql-toolbar .ql-picker-options {
+                                                background-color: #374151 !important;
+                                                color: white !important;
+                                              }
+                                              .ql-container {
+                                                background-color: #1f2937 !important;
+                                                color: white !important;
+                                                border-color: #4b5563 !important;
+                                              }
+                                              .ql-editor {
+                                                color: white !important;
+                                                background-color: #1f2937 !important;
+                                              }
+                                              .ql-editor.ql-blank::before {
+                                                color: #9ca3af !important;
+                                              }
+                                            `}
+                                          </style>
+                                          <ReactQuill
+                                            key={inlineEditingNote}
+                                            theme='snow'
                                             value={inlineEditContent}
-                                            onChange={e =>
-                                              setInlineEditContent(
-                                                e.target.value
-                                              )
-                                            }
-                                            className='w-full px-2 py-1 text-sm bg-transparent border-b border-gray-400 focus:border-gray-600 focus:outline-none text-gray-700 resize-none'
-                                            placeholder='Note content...'
-                                            rows={4}
+                                            onChange={setInlineEditContent}
+                                            modules={quillModules}
+                                            formats={quillFormats}
+                                            className='bg-gray-800 text-white'
+                                            style={{
+                                              backgroundColor: '#1f2937',
+                                              color: 'white',
+                                            }}
                                           />
                                         </div>
 
@@ -1727,7 +1766,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               )}
                             </Draggable>
                           ))}
-                          
+
                           {provided.placeholder}
                         </div>
                       )}
