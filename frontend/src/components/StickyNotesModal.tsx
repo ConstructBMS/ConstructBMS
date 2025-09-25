@@ -13,7 +13,6 @@ import {
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
-import { RichTextEditor } from './RichTextEditor';
 
 // Import dependencies directly - they should be available since they're in package.json
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
@@ -67,22 +66,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [editingNote, setEditingNote] = useState<string | null>(null);
 
   // Helper function to clean and format HTML content for display
+  // Updated to fix truncateHtmlContent reference error
   const formatContentForDisplay = (html: string, maxLength: number = 150) => {
     if (!html) return '';
-    
+
     // Clean up the HTML and ensure proper formatting
     let cleanHtml = html
       .replace(/<br\s*\/?>/gi, '<br>')
       .replace(/<p><\/p>/gi, '')
       .replace(/<p>\s*<\/p>/gi, '')
       .trim();
-    
+
     // If content is short enough, return as-is
     const textContent = cleanHtml.replace(/<[^>]*>/g, '');
     if (textContent.length <= maxLength) {
       return cleanHtml;
     }
-    
+
     // For longer content, we'll let CSS handle the truncation
     return cleanHtml;
   };
