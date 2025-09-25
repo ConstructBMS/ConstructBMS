@@ -93,7 +93,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     // Create a temporary div to parse and clean HTML
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-    
+
     // Clean up the HTML but keep formatting
     let cleanHtml = tempDiv.innerHTML
       .replace(/<p><\/p>/g, '') // Remove empty paragraphs
@@ -1601,80 +1601,106 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           />
                                         </div>
 
-                                        {/* Inline formatting toolbar */}
-                                        <div className='flex gap-1 mb-2'>
+                                        {/* Compact inline formatting toolbar */}
+                                        <div className='flex gap-1 mb-1'>
                                           <button
                                             onClick={() => {
-                                              document.execCommand('bold', false);
+                                              document.execCommand(
+                                                'bold',
+                                                false
+                                              );
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded font-bold'
+                                            className='px-1 py-0.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded font-bold'
                                             title='Bold'
                                           >
                                             B
                                           </button>
                                           <button
                                             onClick={() => {
-                                              document.execCommand('italic', false);
+                                              document.execCommand(
+                                                'italic',
+                                                false
+                                              );
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded italic'
+                                            className='px-1 py-0.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded italic'
                                             title='Italic'
                                           >
                                             I
                                           </button>
                                           <button
                                             onClick={() => {
-                                              document.execCommand('insertUnorderedList', false);
+                                              document.execCommand(
+                                                'insertUnorderedList',
+                                                false
+                                              );
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            className='px-1 py-0.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
                                             title='Bullet List'
                                           >
                                             •
                                           </button>
                                           <button
                                             onClick={() => {
-                                              document.execCommand('insertOrderedList', false);
+                                              document.execCommand(
+                                                'insertOrderedList',
+                                                false
+                                              );
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            className='px-1 py-0.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
                                             title='Numbered List'
                                           >
                                             1.
                                           </button>
                                           <button
                                             onClick={() => {
-                                              document.execCommand('underline', false);
+                                              document.execCommand(
+                                                'underline',
+                                                false
+                                              );
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded underline'
+                                            className='px-1 py-0.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded underline'
                                             title='Underline'
                                           >
                                             U
                                           </button>
                                         </div>
 
-                                        {/* Inline content editing with contentEditable */}
-                                        <div className='flex-1'>
+                                        {/* Compact inline content editing */}
+                                        <div className='flex-1' style={{ maxHeight: '150px' }}>
                                           <div
                                             contentEditable
-                                            onInput={(e) => {
-                                              const target = e.target as HTMLDivElement;
-                                              setInlineEditContent(target.innerHTML);
+                                            onInput={e => {
+                                              const target =
+                                                e.target as HTMLDivElement;
+                                              setInlineEditContent(
+                                                target.innerHTML
+                                              );
                                             }}
-                                            onBlur={(e) => {
-                                              const target = e.target as HTMLDivElement;
-                                              setInlineEditContent(target.innerHTML);
+                                            onBlur={e => {
+                                              const target =
+                                                e.target as HTMLDivElement;
+                                              setInlineEditContent(
+                                                target.innerHTML
+                                              );
                                             }}
-                                            className='w-full h-full px-2 py-1 text-sm bg-transparent border-none focus:outline-none text-gray-700 resize-none'
+                                            className='w-full h-full px-2 py-1 text-sm bg-transparent border-none focus:outline-none text-gray-700 resize-none overflow-y-auto'
                                             style={{
-                                              minHeight: '200px',
+                                              minHeight: '120px',
+                                              maxHeight: '150px',
                                               fontFamily: 'inherit',
                                             }}
-                                            dangerouslySetInnerHTML={{ __html: inlineEditContent }}
-                                            suppressContentEditableWarning={true}
+                                            dangerouslySetInnerHTML={{
+                                              __html: inlineEditContent,
+                                            }}
+                                            suppressContentEditableWarning={
+                                              true
+                                            }
                                           />
                                         </div>
 
-                                        {/* Color picker for inline editing */}
+                                        {/* Compact color picker for inline editing */}
                                         <div
-                                          className='flex flex-wrap gap-1'
+                                          className='flex flex-wrap gap-1 mt-1'
                                           style={{
                                             pointerEvents: 'auto',
                                             position: 'relative',
@@ -1707,7 +1733,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   e.preventDefault()
                                                 }
                                                 onDrag={e => e.preventDefault()}
-                                                className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 ${
+                                                className={`w-3 h-3 rounded-full border-2 transition-all hover:scale-110 ${
                                                   note.color === colorKey
                                                     ? 'border-gray-800 ring-1 ring-gray-600'
                                                     : 'border-gray-400 hover:border-gray-600'
@@ -1722,8 +1748,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           )}
                                         </div>
 
-                                        {/* Action buttons */}
-                                        <div className='flex justify-end space-x-2'>
+                                        {/* Compact action buttons */}
+                                        <div className='flex justify-end space-x-1 mt-2'>
                                           <button
                                             onClick={e => {
                                               e.stopPropagation();
