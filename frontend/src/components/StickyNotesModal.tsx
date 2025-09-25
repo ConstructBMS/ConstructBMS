@@ -981,7 +981,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           ]?.border || '#9ca3af',
                                       }}
                                     >
-                                      <div className='font-medium text-gray-900 group-hover:text-white'>
+                                      <div className='font-medium text-gray-900 group-hover:text-white pr-20 truncate'>
                                         {note.title}
                                       </div>
                                       <div
@@ -1634,7 +1634,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     )}
                                   </div>
 
-                                  <div className='p-3 h-full flex flex-col'>
+                                  <div className='p-3 pr-6 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
                                       // Inline editing mode
                                       <div className='space-y-3'>
@@ -1818,7 +1818,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ) : (
                                       // Normal display mode
                                       <>
-                                        <div className='mb-2 pr-16'>
+                                        <div className='mb-2 pr-20'>
                                           <div className='font-medium text-gray-900 truncate'>
                                             {note.title}
                                           </div>
