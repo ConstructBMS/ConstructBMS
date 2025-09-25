@@ -7,4 +7,5 @@ export { FooterSettings as Footer } from './Footer';
 export { General } from './General';
 export { Integrations } from './Integrations';
 export { Permissions } from './Permissions';
+export { Tags } from './Tags';
 export { UsersAndRoles } from './UsersAndRoles';

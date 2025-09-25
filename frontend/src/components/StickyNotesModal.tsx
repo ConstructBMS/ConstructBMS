@@ -781,38 +781,43 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       <div className='font-medium text-gray-900 group-hover:text-white'>
                                         {note.title}
                                       </div>
-                                      <div 
-                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 overflow-hidden'
+                                      <div
+                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 overflow-hidden flex-1'
                                         style={{
                                           display: '-webkit-box',
                                           WebkitLineClamp: 3,
                                           WebkitBoxOrient: 'vertical',
-                                          maxHeight: '4.5rem'
+                                          maxHeight: '4.5rem',
+                                          minHeight: '3rem',
                                         }}
-                                        dangerouslySetInnerHTML={{ __html: note.content }}
+                                        dangerouslySetInnerHTML={{
+                                          __html: note.content,
+                                        }}
                                       />
-                                      <div className='text-xs text-gray-500 group-hover:text-gray-300 mt-2'>
-                                        {new Date(
-                                          note.created_at
-                                        ).toLocaleDateString()}
-                                      </div>
-                                      {note.tags && note.tags.length > 0 && (
-                                        <div className='flex flex-wrap gap-1 mt-2 max-h-12 overflow-hidden'>
-                                          {note.tags.slice(0, 3).map(tag => (
-                                            <span
-                                              key={tag}
-                                              className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full truncate'
-                                            >
-                                              {tag}
-                                            </span>
-                                          ))}
-                                          {note.tags.length > 3 && (
-                                            <span className='px-2 py-1 text-xs bg-gray-300 text-gray-600 rounded-full'>
-                                              +{note.tags.length - 3}
-                                            </span>
-                                          )}
+                                      <div className='mt-auto'>
+                                        <div className='text-xs text-gray-500 group-hover:text-gray-300 mb-2'>
+                                          {new Date(
+                                            note.created_at
+                                          ).toLocaleDateString()}
                                         </div>
-                                      )}
+                                        {note.tags && note.tags.length > 0 && (
+                                          <div className='flex flex-wrap gap-1 max-h-12 overflow-hidden'>
+                                            {note.tags.slice(0, 3).map(tag => (
+                                              <span
+                                                key={tag}
+                                                className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full truncate'
+                                              >
+                                                {tag}
+                                              </span>
+                                            ))}
+                                            {note.tags.length > 3 && (
+                                              <span className='px-2 py-1 text-xs bg-gray-300 text-gray-600 rounded-full'>
+                                                +{note.tags.length - 3}
+                                              </span>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
                                     </div>
                                   )}
                                 </Draggable>
@@ -1463,40 +1468,45 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             {note.title}
                                           </div>
                                         </div>
-                                        <div 
+                                        <div
                                           className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden'
                                           style={{
                                             display: '-webkit-box',
                                             WebkitLineClamp: 3,
                                             WebkitBoxOrient: 'vertical',
-                                            maxHeight: '4.5rem'
+                                            maxHeight: '4.5rem',
+                                            minHeight: '3rem',
                                           }}
-                                          dangerouslySetInnerHTML={{ __html: note.content }}
+                                          dangerouslySetInnerHTML={{
+                                            __html: note.content,
+                                          }}
                                         />
                                       </>
                                     )}
-                                    <div className='text-xs text-gray-500 mt-2'>
-                                      {new Date(
-                                        note.created_at
-                                      ).toLocaleDateString()}
-                                    </div>
-                                    {note.tags && note.tags.length > 0 && (
-                                      <div className='flex flex-wrap gap-1 mt-2 max-h-12 overflow-hidden'>
-                                        {note.tags.slice(0, 3).map(tag => (
-                                          <span
-                                            key={tag}
-                                            className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full truncate'
-                                          >
-                                            {tag}
-                                          </span>
-                                        ))}
-                                        {note.tags.length > 3 && (
-                                          <span className='px-2 py-1 text-xs bg-gray-300 text-gray-600 rounded-full'>
-                                            +{note.tags.length - 3}
-                                          </span>
-                                        )}
+                                    <div className='mt-auto'>
+                                      <div className='text-xs text-gray-500 mb-2'>
+                                        {new Date(
+                                          note.created_at
+                                        ).toLocaleDateString()}
                                       </div>
-                                    )}
+                                      {note.tags && note.tags.length > 0 && (
+                                        <div className='flex flex-wrap gap-1 max-h-12 overflow-hidden'>
+                                          {note.tags.slice(0, 3).map(tag => (
+                                            <span
+                                              key={tag}
+                                              className='px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full truncate'
+                                            >
+                                              {tag}
+                                            </span>
+                                          ))}
+                                          {note.tags.length > 3 && (
+                                            <span className='px-2 py-1 text-xs bg-gray-300 text-gray-600 rounded-full'>
+                                              +{note.tags.length - 3}
+                                            </span>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               )}

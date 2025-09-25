@@ -6,6 +6,7 @@ import {
   Palette,
   Plug,
   Shield,
+  Tag,
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -20,6 +21,7 @@ import {
   General,
   Integrations,
   Permissions,
+  Tags,
   UsersAndRoles,
 } from './sections';
 
@@ -45,6 +47,12 @@ export default function SettingsPage() {
       label: 'Footer',
       icon: Layout,
       component: Footer,
+    },
+    {
+      id: 'tags',
+      label: 'Tags',
+      icon: Tag,
+      component: Tags,
     },
     {
       id: 'feature-flags',
@@ -87,17 +95,17 @@ export default function SettingsPage() {
 
   return (
     <Page title='Settings'>
-      <div className='space-y-6'>
-        <div>
-          <h2 className='text-2xl font-semibold'>Settings</h2>
-          <p className='text-muted-foreground'>
-            Configure your application settings and preferences.
-          </p>
-        </div>
-
-        {/* Tabs Navigation */}
-        <div className='border-b'>
-          <nav className='-mb-px flex space-x-8 overflow-x-auto'>
+      <div className='flex h-[calc(100vh-200px)]'>
+        {/* Vertical Sidebar Navigation */}
+        <div className='w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col'>
+          <div className='p-6 border-b border-gray-200 dark:border-gray-700'>
+            <h2 className='text-lg font-semibold'>Settings</h2>
+            <p className='text-sm text-muted-foreground mt-1'>
+              Configure your application settings and preferences.
+            </p>
+          </div>
+          
+          <nav className='flex-1 p-4 space-y-1 overflow-y-auto'>
             {tabs.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -106,16 +114,16 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id, tab.href)}
                   className={`
-                    flex items-center space-x-2 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm
+                    w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left font-medium text-sm transition-colors
                     ${
                       isActive
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-700'
                     }
                   `}
                 >
-                  <Icon className='h-4 w-4' />
-                  <span>{tab.label}</span>
+                  <Icon className='h-4 w-4 flex-shrink-0' />
+                  <span className='truncate'>{tab.label}</span>
                 </button>
               );
             })}
@@ -123,7 +131,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Tab Content */}
-        <div className='mt-6'>
+        <div className='flex-1 p-6 overflow-y-auto'>
           {ActiveComponent ? (
             <ActiveComponent />
           ) : (
