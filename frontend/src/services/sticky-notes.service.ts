@@ -72,10 +72,9 @@ class StickyNotesService {
       // Check if we're in demo mode
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      const isDemo = !supabaseUrl || !supabaseAnonKey || 
-        supabaseUrl === 'https://your-project.supabase.co' || 
-        supabaseAnonKey === 'your-anon-key';
+
+      // Always use demo mode for now
+      const isDemo = true;
 
       if (isDemo) {
         // Demo mode - get notes for demo user
@@ -121,15 +120,14 @@ class StickyNotesService {
         // Check if we're in demo mode
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-        
-        const isDemo = !supabaseUrl || !supabaseAnonKey || 
-          supabaseUrl === 'https://your-project.supabase.co' || 
-          supabaseAnonKey === 'your-anon-key';
-          
+
+        // Always use demo mode when no authenticated user
+        const isDemo = true;
+
         if (isDemo) {
           // Demo mode - use a demo user ID
           const demoUserId = 'demo-user-123';
-          
+
           // Use notes table with demo user
           let { data, error } = await supabase
             .from('notes')
@@ -186,10 +184,9 @@ class StickyNotesService {
       // Check if we're in demo mode
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      const isDemo = !supabaseUrl || !supabaseAnonKey || 
-        supabaseUrl === 'https://your-project.supabase.co' || 
-        supabaseAnonKey === 'your-anon-key';
+
+      // Always use demo mode for now
+      const isDemo = true;
 
       // Build update object with all provided fields
       const updateData: any = {
@@ -207,10 +204,7 @@ class StickyNotesService {
       if (noteData.width !== undefined) updateData.width = noteData.width;
       if (noteData.height !== undefined) updateData.height = noteData.height;
 
-      let query = supabase
-        .from('notes')
-        .update(updateData)
-        .eq('id', id);
+      let query = supabase.from('notes').update(updateData).eq('id', id);
 
       // In demo mode, also filter by demo user
       if (isDemo) {
