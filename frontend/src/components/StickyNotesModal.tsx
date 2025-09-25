@@ -86,31 +86,28 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     return cleanHtml;
   };
 
-  // Helper function to clean HTML content for ReactQuill - convert to plain text
+  // Helper function to clean HTML content for contentEditable - keep HTML but clean it
   const cleanHtmlForQuill = (html: string) => {
     if (!html) return '';
 
-    // Create a temporary div to parse HTML
+    // Create a temporary div to parse and clean HTML
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     
-    // Convert to plain text with proper line breaks
-    let textContent = tempDiv.textContent || tempDiv.innerText || '';
-    
-    // Clean up extra whitespace and normalize line breaks
-    textContent = textContent
-      .replace(/\n\s*\n/g, '\n') // Remove multiple line breaks
-      .replace(/^\s+|\s+$/g, '') // Trim start/end
-      .replace(/\s+/g, ' ') // Normalize spaces
+    // Clean up the HTML but keep formatting
+    let cleanHtml = tempDiv.innerHTML
+      .replace(/<p><\/p>/g, '') // Remove empty paragraphs
+      .replace(/<p>\s*<\/p>/g, '') // Remove empty paragraphs with whitespace
+      .replace(/<br\s*\/?>/g, '<br>') // Normalize line breaks
       .trim();
 
-    return textContent;
+    return cleanHtml;
   };
 
   // Simple markdown to HTML converter for display
   const markdownToHtml = (text: string) => {
     if (!text) return '';
-    
+
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
       .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
@@ -980,7 +977,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           display: 'block',
                                         }}
                                         dangerouslySetInnerHTML={{
-                                          __html: markdownToHtml(note.content || ''),
+                                          __html: note.content || '',
                                         }}
                                       />
                                       <div className='mt-auto'>
@@ -1608,40 +1605,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         <div className='flex gap-1 mb-2'>
                                           <button
                                             onClick={() => {
-                                              const textarea = document.querySelector('textarea[placeholder="Note content..."]') as HTMLTextAreaElement;
-                                              if (textarea) {
-                                                const start = textarea.selectionStart;
-                                                const end = textarea.selectionEnd;
-                                                const selectedText = inlineEditContent.substring(start, end);
-                                                const newText = inlineEditContent.substring(0, start) + `**${selectedText}**` + inlineEditContent.substring(end);
-                                                setInlineEditContent(newText);
-                                              }
+                                              document.execCommand('bold', false);
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded font-bold'
                                             title='Bold'
                                           >
                                             B
                                           </button>
                                           <button
                                             onClick={() => {
-                                              const textarea = document.querySelector('textarea[placeholder="Note content..."]') as HTMLTextAreaElement;
-                                              if (textarea) {
-                                                const start = textarea.selectionStart;
-                                                const end = textarea.selectionEnd;
-                                                const selectedText = inlineEditContent.substring(start, end);
-                                                const newText = inlineEditContent.substring(0, start) + `*${selectedText}*` + inlineEditContent.substring(end);
-                                                setInlineEditContent(newText);
-                                              }
+                                              document.execCommand('italic', false);
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded italic'
                                             title='Italic'
                                           >
                                             I
                                           </button>
                                           <button
                                             onClick={() => {
-                                              const newText = inlineEditContent + '\n- ';
-                                              setInlineEditContent(newText);
+                                              document.execCommand('insertUnorderedList', false);
                                             }}
                                             className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
                                             title='Bullet List'
@@ -1650,32 +1632,43 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           </button>
                                           <button
                                             onClick={() => {
-                                              const newText = inlineEditContent + '\n1. ';
-                                              setInlineEditContent(newText);
+                                              document.execCommand('insertOrderedList', false);
                                             }}
                                             className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
                                             title='Numbered List'
                                           >
                                             1.
                                           </button>
+                                          <button
+                                            onClick={() => {
+                                              document.execCommand('underline', false);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded underline'
+                                            title='Underline'
+                                          >
+                                            U
+                                          </button>
                                         </div>
 
-                                        {/* Inline content editing */}
+                                        {/* Inline content editing with contentEditable */}
                                         <div className='flex-1'>
-                                          <textarea
-                                            value={inlineEditContent}
-                                            onChange={e =>
-                                              setInlineEditContent(
-                                                e.target.value
-                                              )
-                                            }
+                                          <div
+                                            contentEditable
+                                            onInput={(e) => {
+                                              const target = e.target as HTMLDivElement;
+                                              setInlineEditContent(target.innerHTML);
+                                            }}
+                                            onBlur={(e) => {
+                                              const target = e.target as HTMLDivElement;
+                                              setInlineEditContent(target.innerHTML);
+                                            }}
                                             className='w-full h-full px-2 py-1 text-sm bg-transparent border-none focus:outline-none text-gray-700 resize-none'
-                                            placeholder='Note content...'
                                             style={{
                                               minHeight: '200px',
                                               fontFamily: 'inherit',
                                             }}
-                                            autoFocus
+                                            dangerouslySetInnerHTML={{ __html: inlineEditContent }}
+                                            suppressContentEditableWarning={true}
                                           />
                                         </div>
 
@@ -1769,7 +1762,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             display: 'block',
                                           }}
                                           dangerouslySetInnerHTML={{
-                                            __html: markdownToHtml(note.content || ''),
+                                            __html: note.content || '',
                                           }}
                                         />
                                       </>
