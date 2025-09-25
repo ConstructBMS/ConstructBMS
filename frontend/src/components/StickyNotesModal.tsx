@@ -69,19 +69,19 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Updated to fix truncateHtmlContent reference error
   const formatContentForDisplay = (html: string, maxLength: number = 300) => {
     if (!html) return '<p>No content</p>';
-    
+
     // Clean up the HTML and ensure proper formatting
     let cleanHtml = html
       .replace(/<br\s*\/?>/gi, '<br>')
       .replace(/<p><\/p>/gi, '')
       .replace(/<p>\s*<\/p>/gi, '')
       .trim();
-    
+
     // If content is empty after cleaning, add a placeholder
     if (!cleanHtml || cleanHtml.trim() === '') {
       return '<p>No content</p>';
     }
-    
+
     // Return the full content - let CSS handle the height limits
     return cleanHtml;
   };
@@ -807,8 +807,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         style={{
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
-                                          lineHeight: '1.4',
-                                          maxHeight: '8rem',
+                                          lineHeight: '1.3',
+                                          maxHeight: '12rem',
                                           overflow: 'hidden',
                                           display: 'block',
                                         }}
@@ -1497,8 +1497,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           style={{
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
-                                            lineHeight: '1.4',
-                                            maxHeight: '8rem',
+                                            lineHeight: '1.3',
+                                            maxHeight: '12rem',
                                             overflow: 'hidden',
                                             display: 'block',
                                           }}
