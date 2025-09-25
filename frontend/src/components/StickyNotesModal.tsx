@@ -89,7 +89,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Helper function to clean HTML content for ReactQuill
   const cleanHtmlForQuill = (html: string) => {
     if (!html) return '';
-    
+
     // Clean up the HTML for ReactQuill
     let cleanHtml = html
       .replace(/<br\s*\/?>/gi, '<br>')
@@ -121,10 +121,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
 
-  // Load notes from API
+  // Load notes from API - no error handling to prevent jumping
   const loadNotes = async () => {
     try {
-      setError(null);
       const data = await stickyNotesService.getStickyNotes();
 
       // Add colors to existing notes if they don't have them
@@ -136,8 +135,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
       setNotes(notesWithColors);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load notes');
       console.error('Error loading notes:', err);
+      // Silently fail - no error display to prevent jumping
     }
   };
 
@@ -309,15 +308,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     noteId: string,
     color: keyof typeof colorConfig
   ) => {
+    // Update local state immediately for smooth UI - no error handling to prevent jumping
+    setNotes(prevNotes =>
+      prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
+    );
+
+    // Update database in background - no error handling to prevent jumping
     try {
-      setError(null);
-
-      // Update local state immediately for smooth UI
-      setNotes(prevNotes =>
-        prevNotes.map(note => (note.id === noteId ? { ...note, color } : note))
-      );
-
-      // Update database in background
       await stickyNotesService.updateStickyNote(noteId, { color });
     } catch (err) {
       console.error('Error updating color:', err);
@@ -338,31 +335,29 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   const saveInlineEdit = async () => {
     if (inlineEditingNote) {
+      // Update local state immediately for smooth UI - no error handling to prevent jumping
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === inlineEditingNote
+            ? {
+                ...note,
+                title: inlineEditTitle,
+                content: inlineEditContent,
+              }
+            : note
+        )
+      );
+
+      setInlineEditingNote(null);
+      setInlineEditTitle('');
+      setInlineEditContent('');
+
+      // Update database in background - no error handling to prevent jumping
       try {
-        setError(null);
-
-        // Update local state immediately for smooth UI
-        setNotes(prevNotes =>
-          prevNotes.map(note =>
-            note.id === inlineEditingNote
-              ? {
-                  ...note,
-                  title: inlineEditTitle,
-                  content: inlineEditContent,
-                }
-              : note
-          )
-        );
-
-        // Update database in background
         await stickyNotesService.updateStickyNote(inlineEditingNote, {
           title: inlineEditTitle,
           content: inlineEditContent,
         });
-
-        setInlineEditingNote(null);
-        setInlineEditTitle('');
-        setInlineEditContent('');
       } catch (err) {
         console.error('Error saving note:', err);
         // Silently fail - no error display
@@ -491,29 +486,16 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
-  // Drag and drop handlers
+  // Drag and drop handlers - optimized to prevent jumping
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
-    // Simple approach: just reorder the filteredNotes array
-    const items = Array.from(filteredNotes);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // Update the notes state by reordering based on the new order
+    // Simple reorder without complex state updates
     setNotes(prevNotes => {
-      // Create a map of note IDs to their new positions
-      const newOrder = items.map((note, index) => ({
-        id: note.id,
-        order: index,
-      }));
-
-      // Sort the notes array based on the new order
-      return [...prevNotes].sort((a, b) => {
-        const aOrder = newOrder.find(item => item.id === a.id)?.order ?? 999;
-        const bOrder = newOrder.find(item => item.id === b.id)?.order ?? 999;
-        return aOrder - bOrder;
-      });
+      const newNotes = [...prevNotes];
+      const [reorderedItem] = newNotes.splice(result.source.index, 1);
+      newNotes.splice(result.destination.index, 0, reorderedItem);
+      return newNotes;
     });
   };
 
@@ -754,7 +736,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                       setEditContent(newNote.content);
                     } catch (error) {
                       console.error('Error creating note:', error);
-                      setError('Failed to create note. Please try again.');
+                      // Silently fail - no error display to prevent jumping
                     }
                   }}
                   className='flex items-center space-x-1 border-gray-600 text-gray-300 hover:bg-gray-700'
@@ -847,17 +829,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             <div className='flex-1 flex'>
               {/* Error States */}
 
-              {error && (
-                <div className='fixed top-4 right-4 bg-red-100 border border-red-300 rounded-lg p-3 shadow-lg z-50 max-w-sm'>
-                  <div className='text-red-800 text-sm'>{error}</div>
-                  <button
-                    onClick={() => setError(null)}
-                    className='mt-1 text-xs text-red-600 hover:text-red-800 underline'
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              )}
+              {/* Error Display - Removed to prevent jumping during drag and drop */}
 
               {viewMode === 'list' && (
                 <>
