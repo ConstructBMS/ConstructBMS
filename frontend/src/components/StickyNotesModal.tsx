@@ -106,6 +106,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
     return textContent;
   };
+
+  // Simple markdown to HTML converter for display
+  const markdownToHtml = (text: string) => {
+    if (!text) return '';
+    
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>') // H1
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>') // H2
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>') // H3
+      .replace(/^- (.*$)/gim, '<li>$1</li>') // Bullet lists
+      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>') // Numbered lists
+      .replace(/\n/g, '<br>') // Line breaks
+      .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>') // Wrap lists
+      .replace(/<\/ul><br><ul>/g, '') // Remove extra ul tags
+      .replace(/<ul><li>(.*?)<\/li><\/ul>/g, '<ul><li>$1</li></ul>'); // Clean up lists
+  };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
@@ -962,9 +980,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           display: 'block',
                                         }}
                                         dangerouslySetInnerHTML={{
-                                          __html: formatContentForDisplay(
-                                            note.content
-                                          ),
+                                          __html: markdownToHtml(note.content || ''),
                                         }}
                                       />
                                       <div className='mt-auto'>
@@ -1588,55 +1604,78 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           />
                                         </div>
 
-                                        {/* Content editing with ReactQuill */}
-                                        <div className='bg-gray-800 rounded-md'>
-                                          <style>
-                                            {`
-                                              .ql-toolbar {
-                                                display: block !important;
-                                                background-color: #374151 !important;
-                                                border-color: #4b5563 !important;
-                                                color: white !important;
+                                        {/* Inline formatting toolbar */}
+                                        <div className='flex gap-1 mb-2'>
+                                          <button
+                                            onClick={() => {
+                                              const textarea = document.querySelector('textarea[placeholder="Note content..."]') as HTMLTextAreaElement;
+                                              if (textarea) {
+                                                const start = textarea.selectionStart;
+                                                const end = textarea.selectionEnd;
+                                                const selectedText = inlineEditContent.substring(start, end);
+                                                const newText = inlineEditContent.substring(0, start) + `**${selectedText}**` + inlineEditContent.substring(end);
+                                                setInlineEditContent(newText);
                                               }
-                                              .ql-toolbar .ql-stroke {
-                                                stroke: white !important;
-                                              }
-                                              .ql-toolbar .ql-fill {
-                                                fill: white !important;
-                                              }
-                                              .ql-toolbar .ql-picker-label {
-                                                color: white !important;
-                                              }
-                                              .ql-toolbar .ql-picker-options {
-                                                background-color: #374151 !important;
-                                                color: white !important;
-                                              }
-                                              .ql-container {
-                                                background-color: #1f2937 !important;
-                                                color: white !important;
-                                                border-color: #4b5563 !important;
-                                              }
-                                              .ql-editor {
-                                                color: white !important;
-                                                background-color: #1f2937 !important;
-                                              }
-                                              .ql-editor.ql-blank::before {
-                                                color: #9ca3af !important;
-                                              }
-                                            `}
-                                          </style>
-                                          <ReactQuill
-                                            key={inlineEditingNote}
-                                            theme='snow'
-                                            value={inlineEditContent}
-                                            onChange={setInlineEditContent}
-                                            modules={quillModules}
-                                            formats={quillFormats}
-                                            className='bg-gray-800 text-white'
-                                            style={{
-                                              backgroundColor: '#1f2937',
-                                              color: 'white',
                                             }}
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            title='Bold'
+                                          >
+                                            B
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              const textarea = document.querySelector('textarea[placeholder="Note content..."]') as HTMLTextAreaElement;
+                                              if (textarea) {
+                                                const start = textarea.selectionStart;
+                                                const end = textarea.selectionEnd;
+                                                const selectedText = inlineEditContent.substring(start, end);
+                                                const newText = inlineEditContent.substring(0, start) + `*${selectedText}*` + inlineEditContent.substring(end);
+                                                setInlineEditContent(newText);
+                                              }
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            title='Italic'
+                                          >
+                                            I
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              const newText = inlineEditContent + '\n- ';
+                                              setInlineEditContent(newText);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            title='Bullet List'
+                                          >
+                                            •
+                                          </button>
+                                          <button
+                                            onClick={() => {
+                                              const newText = inlineEditContent + '\n1. ';
+                                              setInlineEditContent(newText);
+                                            }}
+                                            className='px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded'
+                                            title='Numbered List'
+                                          >
+                                            1.
+                                          </button>
+                                        </div>
+
+                                        {/* Inline content editing */}
+                                        <div className='flex-1'>
+                                          <textarea
+                                            value={inlineEditContent}
+                                            onChange={e =>
+                                              setInlineEditContent(
+                                                e.target.value
+                                              )
+                                            }
+                                            className='w-full h-full px-2 py-1 text-sm bg-transparent border-none focus:outline-none text-gray-700 resize-none'
+                                            placeholder='Note content...'
+                                            style={{
+                                              minHeight: '200px',
+                                              fontFamily: 'inherit',
+                                            }}
+                                            autoFocus
                                           />
                                         </div>
 
@@ -1730,9 +1769,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             display: 'block',
                                           }}
                                           dangerouslySetInnerHTML={{
-                                            __html: formatContentForDisplay(
-                                              note.content
-                                            ),
+                                            __html: markdownToHtml(note.content || ''),
                                           }}
                                         />
                                       </>
