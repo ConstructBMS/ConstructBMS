@@ -68,21 +68,26 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Helper function to clean and format HTML content for display
   // Updated to fix truncateHtmlContent reference error
   const formatContentForDisplay = (html: string, maxLength: number = 150) => {
-    if (!html) return '';
-
+    if (!html) return '<p>No content</p>';
+    
     // Clean up the HTML and ensure proper formatting
     let cleanHtml = html
       .replace(/<br\s*\/?>/gi, '<br>')
       .replace(/<p><\/p>/gi, '')
       .replace(/<p>\s*<\/p>/gi, '')
       .trim();
-
+    
+    // If content is empty after cleaning, add a placeholder
+    if (!cleanHtml || cleanHtml.trim() === '') {
+      return '<p>No content</p>';
+    }
+    
     // If content is short enough, return as-is
     const textContent = cleanHtml.replace(/<[^>]*>/g, '');
     if (textContent.length <= maxLength) {
       return cleanHtml;
     }
-
+    
     // For longer content, we'll let CSS handle the truncation
     return cleanHtml;
   };
@@ -804,16 +809,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.title}
                                       </div>
                                       <div
-                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 overflow-hidden flex-1'
+                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1'
                                         style={{
-                                          display: '-webkit-box',
-                                          WebkitLineClamp: 3,
-                                          WebkitBoxOrient: 'vertical',
-                                          maxHeight: '4.5rem',
-                                          minHeight: '2.5rem',
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
                                           lineHeight: '1.4',
+                                          maxHeight: '4.5rem',
+                                          overflow: 'hidden',
                                         }}
                                         dangerouslySetInnerHTML={{
                                           __html: formatContentForDisplay(
@@ -1496,16 +1498,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           </div>
                                         </div>
                                         <div
-                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden'
+                                          className='text-sm text-gray-700 mt-1 flex-1'
                                           style={{
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 3,
-                                            WebkitBoxOrient: 'vertical',
-                                            maxHeight: '4.5rem',
-                                            minHeight: '2.5rem',
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
                                             lineHeight: '1.4',
+                                            maxHeight: '4.5rem',
+                                            overflow: 'hidden',
                                           }}
                                           dangerouslySetInnerHTML={{
                                             __html: formatContentForDisplay(
