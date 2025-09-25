@@ -569,6 +569,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             .notes-cards {
               position: relative;
             }
+
+            /* Hide scrollbars while keeping scroll functionality */
+            .scrollbar-hide {
+              -ms-overflow-style: none;  /* Internet Explorer 10+ */
+              scrollbar-width: none;  /* Firefox */
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+              display: none;  /* Safari and Chrome */
+            }
           `}
       </style>
       <div className='fixed inset-0 z-50 flex'>
@@ -803,7 +812,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.title}
                                       </div>
                                       <div
-                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1 overflow-hidden group-hover:overflow-y-auto'
+                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1 overflow-hidden group-hover:overflow-y-auto scrollbar-hide'
                                         style={{
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
@@ -1492,7 +1501,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           </div>
                                         </div>
                                         <div
-                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden hover:overflow-y-auto'
+                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden hover:overflow-y-auto scrollbar-hide'
                                           style={{
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
