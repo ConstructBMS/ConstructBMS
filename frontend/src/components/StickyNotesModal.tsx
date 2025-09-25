@@ -145,12 +145,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const contentEditableRef = useRef<HTMLDivElement>(null);
 
-  // Set content when inline editing starts
+  // Set content when inline editing starts (only when note changes, not content)
   useEffect(() => {
-    if (contentEditableRef.current && inlineEditContent) {
-      contentEditableRef.current.innerHTML = inlineEditContent;
+    if (contentEditableRef.current && inlineEditingNote) {
+      const note = notes.find(n => n.id === inlineEditingNote);
+      if (note) {
+        contentEditableRef.current.innerHTML = cleanHtmlForQuill(note.content || '');
+      }
     }
-  }, [inlineEditingNote, inlineEditContent]);
+  }, [inlineEditingNote, notes]);
 
   // Load notes from API - no error handling to prevent jumping
   const loadNotes = async () => {
@@ -1732,13 +1735,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           <div
                                             ref={contentEditableRef}
                                             contentEditable
-                                            onInput={e => {
-                                              const target =
-                                                e.target as HTMLDivElement;
-                                              setInlineEditContent(
-                                                target.innerHTML
-                                              );
-                                            }}
                                             onKeyDown={e => {
                                               // Handle Enter key properly to prevent cursor jumping
                                               if (e.key === 'Enter') {
@@ -1755,14 +1751,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   selection.removeAllRanges();
                                                   selection.addRange(range);
                                                 }
-                                              }
-                                              // Handle Delete and Backspace keys properly
-                                              if (e.key === 'Delete' || e.key === 'Backspace') {
-                                                // Let the default behavior happen, but update state after
-                                                setTimeout(() => {
-                                                  const target = e.target as HTMLDivElement;
-                                                  setInlineEditContent(target.innerHTML);
-                                                }, 0);
                                               }
                                             }}
                                             onBlur={e => {
