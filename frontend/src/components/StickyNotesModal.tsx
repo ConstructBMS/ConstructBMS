@@ -341,6 +341,19 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     }
   };
 
+  const handleDeleteNote = async (noteId: string) => {
+    // Update local state immediately for smooth UI - no error handling to prevent jumping
+    setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+
+    // Update database in background - no error handling to prevent jumping
+    try {
+      await stickyNotesService.deleteStickyNote(noteId);
+    } catch (err) {
+      console.error('Error deleting note:', err);
+      // Silently fail - no error display
+    }
+  };
+
   // Inline editing functions
   const startInlineEdit = (noteId: string) => {
     const note = notes.find(n => n.id === noteId);
@@ -1567,6 +1580,36 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       </button>
                                     )}
 
+                                    {/* Save Button */}
+                                    {inlineEditingNote === note.id && (
+                                      <button
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          saveInlineEdit();
+                                        }}
+                                        className='text-gray-600 hover:text-green-600 text-lg'
+                                        title='Save Note'
+                                      >
+                                        💾
+                                      </button>
+                                    )}
+
+                                    {/* Delete Button */}
+                                    {inlineEditingNote !== note.id && (
+                                      <button
+                                        onClick={e => {
+                                          e.stopPropagation();
+                                          if (confirm('Are you sure you want to delete this note?')) {
+                                            handleDeleteNote(note.id);
+                                          }
+                                        }}
+                                        className='text-gray-600 hover:text-red-600 text-lg'
+                                        title='Delete Note'
+                                      >
+                                        🗑️
+                                      </button>
+                                    )}
+
                                     {/* Move Handle */}
                                     {inlineEditingNote !== note.id && (
                                       <div
@@ -1666,7 +1709,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
 
                                         {/* Compact inline content editing */}
-                                        <div className='flex-1' style={{ maxHeight: '150px' }}>
+                                        <div
+                                          className='flex-1'
+                                          style={{ maxHeight: '150px' }}
+                                        >
                                           <div
                                             contentEditable
                                             onInput={e => {
