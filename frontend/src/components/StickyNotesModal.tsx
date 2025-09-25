@@ -9,6 +9,10 @@ import {
   Search,
   Upload,
   X,
+  Edit2,
+  Save,
+  Trash2,
+  Move,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -1573,10 +1577,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           e.stopPropagation();
                                           startInlineEdit(note.id);
                                         }}
-                                        className='text-gray-600 hover:text-gray-800 text-lg'
+                                        className='text-gray-600 hover:text-gray-800 p-1'
                                         title='Edit Note'
                                       >
-                                        ✏️
+                                        <Edit2 size={16} />
                                       </button>
                                     )}
 
@@ -1587,10 +1591,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           e.stopPropagation();
                                           saveInlineEdit();
                                         }}
-                                        className='text-gray-600 hover:text-green-600 text-lg'
+                                        className='text-gray-600 hover:text-green-600 p-1'
                                         title='Save Note'
                                       >
-                                        💾
+                                        <Save size={16} />
                                       </button>
                                     )}
 
@@ -1603,10 +1607,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             handleDeleteNote(note.id);
                                           }
                                         }}
-                                        className='text-gray-600 hover:text-red-600 text-lg'
+                                        className='text-gray-600 hover:text-red-600 p-1'
                                         title='Delete Note'
                                       >
-                                        🗑️
+                                        <Trash2 size={16} />
                                       </button>
                                     )}
 
@@ -1614,14 +1618,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     {inlineEditingNote !== note.id && (
                                       <div
                                         {...provided.dragHandleProps}
-                                        className='text-gray-600 hover:text-gray-800 cursor-move text-lg'
+                                        className='text-gray-600 hover:text-gray-800 cursor-move p-1'
                                         title='Drag to move'
                                         data-rbd-drag-handle-draggable-id={
                                           note.id
                                         }
                                         data-rbd-drag-handle-context-id='0'
                                       >
-                                        ⋮⋮
+                                        <Move size={16} />
                                       </div>
                                     )}
                                   </div>
@@ -1819,8 +1823,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                     ) : (
                                       // Normal display mode
                                       <>
-                                        <div className='mb-2'>
-                                          <div className='font-medium text-gray-900'>
+                                        <div className='mb-2 pr-16'>
+                                          <div className='font-medium text-gray-900 truncate'>
                                             {note.title}
                                           </div>
                                         </div>
