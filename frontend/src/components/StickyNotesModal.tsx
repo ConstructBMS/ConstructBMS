@@ -64,6 +64,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const [editingNote, setEditingNote] = useState<string | null>(null);
+
+  // Helper function to truncate HTML content properly
+  const truncateHtmlContent = (html: string, maxLength: number = 150) => {
+    // Remove HTML tags for length calculation
+    const textContent = html.replace(/<[^>]*>/g, '');
+    if (textContent.length <= maxLength) {
+      return html;
+    }
+    
+    // Find a good break point (end of word)
+    let truncated = textContent.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    if (lastSpace > maxLength * 0.8) {
+      truncated = truncated.substring(0, lastSpace);
+    }
+    
+    return truncated + '...';
+  };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
@@ -789,9 +807,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           WebkitBoxOrient: 'vertical',
                                           maxHeight: '4.5rem',
                                           minHeight: '3rem',
+                                          wordBreak: 'break-word',
+                                          overflowWrap: 'break-word',
                                         }}
                                         dangerouslySetInnerHTML={{
-                                          __html: note.content,
+                                          __html: truncateHtmlContent(note.content),
                                         }}
                                       />
                                       <div className='mt-auto'>
@@ -1476,9 +1496,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             WebkitBoxOrient: 'vertical',
                                             maxHeight: '4.5rem',
                                             minHeight: '3rem',
+                                            wordBreak: 'break-word',
+                                            overflowWrap: 'break-word',
                                           }}
                                           dangerouslySetInnerHTML={{
-                                            __html: note.content,
+                                            __html: truncateHtmlContent(note.content),
                                           }}
                                         />
                                       </>
