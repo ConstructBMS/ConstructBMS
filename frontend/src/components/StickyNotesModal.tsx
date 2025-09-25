@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
+import { RichTextEditor } from './RichTextEditor';
 
 // Import dependencies directly - they should be available since they're in package.json
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
@@ -65,22 +66,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const [editingNote, setEditingNote] = useState<string | null>(null);
 
-  // Helper function to truncate HTML content properly
-  const truncateHtmlContent = (html: string, maxLength: number = 150) => {
-    // Remove HTML tags for length calculation
-    const textContent = html.replace(/<[^>]*>/g, '');
+  // Helper function to clean and format HTML content for display
+  const formatContentForDisplay = (html: string, maxLength: number = 150) => {
+    if (!html) return '';
+    
+    // Clean up the HTML and ensure proper formatting
+    let cleanHtml = html
+      .replace(/<br\s*\/?>/gi, '<br>')
+      .replace(/<p><\/p>/gi, '')
+      .replace(/<p>\s*<\/p>/gi, '')
+      .trim();
+    
+    // If content is short enough, return as-is
+    const textContent = cleanHtml.replace(/<[^>]*>/g, '');
     if (textContent.length <= maxLength) {
-      return html;
+      return cleanHtml;
     }
     
-    // Find a good break point (end of word)
-    let truncated = textContent.substring(0, maxLength);
-    const lastSpace = truncated.lastIndexOf(' ');
-    if (lastSpace > maxLength * 0.8) {
-      truncated = truncated.substring(0, lastSpace);
-    }
-    
-    return truncated + '...';
+    // For longer content, we'll let CSS handle the truncation
+    return cleanHtml;
   };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
@@ -806,12 +810,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           WebkitLineClamp: 3,
                                           WebkitBoxOrient: 'vertical',
                                           maxHeight: '4.5rem',
-                                          minHeight: '3rem',
+                                          minHeight: '2.5rem',
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
+                                          lineHeight: '1.4',
                                         }}
                                         dangerouslySetInnerHTML={{
-                                          __html: truncateHtmlContent(note.content),
+                                          __html: formatContentForDisplay(
+                                            note.content
+                                          ),
                                         }}
                                       />
                                       <div className='mt-auto'>
@@ -1495,12 +1502,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             WebkitLineClamp: 3,
                                             WebkitBoxOrient: 'vertical',
                                             maxHeight: '4.5rem',
-                                            minHeight: '3rem',
+                                            minHeight: '2.5rem',
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
+                                            lineHeight: '1.4',
                                           }}
                                           dangerouslySetInnerHTML={{
-                                            __html: truncateHtmlContent(note.content),
+                                            __html: formatContentForDisplay(
+                                              note.content
+                                            ),
                                           }}
                                         />
                                       </>
