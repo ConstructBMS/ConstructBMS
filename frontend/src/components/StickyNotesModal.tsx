@@ -803,13 +803,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.title}
                                       </div>
                                       <div
-                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1'
+                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1 overflow-hidden group-hover:overflow-y-auto'
                                         style={{
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
                                           lineHeight: '1.3',
                                           maxHeight: '12rem',
-                                          overflow: 'hidden',
                                           display: 'block',
                                         }}
                                         dangerouslySetInnerHTML={{
@@ -1493,13 +1492,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           </div>
                                         </div>
                                         <div
-                                          className='text-sm text-gray-700 mt-1 flex-1'
+                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden hover:overflow-y-auto'
                                           style={{
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
                                             lineHeight: '1.3',
                                             maxHeight: '12rem',
-                                            overflow: 'hidden',
                                             display: 'block',
                                           }}
                                           dangerouslySetInnerHTML={{
