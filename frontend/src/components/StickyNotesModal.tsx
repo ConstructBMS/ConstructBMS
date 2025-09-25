@@ -1,18 +1,18 @@
 import {
+  Edit2,
   Eye,
   FileText,
   Filter,
   Grid,
   Image,
   List,
+  Move,
   Plus,
+  Save,
   Search,
+  Trash2,
   Upload,
   X,
-  Edit2,
-  Save,
-  Trash2,
-  Move,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -1603,7 +1603,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                       <button
                                         onClick={e => {
                                           e.stopPropagation();
-                                          if (confirm('Are you sure you want to delete this note?')) {
+                                          if (
+                                            confirm(
+                                              'Are you sure you want to delete this note?'
+                                            )
+                                          ) {
                                             handleDeleteNote(note.id);
                                           }
                                         }}
@@ -1800,15 +1804,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                         {/* Compact action buttons */}
                                         <div className='flex justify-end space-x-1 mt-2'>
-                                          <button
-                                            onClick={e => {
-                                              e.stopPropagation();
-                                              saveInlineEdit();
-                                            }}
-                                            className='px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded'
-                                          >
-                                            Save
-                                          </button>
                                           <button
                                             onClick={e => {
                                               e.stopPropagation();
