@@ -85,6 +85,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     // Return the full content - let CSS handle the height limits
     return cleanHtml;
   };
+
+  // Helper function to clean HTML content for ReactQuill
+  const cleanHtmlForQuill = (html: string) => {
+    if (!html) return '';
+    
+    // Clean up the HTML for ReactQuill
+    let cleanHtml = html
+      .replace(/<br\s*\/?>/gi, '<br>')
+      .replace(/<p><\/p>/gi, '')
+      .replace(/<p>\s*<\/p>/gi, '')
+      .trim();
+
+    // If content is empty after cleaning, return empty string
+    if (!cleanHtml || cleanHtml.trim() === '') {
+      return '';
+    }
+
+    return cleanHtml;
+  };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
@@ -262,7 +281,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     if (note) {
       setEditTitle(note.title);
       // Ensure content is properly formatted for ReactQuill
-      setEditContent(note.content || '');
+      setEditContent(cleanHtmlForQuill(note.content || ''));
     }
   };
 
@@ -313,7 +332,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       setInlineEditingNote(noteId);
       setInlineEditTitle(note.title);
       // Ensure content is properly formatted for ReactQuill
-      setInlineEditContent(note.content || '');
+      setInlineEditContent(cleanHtmlForQuill(note.content || ''));
     }
   };
 
@@ -434,7 +453,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       const note = notes.find(n => n.id === selectedNote);
       if (note) {
         setEditTitle(note.title);
-        setEditContent(note.content || '');
+        setEditContent(cleanHtmlForQuill(note.content || ''));
         setEditingNote(selectedNote);
       }
     }
@@ -620,35 +639,35 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               border-color: #4b5563 !important;
               color: white !important;
             }
-            
+
             .ql-toolbar .ql-stroke {
               stroke: white !important;
             }
-            
+
             .ql-toolbar .ql-fill {
               fill: white !important;
             }
-            
+
             .ql-toolbar .ql-picker-label {
               color: white !important;
             }
-            
+
             .ql-toolbar .ql-picker-options {
               background-color: #374151 !important;
               color: white !important;
             }
-            
+
             .ql-container {
               background-color: #1f2937 !important;
               color: white !important;
               border-color: #4b5563 !important;
             }
-            
+
             .ql-editor {
               color: white !important;
               background-color: #1f2937 !important;
             }
-            
+
             .ql-editor.ql-blank::before {
               color: #9ca3af !important;
             }
@@ -1293,16 +1312,52 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             </label>
                             {editingNote ? (
                               <div className='bg-gray-800 rounded-md'>
+                                <style>
+                                  {`
+                                    .ql-toolbar {
+                                      display: block !important;
+                                      background-color: #374151 !important;
+                                      border-color: #4b5563 !important;
+                                      color: white !important;
+                                    }
+                                    .ql-toolbar .ql-stroke {
+                                      stroke: white !important;
+                                    }
+                                    .ql-toolbar .ql-fill {
+                                      fill: white !important;
+                                    }
+                                    .ql-toolbar .ql-picker-label {
+                                      color: white !important;
+                                    }
+                                    .ql-toolbar .ql-picker-options {
+                                      background-color: #374151 !important;
+                                      color: white !important;
+                                    }
+                                    .ql-container {
+                                      background-color: #1f2937 !important;
+                                      color: white !important;
+                                      border-color: #4b5563 !important;
+                                    }
+                                    .ql-editor {
+                                      color: white !important;
+                                      background-color: #1f2937 !important;
+                                    }
+                                    .ql-editor.ql-blank::before {
+                                      color: #9ca3af !important;
+                                    }
+                                  `}
+                                </style>
                                 <ReactQuill
+                                  key={editingNote}
                                   theme='snow'
                                   value={editContent}
                                   onChange={setEditContent}
                                   modules={quillModules}
                                   formats={quillFormats}
                                   className='bg-gray-800 text-white'
-                                  style={{ 
+                                  style={{
                                     backgroundColor: '#1f2937',
-                                    color: 'white'
+                                    color: 'white',
                                   }}
                                 />
                               </div>
