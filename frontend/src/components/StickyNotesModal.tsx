@@ -67,7 +67,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Helper function to clean and format HTML content for display
   // Updated to fix truncateHtmlContent reference error
-  const formatContentForDisplay = (html: string, maxLength: number = 150) => {
+  const formatContentForDisplay = (html: string, maxLength: number = 300) => {
     if (!html) return '<p>No content</p>';
     
     // Clean up the HTML and ensure proper formatting
@@ -82,13 +82,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       return '<p>No content</p>';
     }
     
-    // If content is short enough, return as-is
-    const textContent = cleanHtml.replace(/<[^>]*>/g, '');
-    if (textContent.length <= maxLength) {
-      return cleanHtml;
-    }
-    
-    // For longer content, we'll let CSS handle the truncation
+    // Return the full content - let CSS handle the height limits
     return cleanHtml;
   };
   const [editTitle, setEditTitle] = useState('');
@@ -814,8 +808,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
                                           lineHeight: '1.4',
-                                          maxHeight: '4.5rem',
+                                          maxHeight: '8rem',
                                           overflow: 'hidden',
+                                          display: 'block',
                                         }}
                                         dangerouslySetInnerHTML={{
                                           __html: formatContentForDisplay(
@@ -1503,8 +1498,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
                                             lineHeight: '1.4',
-                                            maxHeight: '4.5rem',
+                                            maxHeight: '8rem',
                                             overflow: 'hidden',
+                                            display: 'block',
                                           }}
                                           dangerouslySetInnerHTML={{
                                             __html: formatContentForDisplay(
