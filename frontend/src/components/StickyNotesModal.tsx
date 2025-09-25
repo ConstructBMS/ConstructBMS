@@ -139,6 +139,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   );
   const [inlineEditTitle, setInlineEditTitle] = useState('');
   const [inlineEditContent, setInlineEditContent] = useState('');
+  const [inlineEditTags, setInlineEditTags] = useState<string[]>([]);
+  const [inlineEditProjectId, setInlineEditProjectId] = useState<string>('');
+  const [inlineEditOpportunityId, setInlineEditOpportunityId] = useState<string>('');
+  const [newTag, setNewTag] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
   const [draggedNoteId, setDraggedNoteId] = useState<string | null>(null);
@@ -377,6 +381,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       setInlineEditTitle(note.title);
       // Ensure content is properly formatted for ReactQuill
       setInlineEditContent(cleanHtmlForQuill(note.content || ''));
+      setInlineEditTags(note.tags || []);
+      setInlineEditProjectId(note.project_id || '');
+      setInlineEditOpportunityId(note.opportunity_id || '');
     }
   };
 
@@ -390,6 +397,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                 ...note,
                 title: inlineEditTitle,
                 content: inlineEditContent,
+                tags: inlineEditTags,
+                project_id: inlineEditProjectId || undefined,
+                opportunity_id: inlineEditOpportunityId || undefined,
               }
             : note
         )
@@ -404,6 +414,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         await stickyNotesService.updateStickyNote(inlineEditingNote, {
           title: inlineEditTitle,
           content: inlineEditContent,
+          tags: inlineEditTags,
+          project_id: inlineEditProjectId || undefined,
+          opportunity_id: inlineEditOpportunityId || undefined,
         });
       } catch (err) {
         console.error('Error saving note:', err);
@@ -416,6 +429,28 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     setInlineEditingNote(null);
     setInlineEditTitle('');
     setInlineEditContent('');
+    setInlineEditTags([]);
+    setInlineEditProjectId('');
+    setInlineEditOpportunityId('');
+  };
+
+  // Tag management functions
+  const addTag = () => {
+    if (newTag.trim() && !inlineEditTags.includes(newTag.trim())) {
+      setInlineEditTags([...inlineEditTags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setInlineEditTags(inlineEditTags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleTagKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag();
+    }
   };
 
   // Enhanced formatting functions
@@ -843,6 +878,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                           title: 'New Note',
                           content: 'Click to edit...',
                           tags: [],
+                          project_id: undefined,
+                          opportunity_id: undefined,
                         }
                       );
                       setNotes(prev => [...prev, newNote]);
@@ -1820,6 +1857,73 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               />
                                             )
                                           )}
+                                        </div>
+
+                                        {/* Tags Section */}
+                                        <div className='mt-2'>
+                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                            Tags
+                                          </label>
+                                          <div className='flex flex-wrap gap-1 mb-1'>
+                                            {inlineEditTags.map(tag => (
+                                              <span
+                                                key={tag}
+                                                className='inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full'
+                                              >
+                                                {tag}
+                                                <button
+                                                  onClick={() => removeTag(tag)}
+                                                  className='text-blue-600 hover:text-blue-800'
+                                                >
+                                                  ×
+                                                </button>
+                                              </span>
+                                            ))}
+                                          </div>
+                                          <div className='flex gap-1'>
+                                            <input
+                                              type='text'
+                                              value={newTag}
+                                              onChange={e => setNewTag(e.target.value)}
+                                              onKeyPress={handleTagKeyPress}
+                                              placeholder='Add tag...'
+                                              className='flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                            />
+                                            <button
+                                              onClick={addTag}
+                                              className='px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600'
+                                            >
+                                              Add
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* Project Assignment */}
+                                        <div className='mt-2'>
+                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                            Project
+                                          </label>
+                                          <input
+                                            type='text'
+                                            value={inlineEditProjectId}
+                                            onChange={e => setInlineEditProjectId(e.target.value)}
+                                            placeholder='Project ID...'
+                                            className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                          />
+                                        </div>
+
+                                        {/* Opportunity Assignment */}
+                                        <div className='mt-2'>
+                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                            Opportunity
+                                          </label>
+                                          <input
+                                            type='text'
+                                            value={inlineEditOpportunityId}
+                                            onChange={e => setInlineEditOpportunityId(e.target.value)}
+                                            placeholder='Opportunity ID...'
+                                            className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                          />
                                         </div>
 
                                         {/* Compact action buttons */}
