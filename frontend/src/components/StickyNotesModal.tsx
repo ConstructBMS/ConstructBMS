@@ -14,7 +14,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Input } from './ui';
 
@@ -144,6 +144,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [draggedNoteId, setDraggedNoteId] = useState<string | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const contentEditableRef = useRef<HTMLDivElement>(null);
+
+  // Set content when inline editing starts
+  useEffect(() => {
+    if (contentEditableRef.current && inlineEditContent) {
+      contentEditableRef.current.innerHTML = inlineEditContent;
+    }
+  }, [inlineEditingNote, inlineEditContent]);
 
   // Load notes from API - no error handling to prevent jumping
   const loadNotes = async () => {
@@ -1728,65 +1735,26 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             onInput={e => {
                                               const target =
                                                 e.target as HTMLDivElement;
-                                              // Store cursor position before state update
-                                              const selection = window.getSelection();
-                                              const range = selection?.getRangeAt(0);
-                                              const cursorOffset = range?.startOffset || 0;
-                                              const cursorNode = range?.startContainer;
-                                              
                                               setInlineEditContent(
                                                 target.innerHTML
                                               );
-                                              
-                                              // Restore cursor position after state update
-                                              setTimeout(() => {
-                                                if (range && selection && cursorNode) {
-                                                  try {
-                                                    const newRange = document.createRange();
-                                                    // Try to find the equivalent position in the new content
-                                                    const textNodes = [];
-                                                    const walker = document.createTreeWalker(
-                                                      target,
-                                                      NodeFilter.SHOW_TEXT,
-                                                      null
-                                                    );
-                                                    let node;
-                                                    while (node = walker.nextNode()) {
-                                                      textNodes.push(node);
-                                                    }
-                                                    
-                                                    if (textNodes.length > 0) {
-                                                      const targetNode = textNodes[0];
-                                                      const maxOffset = targetNode.textContent?.length || 0;
-                                                      newRange.setStart(targetNode, Math.min(cursorOffset, maxOffset));
-                                                      newRange.setEnd(targetNode, Math.min(cursorOffset, maxOffset));
-                                                      selection.removeAllRanges();
-                                                      selection.addRange(newRange);
-                                                    }
-                                                  } catch (err) {
-                                                    // Fallback: place cursor at end
-                                                    const newRange = document.createRange();
-                                                    newRange.selectNodeContents(target);
-                                                    newRange.collapse(false);
-                                                    selection.removeAllRanges();
-                                                    selection.addRange(newRange);
-                                                  }
-                                                }
-                                              }, 0);
                                             }}
                                             onKeyDown={e => {
                                               // Handle Enter key properly to prevent cursor jumping
                                               if (e.key === 'Enter') {
                                                 e.preventDefault();
-                                                document.execCommand('insertHTML', false, '<br>');
-                                              }
-                                              // Handle Delete key properly
-                                              if (e.key === 'Delete' || e.key === 'Backspace') {
-                                                // Let the default behavior happen, but prevent cursor jumping
-                                                setTimeout(() => {
-                                                  const target = e.target as HTMLDivElement;
-                                                  setInlineEditContent(target.innerHTML);
-                                                }, 0);
+                                                // Insert line break and maintain cursor position
+                                                const selection = window.getSelection();
+                                                if (selection && selection.rangeCount > 0) {
+                                                  const range = selection.getRangeAt(0);
+                                                  const br = document.createElement('br');
+                                                  range.deleteContents();
+                                                  range.insertNode(br);
+                                                  range.setStartAfter(br);
+                                                  range.setEndAfter(br);
+                                                  selection.removeAllRanges();
+                                                  selection.addRange(range);
+                                                }
                                               }
                                             }}
                                             onBlur={e => {
@@ -1801,9 +1769,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               minHeight: '120px',
                                               maxHeight: '150px',
                                               fontFamily: 'inherit',
-                                            }}
-                                            dangerouslySetInnerHTML={{
-                                              __html: inlineEditContent,
                                             }}
                                             suppressContentEditableWarning={
                                               true
