@@ -120,6 +120,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [inlineEditContent, setInlineEditContent] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
+  const [draggedNoteId, setDraggedNoteId] = useState<string | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   // Load notes from API - no error handling to prevent jumping
   const loadNotes = async () => {
@@ -488,6 +490,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Drag and drop handlers - optimized to prevent jumping
   const handleDragEnd = (result: any) => {
+    // Clear drag state
+    setDraggedNoteId(null);
+    setDragOverIndex(null);
+    
     if (!result.destination) return;
 
     // Simple reorder without complex state updates
@@ -501,7 +507,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Handle drag start to show drop zones
   const handleDragStart = (result: any) => {
-    // Optional: Add any drag start logic here
+    setDraggedNoteId(result.draggableId);
   };
 
   // Note: Removed react-grid-layout handlers - using @hello-pangea/dnd instead
@@ -588,8 +594,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
             /* Sticky note drop zone indicator */
             .sticky-note-drop-zone {
-              border: 2px solid #ffffff;
-              background: rgba(255, 255, 255, 0.05);
+              border: 2px dashed #ffffff;
+              background: rgba(255, 255, 255, 0.1);
               border-radius: 8px;
               position: relative;
               min-height: 300px;
@@ -598,15 +604,51 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               align-items: center;
               justify-content: center;
               transition: all 0.2s ease;
-              box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+              box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+              animation: pulse 1.5s infinite;
             }
 
             .sticky-note-drop-zone::before {
-              content: 'Drop note here';
-              color: rgba(255, 255, 255, 0.8);
-              font-size: 12px;
-              font-weight: 500;
+              content: 'Drop here';
+              color: rgba(255, 255, 255, 0.9);
+              font-size: 14px;
+              font-weight: 600;
               text-align: center;
+            }
+
+            @keyframes pulse {
+              0% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+              }
+              50% {
+                box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+              }
+              100% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+              }
+            }
+
+            /* Style the placeholder as a drop zone indicator */
+            [data-rbd-placeholder-context-id] {
+              border: 2px dashed #ffffff !important;
+              background: rgba(255, 255, 255, 0.1) !important;
+              border-radius: 8px !important;
+              min-height: 300px !important;
+              min-width: 200px !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              position: relative !important;
+              box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+              animation: pulse 1.5s infinite !important;
+            }
+
+            [data-rbd-placeholder-context-id]::before {
+              content: 'Drop here' !important;
+              color: rgba(255, 255, 255, 0.9) !important;
+              font-size: 14px !important;
+              font-weight: 600 !important;
+              text-align: center !important;
             }
 
             /* Simple controls styling */
@@ -865,7 +907,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                   {/* Notes List */}
                   <div className='w-1/2 border-r bg-gray-800 border-gray-700'>
                     <div className='p-4 bg-gray-800'>
-                      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                      <DragDropContext
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                      >
                         <Droppable droppableId='notes-list'>
                           {provided => (
                             <div
@@ -1435,7 +1480,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
               {viewMode === 'grid' && (
                 <div className='flex-1 bg-gray-900 overflow-auto max-h-[calc(100vh-200px)]'>
-                  <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                  <DragDropContext
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  >
                     <Droppable
                       droppableId='sticky-notes-grid'
                       direction='horizontal'
@@ -1455,13 +1503,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             gridAutoRows: 'minmax(300px, 1fr)',
                           }}
                         >
-                          {/* Drop zone indicator when dragging */}
-                          {snapshot.isDraggingOver && (
-                            <div className="sticky-note-drop-zone">
-                              {/* This will show where the note will be dropped */}
-                            </div>
-                          )}
-                          
                           {filteredNotes.map((note, index) => (
                             <Draggable
                               key={note.id}
@@ -1686,6 +1727,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               )}
                             </Draggable>
                           ))}
+                          
                           {provided.placeholder}
                         </div>
                       )}
