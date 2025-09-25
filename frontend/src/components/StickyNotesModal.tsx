@@ -226,11 +226,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   // Rich text editor configuration
   const quillModules = {
     toolbar: [
-      [{ header: [1, 2, 3, false] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      [{ align: [] }],
       ['link', 'image'],
       [{ color: [] }, { background: [] }],
+      ['blockquote', 'code-block'],
       ['clean'],
     ],
   };
@@ -243,10 +246,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     'strike',
     'list',
     'bullet',
+    'indent',
+    'align',
     'link',
     'image',
     'color',
     'background',
+    'blockquote',
+    'code-block',
   ];
 
   const handleNoteClick = (noteId: string) => {
@@ -254,7 +261,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     const note = notes.find(n => n.id === noteId);
     if (note) {
       setEditTitle(note.title);
-      setEditContent(note.content);
+      // Ensure content is properly formatted for ReactQuill
+      setEditContent(note.content || '');
     }
   };
 
@@ -304,7 +312,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     if (note) {
       setInlineEditingNote(noteId);
       setInlineEditTitle(note.title);
-      setInlineEditContent(note.content);
+      // Ensure content is properly formatted for ReactQuill
+      setInlineEditContent(note.content || '');
     }
   };
 
@@ -422,7 +431,12 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   const handleEdit = () => {
     if (selectedNote) {
-      setEditingNote(selectedNote);
+      const note = notes.find(n => n.id === selectedNote);
+      if (note) {
+        setEditTitle(note.title);
+        setEditContent(note.content || '');
+        setEditingNote(selectedNote);
+      }
     }
   };
 
@@ -584,20 +598,59 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               transition: all 0.2s ease;
               cursor: default;
             }
-            
+
             /* Make the entire card area trigger scroll on hover */
             .notes-cards:hover .hover-scroll-area {
               overflow-y: auto !important;
             }
-            
+
             /* Better hover detection for content areas */
             .hover-scroll-area:hover {
               overflow-y: auto !important;
             }
-            
+
             /* Smooth scrolling behavior */
             .hover-scroll-area {
               scroll-behavior: smooth;
+            }
+
+            /* ReactQuill dark theme styling */
+            .ql-toolbar {
+              background-color: #374151 !important;
+              border-color: #4b5563 !important;
+              color: white !important;
+            }
+            
+            .ql-toolbar .ql-stroke {
+              stroke: white !important;
+            }
+            
+            .ql-toolbar .ql-fill {
+              fill: white !important;
+            }
+            
+            .ql-toolbar .ql-picker-label {
+              color: white !important;
+            }
+            
+            .ql-toolbar .ql-picker-options {
+              background-color: #374151 !important;
+              color: white !important;
+            }
+            
+            .ql-container {
+              background-color: #1f2937 !important;
+              color: white !important;
+              border-color: #4b5563 !important;
+            }
+            
+            .ql-editor {
+              color: white !important;
+              background-color: #1f2937 !important;
+            }
+            
+            .ql-editor.ql-blank::before {
+              color: #9ca3af !important;
             }
           `}
       </style>
@@ -1247,7 +1300,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   modules={quillModules}
                                   formats={quillFormats}
                                   className='bg-gray-800 text-white'
-                                  style={{ backgroundColor: '#1f2937' }}
+                                  style={{ 
+                                    backgroundColor: '#1f2937',
+                                    color: 'white'
+                                  }}
                                 />
                               </div>
                             ) : (
