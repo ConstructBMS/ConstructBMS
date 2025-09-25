@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (!demoUser) {
           // Create a demo user if none exists
           const newDemoUser: User = {
-            id: 'demo-user-123',
+            id: '550e8400-e29b-41d4-a716-446655440000', // Valid UUID for demo user
             email: 'demo@constructbms.com',
             user_metadata: {
               name: 'Demo User',
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           localStorage.setItem('demoUser', JSON.stringify(newDemoUser));
           demoUser = JSON.stringify(newDemoUser);
         }
-        
+
         if (demoUser) {
           setUser(JSON.parse(demoUser));
         }
@@ -142,7 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signIn = async (email: string, password: string) => {
     // Always use demo mode for development/testing
     const demoUser: User = {
-      id: 'demo-user-123',
+      id: '550e8400-e29b-41d4-a716-446655440000', // Valid UUID for demo user
       email: email || 'demo@constructbms.com',
       user_metadata: {
         name: email ? email.split('@')[0] : 'Demo User',
@@ -160,7 +160,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signUp = async (email: string, password: string, name: string) => {
     // Always use demo mode for development/testing
     const demoUser: User = {
-      id: 'demo-user-123',
+      id: '550e8400-e29b-41d4-a716-446655440000', // Valid UUID for demo user
       email: email,
       user_metadata: {
         name: name,

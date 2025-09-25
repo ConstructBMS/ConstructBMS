@@ -76,13 +76,13 @@ class StickyNotesService {
       // Always use demo mode for now
       const isDemo = true;
 
-      if (isDemo) {
-        // Demo mode - get notes for demo user
-        const { data, error } = await supabase
-          .from('notes')
-          .select('*')
-          .eq('author_id', 'demo-user-123')
-          .order('created_at', { ascending: false });
+        if (isDemo) {
+          // Demo mode - get notes for demo user
+          const { data, error } = await supabase
+            .from('notes')
+            .select('*')
+            .eq('author_id', '550e8400-e29b-41d4-a716-446655440000')
+            .order('created_at', { ascending: false });
 
         if (error) {
           throw new Error(error.message);
@@ -126,8 +126,8 @@ class StickyNotesService {
 
         if (isDemo) {
           // Demo mode - use a demo user ID
-          const demoUserId = 'demo-user-123';
-
+          const demoUserId = '550e8400-e29b-41d4-a716-446655440000';
+          
           // Use notes table with demo user
           let { data, error } = await supabase
             .from('notes')
@@ -208,7 +208,7 @@ class StickyNotesService {
 
       // In demo mode, also filter by demo user
       if (isDemo) {
-        query = query.eq('author_id', 'demo-user-123');
+        query = query.eq('author_id', '550e8400-e29b-41d4-a716-446655440000');
       }
 
       let { data, error } = await query.select().single();
