@@ -578,6 +578,27 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
             .scrollbar-hide::-webkit-scrollbar {
               display: none;  /* Safari and Chrome */
             }
+
+            /* Improved hover scroll area */
+            .hover-scroll-area {
+              transition: all 0.2s ease;
+              cursor: default;
+            }
+            
+            /* Make the entire card area trigger scroll on hover */
+            .notes-cards:hover .hover-scroll-area {
+              overflow-y: auto !important;
+            }
+            
+            /* Better hover detection for content areas */
+            .hover-scroll-area:hover {
+              overflow-y: auto !important;
+            }
+            
+            /* Smooth scrolling behavior */
+            .hover-scroll-area {
+              scroll-behavior: smooth;
+            }
           `}
       </style>
       <div className='fixed inset-0 z-50 flex'>
@@ -812,7 +833,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         {note.title}
                                       </div>
                                       <div
-                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1 overflow-hidden group-hover:overflow-y-auto scrollbar-hide'
+                                        className='text-sm text-gray-700 group-hover:text-gray-200 mt-1 flex-1 overflow-hidden group-hover:overflow-y-auto scrollbar-hide hover-scroll-area'
                                         style={{
                                           wordBreak: 'break-word',
                                           overflowWrap: 'break-word',
@@ -1501,7 +1522,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           </div>
                                         </div>
                                         <div
-                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden hover:overflow-y-auto scrollbar-hide'
+                                          className='text-sm text-gray-700 mt-1 flex-1 overflow-hidden hover:overflow-y-auto scrollbar-hide hover-scroll-area'
                                           style={{
                                             wordBreak: 'break-word',
                                             overflowWrap: 'break-word',
