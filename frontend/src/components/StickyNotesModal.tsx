@@ -141,7 +141,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [inlineEditContent, setInlineEditContent] = useState('');
   const [inlineEditTags, setInlineEditTags] = useState<string[]>([]);
   const [inlineEditProjectId, setInlineEditProjectId] = useState<string>('');
-  const [inlineEditOpportunityId, setInlineEditOpportunityId] = useState<string>('');
+  const [inlineEditOpportunityId, setInlineEditOpportunityId] =
+    useState<string>('');
   const [newTag, setNewTag] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
@@ -154,7 +155,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     if (contentEditableRef.current && inlineEditingNote) {
       const note = notes.find(n => n.id === inlineEditingNote);
       if (note) {
-        contentEditableRef.current.innerHTML = cleanHtmlForQuill(note.content || '');
+        contentEditableRef.current.innerHTML = cleanHtmlForQuill(
+          note.content || ''
+        );
       }
     }
   }, [inlineEditingNote, notes]);
@@ -1777,10 +1780,18 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               if (e.key === 'Enter') {
                                                 e.preventDefault();
                                                 // Insert line break and maintain cursor position
-                                                const selection = window.getSelection();
-                                                if (selection && selection.rangeCount > 0) {
-                                                  const range = selection.getRangeAt(0);
-                                                  const br = document.createElement('br');
+                                                const selection =
+                                                  window.getSelection();
+                                                if (
+                                                  selection &&
+                                                  selection.rangeCount > 0
+                                                ) {
+                                                  const range =
+                                                    selection.getRangeAt(0);
+                                                  const br =
+                                                    document.createElement(
+                                                      'br'
+                                                    );
                                                   range.deleteContents();
                                                   range.insertNode(br);
                                                   range.setStartAfter(br);
@@ -1884,9 +1895,13 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             <input
                                               type='text'
                                               value={newTag}
-                                              onChange={e => setNewTag(e.target.value)}
+                                              onChange={e =>
+                                                setNewTag(e.target.value)
+                                              }
                                               onKeyPress={handleTagKeyPress}
-                                              onMouseDown={e => e.stopPropagation()}
+                                              onMouseDown={e =>
+                                                e.stopPropagation()
+                                              }
                                               onClick={e => e.stopPropagation()}
                                               placeholder='Add tag...'
                                               className='flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
@@ -1908,8 +1923,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           <input
                                             type='text'
                                             value={inlineEditProjectId}
-                                            onChange={e => setInlineEditProjectId(e.target.value)}
-                                            onMouseDown={e => e.stopPropagation()}
+                                            onChange={e =>
+                                              setInlineEditProjectId(
+                                                e.target.value
+                                              )
+                                            }
+                                            onMouseDown={e =>
+                                              e.stopPropagation()
+                                            }
                                             onClick={e => e.stopPropagation()}
                                             placeholder='Project ID...'
                                             className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
@@ -1924,8 +1945,14 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           <input
                                             type='text'
                                             value={inlineEditOpportunityId}
-                                            onChange={e => setInlineEditOpportunityId(e.target.value)}
-                                            onMouseDown={e => e.stopPropagation()}
+                                            onChange={e =>
+                                              setInlineEditOpportunityId(
+                                                e.target.value
+                                              )
+                                            }
+                                            onMouseDown={e =>
+                                              e.stopPropagation()
+                                            }
                                             onClick={e => e.stopPropagation()}
                                             placeholder='Opportunity ID...'
                                             className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'

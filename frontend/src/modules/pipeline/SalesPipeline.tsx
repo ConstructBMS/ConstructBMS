@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Plus, Edit2, Trash2, User, DollarSign, Calendar, FileText, Save, X } from 'lucide-react';
+import {
+  DollarSign,
+  Edit2,
+  FileText,
+  Plus,
+  Save,
+  Trash2,
+  User,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Button } from '../../components/ui';
 
 // Types
@@ -122,10 +131,13 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(demoOpportunities);
+  const [opportunities, setOpportunities] =
+    useState<Opportunity[]>(demoOpportunities);
   const [clients, setClients] = useState<Client[]>(demoClients);
   const [editingStage, setEditingStage] = useState<string | null>(null);
-  const [editingOpportunity, setEditingOpportunity] = useState<string | null>(null);
+  const [editingOpportunity, setEditingOpportunity] = useState<string | null>(
+    null
+  );
   const [showNewClientModal, setShowNewClientModal] = useState(false);
   const [showNewOpportunityModal, setShowNewOpportunityModal] = useState(false);
   const [selectedStage, setSelectedStage] = useState<string>('lead');
@@ -164,14 +176,18 @@ export default function SalesPipeline() {
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
-    
+
     if (source.droppableId === destination.droppableId) return;
 
     // Update opportunity stage
-    setOpportunities(prev => 
-      prev.map(opp => 
-        opp.id === draggableId 
-          ? { ...opp, stage: destination.droppableId, updatedAt: new Date().toISOString() }
+    setOpportunities(prev =>
+      prev.map(opp =>
+        opp.id === draggableId
+          ? {
+              ...opp,
+              stage: destination.droppableId,
+              updatedAt: new Date().toISOString(),
+            }
           : opp
       )
     );
@@ -188,9 +204,9 @@ export default function SalesPipeline() {
 
   const saveStageEdit = () => {
     if (editingStage) {
-      setStages(prev => 
-        prev.map(stage => 
-          stage.id === editingStage 
+      setStages(prev =>
+        prev.map(stage =>
+          stage.id === editingStage
             ? { ...stage, name: editingStageName, color: editingStageColor }
             : stage
         )
@@ -221,14 +237,16 @@ export default function SalesPipeline() {
 
   const saveOpportunityEdit = () => {
     if (editingOpportunity) {
-      setOpportunities(prev => 
-        prev.map(opp => 
-          opp.id === editingOpportunity 
-            ? { 
-                ...opp, 
+      setOpportunities(prev =>
+        prev.map(opp =>
+          opp.id === editingOpportunity
+            ? {
+                ...opp,
                 ...editingOpportunityData,
-                client: clients.find(c => c.id === editingOpportunityData.clientId),
-                updatedAt: new Date().toISOString()
+                client: clients.find(
+                  c => c.id === editingOpportunityData.clientId
+                ),
+                updatedAt: new Date().toISOString(),
               }
             : opp
         )
@@ -269,7 +287,13 @@ export default function SalesPipeline() {
       updatedAt: new Date().toISOString(),
     };
     setOpportunities(prev => [...prev, opportunity]);
-    setNewOpportunity({ name: '', details: '', value: 0, clientId: '', notes: '' });
+    setNewOpportunity({
+      name: '',
+      details: '',
+      value: 0,
+      clientId: '',
+      notes: '',
+    });
     setShowNewOpportunityModal(false);
   };
 
@@ -290,76 +314,86 @@ export default function SalesPipeline() {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sales Pipeline</h1>
-        <p className="text-gray-600">Manage your sales opportunities and track progress through the pipeline</p>
+    <div className='p-6 bg-gray-50 min-h-screen'>
+      <div className='mb-6'>
+        <h1 className='text-3xl font-bold text-gray-900 mb-2'>
+          Sales Pipeline
+        </h1>
+        <p className='text-gray-600'>
+          Manage your sales opportunities and track progress through the
+          pipeline
+        </p>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex gap-4">
+      <div className='flex justify-between items-center mb-6'>
+        <div className='flex gap-4'>
           <Button
             onClick={() => setShowNewOpportunityModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className='bg-blue-600 hover:bg-blue-700 text-white'
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className='w-4 h-4 mr-2' />
             New Opportunity
           </Button>
-          <Button
-            onClick={() => setShowNewClientModal(true)}
-            variant="outline"
-          >
-            <User className="w-4 h-4 mr-2" />
+          <Button onClick={() => setShowNewClientModal(true)} variant='outline'>
+            <User className='w-4 h-4 mr-2' />
             New Client
           </Button>
         </div>
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-6 overflow-x-auto pb-4">
-          {stages.map((stage) => (
-            <div key={stage.id} className="flex-shrink-0 w-80">
-              <div className={`${stage.color} border-2 border-gray-200 rounded-lg p-4 min-h-96`}>
+        <div className='flex gap-6 overflow-x-auto pb-4'>
+          {stages.map(stage => (
+            <div key={stage.id} className='flex-shrink-0 w-80'>
+              <div
+                className={`${stage.color} border-2 border-gray-200 rounded-lg p-4 min-h-96`}
+              >
                 {/* Stage Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className='flex items-center justify-between mb-4'>
                   {editingStage === stage.id ? (
-                    <div className="flex-1 mr-2">
+                    <div className='flex-1 mr-2'>
                       <input
-                        type="text"
+                        type='text'
                         value={editingStageName}
-                        onChange={(e) => setEditingStageName(e.target.value)}
-                        className="w-full px-2 py-1 text-lg font-semibold bg-white border border-gray-300 rounded"
+                        onChange={e => setEditingStageName(e.target.value)}
+                        className='w-full px-2 py-1 text-lg font-semibold bg-white border border-gray-300 rounded'
                         autoFocus
                       />
-                      <div className="flex gap-2 mt-2">
+                      <div className='flex gap-2 mt-2'>
                         <select
                           value={editingStageColor}
-                          onChange={(e) => setEditingStageColor(e.target.value)}
-                          className="px-2 py-1 text-sm border border-gray-300 rounded"
+                          onChange={e => setEditingStageColor(e.target.value)}
+                          className='px-2 py-1 text-sm border border-gray-300 rounded'
                         >
-                          {colorOptions.map((color) => (
+                          {colorOptions.map(color => (
                             <option key={color.value} value={color.value}>
                               {color.name}
                             </option>
                           ))}
                         </select>
-                        <Button size="sm" onClick={saveStageEdit}>
-                          <Save className="w-3 h-3" />
+                        <Button size='sm' onClick={saveStageEdit}>
+                          <Save className='w-3 h-3' />
                         </Button>
-                        <Button size="sm" variant="outline" onClick={cancelStageEdit}>
-                          <X className="w-3 h-3" />
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          onClick={cancelStageEdit}
+                        >
+                          <X className='w-3 h-3' />
                         </Button>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <h3 className="text-lg font-semibold text-gray-800">{stage.name}</h3>
+                      <h3 className='text-lg font-semibold text-gray-800'>
+                        {stage.name}
+                      </h3>
                       <Button
-                        size="sm"
-                        variant="ghost"
+                        size='sm'
+                        variant='ghost'
                         onClick={() => startEditStage(stage.id)}
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className='w-4 h-4' />
                       </Button>
                     </>
                   )}
@@ -375,127 +409,172 @@ export default function SalesPipeline() {
                         snapshot.isDraggingOver ? 'bg-gray-200' : ''
                       }`}
                     >
-                      {getOpportunitiesByStage(stage.id).map((opportunity, index) => (
-                        <Draggable
-                          key={opportunity.id}
-                          draggableId={opportunity.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 ${
-                                snapshot.isDragging ? 'shadow-lg' : ''
-                              }`}
-                            >
-                              {editingOpportunity === opportunity.id ? (
-                                <div className="space-y-3">
-                                  <input
-                                    type="text"
-                                    value={editingOpportunityData.name}
-                                    onChange={(e) => setEditingOpportunityData(prev => ({ ...prev, name: e.target.value }))}
-                                    className="w-full px-2 py-1 font-semibold border border-gray-300 rounded"
-                                    placeholder="Opportunity name"
-                                  />
-                                  <textarea
-                                    value={editingOpportunityData.details}
-                                    onChange={(e) => setEditingOpportunityData(prev => ({ ...prev, details: e.target.value }))}
-                                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
-                                    placeholder="Opportunity details"
-                                    rows={2}
-                                  />
-                                  <div className="flex gap-2">
+                      {getOpportunitiesByStage(stage.id).map(
+                        (opportunity, index) => (
+                          <Draggable
+                            key={opportunity.id}
+                            draggableId={opportunity.id}
+                            index={index}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 ${
+                                  snapshot.isDragging ? 'shadow-lg' : ''
+                                }`}
+                              >
+                                {editingOpportunity === opportunity.id ? (
+                                  <div className='space-y-3'>
                                     <input
-                                      type="number"
-                                      value={editingOpportunityData.value}
-                                      onChange={(e) => setEditingOpportunityData(prev => ({ ...prev, value: Number(e.target.value) }))}
-                                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
-                                      placeholder="Value"
+                                      type='text'
+                                      value={editingOpportunityData.name}
+                                      onChange={e =>
+                                        setEditingOpportunityData(prev => ({
+                                          ...prev,
+                                          name: e.target.value,
+                                        }))
+                                      }
+                                      className='w-full px-2 py-1 font-semibold border border-gray-300 rounded'
+                                      placeholder='Opportunity name'
                                     />
-                                    <select
-                                      value={editingOpportunityData.clientId}
-                                      onChange={(e) => setEditingOpportunityData(prev => ({ ...prev, clientId: e.target.value }))}
-                                      className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
-                                    >
-                                      <option value="">Select client</option>
-                                      {clients.map(client => (
-                                        <option key={client.id} value={client.id}>
-                                          {client.name} ({client.company})
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div>
-                                  <textarea
-                                    value={editingOpportunityData.notes}
-                                    onChange={(e) => setEditingOpportunityData(prev => ({ ...prev, notes: e.target.value }))}
-                                    className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
-                                    placeholder="Notes"
-                                    rows={2}
-                                  />
-                                  <div className="flex gap-2">
-                                    <Button size="sm" onClick={saveOpportunityEdit}>
-                                      <Save className="w-3 h-3 mr-1" />
-                                      Save
-                                    </Button>
-                                    <Button size="sm" variant="outline" onClick={cancelOpportunityEdit}>
-                                      <X className="w-3 h-3 mr-1" />
-                                      Cancel
-                                    </Button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <div>
-                                  <div className="flex justify-between items-start mb-2">
-                                    <h4 className="font-semibold text-gray-900">{opportunity.name}</h4>
-                                    <div className="flex gap-1">
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => startEditOpportunity(opportunity.id)}
+                                    <textarea
+                                      value={editingOpportunityData.details}
+                                      onChange={e =>
+                                        setEditingOpportunityData(prev => ({
+                                          ...prev,
+                                          details: e.target.value,
+                                        }))
+                                      }
+                                      className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
+                                      placeholder='Opportunity details'
+                                      rows={2}
+                                    />
+                                    <div className='flex gap-2'>
+                                      <input
+                                        type='number'
+                                        value={editingOpportunityData.value}
+                                        onChange={e =>
+                                          setEditingOpportunityData(prev => ({
+                                            ...prev,
+                                            value: Number(e.target.value),
+                                          }))
+                                        }
+                                        className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
+                                        placeholder='Value'
+                                      />
+                                      <select
+                                        value={editingOpportunityData.clientId}
+                                        onChange={e =>
+                                          setEditingOpportunityData(prev => ({
+                                            ...prev,
+                                            clientId: e.target.value,
+                                          }))
+                                        }
+                                        className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
                                       >
-                                        <Edit2 className="w-3 h-3" />
+                                        <option value=''>Select client</option>
+                                        {clients.map(client => (
+                                          <option
+                                            key={client.id}
+                                            value={client.id}
+                                          >
+                                            {client.name} ({client.company})
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <textarea
+                                      value={editingOpportunityData.notes}
+                                      onChange={e =>
+                                        setEditingOpportunityData(prev => ({
+                                          ...prev,
+                                          notes: e.target.value,
+                                        }))
+                                      }
+                                      className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
+                                      placeholder='Notes'
+                                      rows={2}
+                                    />
+                                    <div className='flex gap-2'>
+                                      <Button
+                                        size='sm'
+                                        onClick={saveOpportunityEdit}
+                                      >
+                                        <Save className='w-3 h-3 mr-1' />
+                                        Save
                                       </Button>
                                       <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        onClick={() => deleteOpportunity(opportunity.id)}
+                                        size='sm'
+                                        variant='outline'
+                                        onClick={cancelOpportunityEdit}
                                       >
-                                        <Trash2 className="w-3 h-3" />
+                                        <X className='w-3 h-3 mr-1' />
+                                        Cancel
                                       </Button>
                                     </div>
                                   </div>
-                                  
-                                  <p className="text-sm text-gray-600 mb-2">{opportunity.details}</p>
-                                  
-                                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
-                                    <div className="flex items-center gap-1">
-                                      <DollarSign className="w-3 h-3" />
-                                      <span className="font-semibold text-green-600">
-                                        {formatCurrency(opportunity.value)}
-                                      </span>
+                                ) : (
+                                  <div>
+                                    <div className='flex justify-between items-start mb-2'>
+                                      <h4 className='font-semibold text-gray-900'>
+                                        {opportunity.name}
+                                      </h4>
+                                      <div className='flex gap-1'>
+                                        <Button
+                                          size='sm'
+                                          variant='ghost'
+                                          onClick={() =>
+                                            startEditOpportunity(opportunity.id)
+                                          }
+                                        >
+                                          <Edit2 className='w-3 h-3' />
+                                        </Button>
+                                        <Button
+                                          size='sm'
+                                          variant='ghost'
+                                          onClick={() =>
+                                            deleteOpportunity(opportunity.id)
+                                          }
+                                        >
+                                          <Trash2 className='w-3 h-3' />
+                                        </Button>
+                                      </div>
                                     </div>
-                                    {opportunity.client && (
-                                      <div className="flex items-center gap-1">
-                                        <User className="w-3 h-3" />
-                                        <span>{opportunity.client.name}</span>
+
+                                    <p className='text-sm text-gray-600 mb-2'>
+                                      {opportunity.details}
+                                    </p>
+
+                                    <div className='flex items-center gap-4 text-sm text-gray-500 mb-2'>
+                                      <div className='flex items-center gap-1'>
+                                        <DollarSign className='w-3 h-3' />
+                                        <span className='font-semibold text-green-600'>
+                                          {formatCurrency(opportunity.value)}
+                                        </span>
+                                      </div>
+                                      {opportunity.client && (
+                                        <div className='flex items-center gap-1'>
+                                          <User className='w-3 h-3' />
+                                          <span>{opportunity.client.name}</span>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {opportunity.notes && (
+                                      <div className='text-xs text-gray-500 bg-gray-50 p-2 rounded'>
+                                        <FileText className='w-3 h-3 inline mr-1' />
+                                        {opportunity.notes}
                                       </div>
                                     )}
                                   </div>
-                                  
-                                  {opportunity.notes && (
-                                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                                      <FileText className="w-3 h-3 inline mr-1" />
-                                      {opportunity.notes}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                                )}
+                              </div>
+                            )}
+                          </Draggable>
+                        )
+                      )}
                       {provided.placeholder}
                     </div>
                   )}
@@ -508,44 +587,55 @@ export default function SalesPipeline() {
 
       {/* New Client Modal */}
       {showNewClientModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Create New Client</h3>
-            <div className="space-y-4">
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <div className='bg-white rounded-lg p-6 w-96'>
+            <h3 className='text-lg font-semibold mb-4'>Create New Client</h3>
+            <div className='space-y-4'>
               <input
-                type="text"
-                placeholder="Client Name"
+                type='text'
+                placeholder='Client Name'
                 value={newClient.name}
-                onChange={(e) => setNewClient(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewClient(prev => ({ ...prev, name: e.target.value }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
               <input
-                type="email"
-                placeholder="Email"
+                type='email'
+                placeholder='Email'
                 value={newClient.email}
-                onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewClient(prev => ({ ...prev, email: e.target.value }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
               <input
-                type="tel"
-                placeholder="Phone"
+                type='tel'
+                placeholder='Phone'
                 value={newClient.phone}
-                onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewClient(prev => ({ ...prev, phone: e.target.value }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
               <input
-                type="text"
-                placeholder="Company"
+                type='text'
+                placeholder='Company'
                 value={newClient.company}
-                onChange={(e) => setNewClient(prev => ({ ...prev, company: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewClient(prev => ({ ...prev, company: e.target.value }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
             </div>
-            <div className="flex gap-2 mt-6">
-              <Button onClick={createNewClient} className="flex-1">
+            <div className='flex gap-2 mt-6'>
+              <Button onClick={createNewClient} className='flex-1'>
                 Create Client
               </Button>
-              <Button variant="outline" onClick={() => setShowNewClientModal(false)}>
+              <Button
+                variant='outline'
+                onClick={() => setShowNewClientModal(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -555,37 +645,56 @@ export default function SalesPipeline() {
 
       {/* New Opportunity Modal */}
       {showNewOpportunityModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Create New Opportunity</h3>
-            <div className="space-y-4">
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+          <div className='bg-white rounded-lg p-6 w-96'>
+            <h3 className='text-lg font-semibold mb-4'>
+              Create New Opportunity
+            </h3>
+            <div className='space-y-4'>
               <input
-                type="text"
-                placeholder="Opportunity Name"
+                type='text'
+                placeholder='Opportunity Name'
                 value={newOpportunity.name}
-                onChange={(e) => setNewOpportunity(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewOpportunity(prev => ({ ...prev, name: e.target.value }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
               <textarea
-                placeholder="Opportunity Details"
+                placeholder='Opportunity Details'
                 value={newOpportunity.details}
-                onChange={(e) => setNewOpportunity(prev => ({ ...prev, details: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewOpportunity(prev => ({
+                    ...prev,
+                    details: e.target.value,
+                  }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
                 rows={3}
               />
               <input
-                type="number"
-                placeholder="Value"
+                type='number'
+                placeholder='Value'
                 value={newOpportunity.value}
-                onChange={(e) => setNewOpportunity(prev => ({ ...prev, value: Number(e.target.value) }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewOpportunity(prev => ({
+                    ...prev,
+                    value: Number(e.target.value),
+                  }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               />
               <select
                 value={newOpportunity.clientId}
-                onChange={(e) => setNewOpportunity(prev => ({ ...prev, clientId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewOpportunity(prev => ({
+                    ...prev,
+                    clientId: e.target.value,
+                  }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
               >
-                <option value="">Select Client</option>
+                <option value=''>Select Client</option>
                 {clients.map(client => (
                   <option key={client.id} value={client.id}>
                     {client.name} ({client.company})
@@ -593,18 +702,26 @@ export default function SalesPipeline() {
                 ))}
               </select>
               <textarea
-                placeholder="Notes"
+                placeholder='Notes'
                 value={newOpportunity.notes}
-                onChange={(e) => setNewOpportunity(prev => ({ ...prev, notes: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded"
+                onChange={e =>
+                  setNewOpportunity(prev => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded'
                 rows={2}
               />
             </div>
-            <div className="flex gap-2 mt-6">
-              <Button onClick={createNewOpportunity} className="flex-1">
+            <div className='flex gap-2 mt-6'>
+              <Button onClick={createNewOpportunity} className='flex-1'>
                 Create Opportunity
               </Button>
-              <Button variant="outline" onClick={() => setShowNewOpportunityModal(false)}>
+              <Button
+                variant='outline'
+                onClick={() => setShowNewOpportunityModal(false)}
+              >
                 Cancel
               </Button>
             </div>
