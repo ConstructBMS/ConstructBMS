@@ -1911,7 +1911,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     e.stopPropagation()
                                                   }
                                                   placeholder='Add tag...'
-                                                  className='w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-32 px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                                 <button
                                                   onClick={addTag}
@@ -1943,7 +1943,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     e.stopPropagation()
                                                   }
                                                   placeholder='Project ID...'
-                                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                               </div>
                                               <div>
@@ -1967,7 +1967,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     e.stopPropagation()
                                                   }
                                                   placeholder='Opportunity ID...'
-                                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                               </div>
                                             </div>
