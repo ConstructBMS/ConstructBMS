@@ -938,6 +938,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               <div className='relative'>
                 <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
                 <Input
+                  id='search-notes'
+                  name='search-notes'
                   placeholder='Search notes...'
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
@@ -1163,6 +1165,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                             </label>
                             {editingNote ? (
                               <Input
+                                id='edit-title'
+                                name='edit-title'
                                 value={editTitle}
                                 onChange={e => setEditTitle(e.target.value)}
                                 className='bg-gray-700 border-gray-600 text-white'

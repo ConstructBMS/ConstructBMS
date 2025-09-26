@@ -460,7 +460,8 @@ export function DashboardBuilder({
               <div className='space-y-2'>
                 <Label htmlFor='name'>Dashboard Name</Label>
                 <Input
-                  id='name'
+                  id='dashboard-name'
+                  name='dashboard-name'
                   value={dashboardName}
                   onChange={e => setDashboardName(e.target.value)}
                   placeholder='e.g., Project Management Dashboard'

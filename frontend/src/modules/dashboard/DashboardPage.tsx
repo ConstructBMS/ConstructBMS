@@ -135,6 +135,8 @@ export default function DashboardPage() {
                 {editingDashboard === dashboard.id ? (
                   <div className='flex items-center space-x-1'>
                     <Input
+                      id='edit-dashboard-name'
+                      name='edit-dashboard-name'
                       value={editName}
                       onChange={e => setEditName(e.target.value)}
                       className='h-8 text-sm'

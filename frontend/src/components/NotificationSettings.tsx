@@ -380,6 +380,8 @@ export function NotificationSettings() {
                 <div>
                   <Label className='text-sm'>Start Time</Label>
                   <Input
+                    id='quiet-hours-start'
+                    name='quiet-hours-start'
                     type='time'
                     value={formData.quietHours.start}
                     onChange={e =>
@@ -390,6 +392,8 @@ export function NotificationSettings() {
                 <div>
                   <Label className='text-sm'>End Time</Label>
                   <Input
+                    id='quiet-hours-end'
+                    name='quiet-hours-end'
                     type='time'
                     value={formData.quietHours.end}
                     onChange={e =>
@@ -431,6 +435,8 @@ export function NotificationSettings() {
                 </div>
                 <div className='flex space-x-2'>
                   <Input
+                    id='add-keyword'
+                    name='add-keyword'
                     placeholder='Add keyword...'
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
@@ -477,6 +483,8 @@ export function NotificationSettings() {
                 </div>
                 <div className='flex space-x-2'>
                   <Input
+                    id='add-exclude-keyword'
+                    name='add-exclude-keyword'
                     placeholder='Add exclude keyword...'
                     onKeyDown={e => {
                       if (e.key === 'Enter') {

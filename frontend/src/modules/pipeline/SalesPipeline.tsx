@@ -388,271 +388,277 @@ export default function SalesPipeline() {
           onDragEnd={handleDragEnd}
         >
           <div className='flex gap-6 min-w-max'>
-          {stages.map(stage => (
-            <div key={stage.id} className='flex-shrink-0 w-80'>
-              <div
-                className={`${stage.color} border-2 border-gray-200 rounded-lg p-4 min-h-96`}
-              >
-                {/* Stage Header */}
-                <div className='flex items-center justify-between mb-4'>
-                  {editingStage === stage.id ? (
-                    <div className='flex-1 mr-2'>
-                      <input
-                        type='text'
-                        value={editingStageName}
-                        onChange={e => setEditingStageName(e.target.value)}
-                        className='w-full px-2 py-1 text-lg font-semibold bg-white border border-gray-300 rounded'
-                        autoFocus
-                      />
-                      <div className='flex gap-2 mt-2'>
-                        <select
-                          value={editingStageColor}
-                          onChange={e => setEditingStageColor(e.target.value)}
-                          className='px-2 py-1 text-sm border border-gray-300 rounded'
-                        >
-                          {colorOptions.map(color => (
-                            <option key={color.value} value={color.value}>
-                              {color.name}
-                            </option>
-                          ))}
-                        </select>
-                        <Button size='sm' onClick={saveStageEdit}>
-                          <Save className='w-3 h-3' />
-                        </Button>
+            {stages.map(stage => (
+              <div key={stage.id} className='flex-shrink-0 w-80'>
+                <div
+                  className={`${stage.color} border-2 border-gray-200 rounded-lg p-4 min-h-96`}
+                >
+                  {/* Stage Header */}
+                  <div className='flex items-center justify-between mb-4'>
+                    {editingStage === stage.id ? (
+                      <div className='flex-1 mr-2'>
+                        <input
+                          type='text'
+                          value={editingStageName}
+                          onChange={e => setEditingStageName(e.target.value)}
+                          className='w-full px-2 py-1 text-lg font-semibold bg-white border border-gray-300 rounded'
+                          autoFocus
+                        />
+                        <div className='flex gap-2 mt-2'>
+                          <select
+                            value={editingStageColor}
+                            onChange={e => setEditingStageColor(e.target.value)}
+                            className='px-2 py-1 text-sm border border-gray-300 rounded'
+                          >
+                            {colorOptions.map(color => (
+                              <option key={color.value} value={color.value}>
+                                {color.name}
+                              </option>
+                            ))}
+                          </select>
+                          <Button size='sm' onClick={saveStageEdit}>
+                            <Save className='w-3 h-3' />
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            onClick={cancelStageEdit}
+                          >
+                            <X className='w-3 h-3' />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <h3 className='text-lg font-semibold text-gray-800'>
+                          {stage.name}
+                        </h3>
                         <Button
                           size='sm'
-                          variant='outline'
-                          onClick={cancelStageEdit}
+                          variant='ghost'
+                          onClick={() => startEditStage(stage.id)}
                         >
-                          <X className='w-3 h-3' />
+                          <Edit2 className='w-4 h-4' />
                         </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <h3 className='text-lg font-semibold text-gray-800'>
-                        {stage.name}
-                      </h3>
-                      <Button
-                        size='sm'
-                        variant='ghost'
-                        onClick={() => startEditStage(stage.id)}
-                      >
-                        <Edit2 className='w-4 h-4' />
-                      </Button>
-                    </>
-                  )}
-                </div>
+                      </>
+                    )}
+                  </div>
 
-                {/* Stage Content */}
-                <Droppable
-                  droppableId={stage.id}
-                  type='OPPORTUNITY'
-                  direction='vertical'
-                >
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className={`min-h-64 transition-colors duration-200 ${
-                        snapshot.isDraggingOver
-                          ? 'bg-blue-50 border-2 border-blue-300 border-dashed'
-                          : ''
-                      }`}
-                    >
-                      {getOpportunitiesByStage(stage.id).map(
-                        (opportunity, index) => (
-                          <Draggable
-                            key={opportunity.id}
-                            draggableId={opportunity.id}
-                            index={index}
-                            type='OPPORTUNITY'
-                          >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 transition-all duration-200 ${
-                                  snapshot.isDragging
-                                    ? 'shadow-xl rotate-2 scale-105 border-blue-300'
-                                    : 'hover:shadow-md'
-                                }`}
-                              >
-                                {editingOpportunity === opportunity.id ? (
-                                  <div className='space-y-3'>
-                                    <input
-                                      type='text'
-                                      value={editingOpportunityData.name}
-                                      onChange={e =>
-                                        setEditingOpportunityData(prev => ({
-                                          ...prev,
-                                          name: e.target.value,
-                                        }))
-                                      }
-                                      className='w-full px-2 py-1 font-semibold border border-gray-300 rounded'
-                                      placeholder='Opportunity name'
-                                    />
-                                    <textarea
-                                      value={editingOpportunityData.details}
-                                      onChange={e =>
-                                        setEditingOpportunityData(prev => ({
-                                          ...prev,
-                                          details: e.target.value,
-                                        }))
-                                      }
-                                      className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
-                                      placeholder='Opportunity details'
-                                      rows={2}
-                                    />
-                                    <div className='flex gap-2'>
+                  {/* Stage Content */}
+                  <Droppable
+                    droppableId={stage.id}
+                    type='OPPORTUNITY'
+                    direction='vertical'
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`min-h-64 transition-colors duration-200 ${
+                          snapshot.isDraggingOver
+                            ? 'bg-blue-50 border-2 border-blue-300 border-dashed'
+                            : ''
+                        }`}
+                      >
+                        {getOpportunitiesByStage(stage.id).map(
+                          (opportunity, index) => (
+                            <Draggable
+                              key={opportunity.id}
+                              draggableId={opportunity.id}
+                              index={index}
+                              type='OPPORTUNITY'
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 transition-all duration-200 ${
+                                    snapshot.isDragging
+                                      ? 'shadow-xl rotate-2 scale-105 border-blue-300'
+                                      : 'hover:shadow-md'
+                                  }`}
+                                >
+                                  {editingOpportunity === opportunity.id ? (
+                                    <div className='space-y-3'>
                                       <input
-                                        type='number'
-                                        value={editingOpportunityData.value}
+                                        type='text'
+                                        value={editingOpportunityData.name}
                                         onChange={e =>
                                           setEditingOpportunityData(prev => ({
                                             ...prev,
-                                            value: Number(e.target.value),
+                                            name: e.target.value,
                                           }))
                                         }
-                                        className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
-                                        placeholder='Value'
+                                        className='w-full px-2 py-1 font-semibold border border-gray-300 rounded'
+                                        placeholder='Opportunity name'
                                       />
-                                      <div className='flex gap-1'>
-                                        <select
-                                          value={
-                                            editingOpportunityData.clientId
-                                          }
+                                      <textarea
+                                        value={editingOpportunityData.details}
+                                        onChange={e =>
+                                          setEditingOpportunityData(prev => ({
+                                            ...prev,
+                                            details: e.target.value,
+                                          }))
+                                        }
+                                        className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
+                                        placeholder='Opportunity details'
+                                        rows={2}
+                                      />
+                                      <div className='flex gap-2'>
+                                        <input
+                                          type='number'
+                                          value={editingOpportunityData.value}
                                           onChange={e =>
                                             setEditingOpportunityData(prev => ({
                                               ...prev,
-                                              clientId: e.target.value,
+                                              value: Number(e.target.value),
                                             }))
                                           }
                                           className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
-                                        >
-                                          <option value=''>
-                                            Select client
-                                          </option>
-                                          {clients.map(client => (
-                                            <option
-                                              key={client.id}
-                                              value={client.id}
-                                            >
-                                              {client.name} ({client.company})
+                                          placeholder='Value'
+                                        />
+                                        <div className='flex gap-1'>
+                                          <select
+                                            value={
+                                              editingOpportunityData.clientId
+                                            }
+                                            onChange={e =>
+                                              setEditingOpportunityData(
+                                                prev => ({
+                                                  ...prev,
+                                                  clientId: e.target.value,
+                                                })
+                                              )
+                                            }
+                                            className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
+                                          >
+                                            <option value=''>
+                                              Select client
                                             </option>
-                                          ))}
-                                        </select>
+                                            {clients.map(client => (
+                                              <option
+                                                key={client.id}
+                                                value={client.id}
+                                              >
+                                                {client.name} ({client.company})
+                                              </option>
+                                            ))}
+                                          </select>
+                                          <Button
+                                            type='button'
+                                            variant='outline'
+                                            size='sm'
+                                            onClick={() =>
+                                              setShowNewClientModal(true)
+                                            }
+                                            className='px-2 py-1 text-xs'
+                                          >
+                                            <Plus className='w-3 h-3' />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                      <textarea
+                                        value={editingOpportunityData.notes}
+                                        onChange={e =>
+                                          setEditingOpportunityData(prev => ({
+                                            ...prev,
+                                            notes: e.target.value,
+                                          }))
+                                        }
+                                        className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
+                                        placeholder='Notes'
+                                        rows={2}
+                                      />
+                                      <div className='flex gap-2'>
                                         <Button
-                                          type='button'
+                                          size='sm'
+                                          onClick={saveOpportunityEdit}
+                                        >
+                                          <Save className='w-3 h-3 mr-1' />
+                                          Save
+                                        </Button>
+                                        <Button
+                                          size='sm'
                                           variant='outline'
-                                          size='sm'
-                                          onClick={() =>
-                                            setShowNewClientModal(true)
-                                          }
-                                          className='px-2 py-1 text-xs'
+                                          onClick={cancelOpportunityEdit}
                                         >
-                                          <Plus className='w-3 h-3' />
+                                          <X className='w-3 h-3 mr-1' />
+                                          Cancel
                                         </Button>
                                       </div>
                                     </div>
-                                    <textarea
-                                      value={editingOpportunityData.notes}
-                                      onChange={e =>
-                                        setEditingOpportunityData(prev => ({
-                                          ...prev,
-                                          notes: e.target.value,
-                                        }))
-                                      }
-                                      className='w-full px-2 py-1 text-sm border border-gray-300 rounded'
-                                      placeholder='Notes'
-                                      rows={2}
-                                    />
-                                    <div className='flex gap-2'>
-                                      <Button
-                                        size='sm'
-                                        onClick={saveOpportunityEdit}
-                                      >
-                                        <Save className='w-3 h-3 mr-1' />
-                                        Save
-                                      </Button>
-                                      <Button
-                                        size='sm'
-                                        variant='outline'
-                                        onClick={cancelOpportunityEdit}
-                                      >
-                                        <X className='w-3 h-3 mr-1' />
-                                        Cancel
-                                      </Button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <div className='flex justify-between items-start mb-2'>
-                                      <h4 className='font-semibold text-gray-900'>
-                                        {opportunity.name}
-                                      </h4>
-                                      <div className='flex gap-1'>
-                                        <Button
-                                          size='sm'
-                                          variant='ghost'
-                                          onClick={() =>
-                                            startEditOpportunity(opportunity.id)
-                                          }
-                                        >
-                                          <Edit2 className='w-3 h-3' />
-                                        </Button>
-                                        <Button
-                                          size='sm'
-                                          variant='ghost'
-                                          onClick={() =>
-                                            deleteOpportunity(opportunity.id)
-                                          }
-                                        >
-                                          <Trash2 className='w-3 h-3' />
-                                        </Button>
+                                  ) : (
+                                    <div>
+                                      <div className='flex justify-between items-start mb-2'>
+                                        <h4 className='font-semibold text-gray-900'>
+                                          {opportunity.name}
+                                        </h4>
+                                        <div className='flex gap-1'>
+                                          <Button
+                                            size='sm'
+                                            variant='ghost'
+                                            onClick={() =>
+                                              startEditOpportunity(
+                                                opportunity.id
+                                              )
+                                            }
+                                          >
+                                            <Edit2 className='w-3 h-3' />
+                                          </Button>
+                                          <Button
+                                            size='sm'
+                                            variant='ghost'
+                                            onClick={() =>
+                                              deleteOpportunity(opportunity.id)
+                                            }
+                                          >
+                                            <Trash2 className='w-3 h-3' />
+                                          </Button>
+                                        </div>
                                       </div>
-                                    </div>
 
-                                    <p className='text-sm text-gray-600 mb-2'>
-                                      {opportunity.details}
-                                    </p>
+                                      <p className='text-sm text-gray-600 mb-2'>
+                                        {opportunity.details}
+                                      </p>
 
-                                    <div className='flex items-center gap-4 text-sm text-gray-500 mb-2'>
-                                      <div className='flex items-center gap-1'>
-                                        <DollarSign className='w-3 h-3' />
-                                        <span className='font-semibold text-green-600'>
-                                          {formatCurrency(opportunity.value)}
-                                        </span>
-                                      </div>
-                                      {opportunity.client && (
+                                      <div className='flex items-center gap-4 text-sm text-gray-500 mb-2'>
                                         <div className='flex items-center gap-1'>
-                                          <User className='w-3 h-3' />
-                                          <span>{opportunity.client.name}</span>
+                                          <DollarSign className='w-3 h-3' />
+                                          <span className='font-semibold text-green-600'>
+                                            {formatCurrency(opportunity.value)}
+                                          </span>
+                                        </div>
+                                        {opportunity.client && (
+                                          <div className='flex items-center gap-1'>
+                                            <User className='w-3 h-3' />
+                                            <span>
+                                              {opportunity.client.name}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {opportunity.notes && (
+                                        <div className='text-xs text-gray-500 bg-gray-50 p-2 rounded'>
+                                          <FileText className='w-3 h-3 inline mr-1' />
+                                          {opportunity.notes}
                                         </div>
                                       )}
                                     </div>
-
-                                    {opportunity.notes && (
-                                      <div className='text-xs text-gray-500 bg-gray-50 p-2 rounded'>
-                                        <FileText className='w-3 h-3 inline mr-1' />
-                                        {opportunity.notes}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </Draggable>
-                        )
-                      )}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          )
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         </DragDropContext>
       </div>
