@@ -639,6 +639,7 @@ const GeneralSettings: React.FC = () => {
 
                       <div className='space-y-4'>
                         <Label
+                          htmlFor='primary-color'
                           style={{
                             color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                           }}
@@ -647,6 +648,8 @@ const GeneralSettings: React.FC = () => {
                         </Label>
                         <div className='flex items-center gap-4'>
                           <Input
+                            id='color-picker'
+                            name='color-picker'
                             type='color'
                             value={appearanceSettings.primaryColor}
                             onChange={e =>
@@ -658,6 +661,8 @@ const GeneralSettings: React.FC = () => {
                             className='w-16 h-12 rounded-lg border-2 border-gray-200'
                           />
                           <Input
+                            id='primary-color'
+                            name='primary-color'
                             value={appearanceSettings.primaryColor}
                             onChange={e =>
                               setAppearanceSettings({
@@ -1215,6 +1220,7 @@ const GeneralSettings: React.FC = () => {
                       </div>
                       <div className='space-y-2'>
                         <Label
+                          htmlFor='project-format'
                           style={{
                             color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                           }}
@@ -1231,6 +1237,7 @@ const GeneralSettings: React.FC = () => {
                           }
                         >
                           <SelectTrigger
+                            id='project-format'
                             style={{
                               backgroundColor:
                                 theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1402,6 +1409,7 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='currency'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1418,6 +1426,7 @@ const GeneralSettings: React.FC = () => {
                             }
                           >
                             <SelectTrigger
+                              id='currency'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
