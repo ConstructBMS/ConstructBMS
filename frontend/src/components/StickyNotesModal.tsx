@@ -1975,15 +1975,24 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                         </div>
 
                                         {/* Compact action buttons */}
-                                        <div className='flex justify-end space-x-1 mt-2'>
+                                        <div className='flex justify-end space-x-2 mt-2'>
                                           <button
                                             onClick={e => {
                                               e.stopPropagation();
                                               cancelInlineEdit();
                                             }}
-                                            className='px-2 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded'
+                                            className='px-3 py-1 text-sm bg-gray-500 hover:bg-gray-600 text-white rounded'
                                           >
                                             Cancel
+                                          </button>
+                                          <button
+                                            onClick={e => {
+                                              e.stopPropagation();
+                                              saveInlineEdit();
+                                            }}
+                                            className='px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded'
+                                          >
+                                            Save
                                           </button>
                                         </div>
                                       </div>
