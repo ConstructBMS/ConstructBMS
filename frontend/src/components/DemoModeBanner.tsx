@@ -14,13 +14,14 @@ export function DemoModeBanner() {
 
   return (
     <div
-      className={`${status.statusColor} text-white py-2 px-4 text-sm font-medium`}
+      className={`${status.statusColor} text-white py-3 px-4 text-sm font-medium shadow-lg`}
+      data-demo-banner
     >
       <div className='max-w-7xl mx-auto flex items-center justify-between'>
         <div className='flex items-center space-x-3'>
-          <AlertTriangle className='h-4 w-4' />
-          <span>
-            You are currently in <strong>Demo Mode</strong>. All data shown is
+          <AlertTriangle className='h-5 w-5 text-yellow-300' />
+          <span className='font-semibold'>
+            You are currently in <span className='text-yellow-300 font-bold'>Demo Mode</span>. All data shown is
             for demonstration purposes only.
           </span>
         </div>

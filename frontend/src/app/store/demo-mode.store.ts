@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { DemoDataManager } from '../../lib/demo-data';
 
 export interface DemoModeStore {
   isDemoMode: boolean;
@@ -11,9 +12,13 @@ export interface DemoModeStore {
   clearDemoData: () => void;
   resetToDemoMode: () => void;
   setCanManageDemoData: (canManage: boolean) => void;
+  hasDemoData: () => boolean;
+  exportDemoData: () => string;
+  importDemoData: (data: string) => void;
   getDemoModeStatus: () => {
     isDemo: boolean;
     statusText: string;
+    statusColor: string;
   };
 }
 
@@ -37,24 +42,13 @@ export const useDemoModeStore = create<DemoModeStore>()(
         return {
           isDemo: isDemoMode,
           statusText: isDemoMode ? 'Demo Mode' : 'Live Mode',
+          statusColor: isDemoMode ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-green-600',
         };
       },
 
       clearDemoData: () => {
-        // Clear all demo data from localStorage
-        localStorage.removeItem('notifications-store');
-        localStorage.removeItem('chat-store');
-        localStorage.removeItem('sticky-notes-store');
-
-        // Clear any other demo data stores
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && (key.includes('demo') || key.includes('store'))) {
-            keysToRemove.push(key);
-          }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
+        // Use the DemoDataManager to clear all demo data
+        DemoDataManager.clearAllDemoData();
 
         set({
           isDemoMode: false,
@@ -71,6 +65,18 @@ export const useDemoModeStore = create<DemoModeStore>()(
         });
         // Reload the page to reset all stores
         window.location.reload();
+      },
+
+      hasDemoData: () => {
+        return DemoDataManager.hasDemoData();
+      },
+
+      exportDemoData: () => {
+        return DemoDataManager.exportDemoData();
+      },
+
+      importDemoData: (data: string) => {
+        DemoDataManager.importDemoData(data);
       },
     }),
     {
