@@ -1599,7 +1599,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   {...provided.draggableProps}
                                   className={`notes-cards aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
                                     inlineEditingNote === note.id
-                                      ? 'cursor-default ring-2 ring-blue-500 relative z-50'
+                                      ? 'cursor-default ring-2 ring-blue-500 relative z-[60]'
                                       : 'cursor-pointer hover:shadow-md'
                                   }`}
                                   onDoubleClick={() => {
@@ -1688,7 +1688,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   <div className='p-3 pr-6 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
                                       // Inline editing mode - with proper z-index and positioning
-                                      <div className='space-y-3 relative z-50 bg-white rounded-lg p-2 shadow-lg border'>
+                                      <div className='space-y-3 relative z-[70] bg-white rounded-lg p-2 shadow-lg border'>
                                         {/* Title editing */}
                                         <div>
                                           <input
@@ -1911,7 +1911,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                     e.stopPropagation()
                                                   }
                                                   placeholder='Add tag...'
-                                                  className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-32 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                                 <button
                                                   onClick={addTag}
