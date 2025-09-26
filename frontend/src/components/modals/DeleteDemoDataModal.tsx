@@ -30,7 +30,7 @@ export function DeleteDemoDataModal({
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { markDemoDataCleanup } = useDemoModeStore();
+  const { clearDemoData } = useDemoModeStore();
 
   const requiredConfirmText = 'DELETE DEMO DATA';
   const isConfirmValid = confirmText === requiredConfirmText;
@@ -43,7 +43,7 @@ export function DeleteDemoDataModal({
 
     try {
       await DemoDataService.deleteAllDemoData();
-      markDemoDataCleanup();
+      clearDemoData();
       onSuccess();
       onClose();
     } catch (err) {

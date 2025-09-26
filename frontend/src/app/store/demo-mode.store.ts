@@ -42,7 +42,9 @@ export const useDemoModeStore = create<DemoModeStore>()(
         return {
           isDemo: isDemoMode,
           statusText: isDemoMode ? 'Demo Mode' : 'Live Mode',
-          statusColor: isDemoMode ? 'bg-gradient-to-r from-blue-600 to-purple-600' : 'bg-green-600',
+          statusColor: isDemoMode
+            ? 'bg-gradient-to-r from-blue-600 to-purple-600'
+            : 'bg-green-600',
         };
       },
 

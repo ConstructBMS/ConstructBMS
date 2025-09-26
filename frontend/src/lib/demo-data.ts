@@ -10,7 +10,7 @@ export interface DemoDataItem {
 
 export class DemoDataManager {
   private static readonly DEMO_PREFIX = 'demo-';
-  
+
   /**
    * Check if an ID is a demo item
    */
@@ -52,7 +52,7 @@ export class DemoDataManager {
     const existingData = this.getDemoData();
     existingData.push(demoItem);
     localStorage.setItem('demo-data', JSON.stringify(existingData));
-    
+
     return id;
   }
 
@@ -70,22 +70,23 @@ export class DemoDataManager {
    */
   static clearAllDemoData(): void {
     localStorage.removeItem('demo-data');
-    
+
     // Clear all demo-related localStorage items
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (
-        key.includes('demo') || 
-        key.includes('store') ||
-        key.startsWith('sticky-notes') ||
-        key.startsWith('projects') ||
-        key.startsWith('opportunities')
-      )) {
+      if (
+        key &&
+        (key.includes('demo') ||
+          key.includes('store') ||
+          key.startsWith('sticky-notes') ||
+          key.startsWith('projects') ||
+          key.startsWith('opportunities'))
+      ) {
         keysToRemove.push(key);
       }
     }
-    
+
     keysToRemove.forEach(key => localStorage.removeItem(key));
   }
 
@@ -138,7 +139,7 @@ export const DEMO_DATA_TEMPLATES = {
       end_date: '2024-12-31',
     },
     {
-      id: 'proj-2', 
+      id: 'proj-2',
       name: 'Warehouse Renovation',
       status: 'planning',
       description: 'Complete renovation of existing warehouse facility',
@@ -148,7 +149,7 @@ export const DEMO_DATA_TEMPLATES = {
     },
     {
       id: 'proj-3',
-      name: 'Residential Complex', 
+      name: 'Residential Complex',
       status: 'in-progress',
       description: '50-unit residential complex with amenities',
       budget: 1800000,
@@ -156,7 +157,7 @@ export const DEMO_DATA_TEMPLATES = {
       end_date: '2024-10-31',
     },
   ],
-  
+
   opportunities: [
     {
       id: 'opp-1',
@@ -168,7 +169,7 @@ export const DEMO_DATA_TEMPLATES = {
     {
       id: 'opp-2',
       name: 'Retail Store Fit-Out',
-      stage: 'qualified', 
+      stage: 'qualified',
       value: 75000,
       description: 'Complete retail space renovation',
     },
@@ -191,7 +192,7 @@ export const DEMO_DATA_TEMPLATES = {
     },
     {
       id: 'client-2',
-      name: 'Sarah Johnson', 
+      name: 'Sarah Johnson',
       email: 'sarah@techstart.com',
       phone: '+1-555-0456',
       company: 'TechStart Inc',
@@ -199,7 +200,7 @@ export const DEMO_DATA_TEMPLATES = {
     {
       id: 'client-3',
       name: 'Mike Wilson',
-      email: 'mike@buildco.com', 
+      email: 'mike@buildco.com',
       phone: '+1-555-0789',
       company: 'BuildCo Ltd',
     },
@@ -209,21 +210,24 @@ export const DEMO_DATA_TEMPLATES = {
     {
       id: 'note-1',
       title: 'Welcome to ConstructBMS',
-      content: 'Getting Started: Explore the dashboard, Create your first project, Add team members, Set up your workflow, Happy building!',
+      content:
+        'Getting Started: Explore the dashboard, Create your first project, Add team members, Set up your workflow, Happy building!',
       color: 'yellow',
       tags: ['welcome', 'getting-started'],
     },
     {
       id: 'note-2',
       title: 'Team Meeting Agenda',
-      content: 'Weekly Team Meeting - Monday 9:00 AM\n\n1. Review project progress\n2. Discuss upcoming deadlines\n3. Address any blockers\n4. Plan next week\'s priorities',
+      content:
+        "Weekly Team Meeting - Monday 9:00 AM\n\n1. Review project progress\n2. Discuss upcoming deadlines\n3. Address any blockers\n4. Plan next week's priorities",
       color: 'purple',
       tags: ['meeting', 'agenda', 'team'],
     },
     {
       id: 'note-3',
       title: 'Client Feedback - Excellent',
-      content: 'Client Meeting Summary:\n\n✅ Project timeline approved\n✅ Budget confirmed\n✅ Quality standards met\n✅ Communication excellent',
+      content:
+        'Client Meeting Summary:\n\n✅ Project timeline approved\n✅ Budget confirmed\n✅ Quality standards met\n✅ Communication excellent',
       color: 'green',
       tags: ['client', 'feedback', 'positive'],
     },

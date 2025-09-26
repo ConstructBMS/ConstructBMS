@@ -21,8 +21,9 @@ export function DemoModeBanner() {
         <div className='flex items-center space-x-3'>
           <AlertTriangle className='h-5 w-5 text-yellow-300' />
           <span className='font-semibold'>
-            You are currently in <span className='text-yellow-300 font-bold'>Demo Mode</span>. All data shown is
-            for demonstration purposes only.
+            You are currently in{' '}
+            <span className='text-yellow-300 font-bold'>Demo Mode</span>. All
+            data shown is for demonstration purposes only.
           </span>
         </div>
 

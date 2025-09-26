@@ -29,6 +29,61 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { DemoDataManagement } from '../modules/settings/sections/DemoDataManagement';
+import { useDemoModeStore } from '../app/store/demo-mode.store';
+
+// Go Live Section Component
+const GoLiveSection = () => {
+  const { isDemoMode, clearDemoData, getDemoModeStatus } = useDemoModeStore();
+  const status = getDemoModeStatus();
+
+  if (!isDemoMode) {
+    return null;
+  }
+
+  const handleGoLive = () => {
+    if (confirm('Are you sure you want to delete all demo data and go live? This action cannot be undone.')) {
+      clearDemoData();
+      window.location.reload();
+    }
+  };
+
+  return (
+    <Card className="border-red-200 bg-red-50">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2 text-red-800">
+          <AlertTriangle className="h-5 w-5" />
+          <span>Go Live</span>
+        </CardTitle>
+        <CardDescription className="text-red-700">
+          Switch from demo mode to live mode by deleting all demo data.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="bg-red-100 border border-red-300 rounded-lg p-4">
+            <p className="text-red-800 text-sm font-medium mb-2">
+              ⚠️ This action will permanently delete all demo data including:
+            </p>
+            <ul className="text-red-700 text-sm space-y-1 ml-4">
+              <li>• All demo projects, contacts, and tasks</li>
+              <li>• All demo sticky notes and documents</li>
+              <li>• All demo user accounts (except admin)</li>
+              <li>• All demo financial records</li>
+            </ul>
+          </div>
+          <Button
+            variant="destructive"
+            onClick={handleGoLive}
+            className="w-full"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete Demo Data & Go Live
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'auto';
@@ -1027,6 +1082,9 @@ const GeneralSettings: React.FC = () => {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* Go Live Section */}
+                  <GoLiveSection />
                 </div>
               </TabsContent>
 
