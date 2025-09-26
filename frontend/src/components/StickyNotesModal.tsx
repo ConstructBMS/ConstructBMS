@@ -642,8 +642,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
         {`
             /* Disable all drag animations for simple experience */
             [data-rbd-draggable-id],
-            .react-beautiful-dnd-dragging,
-            .react-beautiful-dnd-dragging * {
+            .rbd-dragging,
+            .rbd-dragging * {
               transition: none !important;
               animation: none !important;
             }

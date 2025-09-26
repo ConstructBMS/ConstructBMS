@@ -1,3 +1,4 @@
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import {
   DollarSign,
   Edit2,
@@ -9,7 +10,6 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Button } from '../../components/ui';
 
 // Types
