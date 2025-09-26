@@ -232,6 +232,8 @@ export function CRM() {
                       {editingField === field.id ? (
                         <div className='flex-1 grid grid-cols-3 gap-2'>
                           <Input
+                            id={`custom-field-name-${field.id}`}
+                            name={`custom-field-name-${field.id}`}
                             value={field.name}
                             onChange={e =>
                               updateCustomField(field.id, {
@@ -419,6 +421,8 @@ export function CRM() {
                       {editingSource === source.id ? (
                         <div className='flex-1 grid grid-cols-3 gap-2'>
                           <Input
+                            id={`lead-source-name-${source.id}`}
+                            name={`lead-source-name-${source.id}`}
                             value={source.name}
                             onChange={e =>
                               updateLeadSource(source.id, {
@@ -428,6 +432,8 @@ export function CRM() {
                             placeholder='Source name'
                           />
                           <Input
+                            id={`lead-source-description-${source.id}`}
+                            name={`lead-source-description-${source.id}`}
                             value={source.description}
                             onChange={e =>
                               updateLeadSource(source.id, {
@@ -527,6 +533,8 @@ export function CRM() {
                         {editingStatus === status.id ? (
                           <div className='flex-1 grid grid-cols-4 gap-2'>
                             <Input
+                              id={`lead-status-name-${status.id}`}
+                              name={`lead-status-name-${status.id}`}
                               value={status.name}
                               onChange={e =>
                                 updateLeadStatus(status.id, {
@@ -536,6 +544,8 @@ export function CRM() {
                               placeholder='Status name'
                             />
                             <Input
+                              id={`lead-status-description-${status.id}`}
+                              name={`lead-status-description-${status.id}`}
                               value={status.description}
                               onChange={e =>
                                 updateLeadStatus(status.id, {
@@ -545,6 +555,8 @@ export function CRM() {
                               placeholder='Description'
                             />
                             <Input
+                              id={`lead-status-order-${status.id}`}
+                              name={`lead-status-order-${status.id}`}
                               type='number'
                               value={status.order}
                               onChange={e =>
@@ -702,6 +714,8 @@ export function CRM() {
                         {editingStage === stage.id ? (
                           <div className='flex-1 grid grid-cols-5 gap-2'>
                             <Input
+                              id={`pipeline-stage-name-${stage.id}`}
+                              name={`pipeline-stage-name-${stage.id}`}
                               value={stage.name}
                               onChange={e =>
                                 updatePipelineStage(stage.id, {
@@ -711,6 +725,8 @@ export function CRM() {
                               placeholder='Stage name'
                             />
                             <Input
+                              id={`pipeline-stage-description-${stage.id}`}
+                              name={`pipeline-stage-description-${stage.id}`}
                               value={stage.description}
                               onChange={e =>
                                 updatePipelineStage(stage.id, {
@@ -720,6 +736,8 @@ export function CRM() {
                               placeholder='Description'
                             />
                             <Input
+                              id={`pipeline-stage-probability-${stage.id}`}
+                              name={`pipeline-stage-probability-${stage.id}`}
                               type='number'
                               value={stage.probability}
                               onChange={e =>
@@ -730,6 +748,8 @@ export function CRM() {
                               placeholder='Probability %'
                             />
                             <Input
+                              id={`pipeline-stage-order-${stage.id}`}
+                              name={`pipeline-stage-order-${stage.id}`}
                               type='number'
                               value={stage.order}
                               onChange={e =>

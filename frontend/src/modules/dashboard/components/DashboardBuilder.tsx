@@ -7,14 +7,10 @@ import {
   DollarSign,
   FileText,
   Grid,
-  Layout,
-  Palette,
   PieChart,
-  Plus,
   Settings,
   TrendingUp,
   Users,
-  X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '../../../components/ui/badge';

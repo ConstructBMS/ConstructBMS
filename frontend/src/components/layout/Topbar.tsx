@@ -202,7 +202,6 @@ export function Topbar() {
             <StickyNote className='h-5 w-5' />
           </Button>
 
-
           {/* Notifications */}
           <Button
             variant='ghost'
@@ -248,7 +247,6 @@ export function Topbar() {
         isOpen={notificationsOpen}
         onClose={() => setNotificationsOpen(false)}
       />
-
     </header>
   );
 }
