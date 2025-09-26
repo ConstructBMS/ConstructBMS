@@ -211,19 +211,25 @@ export default function SalesPipeline() {
       // Moving between different columns
       const newSourceOpportunities = Array.from(sourceOpportunities);
       const newDestOpportunities = Array.from(destOpportunities);
-      
+
       const [movedOpportunity] = newSourceOpportunities.splice(source.index, 1);
       movedOpportunity.stage = destination.droppableId;
       movedOpportunity.updatedAt = new Date().toISOString();
-      
+
       newDestOpportunities.splice(destination.index, 0, movedOpportunity);
 
       // Update all opportunities
       setOpportunities(prev => {
         const otherOpportunities = prev.filter(
-          opp => opp.stage !== source.droppableId && opp.stage !== destination.droppableId
+          opp =>
+            opp.stage !== source.droppableId &&
+            opp.stage !== destination.droppableId
         );
-        return [...otherOpportunities, ...newSourceOpportunities, ...newDestOpportunities];
+        return [
+          ...otherOpportunities,
+          ...newSourceOpportunities,
+          ...newDestOpportunities,
+        ];
       });
     }
   };
@@ -376,7 +382,10 @@ export default function SalesPipeline() {
         </div>
       </div>
 
-      <DragDropContext onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
+      <DragDropContext
+        onDragUpdate={handleDragUpdate}
+        onDragEnd={handleDragEnd}
+      >
         <div className='flex gap-6 overflow-x-auto pb-4'>
           {stages.map(stage => (
             <div key={stage.id} className='flex-shrink-0 w-80'>
@@ -435,18 +444,18 @@ export default function SalesPipeline() {
                 </div>
 
                 {/* Stage Content */}
-                <Droppable 
+                <Droppable
                   droppableId={stage.id}
-                  type="OPPORTUNITY"
-                  direction="vertical"
+                  type='OPPORTUNITY'
+                  direction='vertical'
                 >
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                       className={`min-h-64 transition-colors duration-200 ${
-                        snapshot.isDraggingOver 
-                          ? 'bg-blue-50 border-2 border-blue-300 border-dashed' 
+                        snapshot.isDraggingOver
+                          ? 'bg-blue-50 border-2 border-blue-300 border-dashed'
                           : ''
                       }`}
                     >
@@ -456,7 +465,7 @@ export default function SalesPipeline() {
                             key={opportunity.id}
                             draggableId={opportunity.id}
                             index={index}
-                            type="OPPORTUNITY"
+                            type='OPPORTUNITY'
                           >
                             {(provided, snapshot) => (
                               <div
@@ -464,8 +473,8 @@ export default function SalesPipeline() {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 transition-all duration-200 ${
-                                  snapshot.isDragging 
-                                    ? 'shadow-xl rotate-2 scale-105 border-blue-300' 
+                                  snapshot.isDragging
+                                    ? 'shadow-xl rotate-2 scale-105 border-blue-300'
                                     : 'hover:shadow-md'
                                 }`}
                               >
@@ -508,26 +517,37 @@ export default function SalesPipeline() {
                                         className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
                                         placeholder='Value'
                                       />
-                                      <select
-                                        value={editingOpportunityData.clientId}
-                                        onChange={e =>
-                                          setEditingOpportunityData(prev => ({
-                                            ...prev,
-                                            clientId: e.target.value,
-                                          }))
-                                        }
-                                        className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
-                                      >
-                                        <option value=''>Select client</option>
-                                        {clients.map(client => (
-                                          <option
-                                            key={client.id}
-                                            value={client.id}
-                                          >
-                                            {client.name} ({client.company})
-                                          </option>
-                                        ))}
-                                      </select>
+                                      <div className='flex gap-1'>
+                                        <select
+                                          value={editingOpportunityData.clientId}
+                                          onChange={e =>
+                                            setEditingOpportunityData(prev => ({
+                                              ...prev,
+                                              clientId: e.target.value,
+                                            }))
+                                          }
+                                          className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
+                                        >
+                                          <option value=''>Select client</option>
+                                          {clients.map(client => (
+                                            <option
+                                              key={client.id}
+                                              value={client.id}
+                                            >
+                                              {client.name} ({client.company})
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <Button
+                                          type='button'
+                                          variant='outline'
+                                          size='sm'
+                                          onClick={() => setShowNewClientModal(true)}
+                                          className='px-2 py-1 text-xs'
+                                        >
+                                          <Plus className='w-3 h-3' />
+                                        </Button>
+                                      </div>
                                     </div>
                                     <textarea
                                       value={editingOpportunityData.notes}
@@ -728,23 +748,34 @@ export default function SalesPipeline() {
                 }
                 className='w-full px-3 py-2 border border-gray-300 rounded'
               />
-              <select
-                value={newOpportunity.clientId}
-                onChange={e =>
-                  setNewOpportunity(prev => ({
-                    ...prev,
-                    clientId: e.target.value,
-                  }))
-                }
-                className='w-full px-3 py-2 border border-gray-300 rounded'
-              >
-                <option value=''>Select Client</option>
-                {clients.map(client => (
-                  <option key={client.id} value={client.id}>
-                    {client.name} ({client.company})
-                  </option>
-                ))}
-              </select>
+              <div className='flex gap-2'>
+                <select
+                  value={newOpportunity.clientId}
+                  onChange={e =>
+                    setNewOpportunity(prev => ({
+                      ...prev,
+                      clientId: e.target.value,
+                    }))
+                  }
+                  className='flex-1 px-3 py-2 border border-gray-300 rounded'
+                >
+                  <option value=''>Select Client</option>
+                  {clients.map(client => (
+                    <option key={client.id} value={client.id}>
+                      {client.name} ({client.company})
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => setShowNewClientModal(true)}
+                  className='px-3 py-2'
+                >
+                  <Plus className='w-4 h-4' />
+                </Button>
+              </div>
               <textarea
                 placeholder='Notes'
                 value={newOpportunity.notes}

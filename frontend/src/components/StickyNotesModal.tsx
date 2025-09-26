@@ -1870,93 +1870,98 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           )}
                                         </div>
 
-                                        {/* Tags Section */}
-                                        <div className='mt-2'>
-                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
-                                            Tags
-                                          </label>
-                                          <div className='flex flex-wrap gap-1 mb-1'>
-                                            {inlineEditTags.map(tag => (
-                                              <span
-                                                key={tag}
-                                                className='inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full'
-                                              >
-                                                {tag}
+                                        {/* Quick Assignment Section */}
+                                        <div className='mt-2 p-2 bg-gray-50 rounded border'>
+                                          <div className='grid grid-cols-2 gap-2'>
+                                            {/* Tags */}
+                                            <div>
+                                              <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                                Tags
+                                              </label>
+                                              <div className='flex flex-wrap gap-1 mb-1 max-h-16 overflow-y-auto'>
+                                                {inlineEditTags.map(tag => (
+                                                  <span
+                                                    key={tag}
+                                                    className='inline-flex items-center gap-1 px-1 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full'
+                                                  >
+                                                    {tag}
+                                                    <button
+                                                      onClick={() => removeTag(tag)}
+                                                      className='text-blue-600 hover:text-blue-800 text-xs'
+                                                    >
+                                                      ×
+                                                    </button>
+                                                  </span>
+                                                ))}
+                                              </div>
+                                              <div className='flex gap-1'>
+                                                <input
+                                                  type='text'
+                                                  value={newTag}
+                                                  onChange={e =>
+                                                    setNewTag(e.target.value)
+                                                  }
+                                                  onKeyPress={handleTagKeyPress}
+                                                  onMouseDown={e =>
+                                                    e.stopPropagation()
+                                                  }
+                                                  onClick={e => e.stopPropagation()}
+                                                  placeholder='Add tag...'
+                                                  className='flex-1 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                />
                                                 <button
-                                                  onClick={() => removeTag(tag)}
-                                                  className='text-blue-600 hover:text-blue-800'
+                                                  onClick={addTag}
+                                                  className='px-1 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600'
                                                 >
-                                                  ×
+                                                  +
                                                 </button>
-                                              </span>
-                                            ))}
-                                          </div>
-                                          <div className='flex gap-1'>
-                                            <input
-                                              type='text'
-                                              value={newTag}
-                                              onChange={e =>
-                                                setNewTag(e.target.value)
-                                              }
-                                              onKeyPress={handleTagKeyPress}
-                                              onMouseDown={e =>
-                                                e.stopPropagation()
-                                              }
-                                              onClick={e => e.stopPropagation()}
-                                              placeholder='Add tag...'
-                                              className='flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
-                                            />
-                                            <button
-                                              onClick={addTag}
-                                              className='px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600'
-                                            >
-                                              Add
-                                            </button>
-                                          </div>
-                                        </div>
+                                              </div>
+                                            </div>
 
-                                        {/* Project Assignment */}
-                                        <div className='mt-2'>
-                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
-                                            Project
-                                          </label>
-                                          <input
-                                            type='text'
-                                            value={inlineEditProjectId}
-                                            onChange={e =>
-                                              setInlineEditProjectId(
-                                                e.target.value
-                                              )
-                                            }
-                                            onMouseDown={e =>
-                                              e.stopPropagation()
-                                            }
-                                            onClick={e => e.stopPropagation()}
-                                            placeholder='Project ID...'
-                                            className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
-                                          />
-                                        </div>
-
-                                        {/* Opportunity Assignment */}
-                                        <div className='mt-2'>
-                                          <label className='text-xs font-medium text-gray-600 mb-1 block'>
-                                            Opportunity
-                                          </label>
-                                          <input
-                                            type='text'
-                                            value={inlineEditOpportunityId}
-                                            onChange={e =>
-                                              setInlineEditOpportunityId(
-                                                e.target.value
-                                              )
-                                            }
-                                            onMouseDown={e =>
-                                              e.stopPropagation()
-                                            }
-                                            onClick={e => e.stopPropagation()}
-                                            placeholder='Opportunity ID...'
-                                            className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
-                                          />
+                                            {/* Project & Opportunity */}
+                                            <div className='space-y-2'>
+                                              <div>
+                                                <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                                  Project
+                                                </label>
+                                                <input
+                                                  type='text'
+                                                  value={inlineEditProjectId}
+                                                  onChange={e =>
+                                                    setInlineEditProjectId(
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                  onMouseDown={e =>
+                                                    e.stopPropagation()
+                                                  }
+                                                  onClick={e => e.stopPropagation()}
+                                                  placeholder='Project ID...'
+                                                  className='w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                />
+                                              </div>
+                                              <div>
+                                                <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                                  Opportunity
+                                                </label>
+                                                <input
+                                                  type='text'
+                                                  value={inlineEditOpportunityId}
+                                                  onChange={e =>
+                                                    setInlineEditOpportunityId(
+                                                      e.target.value
+                                                    )
+                                                  }
+                                                  onMouseDown={e =>
+                                                    e.stopPropagation()
+                                                  }
+                                                  onClick={e => e.stopPropagation()}
+                                                  placeholder='Opportunity ID...'
+                                                  className='w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
 
                                         {/* Compact action buttons */}

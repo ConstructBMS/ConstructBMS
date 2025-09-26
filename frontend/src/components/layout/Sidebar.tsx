@@ -34,6 +34,13 @@ const navigationItems = [
     href: '/dashboard-home',
   },
   {
+    id: 'pipeline',
+    label: 'Pipeline',
+    icon: TrendingUp,
+    href: '/pipeline',
+    flag: 'pipeline' as const,
+  },
+  {
     id: 'chat',
     label: 'Chat',
     icon: MessageSquare,
@@ -113,13 +120,6 @@ const navigationItems = [
     icon: Workflow,
     href: '/workflows',
     flag: 'workflows' as const,
-  },
-  {
-    id: 'pipeline',
-    label: 'Pipeline',
-    icon: TrendingUp,
-    href: '/pipeline',
-    flag: 'pipeline' as const,
   },
   {
     id: 'estimates',
