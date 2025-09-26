@@ -512,6 +512,7 @@ const GeneralSettings: React.FC = () => {
 
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='font-size'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -528,6 +529,7 @@ const GeneralSettings: React.FC = () => {
                             }
                           >
                             <SelectTrigger
+                              id='font-size'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -722,6 +724,7 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='sidebar-position'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -730,6 +733,7 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='left'>
                             <SelectTrigger
+                              id='sidebar-position'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -754,6 +758,7 @@ const GeneralSettings: React.FC = () => {
 
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='content-width'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -762,6 +767,7 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='standard'>
                             <SelectTrigger
+                              id='content-width'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1059,6 +1065,7 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='industry'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1067,6 +1074,7 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='construction'>
                             <SelectTrigger
+                              id='industry'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1332,6 +1340,7 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='invoice-prefix'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1339,6 +1348,8 @@ const GeneralSettings: React.FC = () => {
                             Invoice Prefix
                           </Label>
                           <Input
+                            id='invoice-prefix'
+                            name='invoice-prefix'
                             placeholder='INV'
                             value={financeSettings.invoicePrefix}
                             onChange={e =>
@@ -1358,6 +1369,7 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='next-invoice-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1365,6 +1377,8 @@ const GeneralSettings: React.FC = () => {
                             Next Invoice Number
                           </Label>
                           <Input
+                            id='next-invoice-number'
+                            name='next-invoice-number'
                             placeholder='3001'
                             type='number'
                             value={financeSettings.nextInvoiceNumber}
@@ -1422,6 +1436,7 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='tax-rate'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1429,6 +1444,8 @@ const GeneralSettings: React.FC = () => {
                             Tax Rate (%)
                           </Label>
                           <Input
+                            id='tax-rate'
+                            name='tax-rate'
                             placeholder='20'
                             type='number'
                             value={financeSettings.taxRate}
@@ -1484,6 +1501,7 @@ const GeneralSettings: React.FC = () => {
                         <div className='grid grid-cols-2 gap-4'>
                           <div className='space-y-2'>
                             <Label
+                              htmlFor='client-prefix'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1491,6 +1509,8 @@ const GeneralSettings: React.FC = () => {
                               Client Number Prefix
                             </Label>
                             <Input
+                              id='client-prefix'
+                              name='client-prefix'
                               placeholder='CLT'
                               value={crmSettings.client.prefix}
                               onChange={e =>
@@ -1513,6 +1533,7 @@ const GeneralSettings: React.FC = () => {
                           </div>
                           <div className='space-y-2'>
                             <Label
+                              htmlFor='next-client-number'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1520,6 +1541,8 @@ const GeneralSettings: React.FC = () => {
                               Next Client Number
                             </Label>
                             <Input
+                              id='next-client-number'
+                              name='next-client-number'
                               placeholder='1001'
                               type='number'
                               value={crmSettings.client.nextNumber}
@@ -1557,6 +1580,7 @@ const GeneralSettings: React.FC = () => {
                         <div className='grid grid-cols-2 gap-4'>
                           <div className='space-y-2'>
                             <Label
+                              htmlFor='consultant-prefix'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1564,6 +1588,8 @@ const GeneralSettings: React.FC = () => {
                               Consultant Number Prefix
                             </Label>
                             <Input
+                              id='consultant-prefix'
+                              name='consultant-prefix'
                               placeholder='CNS'
                               value={crmSettings.consultant.prefix}
                               onChange={e =>
@@ -1586,6 +1612,7 @@ const GeneralSettings: React.FC = () => {
                           </div>
                           <div className='space-y-2'>
                             <Label
+                              htmlFor='next-consultant-number'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1593,6 +1620,8 @@ const GeneralSettings: React.FC = () => {
                               Next Consultant Number
                             </Label>
                             <Input
+                              id='next-consultant-number'
+                              name='next-consultant-number'
                               placeholder='1001'
                               type='number'
                               value={crmSettings.consultant.nextNumber}
