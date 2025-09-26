@@ -1886,6 +1886,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                               value={newTag}
                                               onChange={e => setNewTag(e.target.value)}
                                               onKeyPress={handleTagKeyPress}
+                                              onMouseDown={e => e.stopPropagation()}
+                                              onClick={e => e.stopPropagation()}
                                               placeholder='Add tag...'
                                               className='flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                             />
@@ -1907,6 +1909,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             type='text'
                                             value={inlineEditProjectId}
                                             onChange={e => setInlineEditProjectId(e.target.value)}
+                                            onMouseDown={e => e.stopPropagation()}
+                                            onClick={e => e.stopPropagation()}
                                             placeholder='Project ID...'
                                             className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                           />
@@ -1921,6 +1925,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                             type='text'
                                             value={inlineEditOpportunityId}
                                             onChange={e => setInlineEditOpportunityId(e.target.value)}
+                                            onMouseDown={e => e.stopPropagation()}
+                                            onClick={e => e.stopPropagation()}
                                             placeholder='Opportunity ID...'
                                             className='w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                           />
