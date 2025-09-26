@@ -385,6 +385,7 @@ export default function SalesPipeline() {
       <DragDropContext
         onDragUpdate={handleDragUpdate}
         onDragEnd={handleDragEnd}
+        enableDefaultSensors={false}
       >
         <div className='flex gap-6 overflow-x-auto pb-4'>
           {stages.map(stage => (
