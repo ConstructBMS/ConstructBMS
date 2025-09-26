@@ -6,7 +6,6 @@ import {
   ChevronRight,
   ChevronUp,
   FileStack,
-  FileText,
   FolderOpen,
   GanttChart,
   Globe,

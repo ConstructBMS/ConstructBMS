@@ -519,7 +519,9 @@ export default function SalesPipeline() {
                                       />
                                       <div className='flex gap-1'>
                                         <select
-                                          value={editingOpportunityData.clientId}
+                                          value={
+                                            editingOpportunityData.clientId
+                                          }
                                           onChange={e =>
                                             setEditingOpportunityData(prev => ({
                                               ...prev,
@@ -528,7 +530,9 @@ export default function SalesPipeline() {
                                           }
                                           className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded'
                                         >
-                                          <option value=''>Select client</option>
+                                          <option value=''>
+                                            Select client
+                                          </option>
                                           {clients.map(client => (
                                             <option
                                               key={client.id}
@@ -542,7 +546,9 @@ export default function SalesPipeline() {
                                           type='button'
                                           variant='outline'
                                           size='sm'
-                                          onClick={() => setShowNewClientModal(true)}
+                                          onClick={() =>
+                                            setShowNewClientModal(true)
+                                          }
                                           className='px-2 py-1 text-xs'
                                         >
                                           <Plus className='w-3 h-3' />

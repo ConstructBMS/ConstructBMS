@@ -1599,7 +1599,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                   {...provided.draggableProps}
                                   className={`notes-cards aspect-square h-72 w-72 rounded-lg border-l-4 sticky-note-${note.color} ${
                                     inlineEditingNote === note.id
-                                      ? 'cursor-default ring-2 ring-blue-500'
+                                      ? 'cursor-default ring-2 ring-blue-500 relative z-50'
                                       : 'cursor-pointer hover:shadow-md'
                                   }`}
                                   onDoubleClick={() => {
@@ -1687,8 +1687,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
                                   <div className='p-3 pr-6 h-full flex flex-col'>
                                     {inlineEditingNote === note.id ? (
-                                      // Inline editing mode
-                                      <div className='space-y-3'>
+                                      // Inline editing mode - with proper z-index and positioning
+                                      <div className='space-y-3 relative z-50 bg-white rounded-lg p-2 shadow-lg border'>
                                         {/* Title editing */}
                                         <div>
                                           <input
@@ -1870,31 +1870,33 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                           )}
                                         </div>
 
-                                        {/* Quick Assignment Section */}
-                                        <div className='mt-2 p-2 bg-gray-50 rounded border'>
-                                          <div className='grid grid-cols-2 gap-2'>
-                                            {/* Tags */}
+                                        {/* Quick Assignment Section - Vertical Layout */}
+                                        <div className='mt-2 p-3 bg-gray-50 rounded border border-gray-200'>
+                                          <div className='space-y-3'>
+                                            {/* Tags Section */}
                                             <div>
-                                              <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                              <label className='text-sm font-medium text-gray-700 mb-2 block'>
                                                 Tags
                                               </label>
-                                              <div className='flex flex-wrap gap-1 mb-1 max-h-16 overflow-y-auto'>
+                                              <div className='flex flex-wrap gap-1 mb-2 max-h-20 overflow-y-auto'>
                                                 {inlineEditTags.map(tag => (
                                                   <span
                                                     key={tag}
-                                                    className='inline-flex items-center gap-1 px-1 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full'
+                                                    className='inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded-full'
                                                   >
                                                     {tag}
                                                     <button
-                                                      onClick={() => removeTag(tag)}
-                                                      className='text-blue-600 hover:text-blue-800 text-xs'
+                                                      onClick={() =>
+                                                        removeTag(tag)
+                                                      }
+                                                      className='text-blue-600 hover:text-blue-800 text-sm'
                                                     >
                                                       ×
                                                     </button>
                                                   </span>
                                                 ))}
                                               </div>
-                                              <div className='flex gap-1'>
+                                              <div className='flex gap-2'>
                                                 <input
                                                   type='text'
                                                   value={newTag}
@@ -1905,23 +1907,25 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   onMouseDown={e =>
                                                     e.stopPropagation()
                                                   }
-                                                  onClick={e => e.stopPropagation()}
+                                                  onClick={e =>
+                                                    e.stopPropagation()
+                                                  }
                                                   placeholder='Add tag...'
-                                                  className='flex-1 px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                                 <button
                                                   onClick={addTag}
-                                                  className='px-1 py-0.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600'
+                                                  className='px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600'
                                                 >
-                                                  +
+                                                  Add
                                                 </button>
                                               </div>
                                             </div>
 
-                                            {/* Project & Opportunity */}
-                                            <div className='space-y-2'>
+                                            {/* Project & Opportunity Section */}
+                                            <div className='grid grid-cols-2 gap-3'>
                                               <div>
-                                                <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                                <label className='text-sm font-medium text-gray-700 mb-1 block'>
                                                   Project
                                                 </label>
                                                 <input
@@ -1935,18 +1939,22 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   onMouseDown={e =>
                                                     e.stopPropagation()
                                                   }
-                                                  onClick={e => e.stopPropagation()}
+                                                  onClick={e =>
+                                                    e.stopPropagation()
+                                                  }
                                                   placeholder='Project ID...'
-                                                  className='w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                               </div>
                                               <div>
-                                                <label className='text-xs font-medium text-gray-600 mb-1 block'>
+                                                <label className='text-sm font-medium text-gray-700 mb-1 block'>
                                                   Opportunity
                                                 </label>
                                                 <input
                                                   type='text'
-                                                  value={inlineEditOpportunityId}
+                                                  value={
+                                                    inlineEditOpportunityId
+                                                  }
                                                   onChange={e =>
                                                     setInlineEditOpportunityId(
                                                       e.target.value
@@ -1955,9 +1963,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   onMouseDown={e =>
                                                     e.stopPropagation()
                                                   }
-                                                  onClick={e => e.stopPropagation()}
+                                                  onClick={e =>
+                                                    e.stopPropagation()
+                                                  }
                                                   placeholder='Opportunity ID...'
-                                                  className='w-full px-1 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
+                                                  className='w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 />
                                               </div>
                                             </div>
