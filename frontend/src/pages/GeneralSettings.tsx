@@ -1270,6 +1270,7 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='estimate-prefix'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1277,6 +1278,8 @@ const GeneralSettings: React.FC = () => {
                             Estimate Prefix
                           </Label>
                           <Input
+                            id='estimate-prefix'
+                            name='estimate-prefix'
                             placeholder='EST'
                             value={financeSettings.estimatePrefix}
                             onChange={e =>
@@ -1296,6 +1299,7 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
+                            htmlFor='next-estimate-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1303,6 +1307,8 @@ const GeneralSettings: React.FC = () => {
                             Next Estimate Number
                           </Label>
                           <Input
+                            id='next-estimate-number'
+                            name='next-estimate-number'
                             placeholder='2001'
                             type='number'
                             value={financeSettings.nextEstimateNumber}
