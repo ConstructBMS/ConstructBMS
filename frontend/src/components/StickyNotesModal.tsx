@@ -152,7 +152,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
 
   // Demo data for projects and opportunities
   const demoProjects = [
-    { id: 'proj-1', name: 'Office Building Construction', status: 'in-progress' },
+    {
+      id: 'proj-1',
+      name: 'Office Building Construction',
+      status: 'in-progress',
+    },
     { id: 'proj-2', name: 'Warehouse Renovation', status: 'planning' },
     { id: 'proj-3', name: 'Residential Complex', status: 'in-progress' },
     { id: 'proj-4', name: 'Shopping Center Development', status: 'completed' },
@@ -160,11 +164,11 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   ];
 
   const demoOpportunities = [
-    { id: 'opp-1', name: 'Office Building Construction', stage: 'proposal' },
-    { id: 'opp-2', name: 'Warehouse Renovation', stage: 'qualified' },
-    { id: 'opp-3', name: 'Residential Complex', stage: 'negotiation' },
-    { id: 'opp-4', name: 'Shopping Center Development', stage: 'closed-won' },
-    { id: 'opp-5', name: 'Hospital Expansion', stage: 'lead' },
+    { id: 'opp-1', name: 'Tech Startup Office Lease', stage: 'proposal' },
+    { id: 'opp-2', name: 'Retail Store Fit-Out', stage: 'qualified' },
+    { id: 'opp-3', name: 'Restaurant Renovation', stage: 'negotiation' },
+    { id: 'opp-4', name: 'Gym Equipment Installation', stage: 'closed-won' },
+    { id: 'opp-5', name: 'Hotel Lobby Redesign', stage: 'lead' },
   ];
 
   // Set content when inline editing starts (only when note changes, not content)
@@ -1960,10 +1964,16 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   }
                                                   className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 >
-                                                  <option value=''>Select Project</option>
+                                                  <option value=''>
+                                                    Select Project
+                                                  </option>
                                                   {demoProjects.map(project => (
-                                                    <option key={project.id} value={project.id}>
-                                                      {project.name} ({project.status})
+                                                    <option
+                                                      key={project.id}
+                                                      value={project.id}
+                                                    >
+                                                      {project.name} (
+                                                      {project.status})
                                                     </option>
                                                   ))}
                                                 </select>
@@ -1989,12 +1999,20 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   }
                                                   className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
                                                 >
-                                                  <option value=''>Select Opportunity</option>
-                                                  {demoOpportunities.map(opportunity => (
-                                                    <option key={opportunity.id} value={opportunity.id}>
-                                                      {opportunity.name} ({opportunity.stage})
-                                                    </option>
-                                                  ))}
+                                                  <option value=''>
+                                                    Select Opportunity
+                                                  </option>
+                                                  {demoOpportunities.map(
+                                                    opportunity => (
+                                                      <option
+                                                        key={opportunity.id}
+                                                        value={opportunity.id}
+                                                      >
+                                                        {opportunity.name} (
+                                                        {opportunity.stage})
+                                                      </option>
+                                                    )
+                                                  )}
                                                 </select>
                                               </div>
                                             </div>
