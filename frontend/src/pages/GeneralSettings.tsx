@@ -33,64 +33,57 @@ import { DemoDataManagement } from '../modules/settings/sections/DemoDataManagem
 
 // Go Live Section Component
 const GoLiveSection = () => {
-  const { isDemoMode, clearDemoData, getDemoModeStatus } = useDemoModeStore();
-  const status = getDemoModeStatus();
-
-  console.log('GoLiveSection - isDemoMode:', isDemoMode);
-  console.log('GoLiveSection - status:', status);
-
-  // Temporarily always show for debugging
-  // if (!isDemoMode) {
-  //   console.log('GoLiveSection - Not in demo mode, returning null');
-  //   return null;
-  // }
-
+  console.log('GoLiveSection - Component is rendering');
+  
   const handleGoLive = () => {
     if (
       confirm(
         'Are you sure you want to delete all demo data and go live? This action cannot be undone.'
       )
     ) {
-      clearDemoData();
+      // Clear demo data and reload
+      localStorage.clear();
       window.location.reload();
     }
   };
 
   return (
-    <Card className='border-red-200 bg-red-50'>
-      <CardHeader>
-        <CardTitle className='flex items-center space-x-2 text-red-800'>
-          <AlertTriangle className='h-5 w-5' />
-          <span>Go Live</span>
-        </CardTitle>
-        <CardDescription className='text-red-700'>
-          Switch from demo mode to live mode by deleting all demo data.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className='space-y-4'>
-          <div className='bg-red-100 border border-red-300 rounded-lg p-4'>
-            <p className='text-red-800 text-sm font-medium mb-2'>
-              ⚠️ This action will permanently delete all demo data including:
-            </p>
-            <ul className='text-red-700 text-sm space-y-1 ml-4'>
-              <li>• All demo projects, contacts, and tasks</li>
-              <li>• All demo sticky notes and documents</li>
-              <li>• All demo user accounts (except admin)</li>
-              <li>• All demo financial records</li>
-            </ul>
+    <div className="mb-6">
+      <Card className='border-red-200 bg-red-50'>
+        <CardHeader>
+          <CardTitle className='flex items-center space-x-2 text-red-800'>
+            <AlertTriangle className='h-5 w-5' />
+            <span>Go Live</span>
+          </CardTitle>
+          <CardDescription className='text-red-700'>
+            Switch from demo mode to live mode by deleting all demo data.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-4'>
+            <div className='bg-red-100 border border-red-300 rounded-lg p-4'>
+              <p className='text-red-800 text-sm font-medium mb-2'>
+                ⚠️ This action will permanently delete all demo data including:
+              </p>
+              <ul className='text-red-700 text-sm space-y-1 ml-4'>
+                <li>• All demo projects, contacts, and tasks</li>
+                <li>• All demo sticky notes and documents</li>
+                <li>• All demo user accounts (except admin)</li>
+                <li>• All demo financial records</li>
+              </ul>
+            </div>
+            <Button
+              variant='destructive'
+              onClick={handleGoLive}
+              className='w-full'
+            >
+              <Trash2 className='h-4 w-4 mr-2' />
+              Delete Demo Data & Go Live
+            </Button>
           </div>
-          <Button
-            variant='destructive'
-            onClick={handleGoLive}
-            className='w-full'
-          >
-            <Trash2 className='h-4 w-4 mr-2' />
-            Delete Demo Data & Go Live
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -447,6 +440,13 @@ const GeneralSettings: React.FC = () => {
             <div className='flex-1 overflow-y-auto pr-6 pl-6 pb-6'>
               <TabsContent value='appearance' className='space-y-6'>
                 <div className='space-y-6'>
+                  {/* TEST: Go Live Section - Should be visible */}
+                  <div className="bg-yellow-100 border-2 border-yellow-400 p-4 rounded-lg">
+                    <h3 className="text-lg font-bold text-yellow-800">TEST: Go Live Section</h3>
+                    <p className="text-yellow-700">If you can see this, the component is working!</p>
+                    <GoLiveSection />
+                  </div>
+
                   {/* Theme Settings */}
                   <Card
                     style={{
