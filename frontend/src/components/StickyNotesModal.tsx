@@ -1016,7 +1016,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                       <DragDropContext
                         onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
-                        enableDefaultSensors={false}
                       >
                         <Droppable droppableId='notes-list'>
                           {provided => (
@@ -1584,11 +1583,10 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
               )}
 
               {viewMode === 'grid' && (
-                <div className='flex-1 bg-gray-900 overflow-auto max-h-[calc(100vh-200px)]'>
+                <div className='flex-1 bg-gray-900 max-h-[calc(100vh-200px)]'>
                   <DragDropContext
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
-                    enableDefaultSensors={false}
                   >
                     <Droppable
                       droppableId='sticky-notes-grid'

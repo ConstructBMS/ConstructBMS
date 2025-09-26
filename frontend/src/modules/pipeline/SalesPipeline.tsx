@@ -382,12 +382,12 @@ export default function SalesPipeline() {
         </div>
       </div>
 
-      <DragDropContext
-        onDragUpdate={handleDragUpdate}
-        onDragEnd={handleDragEnd}
-        enableDefaultSensors={false}
-      >
-        <div className='flex gap-6 overflow-x-auto pb-4'>
+      <div className='overflow-x-auto pb-4'>
+        <DragDropContext
+          onDragUpdate={handleDragUpdate}
+          onDragEnd={handleDragEnd}
+        >
+          <div className='flex gap-6 min-w-max'>
           {stages.map(stage => (
             <div key={stage.id} className='flex-shrink-0 w-80'>
               <div
@@ -653,8 +653,9 @@ export default function SalesPipeline() {
               </div>
             </div>
           ))}
-        </div>
-      </DragDropContext>
+          </div>
+        </DragDropContext>
+      </div>
 
       {/* New Client Modal */}
       {showNewClientModal && (
