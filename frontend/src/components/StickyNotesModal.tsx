@@ -150,6 +150,23 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const contentEditableRef = useRef<HTMLDivElement>(null);
 
+  // Demo data for projects and opportunities
+  const demoProjects = [
+    { id: 'proj-1', name: 'Office Building Construction', status: 'in-progress' },
+    { id: 'proj-2', name: 'Warehouse Renovation', status: 'planning' },
+    { id: 'proj-3', name: 'Residential Complex', status: 'in-progress' },
+    { id: 'proj-4', name: 'Shopping Center Development', status: 'completed' },
+    { id: 'proj-5', name: 'Hospital Expansion', status: 'on-hold' },
+  ];
+
+  const demoOpportunities = [
+    { id: 'opp-1', name: 'Office Building Construction', stage: 'proposal' },
+    { id: 'opp-2', name: 'Warehouse Renovation', stage: 'qualified' },
+    { id: 'opp-3', name: 'Residential Complex', stage: 'negotiation' },
+    { id: 'opp-4', name: 'Shopping Center Development', stage: 'closed-won' },
+    { id: 'opp-5', name: 'Hospital Expansion', stage: 'lead' },
+  ];
+
   // Set content when inline editing starts (only when note changes, not content)
   useEffect(() => {
     if (contentEditableRef.current && inlineEditingNote) {
@@ -1928,8 +1945,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                 <label className='text-sm font-medium text-gray-700 mb-1 block'>
                                                   Project
                                                 </label>
-                                                <input
-                                                  type='text'
+                                                <select
                                                   value={inlineEditProjectId}
                                                   onChange={e =>
                                                     setInlineEditProjectId(
@@ -1942,16 +1958,21 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   onClick={e =>
                                                     e.stopPropagation()
                                                   }
-                                                  placeholder='Project ID...'
                                                   className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
-                                                />
+                                                >
+                                                  <option value=''>Select Project</option>
+                                                  {demoProjects.map(project => (
+                                                    <option key={project.id} value={project.id}>
+                                                      {project.name} ({project.status})
+                                                    </option>
+                                                  ))}
+                                                </select>
                                               </div>
                                               <div>
                                                 <label className='text-sm font-medium text-gray-700 mb-1 block'>
                                                   Opportunity
                                                 </label>
-                                                <input
-                                                  type='text'
+                                                <select
                                                   value={
                                                     inlineEditOpportunityId
                                                   }
@@ -1966,9 +1987,15 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                                                   onClick={e =>
                                                     e.stopPropagation()
                                                   }
-                                                  placeholder='Opportunity ID...'
                                                   className='w-full px-2 py-1 text-sm text-gray-900 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500'
-                                                />
+                                                >
+                                                  <option value=''>Select Opportunity</option>
+                                                  {demoOpportunities.map(opportunity => (
+                                                    <option key={opportunity.id} value={opportunity.id}>
+                                                      {opportunity.name} ({opportunity.stage})
+                                                    </option>
+                                                  ))}
+                                                </select>
                                               </div>
                                             </div>
                                           </div>
