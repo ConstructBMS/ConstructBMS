@@ -172,25 +172,60 @@ export default function SalesPipeline() {
     notes: '',
   });
 
+  const handleDragUpdate = (result: any) => {
+    // This provides visual feedback during dragging
+    // The drop zone indicator is handled automatically by @hello-pangea/dnd
+  };
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
 
-    if (source.droppableId === destination.droppableId) return;
+    // If dropped in the same position, do nothing
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
 
-    // Update opportunity stage
-    setOpportunities(prev =>
-      prev.map(opp =>
-        opp.id === draggableId
-          ? {
-              ...opp,
-              stage: destination.droppableId,
-              updatedAt: new Date().toISOString(),
-            }
-          : opp
-      )
-    );
+    // Get the opportunities for the source and destination stages
+    const sourceOpportunities = getOpportunitiesByStage(source.droppableId);
+    const destOpportunities = getOpportunitiesByStage(destination.droppableId);
+
+    // If moving within the same column
+    if (source.droppableId === destination.droppableId) {
+      const newOpportunities = Array.from(sourceOpportunities);
+      const [reorderedOpportunity] = newOpportunities.splice(source.index, 1);
+      newOpportunities.splice(destination.index, 0, reorderedOpportunity);
+
+      // Update the opportunities with new order
+      setOpportunities(prev => {
+        const otherOpportunities = prev.filter(
+          opp => opp.stage !== source.droppableId
+        );
+        return [...otherOpportunities, ...newOpportunities];
+      });
+    } else {
+      // Moving between different columns
+      const newSourceOpportunities = Array.from(sourceOpportunities);
+      const newDestOpportunities = Array.from(destOpportunities);
+      
+      const [movedOpportunity] = newSourceOpportunities.splice(source.index, 1);
+      movedOpportunity.stage = destination.droppableId;
+      movedOpportunity.updatedAt = new Date().toISOString();
+      
+      newDestOpportunities.splice(destination.index, 0, movedOpportunity);
+
+      // Update all opportunities
+      setOpportunities(prev => {
+        const otherOpportunities = prev.filter(
+          opp => opp.stage !== source.droppableId && opp.stage !== destination.droppableId
+        );
+        return [...otherOpportunities, ...newSourceOpportunities, ...newDestOpportunities];
+      });
+    }
   };
 
   const startEditStage = (stageId: string) => {
@@ -341,7 +376,7 @@ export default function SalesPipeline() {
         </div>
       </div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext onDragUpdate={handleDragUpdate} onDragEnd={handleDragEnd}>
         <div className='flex gap-6 overflow-x-auto pb-4'>
           {stages.map(stage => (
             <div key={stage.id} className='flex-shrink-0 w-80'>
@@ -400,13 +435,19 @@ export default function SalesPipeline() {
                 </div>
 
                 {/* Stage Content */}
-                <Droppable droppableId={stage.id}>
+                <Droppable 
+                  droppableId={stage.id}
+                  type="OPPORTUNITY"
+                  direction="vertical"
+                >
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`min-h-64 ${
-                        snapshot.isDraggingOver ? 'bg-gray-200' : ''
+                      className={`min-h-64 transition-colors duration-200 ${
+                        snapshot.isDraggingOver 
+                          ? 'bg-blue-50 border-2 border-blue-300 border-dashed' 
+                          : ''
                       }`}
                     >
                       {getOpportunitiesByStage(stage.id).map(
@@ -415,14 +456,17 @@ export default function SalesPipeline() {
                             key={opportunity.id}
                             draggableId={opportunity.id}
                             index={index}
+                            type="OPPORTUNITY"
                           >
                             {(provided, snapshot) => (
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 ${
-                                  snapshot.isDragging ? 'shadow-lg' : ''
+                                className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3 transition-all duration-200 ${
+                                  snapshot.isDragging 
+                                    ? 'shadow-xl rotate-2 scale-105 border-blue-300' 
+                                    : 'hover:shadow-md'
                                 }`}
                               >
                                 {editingOpportunity === opportunity.id ? (
