@@ -132,25 +132,27 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
-  const [currentTheme, setCurrentTheme] = useState(() => 
+  const [currentTheme, setCurrentTheme] = useState(() =>
     localStorage.getItem('theme') === 'light' ? 'light' : 'dark'
   );
 
   // Listen for theme changes and update immediately
   useEffect(() => {
     const handleThemeChange = () => {
-      const newTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+      const newTheme =
+        localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
       setCurrentTheme(newTheme);
     };
 
     // Listen for storage changes
     window.addEventListener('storage', handleThemeChange);
-    
+
     // Listen for custom theme change events
     window.addEventListener('themeChanged', handleThemeChange);
 
     // Also listen to the theme context changes
-    const newTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+    const newTheme =
+      localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
     setCurrentTheme(newTheme);
 
     return () => {
@@ -158,6 +160,11 @@ export default function SalesPipeline() {
       window.removeEventListener('themeChanged', handleThemeChange);
     };
   }, [theme]);
+
+  // Debug current theme
+  console.log('Current theme in component:', currentTheme);
+  console.log('localStorage theme:', localStorage.getItem('theme'));
+
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -384,6 +391,7 @@ export default function SalesPipeline() {
 
   return (
     <div
+      key={currentTheme} // Force re-render when theme changes
       className={`p-6 min-h-screen ${
         currentTheme === 'dark'
           ? 'bg-gray-900 text-white'
