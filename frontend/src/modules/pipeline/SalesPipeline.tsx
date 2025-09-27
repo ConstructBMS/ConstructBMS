@@ -9,7 +9,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../../components/ui';
 import { useTheme } from '../../contexts/ThemeContext.tsx';
 
@@ -148,8 +148,26 @@ export default function SalesPipeline() {
     setForceUpdate(prev => prev + 1);
   }, [theme]);
 
-  // Use the actual theme from context
-  const currentTheme = theme;
+  // Listen for localStorage changes to update immediately
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log('localStorage theme changed to:', localStorage.getItem('theme'));
+      setForceUpdate(prev => prev + 1);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom theme change events
+    window.addEventListener('themeChanged', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('themeChanged', handleStorageChange);
+    };
+  }, []);
+
+  // FIX: Use localStorage theme directly to bypass context issues
+  const currentTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
