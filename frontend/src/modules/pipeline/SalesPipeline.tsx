@@ -132,16 +132,14 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
-  console.log('SalesPipeline theme:', theme); // Debug log
-  console.log('localStorage theme:', localStorage.getItem('theme')); // Debug log
-  console.log(
-    'document classes:',
-    document.documentElement.classList.toString()
-  ); // Debug log
-
-  // Force dark theme for debugging
-  const forcedTheme = 'dark';
-  console.log('Forced theme:', forcedTheme);
+  
+  // Clear localStorage theme conflict and force dark theme
+  if (localStorage.getItem('theme') === 'light') {
+    localStorage.setItem('theme', 'dark');
+  }
+  
+  // Use dark theme for Sales Pipeline
+  const currentTheme = 'dark';
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -369,33 +367,23 @@ export default function SalesPipeline() {
   return (
     <div
       className={`p-6 min-h-screen ${
-        forcedTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+        currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
       }`}
-      style={{ 
-        backgroundColor: forcedTheme === 'dark' ? '#111827' : '#f9fafb',
-        color: forcedTheme === 'dark' ? '#ffffff' : '#000000',
-        border: forcedTheme === 'dark' ? '3px solid red' : '3px solid blue',
-        '!important': 'true',
-        'background-color': forcedTheme === 'dark' ? '#111827 !important' : '#f9fafb !important',
-        'color': forcedTheme === 'dark' ? '#ffffff !important' : '#000000 !important'
-      } as React.CSSProperties}
+      style={{
+        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
+        color: currentTheme === 'dark' ? '#ffffff' : '#000000',
+      }}
     >
       <div className='mb-6'>
         <h1
           className={`text-3xl font-bold mb-2 ${
-            forcedTheme === 'dark' ? 'text-white' : 'text-gray-900'
+            currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}
-          style={{
-            color: forcedTheme === 'dark' ? '#ffffff !important' : '#000000 !important',
-            backgroundColor: forcedTheme === 'dark' ? '#ff0000 !important' : '#0000ff !important',
-            padding: '10px',
-            border: '2px solid yellow'
-          }}
         >
-          Sales Pipeline - FORCED DARK THEME TEST
+          Sales Pipeline
         </h1>
         <p
-          className={forcedTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+          className={currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
         >
           Manage your sales opportunities and track progress through the
           pipeline
@@ -428,12 +416,12 @@ export default function SalesPipeline() {
               <div key={stage.id} className='flex-shrink-0 w-80'>
                 <div
                   className={`${stage.color} border-2 ${
-                    forcedTheme === 'dark'
+                    currentTheme === 'dark'
                       ? 'border-gray-600'
                       : 'border-gray-200'
                   } rounded-lg p-4 min-h-96`}
                   style={{
-                    borderColor: forcedTheme === 'dark' ? '#4b5563' : '#e5e7eb',
+                    borderColor: currentTheme === 'dark' ? '#4b5563' : '#e5e7eb',
                   }}
                 >
                   {/* Stage Header */}
@@ -445,7 +433,7 @@ export default function SalesPipeline() {
                           value={editingStageName}
                           onChange={e => setEditingStageName(e.target.value)}
                           className={`w-full px-2 py-1 text-lg font-semibold rounded ${
-                            forcedTheme === 'dark'
+                            currentTheme === 'dark'
                               ? 'bg-gray-700 border-gray-500 text-white'
                               : 'bg-white border-gray-300'
                           } border`}
@@ -456,7 +444,7 @@ export default function SalesPipeline() {
                             value={editingStageColor}
                             onChange={e => setEditingStageColor(e.target.value)}
                             className={`px-2 py-1 text-sm rounded border ${
-                              forcedTheme === 'dark'
+                              currentTheme === 'dark'
                                 ? 'bg-gray-700 border-gray-500 text-white'
                                 : 'bg-white border-gray-300'
                             }`}
@@ -483,7 +471,7 @@ export default function SalesPipeline() {
                       <>
                         <h3
                           className={`text-lg font-semibold ${
-                            forcedTheme === 'dark'
+                            currentTheme === 'dark'
                               ? 'text-gray-100'
                               : 'text-gray-800'
                           }`}
@@ -513,7 +501,7 @@ export default function SalesPipeline() {
                         {...provided.droppableProps}
                         className={`min-h-64 transition-colors duration-200 ${
                           snapshot.isDraggingOver
-                            ? forcedTheme === 'dark'
+                            ? currentTheme === 'dark'
                               ? 'bg-blue-900 border-2 border-blue-400 border-dashed'
                               : 'bg-blue-50 border-2 border-blue-300 border-dashed'
                             : ''
@@ -533,7 +521,7 @@ export default function SalesPipeline() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className={`rounded-lg shadow-sm border p-4 mb-3 transition-all duration-200 ${
-                                    forcedTheme === 'dark'
+                                    currentTheme === 'dark'
                                       ? 'bg-gray-800 border-gray-600'
                                       : 'bg-white border-gray-200'
                                   } ${
@@ -544,15 +532,15 @@ export default function SalesPipeline() {
                                   style={
                                     {
                                       backgroundColor:
-                                        forcedTheme === 'dark'
+                                        currentTheme === 'dark'
                                           ? '#1f2937'
                                           : '#ffffff',
                                       borderColor:
-                                        forcedTheme === 'dark'
+                                        currentTheme === 'dark'
                                           ? '#4b5563'
                                           : '#e5e7eb',
                                       color:
-                                        forcedTheme === 'dark'
+                                        currentTheme === 'dark'
                                           ? '#ffffff'
                                           : '#000000',
                                       '--tw-bg-opacity': '1',
@@ -572,7 +560,7 @@ export default function SalesPipeline() {
                                           }))
                                         }
                                         className={`w-full px-2 py-1 font-semibold border rounded ${
-                                          forcedTheme === 'dark'
+                                          currentTheme === 'dark'
                                             ? 'bg-gray-700 border-gray-500 text-white'
                                             : 'bg-white border-gray-300'
                                         }`}
@@ -587,7 +575,7 @@ export default function SalesPipeline() {
                                           }))
                                         }
                                         className={`w-full px-2 py-1 text-sm border rounded ${
-                                          forcedTheme === 'dark'
+                                          currentTheme === 'dark'
                                             ? 'bg-gray-700 border-gray-500 text-white'
                                             : 'bg-white border-gray-300'
                                         }`}
@@ -605,7 +593,7 @@ export default function SalesPipeline() {
                                             }))
                                           }
                                           className={`flex-1 px-2 py-1 text-sm border rounded ${
-                                            forcedTheme === 'dark'
+                                            currentTheme === 'dark'
                                               ? 'bg-gray-700 border-gray-500 text-white'
                                               : 'bg-white border-gray-300'
                                           }`}
@@ -625,7 +613,7 @@ export default function SalesPipeline() {
                                               )
                                             }
                                             className={`flex-1 px-2 py-1 text-sm border rounded ${
-                                              forcedTheme === 'dark'
+                                              currentTheme === 'dark'
                                                 ? 'bg-gray-700 border-gray-500 text-white'
                                                 : 'bg-white border-gray-300'
                                             }`}
@@ -664,7 +652,7 @@ export default function SalesPipeline() {
                                           }))
                                         }
                                         className={`w-full px-2 py-1 text-sm border rounded ${
-                                          forcedTheme === 'dark'
+                                          currentTheme === 'dark'
                                             ? 'bg-gray-700 border-gray-500 text-white'
                                             : 'bg-white border-gray-300'
                                         }`}
@@ -694,7 +682,7 @@ export default function SalesPipeline() {
                                       <div className='flex justify-between items-start mb-2'>
                                         <h4
                                           className={`font-semibold ${
-                                            forcedTheme === 'dark'
+                                            currentTheme === 'dark'
                                               ? 'text-white'
                                               : 'text-gray-900'
                                           }`}
@@ -727,7 +715,7 @@ export default function SalesPipeline() {
 
                                       <p
                                         className={`text-sm mb-2 ${
-                                          forcedTheme === 'dark'
+                                          currentTheme === 'dark'
                                             ? 'text-gray-300'
                                             : 'text-gray-600'
                                         }`}
@@ -737,7 +725,7 @@ export default function SalesPipeline() {
 
                                       <div
                                         className={`flex items-center gap-4 text-sm mb-2 ${
-                                          forcedTheme === 'dark'
+                                          currentTheme === 'dark'
                                             ? 'text-gray-400'
                                             : 'text-gray-500'
                                         }`}
@@ -761,7 +749,7 @@ export default function SalesPipeline() {
                                       {opportunity.notes && (
                                         <div
                                           className={`text-xs p-2 rounded ${
-                                            forcedTheme === 'dark'
+                                            currentTheme === 'dark'
                                               ? 'text-gray-400 bg-gray-700'
                                               : 'text-gray-500 bg-gray-50'
                                           }`}
@@ -793,12 +781,12 @@ export default function SalesPipeline() {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
           <div
             className={`rounded-lg p-6 w-96 ${
-              forcedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'
+              currentTheme === 'dark' ? 'bg-gray-800' : 'bg-white'
             }`}
           >
             <h3
               className={`text-lg font-semibold mb-4 ${
-                forcedTheme === 'dark' ? 'text-white' : 'text-gray-900'
+                currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}
             >
               Create New Client
@@ -812,7 +800,7 @@ export default function SalesPipeline() {
                   setNewClient(prev => ({ ...prev, name: e.target.value }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -825,7 +813,7 @@ export default function SalesPipeline() {
                   setNewClient(prev => ({ ...prev, email: e.target.value }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -838,7 +826,7 @@ export default function SalesPipeline() {
                   setNewClient(prev => ({ ...prev, phone: e.target.value }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -851,7 +839,7 @@ export default function SalesPipeline() {
                   setNewClient(prev => ({ ...prev, company: e.target.value }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -877,12 +865,12 @@ export default function SalesPipeline() {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
           <div
             className={`rounded-lg p-6 w-96 ${
-              forcedTheme === 'dark' ? 'bg-gray-800' : 'bg-white'
+              currentTheme === 'dark' ? 'bg-gray-800' : 'bg-white'
             }`}
           >
             <h3
               className={`text-lg font-semibold mb-4 ${
-                forcedTheme === 'dark' ? 'text-white' : 'text-gray-900'
+                currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
               }`}
             >
               Create New Opportunity
@@ -896,7 +884,7 @@ export default function SalesPipeline() {
                   setNewOpportunity(prev => ({ ...prev, name: e.target.value }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -911,7 +899,7 @@ export default function SalesPipeline() {
                   }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -928,7 +916,7 @@ export default function SalesPipeline() {
                   }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
@@ -943,7 +931,7 @@ export default function SalesPipeline() {
                     }))
                   }
                   className={`flex-1 px-3 py-2 border rounded ${
-                    forcedTheme === 'dark'
+                    currentTheme === 'dark'
                       ? 'bg-gray-700 border-gray-500 text-white'
                       : 'bg-white border-gray-300'
                   }`}
@@ -975,7 +963,7 @@ export default function SalesPipeline() {
                   }))
                 }
                 className={`w-full px-3 py-2 border rounded ${
-                  forcedTheme === 'dark'
+                  currentTheme === 'dark'
                     ? 'bg-gray-700 border-gray-500 text-white'
                     : 'bg-white border-gray-300'
                 }`}
