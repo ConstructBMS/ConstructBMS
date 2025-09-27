@@ -362,12 +362,8 @@ export default function SalesPipeline() {
   return (
     <div
       className={`p-6 min-h-screen ${
-        currentTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+        currentTheme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
       }`}
-      style={{
-        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
-        color: currentTheme === 'dark' ? '#ffffff' : '#000000',
-      }}
     >
       <div className='mb-6'>
         <h1
@@ -470,7 +466,7 @@ export default function SalesPipeline() {
                         <h3
                           className={`text-lg font-semibold ${
                             currentTheme === 'dark'
-                              ? 'text-white'
+                              ? 'text-gray-100'
                               : 'text-gray-900'
                           }`}
                         >
@@ -482,7 +478,7 @@ export default function SalesPipeline() {
                           onClick={() => startEditStage(stage.id)}
                           className={`${
                             currentTheme === 'dark'
-                              ? 'text-gray-300 hover:text-white'
+                              ? 'text-gray-200 hover:text-white'
                               : 'text-gray-600 hover:text-gray-900'
                           }`}
                         >
@@ -505,8 +501,8 @@ export default function SalesPipeline() {
                         className={`min-h-64 transition-colors duration-200 ${
                           snapshot.isDraggingOver
                             ? currentTheme === 'dark'
-                              ? 'bg-gray-700 border-2 border-green-400 border-dashed'
-                              : 'bg-gray-100 border-2 border-green-300 border-dashed'
+                              ? 'bg-gray-700 border-2 border-blue-400 border-dashed'
+                              : 'bg-blue-50 border-2 border-blue-300 border-dashed'
                             : ''
                         }`}
                       >
@@ -529,27 +525,9 @@ export default function SalesPipeline() {
                                       : 'bg-white border-gray-200'
                                   } ${
                                     snapshot.isDragging
-                                      ? 'shadow-2xl rotate-2 scale-105 border-blue-400 opacity-90'
+                                      ? 'shadow-xl rotate-1 scale-105 opacity-80'
                                       : 'hover:shadow-md'
                                   }`}
-                                  style={
-                                    {
-                                      backgroundColor:
-                                        currentTheme === 'dark'
-                                          ? '#1f2937'
-                                          : '#ffffff',
-                                      borderColor:
-                                        currentTheme === 'dark'
-                                          ? '#4b5563'
-                                          : '#e5e7eb',
-                                      color:
-                                        currentTheme === 'dark'
-                                          ? '#ffffff'
-                                          : '#000000',
-                                      '--tw-bg-opacity': '1',
-                                      '--tw-text-opacity': '1',
-                                    } as React.CSSProperties
-                                  }
                                 >
                                   {editingOpportunity === opportunity.id ? (
                                     <div className='space-y-3'>
