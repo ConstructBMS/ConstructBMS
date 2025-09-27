@@ -133,6 +133,8 @@ const colorOptions = [
 export default function SalesPipeline() {
   const { theme } = useTheme();
   console.log('SalesPipeline theme:', theme); // Debug log
+  console.log('localStorage theme:', localStorage.getItem('theme')); // Debug log
+  console.log('document classes:', document.documentElement.classList.toString()); // Debug log
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -358,11 +360,15 @@ export default function SalesPipeline() {
   };
 
   return (
-    <div 
+    <div
       className={`p-6 min-h-screen ${
         theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
       }`}
-      style={{ backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb' }}
+      style={{ 
+        backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
+        color: theme === 'dark' ? '#ffffff' : '#000000',
+        border: theme === 'dark' ? '3px solid red' : '3px solid blue'
+      }}
     >
       <div className='mb-6'>
         <h1
@@ -406,8 +412,8 @@ export default function SalesPipeline() {
                   className={`${stage.color} border-2 ${
                     theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
                   } rounded-lg p-4 min-h-96`}
-                  style={{ 
-                    borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb'
+                  style={{
+                    borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb',
                   }}
                 >
                   {/* Stage Header */}
@@ -505,18 +511,23 @@ export default function SalesPipeline() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className={`rounded-lg shadow-sm border p-4 mb-3 transition-all duration-200 ${
-                                    theme === 'dark' 
-                                      ? 'bg-gray-800 border-gray-600' 
+                                    theme === 'dark'
+                                      ? 'bg-gray-800 border-gray-600'
                                       : 'bg-white border-gray-200'
                                   } ${
                                     snapshot.isDragging
                                       ? 'shadow-xl rotate-2 scale-105 border-blue-300'
                                       : 'hover:shadow-md'
                                   }`}
-                                  style={{ 
-                                    backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff',
-                                    borderColor: theme === 'dark' ? '#4b5563' : '#e5e7eb'
-                                  }}
+                                  style={{
+                                    backgroundColor:
+                                      theme === 'dark' ? '#1f2937' : '#ffffff',
+                                    borderColor:
+                                      theme === 'dark' ? '#4b5563' : '#e5e7eb',
+                                    color: theme === 'dark' ? '#ffffff' : '#000000',
+                                    '--tw-bg-opacity': '1',
+                                    '--tw-text-opacity': '1'
+                                  } as React.CSSProperties}
                                 >
                                   {editingOpportunity === opportunity.id ? (
                                     <div className='space-y-3'>
@@ -717,10 +728,10 @@ export default function SalesPipeline() {
                                       </div>
 
                                       {opportunity.notes && (
-                                        <div 
+                                        <div
                                           className={`text-xs p-2 rounded ${
-                                            theme === 'dark' 
-                                              ? 'text-gray-400 bg-gray-700' 
+                                            theme === 'dark'
+                                              ? 'text-gray-400 bg-gray-700'
                                               : 'text-gray-500 bg-gray-50'
                                           }`}
                                         >
