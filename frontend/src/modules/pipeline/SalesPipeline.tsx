@@ -9,7 +9,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui';
 import { useTheme } from '../../contexts/ThemeContext.tsx';
 
@@ -132,11 +132,21 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   // Debug theme
   console.log('SalesPipeline theme:', theme);
   console.log('localStorage theme:', localStorage.getItem('theme'));
-  console.log('document classes:', document.documentElement.classList.toString());
+  console.log(
+    'document classes:',
+    document.documentElement.classList.toString()
+  );
+
+  // Force re-render when theme changes
+  useEffect(() => {
+    console.log('Theme changed to:', theme);
+    setForceUpdate(prev => prev + 1);
+  }, [theme]);
 
   // Use the actual theme from context
   const currentTheme = theme;
@@ -374,7 +384,7 @@ export default function SalesPipeline() {
       style={{
         backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
         color: currentTheme === 'dark' ? '#ffffff' : '#111827',
-        border: currentTheme === 'dark' ? '3px solid red' : '3px solid blue'
+        border: currentTheme === 'dark' ? '3px solid red' : '3px solid blue',
       }}
     >
       <div className='mb-6'>
@@ -386,7 +396,7 @@ export default function SalesPipeline() {
             color: currentTheme === 'dark' ? '#ffffff' : '#111827',
             backgroundColor: currentTheme === 'dark' ? '#ff0000' : '#0000ff',
             padding: '10px',
-            border: '2px solid yellow'
+            border: '2px solid yellow',
           }}
         >
           Sales Pipeline - THEME DEBUG: {currentTheme}
