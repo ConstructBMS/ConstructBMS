@@ -138,6 +138,10 @@ export default function SalesPipeline() {
     'document classes:',
     document.documentElement.classList.toString()
   ); // Debug log
+  
+  // Force dark theme for debugging
+  const forcedTheme = 'dark';
+  console.log('Forced theme:', forcedTheme);
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -367,21 +371,21 @@ export default function SalesPipeline() {
       className={`p-6 min-h-screen ${
         theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
       }`}
-      style={{
-        backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
-        color: theme === 'dark' ? '#ffffff' : '#000000',
-        border: theme === 'dark' ? '3px solid red' : '3px solid blue',
+      style={{ 
+        backgroundColor: forcedTheme === 'dark' ? '#111827' : '#f9fafb',
+        color: forcedTheme === 'dark' ? '#ffffff' : '#000000',
+        border: forcedTheme === 'dark' ? '3px solid red' : '3px solid blue',
       }}
     >
       <div className='mb-6'>
         <h1
           className={`text-3xl font-bold mb-2 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
+            forcedTheme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}
         >
           Sales Pipeline
         </h1>
-        <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+        <p className={forcedTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
           Manage your sales opportunities and track progress through the
           pipeline
         </p>
