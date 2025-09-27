@@ -132,7 +132,7 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
-  
+
   // Use the actual theme from context, but ensure dark theme for Sales Pipeline
   const currentTheme = theme === 'dark' ? 'dark' : 'dark';
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
@@ -500,8 +500,8 @@ export default function SalesPipeline() {
                         className={`min-h-64 transition-colors duration-200 ${
                           snapshot.isDraggingOver
                             ? currentTheme === 'dark'
-                              ? 'bg-blue-900 border-2 border-blue-400 border-dashed'
-                              : 'bg-blue-50 border-2 border-blue-300 border-dashed'
+                              ? 'bg-gray-700 border-2 border-gray-400 border-dashed'
+                              : 'bg-gray-100 border-2 border-gray-300 border-dashed'
                             : ''
                         }`}
                       >
@@ -524,7 +524,7 @@ export default function SalesPipeline() {
                                       : 'bg-white border-gray-200'
                                   } ${
                                     snapshot.isDragging
-                                      ? 'shadow-xl rotate-2 scale-105 border-blue-300'
+                                      ? 'shadow-2xl rotate-1 scale-105 border-gray-400 opacity-90'
                                       : 'hover:shadow-md'
                                   }`}
                                   style={
