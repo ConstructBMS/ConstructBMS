@@ -133,8 +133,8 @@ const colorOptions = [
 export default function SalesPipeline() {
   const { theme } = useTheme();
 
-  // Use the actual theme from context, but ensure dark theme for Sales Pipeline
-  const currentTheme = theme === 'dark' ? 'dark' : 'dark';
+  // Use the actual theme from context
+  const currentTheme = theme;
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -470,8 +470,8 @@ export default function SalesPipeline() {
                         <h3
                           className={`text-lg font-semibold ${
                             currentTheme === 'dark'
-                              ? 'text-gray-100'
-                              : 'text-gray-800'
+                              ? 'text-white'
+                              : 'text-gray-900'
                           }`}
                         >
                           {stage.name}
@@ -480,6 +480,11 @@ export default function SalesPipeline() {
                           size='sm'
                           variant='ghost'
                           onClick={() => startEditStage(stage.id)}
+                          className={`${
+                            currentTheme === 'dark'
+                              ? 'text-gray-300 hover:text-white'
+                              : 'text-gray-600 hover:text-gray-900'
+                          }`}
                         >
                           <Edit2 className='w-4 h-4' />
                         </Button>
@@ -500,8 +505,8 @@ export default function SalesPipeline() {
                         className={`min-h-64 transition-colors duration-200 ${
                           snapshot.isDraggingOver
                             ? currentTheme === 'dark'
-                              ? 'bg-gray-700 border-2 border-gray-400 border-dashed'
-                              : 'bg-gray-100 border-2 border-gray-300 border-dashed'
+                              ? 'bg-gray-700 border-2 border-green-400 border-dashed'
+                              : 'bg-gray-100 border-2 border-green-300 border-dashed'
                             : ''
                         }`}
                       >
@@ -524,7 +529,7 @@ export default function SalesPipeline() {
                                       : 'bg-white border-gray-200'
                                   } ${
                                     snapshot.isDragging
-                                      ? 'shadow-2xl rotate-1 scale-105 border-gray-400 opacity-90'
+                                      ? 'shadow-2xl rotate-2 scale-105 border-blue-400 opacity-90'
                                       : 'hover:shadow-md'
                                   }`}
                                   style={
