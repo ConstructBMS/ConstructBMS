@@ -133,13 +133,8 @@ const colorOptions = [
 export default function SalesPipeline() {
   const { theme } = useTheme();
   
-  // Clear localStorage theme conflict and force dark theme
-  if (localStorage.getItem('theme') === 'light') {
-    localStorage.setItem('theme', 'dark');
-  }
-  
-  // Use dark theme for Sales Pipeline
-  const currentTheme = 'dark';
+  // Use the actual theme from context, but ensure dark theme for Sales Pipeline
+  const currentTheme = theme === 'dark' ? 'dark' : 'dark';
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -383,7 +378,9 @@ export default function SalesPipeline() {
           Sales Pipeline
         </h1>
         <p
-          className={currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+          className={
+            currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }
         >
           Manage your sales opportunities and track progress through the
           pipeline
@@ -421,7 +418,8 @@ export default function SalesPipeline() {
                       : 'border-gray-200'
                   } rounded-lg p-4 min-h-96`}
                   style={{
-                    borderColor: currentTheme === 'dark' ? '#4b5563' : '#e5e7eb',
+                    borderColor:
+                      currentTheme === 'dark' ? '#4b5563' : '#e5e7eb',
                   }}
                 >
                   {/* Stage Header */}
