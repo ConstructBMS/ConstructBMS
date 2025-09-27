@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../../components/ui';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext.tsx';
 
 // Types
 interface Client {
@@ -134,7 +134,10 @@ export default function SalesPipeline() {
   const { theme } = useTheme();
   console.log('SalesPipeline theme:', theme); // Debug log
   console.log('localStorage theme:', localStorage.getItem('theme')); // Debug log
-  console.log('document classes:', document.documentElement.classList.toString()); // Debug log
+  console.log(
+    'document classes:',
+    document.documentElement.classList.toString()
+  ); // Debug log
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -364,10 +367,10 @@ export default function SalesPipeline() {
       className={`p-6 min-h-screen ${
         theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
       }`}
-      style={{ 
+      style={{
         backgroundColor: theme === 'dark' ? '#111827' : '#f9fafb',
         color: theme === 'dark' ? '#ffffff' : '#000000',
-        border: theme === 'dark' ? '3px solid red' : '3px solid blue'
+        border: theme === 'dark' ? '3px solid red' : '3px solid blue',
       }}
     >
       <div className='mb-6'>
@@ -519,15 +522,24 @@ export default function SalesPipeline() {
                                       ? 'shadow-xl rotate-2 scale-105 border-blue-300'
                                       : 'hover:shadow-md'
                                   }`}
-                                  style={{
-                                    backgroundColor:
-                                      theme === 'dark' ? '#1f2937' : '#ffffff',
-                                    borderColor:
-                                      theme === 'dark' ? '#4b5563' : '#e5e7eb',
-                                    color: theme === 'dark' ? '#ffffff' : '#000000',
-                                    '--tw-bg-opacity': '1',
-                                    '--tw-text-opacity': '1'
-                                  } as React.CSSProperties}
+                                  style={
+                                    {
+                                      backgroundColor:
+                                        theme === 'dark'
+                                          ? '#1f2937'
+                                          : '#ffffff',
+                                      borderColor:
+                                        theme === 'dark'
+                                          ? '#4b5563'
+                                          : '#e5e7eb',
+                                      color:
+                                        theme === 'dark'
+                                          ? '#ffffff'
+                                          : '#000000',
+                                      '--tw-bg-opacity': '1',
+                                      '--tw-text-opacity': '1',
+                                    } as React.CSSProperties
+                                  }
                                 >
                                   {editingOpportunity === opportunity.id ? (
                                     <div className='space-y-3'>
