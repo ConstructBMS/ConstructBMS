@@ -132,42 +132,32 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
-  const [forceUpdate, setForceUpdate] = useState(0);
-
-  // Debug theme
-  console.log('SalesPipeline theme:', theme);
-  console.log('localStorage theme:', localStorage.getItem('theme'));
-  console.log(
-    'document classes:',
-    document.documentElement.classList.toString()
+  const [currentTheme, setCurrentTheme] = useState(() => 
+    localStorage.getItem('theme') === 'light' ? 'light' : 'dark'
   );
 
-  // Force re-render when theme changes
+  // Listen for theme changes and update immediately
   useEffect(() => {
-    console.log('Theme changed to:', theme);
-    setForceUpdate(prev => prev + 1);
-  }, [theme]);
-
-  // Listen for localStorage changes to update immediately
-  useEffect(() => {
-    const handleStorageChange = () => {
-      console.log('localStorage theme changed to:', localStorage.getItem('theme'));
-      setForceUpdate(prev => prev + 1);
+    const handleThemeChange = () => {
+      const newTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+      setCurrentTheme(newTheme);
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    // Listen for storage changes
+    window.addEventListener('storage', handleThemeChange);
     
-    // Also listen for custom theme change events
-    window.addEventListener('themeChanged', handleStorageChange);
+    // Listen for custom theme change events
+    window.addEventListener('themeChanged', handleThemeChange);
+
+    // Also listen to the theme context changes
+    const newTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+    setCurrentTheme(newTheme);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('themeChanged', handleStorageChange);
+      window.removeEventListener('storage', handleThemeChange);
+      window.removeEventListener('themeChanged', handleThemeChange);
     };
-  }, []);
-
-  // FIX: Use localStorage theme directly to bypass context issues
-  const currentTheme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+  }, [theme]);
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
   const [opportunities, setOpportunities] =
     useState<Opportunity[]>(demoOpportunities);
@@ -399,25 +389,14 @@ export default function SalesPipeline() {
           ? 'bg-gray-900 text-white'
           : 'bg-gray-50 text-gray-900'
       }`}
-      style={{
-        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
-        color: currentTheme === 'dark' ? '#ffffff' : '#111827',
-        border: currentTheme === 'dark' ? '3px solid red' : '3px solid blue',
-      }}
     >
       <div className='mb-6'>
         <h1
           className={`text-3xl font-bold mb-2 ${
             currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}
-          style={{
-            color: currentTheme === 'dark' ? '#ffffff' : '#111827',
-            backgroundColor: currentTheme === 'dark' ? '#ff0000' : '#0000ff',
-            padding: '10px',
-            border: '2px solid yellow',
-          }}
         >
-          Sales Pipeline - THEME DEBUG: {currentTheme}
+          Sales Pipeline
         </h1>
         <p
           className={
