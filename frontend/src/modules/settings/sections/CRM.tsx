@@ -1,7 +1,7 @@
+import { Edit, GripVertical, Plus, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { Plus, Trash2, Edit, Save, GripVertical } from 'lucide-react';
-import { useSettingsStore } from '../store';
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -15,15 +15,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Separator,
   Switch,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
   Textarea,
-  Badge,
-  Separator,
 } from '../../../components/ui';
+import { useSettingsStore } from '../store';
 
 export function CRM() {
   const {
