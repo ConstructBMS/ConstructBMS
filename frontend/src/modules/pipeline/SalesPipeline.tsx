@@ -362,7 +362,9 @@ export default function SalesPipeline() {
   return (
     <div
       className={`p-6 min-h-screen ${
-        currentTheme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+        currentTheme === 'dark'
+          ? 'bg-gray-900 text-white'
+          : 'bg-gray-50 text-gray-900'
       }`}
     >
       <div className='mb-6'>
@@ -408,15 +410,11 @@ export default function SalesPipeline() {
             {stages.map(stage => (
               <div key={stage.id} className='flex-shrink-0 w-80'>
                 <div
-                  className={`${stage.color} border-2 ${
+                  className={`border-2 rounded-lg p-4 min-h-96 ${
                     currentTheme === 'dark'
-                      ? 'border-gray-600'
-                      : 'border-gray-200'
-                  } rounded-lg p-4 min-h-96`}
-                  style={{
-                    borderColor:
-                      currentTheme === 'dark' ? '#4b5563' : '#e5e7eb',
-                  }}
+                      ? 'bg-gray-800 border-gray-600'
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
                 >
                   {/* Stage Header */}
                   <div className='flex items-center justify-between mb-4'>
