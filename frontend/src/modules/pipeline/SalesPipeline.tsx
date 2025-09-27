@@ -133,6 +133,11 @@ const colorOptions = [
 export default function SalesPipeline() {
   const { theme } = useTheme();
 
+  // Debug theme
+  console.log('SalesPipeline theme:', theme);
+  console.log('localStorage theme:', localStorage.getItem('theme'));
+  console.log('document classes:', document.documentElement.classList.toString());
+
   // Use the actual theme from context
   const currentTheme = theme;
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);
@@ -366,14 +371,25 @@ export default function SalesPipeline() {
           ? 'bg-gray-900 text-white'
           : 'bg-gray-50 text-gray-900'
       }`}
+      style={{
+        backgroundColor: currentTheme === 'dark' ? '#111827' : '#f9fafb',
+        color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+        border: currentTheme === 'dark' ? '3px solid red' : '3px solid blue'
+      }}
     >
       <div className='mb-6'>
         <h1
           className={`text-3xl font-bold mb-2 ${
             currentTheme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}
+          style={{
+            color: currentTheme === 'dark' ? '#ffffff' : '#111827',
+            backgroundColor: currentTheme === 'dark' ? '#ff0000' : '#0000ff',
+            padding: '10px',
+            border: '2px solid yellow'
+          }}
         >
-          Sales Pipeline
+          Sales Pipeline - THEME DEBUG: {currentTheme}
         </h1>
         <p
           className={
