@@ -371,19 +371,28 @@ export default function SalesPipeline() {
       className={`p-6 min-h-screen ${
         forcedTheme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
       }`}
-      style={{
+      style={{ 
         backgroundColor: forcedTheme === 'dark' ? '#111827' : '#f9fafb',
         color: forcedTheme === 'dark' ? '#ffffff' : '#000000',
         border: forcedTheme === 'dark' ? '3px solid red' : '3px solid blue',
-      }}
+        '!important': 'true',
+        'background-color': forcedTheme === 'dark' ? '#111827 !important' : '#f9fafb !important',
+        'color': forcedTheme === 'dark' ? '#ffffff !important' : '#000000 !important'
+      } as React.CSSProperties}
     >
       <div className='mb-6'>
         <h1
           className={`text-3xl font-bold mb-2 ${
             forcedTheme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}
+          style={{
+            color: forcedTheme === 'dark' ? '#ffffff !important' : '#000000 !important',
+            backgroundColor: forcedTheme === 'dark' ? '#ff0000 !important' : '#0000ff !important',
+            padding: '10px',
+            border: '2px solid yellow'
+          }}
         >
-          Sales Pipeline
+          Sales Pipeline - FORCED DARK THEME TEST
         </h1>
         <p
           className={forcedTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
@@ -419,7 +428,9 @@ export default function SalesPipeline() {
               <div key={stage.id} className='flex-shrink-0 w-80'>
                 <div
                   className={`${stage.color} border-2 ${
-                    forcedTheme === 'dark' ? 'border-gray-600' : 'border-gray-200'
+                    forcedTheme === 'dark'
+                      ? 'border-gray-600'
+                      : 'border-gray-200'
                   } rounded-lg p-4 min-h-96`}
                   style={{
                     borderColor: forcedTheme === 'dark' ? '#4b5563' : '#e5e7eb',
@@ -472,7 +483,9 @@ export default function SalesPipeline() {
                       <>
                         <h3
                           className={`text-lg font-semibold ${
-                            forcedTheme === 'dark' ? 'text-gray-100' : 'text-gray-800'
+                            forcedTheme === 'dark'
+                              ? 'text-gray-100'
+                              : 'text-gray-800'
                           }`}
                         >
                           {stage.name}
