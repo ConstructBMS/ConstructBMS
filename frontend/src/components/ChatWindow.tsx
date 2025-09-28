@@ -205,7 +205,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
       </div>
 
       {/* Messages Area */}
-      <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900'>
+      <div className='flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900 scrollbar-accent scrollbar-fade'>
         {chatMessages.length === 0 ? (
           <div className='flex-1 flex items-center justify-center text-gray-400'>
             <div className='text-center'>

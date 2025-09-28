@@ -1,3 +1,4 @@
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { getIconStrict } from '@/design/icons';
 import { useToast } from '@/hooks/use-toast';
-import { useThemeStore } from '@/app/store/ui/theme.store';
 import type { FooterConfig, FooterWidget } from '@/types/footer';
 import React, { useEffect, useState } from 'react';
 

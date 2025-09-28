@@ -105,7 +105,7 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          <nav className='flex-1 p-4 space-y-1 overflow-y-auto'>
+          <nav className='flex-1 p-4 space-y-1 overflow-y-auto scrollbar-accent scrollbar-fade'>
             {tabs.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -131,7 +131,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Tab Content */}
-        <div className='flex-1 p-6 overflow-y-auto'>
+        <div className='flex-1 p-6 overflow-y-auto scrollbar-accent scrollbar-fade'>
           {ActiveComponent ? (
             <ActiveComponent />
           ) : (

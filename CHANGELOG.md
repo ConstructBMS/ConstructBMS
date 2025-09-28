@@ -2,9 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2025-01-28] - Fixed Authentication Context and Demo Data Issues
+## [2025-01-28] - Fixed Theme System and Authentication Issues
 
 ### Fixed
+
+- **Theme System Unification**: Resolved inconsistent theme switching across components
+  - Unified all components to use Zustand-based theme store (useThemeStore)
+  - Fixed SalesPipeline kanban board not responding to light theme
+  - Updated SalesPipeline, ChatList, Sidebar, Layout, Dashboard, FooterBuilder, GeneralSettings
+  - All components now use the same theme system for consistent behavior
+  - Light theme now works properly across all components including sales pipeline
 
 - **AuthContext useAuth Hook Error**: Resolved "useAuth must be used within an AuthProvider" error
   - Added fallback context to prevent crashes during development hot reloads
@@ -20,6 +27,7 @@ All notable changes to this project will be documented in this file.
 
 ### Technical Details
 
+- Unified theme system: All components now use `useThemeStore` from Zustand
 - Enhanced AuthContext with fallback values to prevent development crashes
 - Added `/frontend/src/lib/demo-data.ts` with DemoDataManager class
 - Provides localStorage-based demo data management functionality

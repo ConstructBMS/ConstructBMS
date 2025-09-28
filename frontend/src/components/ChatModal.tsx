@@ -367,7 +367,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     </Button>
                   </div>
                 </div>
-                <div className='flex-1 overflow-y-auto overflow-x-visible scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent hover:scrollbar-thumb-blue-400'>
+                <div className='flex-1 overflow-y-auto overflow-x-visible scrollbar-accent scrollbar-fade'>
                   <ChatList
                     chats={chats}
                     currentChatId={currentChatId}
@@ -420,7 +420,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                     </div>
 
                     {/* Messages Area */}
-                    <div className='flex-1 overflow-y-auto overflow-x-visible p-4 space-y-4 bg-gray-900 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent hover:scrollbar-thumb-blue-400'>
+                    <div className='flex-1 overflow-y-auto overflow-x-visible p-4 space-y-4 bg-gray-900 scrollbar-accent scrollbar-fade'>
                       {chatMessages.length === 0 ? (
                         <div className='flex-1 flex items-center justify-center text-gray-400'>
                           <div className='text-center'>

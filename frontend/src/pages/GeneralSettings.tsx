@@ -1,3 +1,4 @@
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,6 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useThemeStore } from '@/app/store/ui/theme.store';
 import {
   Bell,
   Building,
@@ -24,8 +24,8 @@ import {
   Save,
   Settings,
   Shield,
-  Users,
   Trash2,
+  Users,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { DemoDataManagement } from '../modules/settings/sections/DemoDataManagement';
@@ -176,7 +176,7 @@ const GeneralSettings: React.FC = () => {
                   Configure your application
                 </p>
               </div>
-              <div className='flex-1 p-4 lg:p-6 lg:pt-4 overflow-y-auto'>
+              <div className='flex-1 p-4 lg:p-6 lg:pt-4 overflow-y-auto scrollbar-accent scrollbar-fade'>
                 <TabsList className='flex flex-col w-full !bg-transparent !p-0 !border-none !shadow-none'>
                   <TabsTrigger
                     value='appearance'
@@ -380,7 +380,7 @@ const GeneralSettings: React.FC = () => {
               </div>
             </div>
 
-            <div className='flex-1 overflow-y-auto pr-6 pl-6 pb-6'>
+            <div className='flex-1 overflow-y-auto pr-6 pl-6 pb-6 scrollbar-accent scrollbar-fade'>
               <TabsContent value='appearance' className='space-y-6'>
                 <div className='space-y-6'>
                   {/* Theme Settings */}
