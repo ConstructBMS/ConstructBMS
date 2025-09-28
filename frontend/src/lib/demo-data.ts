@@ -16,9 +16,9 @@ export class DemoDataManager {
         keysToRemove.push(key);
       }
     }
-    
+
     keysToRemove.forEach(key => localStorage.removeItem(key));
-    
+
     // Also clear any demo mode related stores
     localStorage.removeItem('demo-mode-store');
   }
@@ -42,7 +42,7 @@ export class DemoDataManager {
    */
   static exportDemoData(): string {
     const demoData: Record<string, any> = {};
-    
+
     // Collect all demo-related data
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -57,7 +57,7 @@ export class DemoDataManager {
         }
       }
     }
-    
+
     return JSON.stringify(demoData, null, 2);
   }
 
@@ -67,13 +67,16 @@ export class DemoDataManager {
   static importDemoData(data: string): void {
     try {
       const demoData = JSON.parse(data);
-      
+
       // Clear existing demo data first
       this.clearAllDemoData();
-      
+
       // Import new demo data
       Object.entries(demoData).forEach(([key, value]) => {
-        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+        localStorage.setItem(
+          key,
+          typeof value === 'string' ? value : JSON.stringify(value)
+        );
       });
     } catch (error) {
       console.error('Failed to import demo data:', error);

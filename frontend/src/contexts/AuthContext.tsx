@@ -27,7 +27,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    console.error('useAuth called outside of AuthProvider. Context:', context);
+    // Return a fallback context to prevent crashes during development
+    return {
+      user: null,
+      loading: false,
+      signIn: async () => {},
+      signUp: async () => {},
+      signOut: async () => {},
+      isDemoMode: true,
+    };
   }
   return context;
 };
@@ -40,6 +49,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+
+  console.log('AuthProvider rendering with user:', user, 'loading:', loading);
 
   // Initialize authentication state
   useEffect(() => {
@@ -191,5 +202,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isDemoMode,
   };
 
+  console.log('AuthProvider providing value:', value);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
