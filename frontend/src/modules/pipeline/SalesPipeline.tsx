@@ -9,7 +9,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../../components/ui';
 import { useTheme } from '../../contexts/ThemeContext.tsx';
 
@@ -132,7 +132,7 @@ const colorOptions = [
 
 export default function SalesPipeline() {
   const { theme } = useTheme();
-  
+
   // Use theme context directly - this should update automatically
   const currentTheme = theme;
 
@@ -378,7 +378,9 @@ export default function SalesPipeline() {
           Sales Pipeline
         </h1>
         <p
-          className={currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+          className={
+            currentTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }
         >
           Manage your sales opportunities and track progress through the
           pipeline

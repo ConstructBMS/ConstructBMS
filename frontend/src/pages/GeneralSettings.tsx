@@ -24,67 +24,11 @@ import {
   Save,
   Settings,
   Shield,
-  Trash2,
   Users,
+  Trash2,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { DemoDataManagement } from '../modules/settings/sections/DemoDataManagement';
-
-// Go Live Section Component
-const GoLiveSection = () => {
-  console.log('GoLiveSection - Component is rendering');
-
-  const handleGoLive = () => {
-    if (
-      confirm(
-        'Are you sure you want to delete all demo data and go live? This action cannot be undone.'
-      )
-    ) {
-      // Clear demo data and reload
-      localStorage.clear();
-      window.location.reload();
-    }
-  };
-
-  return (
-    <div className='mb-6'>
-      <Card className='border-red-200 bg-red-50'>
-        <CardHeader>
-          <CardTitle className='flex items-center space-x-2 text-red-800'>
-            <AlertTriangle className='h-5 w-5' />
-            <span>Go Live</span>
-          </CardTitle>
-          <CardDescription className='text-red-700'>
-            Switch from demo mode to live mode by deleting all demo data.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className='space-y-4'>
-            <div className='bg-red-100 border border-red-300 rounded-lg p-4'>
-              <p className='text-red-800 text-sm font-medium mb-2'>
-                ⚠️ This action will permanently delete all demo data including:
-              </p>
-              <ul className='text-red-700 text-sm space-y-1 ml-4'>
-                <li>• All demo projects, contacts, and tasks</li>
-                <li>• All demo sticky notes and documents</li>
-                <li>• All demo user accounts (except admin)</li>
-                <li>• All demo financial records</li>
-              </ul>
-            </div>
-            <Button
-              variant='destructive'
-              onClick={handleGoLive}
-              className='w-full'
-            >
-              <Trash2 className='h-4 w-4 mr-2' />
-              Delete Demo Data & Go Live
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
 
 interface AppearanceSettings {
   theme: 'light' | 'dark' | 'auto';
@@ -439,17 +383,6 @@ const GeneralSettings: React.FC = () => {
             <div className='flex-1 overflow-y-auto pr-6 pl-6 pb-6'>
               <TabsContent value='appearance' className='space-y-6'>
                 <div className='space-y-6'>
-                  {/* TEST: Go Live Section - Should be visible */}
-                  <div className='bg-yellow-100 border-2 border-yellow-400 p-4 rounded-lg'>
-                    <h3 className='text-lg font-bold text-yellow-800'>
-                      TEST: Go Live Section
-                    </h3>
-                    <p className='text-yellow-700'>
-                      If you can see this, the component is working!
-                    </p>
-                    <GoLiveSection />
-                  </div>
-
                   {/* Theme Settings */}
                   <Card
                     style={{
@@ -472,7 +405,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='theme-mode'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -489,7 +421,6 @@ const GeneralSettings: React.FC = () => {
                             }
                           >
                             <SelectTrigger
-                              id='theme-mode'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -512,7 +443,6 @@ const GeneralSettings: React.FC = () => {
 
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='font-size'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -529,7 +459,6 @@ const GeneralSettings: React.FC = () => {
                             }
                           >
                             <SelectTrigger
-                              id='font-size'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -639,7 +568,6 @@ const GeneralSettings: React.FC = () => {
 
                       <div className='space-y-4'>
                         <Label
-                          htmlFor='primary-color'
                           style={{
                             color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                           }}
@@ -648,8 +576,6 @@ const GeneralSettings: React.FC = () => {
                         </Label>
                         <div className='flex items-center gap-4'>
                           <Input
-                            id='color-picker'
-                            name='color-picker'
                             type='color'
                             value={appearanceSettings.primaryColor}
                             onChange={e =>
@@ -661,8 +587,6 @@ const GeneralSettings: React.FC = () => {
                             className='w-16 h-12 rounded-lg border-2 border-gray-200'
                           />
                           <Input
-                            id='primary-color'
-                            name='primary-color'
                             value={appearanceSettings.primaryColor}
                             onChange={e =>
                               setAppearanceSettings({
@@ -729,7 +653,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='sidebar-position'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -738,7 +661,6 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='left'>
                             <SelectTrigger
-                              id='sidebar-position'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -763,7 +685,6 @@ const GeneralSettings: React.FC = () => {
 
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='content-width'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -772,7 +693,6 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='standard'>
                             <SelectTrigger
-                              id='content-width'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -851,7 +771,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='company-name'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -859,8 +778,6 @@ const GeneralSettings: React.FC = () => {
                             Company Name
                           </Label>
                           <Input
-                            id='company-name'
-                            name='company-name'
                             placeholder='Enter company name'
                             value={companyInfo.name}
                             onChange={e =>
@@ -880,7 +797,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='company-email'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -888,9 +804,6 @@ const GeneralSettings: React.FC = () => {
                             Company Email
                           </Label>
                           <Input
-                            id='company-email'
-                            name='company-email'
-                            type='email'
                             placeholder='contact@company.com'
                             value={companyInfo.email}
                             onChange={e =>
@@ -911,7 +824,6 @@ const GeneralSettings: React.FC = () => {
                       </div>
                       <div className='space-y-2'>
                         <Label
-                          htmlFor='company-address'
                           style={{
                             color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                           }}
@@ -919,8 +831,6 @@ const GeneralSettings: React.FC = () => {
                           Company Address
                         </Label>
                         <Textarea
-                          id='company-address'
-                          name='company-address'
                           placeholder='Enter full company address'
                           rows={3}
                           value={companyInfo.address}
@@ -942,7 +852,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='company-phone'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -950,9 +859,6 @@ const GeneralSettings: React.FC = () => {
                             Phone Number
                           </Label>
                           <Input
-                            id='company-phone'
-                            name='company-phone'
-                            type='tel'
                             placeholder='+1 (555) 123-4567'
                             value={companyInfo.phone}
                             onChange={e =>
@@ -972,7 +878,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='company-website'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -980,9 +885,6 @@ const GeneralSettings: React.FC = () => {
                             Website
                           </Label>
                           <Input
-                            id='company-website'
-                            name='company-website'
-                            type='url'
                             placeholder='https://company.com'
                             value={companyInfo.website}
                             onChange={e =>
@@ -1026,7 +928,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='vat-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1034,8 +935,6 @@ const GeneralSettings: React.FC = () => {
                             VAT Number
                           </Label>
                           <Input
-                            id='vat-number'
-                            name='vat-number'
                             placeholder='GB123456789'
                             style={{
                               backgroundColor:
@@ -1048,7 +947,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='company-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1056,8 +954,6 @@ const GeneralSettings: React.FC = () => {
                             Company Number
                           </Label>
                           <Input
-                            id='company-number'
-                            name='company-number'
                             placeholder='12345678'
                             style={{
                               backgroundColor:
@@ -1070,7 +966,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='industry'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1079,7 +974,6 @@ const GeneralSettings: React.FC = () => {
                           </Label>
                           <Select defaultValue='construction'>
                             <SelectTrigger
-                              id='industry'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1133,9 +1027,6 @@ const GeneralSettings: React.FC = () => {
                       </div>
                     </CardContent>
                   </Card>
-
-                  {/* Go Live Section */}
-                  <GoLiveSection />
                 </div>
               </TabsContent>
 
@@ -1160,7 +1051,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='project-prefix'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1168,8 +1058,6 @@ const GeneralSettings: React.FC = () => {
                             Project Number Prefix
                           </Label>
                           <Input
-                            id='project-prefix'
-                            name='project-prefix'
                             placeholder='PRJ'
                             value={projectSettings.prefix}
                             onChange={e =>
@@ -1189,7 +1077,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='next-project-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1197,8 +1084,6 @@ const GeneralSettings: React.FC = () => {
                             Next Project Number
                           </Label>
                           <Input
-                            id='next-project-number'
-                            name='next-project-number'
                             placeholder='1001'
                             type='number'
                             value={projectSettings.nextNumber}
@@ -1220,7 +1105,6 @@ const GeneralSettings: React.FC = () => {
                       </div>
                       <div className='space-y-2'>
                         <Label
-                          htmlFor='project-format'
                           style={{
                             color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                           }}
@@ -1237,7 +1121,6 @@ const GeneralSettings: React.FC = () => {
                           }
                         >
                           <SelectTrigger
-                            id='project-format'
                             style={{
                               backgroundColor:
                                 theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1285,7 +1168,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='estimate-prefix'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1293,8 +1175,6 @@ const GeneralSettings: React.FC = () => {
                             Estimate Prefix
                           </Label>
                           <Input
-                            id='estimate-prefix'
-                            name='estimate-prefix'
                             placeholder='EST'
                             value={financeSettings.estimatePrefix}
                             onChange={e =>
@@ -1314,7 +1194,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='next-estimate-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1322,8 +1201,6 @@ const GeneralSettings: React.FC = () => {
                             Next Estimate Number
                           </Label>
                           <Input
-                            id='next-estimate-number'
-                            name='next-estimate-number'
                             placeholder='2001'
                             type='number'
                             value={financeSettings.nextEstimateNumber}
@@ -1347,7 +1224,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='invoice-prefix'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1355,8 +1231,6 @@ const GeneralSettings: React.FC = () => {
                             Invoice Prefix
                           </Label>
                           <Input
-                            id='invoice-prefix'
-                            name='invoice-prefix'
                             placeholder='INV'
                             value={financeSettings.invoicePrefix}
                             onChange={e =>
@@ -1376,7 +1250,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='next-invoice-number'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1384,8 +1257,6 @@ const GeneralSettings: React.FC = () => {
                             Next Invoice Number
                           </Label>
                           <Input
-                            id='next-invoice-number'
-                            name='next-invoice-number'
                             placeholder='3001'
                             type='number'
                             value={financeSettings.nextInvoiceNumber}
@@ -1409,7 +1280,6 @@ const GeneralSettings: React.FC = () => {
                       <div className='grid grid-cols-2 gap-4'>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='currency'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1426,7 +1296,6 @@ const GeneralSettings: React.FC = () => {
                             }
                           >
                             <SelectTrigger
-                              id='currency'
                               style={{
                                 backgroundColor:
                                   theme === 'dark' ? '#4b5563' : '#ffffff',
@@ -1445,7 +1314,6 @@ const GeneralSettings: React.FC = () => {
                         </div>
                         <div className='space-y-2'>
                           <Label
-                            htmlFor='tax-rate'
                             style={{
                               color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                             }}
@@ -1453,8 +1321,6 @@ const GeneralSettings: React.FC = () => {
                             Tax Rate (%)
                           </Label>
                           <Input
-                            id='tax-rate'
-                            name='tax-rate'
                             placeholder='20'
                             type='number'
                             value={financeSettings.taxRate}
@@ -1510,7 +1376,6 @@ const GeneralSettings: React.FC = () => {
                         <div className='grid grid-cols-2 gap-4'>
                           <div className='space-y-2'>
                             <Label
-                              htmlFor='client-prefix'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1518,8 +1383,6 @@ const GeneralSettings: React.FC = () => {
                               Client Number Prefix
                             </Label>
                             <Input
-                              id='client-prefix'
-                              name='client-prefix'
                               placeholder='CLT'
                               value={crmSettings.client.prefix}
                               onChange={e =>
@@ -1542,7 +1405,6 @@ const GeneralSettings: React.FC = () => {
                           </div>
                           <div className='space-y-2'>
                             <Label
-                              htmlFor='next-client-number'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1550,8 +1412,6 @@ const GeneralSettings: React.FC = () => {
                               Next Client Number
                             </Label>
                             <Input
-                              id='next-client-number'
-                              name='next-client-number'
                               placeholder='1001'
                               type='number'
                               value={crmSettings.client.nextNumber}
@@ -1589,7 +1449,6 @@ const GeneralSettings: React.FC = () => {
                         <div className='grid grid-cols-2 gap-4'>
                           <div className='space-y-2'>
                             <Label
-                              htmlFor='consultant-prefix'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1597,8 +1456,6 @@ const GeneralSettings: React.FC = () => {
                               Consultant Number Prefix
                             </Label>
                             <Input
-                              id='consultant-prefix'
-                              name='consultant-prefix'
                               placeholder='CNS'
                               value={crmSettings.consultant.prefix}
                               onChange={e =>
@@ -1621,7 +1478,6 @@ const GeneralSettings: React.FC = () => {
                           </div>
                           <div className='space-y-2'>
                             <Label
-                              htmlFor='next-consultant-number'
                               style={{
                                 color: theme === 'dark' ? '#f9fafb' : '#1e293b',
                               }}
@@ -1629,8 +1485,6 @@ const GeneralSettings: React.FC = () => {
                               Next Consultant Number
                             </Label>
                             <Input
-                              id='next-consultant-number'
-                              name='next-consultant-number'
                               placeholder='1001'
                               type='number'
                               value={crmSettings.consultant.nextNumber}
@@ -1661,7 +1515,6 @@ const GeneralSettings: React.FC = () => {
 
               <TabsContent value='demo-data' className='space-y-6'>
                 <DemoDataManagement />
-                <GoLiveSection />
               </TabsContent>
             </div>
           </div>
