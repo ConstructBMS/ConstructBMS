@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Chat, useChatStore } from '../app/store/chat.store';
-import { useTheme } from '../contexts/ThemeContext.tsx';
+import { useThemeStore } from '../app/store/ui/theme.store';
 import { cn } from '../lib/utils/cn';
 import { Button } from './ui/button';
 
@@ -36,7 +36,7 @@ export function ChatList({
     getChatMessages,
   } = useChatStore();
   const [showMenu, setShowMenu] = useState<string | null>(null);
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   // Sort chats: pinned first, then by last activity
   const sortedChats = [...chats].sort((a, b) => {

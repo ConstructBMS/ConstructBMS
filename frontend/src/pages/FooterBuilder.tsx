@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { getIconStrict } from '@/design/icons';
 import { useToast } from '@/hooks/use-toast';
-import { useTheme } from '@/hooks/useTheme';
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import type { FooterConfig, FooterWidget } from '@/types/footer';
 import React, { useEffect, useState } from 'react';
 
@@ -118,7 +118,7 @@ const FooterBuilder: React.FC = () => {
   );
   const [isWidgetDialogOpen, setIsWidgetDialogOpen] = useState(false);
   const { toast } = useToast();
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   // Load config from localStorage on mount
   useEffect(() => {

@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../../components/ui';
-import { useTheme } from '../../contexts/ThemeContext.tsx';
+import { useThemeStore } from '../../app/store/ui/theme.store';
 
 // Types
 interface Client {
@@ -131,9 +131,9 @@ const colorOptions = [
 ];
 
 export default function SalesPipeline() {
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
-  // Use theme context directly - this should update automatically
+  // Use theme store directly - this should update automatically
   const currentTheme = theme;
 
   const [stages, setStages] = useState<PipelineStage[]>(defaultStages);

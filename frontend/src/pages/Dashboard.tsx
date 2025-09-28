@@ -1,4 +1,4 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import {
   AlertCircle,
   Calendar,
@@ -13,7 +13,7 @@ import {
 import React from 'react';
 
 const Dashboard: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   const stats = [
     {

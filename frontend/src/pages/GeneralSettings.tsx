@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useTheme } from '@/hooks/useTheme';
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import {
   Bell,
   Building,
@@ -74,7 +74,7 @@ interface CrmSettings {
 }
 
 const GeneralSettings: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   const [appearanceSettings, setAppearanceSettings] =
     useState<AppearanceSettings>({

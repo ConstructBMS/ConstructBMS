@@ -1,4 +1,4 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import {
   Calendar,
   CheckSquare,
@@ -169,7 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const { theme } = useTheme();
+  const { theme } = useThemeStore();
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);

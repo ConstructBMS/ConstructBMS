@@ -1,4 +1,4 @@
-import { useTheme } from '@/hooks/useTheme';
+import { useThemeStore } from '@/app/store/ui/theme.store';
 import type { FooterConfig } from '@/types/footer';
 import { ChevronLeft, FileText, Menu, Moon, Sun, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [footerConfig, setFooterConfig] = useState<FooterConfig | null>(null);
   const { user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useThemeStore();
 
   // Load footer config from localStorage
   useEffect(() => {
