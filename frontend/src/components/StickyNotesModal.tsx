@@ -132,7 +132,8 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       const notesWithColors = data.map((note, index) => ({
         ...note,
         color:
-          note.color || (['yellow', 'pink', 'blue', 'green'][index % 4] as any),
+          note.color ||
+          (['yellow', 'pink', 'blue', 'green'][index % 4] as string),
       }));
 
       setNotes(notesWithColors);
@@ -529,7 +530,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   };
 
   // Drag and drop handlers - optimized to prevent jumping
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: Record<string, unknown>) => {
     // Clear drag state
     setDraggedNoteId(null);
     setDragOverIndex(null);
@@ -546,7 +547,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   };
 
   // Handle drag start to show drop zones
-  const handleDragStart = (result: any) => {
+  const handleDragStart = (result: Record<string, unknown>) => {
     setDraggedNoteId(result.draggableId);
   };
 

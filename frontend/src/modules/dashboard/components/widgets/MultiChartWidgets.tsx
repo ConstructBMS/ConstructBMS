@@ -26,7 +26,7 @@ export function MultiBarChart({
 }: {
   title: string;
   data: MultiBarChartData[];
-  config: any;
+  config: Record<string, unknown>;
 }) {
   const maxValue = Math.max(
     ...data.map(d => Math.max(d.efficiency, d.quality, d.delivery))
@@ -190,7 +190,7 @@ export function MultiLineChart({
 }: {
   title: string;
   data: MultiLineChartData[];
-  config: any;
+  config: Record<string, unknown>;
 }) {
   const maxRevenue = Math.max(...data.map(d => d.revenue));
   const maxProjects = Math.max(...data.map(d => d.projects));

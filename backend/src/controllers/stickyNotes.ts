@@ -61,7 +61,7 @@ export const getStickyNotes = async (req: Request, res: Response) => {
         )
       `
       )
-      .eq('author_id', req.user?.id)
+      .eq('author_id', (req as any).user?.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -106,7 +106,7 @@ export const createStickyNote = async (req: Request, res: Response) => {
         tags,
         project_id,
         opportunity_id,
-        author_id: req.user?.id,
+        author_id: (req as any).user?.id,
       })
       .select()
       .single();
@@ -157,7 +157,7 @@ export const updateStickyNote = async (req: Request, res: Response) => {
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
-      .eq('author_id', req.user?.id)
+      .eq('author_id', (req as any).user?.id)
       .select()
       .single();
 
@@ -185,7 +185,7 @@ export const deleteStickyNote = async (req: Request, res: Response) => {
       .from('notes')
       .delete()
       .eq('id', id)
-      .eq('author_id', req.user?.id);
+      .eq('author_id', (req as any).user?.id);
 
     if (error) {
       return res.status(500).json({ error: error.message });

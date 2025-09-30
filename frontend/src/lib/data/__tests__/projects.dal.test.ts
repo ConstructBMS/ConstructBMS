@@ -12,7 +12,7 @@ vi.mock('../../../services/supabase', () => ({
   },
 }));
 
-const mockSupabase = supabase as any;
+const mockSupabase = supabase as Record<string, unknown>;
 
 describe('ProjectsDAL', () => {
   beforeEach(() => {
@@ -38,7 +38,7 @@ describe('ProjectsDAL', () => {
         order: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.order.mockResolvedValue({ data: mockProjects, error: null });
 
       const result = await ProjectsDAL.listProjects('org-1');
@@ -59,7 +59,7 @@ describe('ProjectsDAL', () => {
         order: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.order.mockResolvedValue({
         data: null,
         error: { message: 'Database error' },
@@ -77,7 +77,7 @@ describe('ProjectsDAL', () => {
         order: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.order.mockResolvedValue({ data: null, error: null });
 
       const result = await ProjectsDAL.listProjects('org-1');
@@ -103,7 +103,7 @@ describe('ProjectsDAL', () => {
         single: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.single.mockResolvedValue({ data: mockProject, error: null });
 
       const result = await ProjectsDAL.getProject('1');
@@ -122,7 +122,7 @@ describe('ProjectsDAL', () => {
         single: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.single.mockResolvedValue({
         data: null,
         error: { message: 'Project not found' },
@@ -161,7 +161,7 @@ describe('ProjectsDAL', () => {
         single: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.single.mockResolvedValue({ data: mockProject, error: null });
 
       const result = await ProjectsDAL.upsertProject(projectData);
@@ -198,7 +198,7 @@ describe('ProjectsDAL', () => {
         single: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.single.mockResolvedValue({ data: mockProject, error: null });
 
       const result = await ProjectsDAL.upsertProject(projectData);
@@ -217,7 +217,7 @@ describe('ProjectsDAL', () => {
         eq: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.eq.mockResolvedValue({ error: null });
 
       await ProjectsDAL.deleteProject('1');
@@ -233,7 +233,7 @@ describe('ProjectsDAL', () => {
         eq: vi.fn().mockReturnThis(),
       };
 
-      mockSupabase.from.mockReturnValue(mockQuery as any);
+      mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.eq.mockResolvedValue({
         error: { message: 'Deletion failed' },
       });

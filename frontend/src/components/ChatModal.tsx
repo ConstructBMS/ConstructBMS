@@ -524,7 +524,7 @@ export function ChatModal({ isOpen, onClose }: ChatModalProps) {
                   Select Members
                 </label>
                 <div className='space-y-2 max-h-40 overflow-y-auto'>
-                  {users.map((user: any) => (
+                  {users.map((user: Record<string, unknown>) => (
                     <div key={user.id} className='flex items-center space-x-3'>
                       <input
                         type='checkbox'

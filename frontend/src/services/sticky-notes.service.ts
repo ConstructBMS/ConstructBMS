@@ -177,7 +177,7 @@ class StickyNotesService {
       const isDemo = true;
 
       // Build update object with all provided fields
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         updated_at: new Date().toISOString(),
       };
 

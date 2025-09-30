@@ -82,7 +82,10 @@ interface EnterprisePermissionsState {
   deleteUser: (userId: string) => Promise<void>;
   assignRole: (userId: string, roleId: string) => Promise<void>;
   removeRole: (userId: string, roleId: string) => Promise<void>;
-  addCustomPermission: (userId: string, permission: any) => Promise<void>;
+  addCustomPermission: (
+    userId: string,
+    permission: Record<string, unknown>
+  ) => Promise<void>;
   removeCustomPermission: (
     userId: string,
     permissionId: string
@@ -105,7 +108,10 @@ interface EnterprisePermissionsState {
   getRulesByResource: (resource: string) => PermissionRule[];
 
   // Actions - Resource Permissions
-  setResourcePermission: (resourceId: string, permission: any) => Promise<void>;
+  setResourcePermission: (
+    resourceId: string,
+    permission: Record<string, unknown>
+  ) => Promise<void>;
   removeResourcePermission: (
     resourceId: string,
     permissionId: string
@@ -115,9 +121,15 @@ interface EnterprisePermissionsState {
   ) => ResourcePermission | undefined;
 
   // Actions - File/Folder Permissions
-  setFilePermission: (fileId: string, permission: any) => Promise<void>;
+  setFilePermission: (
+    fileId: string,
+    permission: Record<string, unknown>
+  ) => Promise<void>;
   removeFilePermission: (fileId: string, permissionId: string) => Promise<void>;
-  setFolderPermission: (folderId: string, permission: any) => Promise<void>;
+  setFolderPermission: (
+    folderId: string,
+    permission: Record<string, unknown>
+  ) => Promise<void>;
   removeFolderPermission: (
     folderId: string,
     permissionId: string
@@ -141,7 +153,7 @@ interface EnterprisePermissionsState {
     userId: string,
     resource: string,
     action: string,
-    context?: any
+    context?: Record<string, unknown>
   ) => Promise<PermissionEvaluation>;
   evaluateUserPermissions: (userId: string) => Promise<PermissionEvaluation[]>;
   evaluateRolePermissions: (roleId: string) => Promise<PermissionEvaluation[]>;
@@ -153,8 +165,12 @@ interface EnterprisePermissionsState {
   logPermissionAudit: (
     audit: Omit<PermissionAuditLog, 'id' | 'timestamp'>
   ) => Promise<void>;
-  getAuditLogs: (filters?: any) => Promise<PermissionAuditLog[]>;
-  getChangeLogs: (filters?: any) => Promise<PermissionChangeLog[]>;
+  getAuditLogs: (
+    filters?: Record<string, unknown>
+  ) => Promise<PermissionAuditLog[]>;
+  getChangeLogs: (
+    filters?: Record<string, unknown>
+  ) => Promise<PermissionChangeLog[]>;
 
   // Actions - UI State
   setSelectedRole: (roleId: string | null) => void;
@@ -649,7 +665,10 @@ export const useEnterprisePermissionsStore =
           }
         },
 
-        addCustomPermission: async (userId: string, permission: any) => {
+        addCustomPermission: async (
+          userId: string,
+          permission: Record<string, unknown>
+        ) => {
           set({ isSaving: true, error: null });
           try {
             set(state => ({

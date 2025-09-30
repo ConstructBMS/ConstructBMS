@@ -147,7 +147,7 @@ export interface DashboardWidget {
   id: string;
   name: string;
   type: 'chart' | 'table' | 'metric' | 'list';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   position: { x: number; y: number; w: number; h: number };
   isVisible: boolean;
 }
@@ -176,7 +176,7 @@ export interface EmailProvider {
   id: string;
   name: string;
   type: 'smtp' | 'sendgrid' | 'mailgun' | 'ses';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -184,7 +184,7 @@ export interface CalendarProvider {
   id: string;
   name: string;
   type: 'google' | 'outlook' | 'calendly';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -192,14 +192,14 @@ export interface PhoneSystem {
   id: string;
   name: string;
   type: 'twilio' | 'vonage' | 'ringcentral';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isActive: boolean;
 }
 
 export interface SocialMediaIntegration {
   id: string;
   platform: 'facebook' | 'twitter' | 'linkedin' | 'instagram';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -230,14 +230,14 @@ export interface Trigger {
     | 'lead_status_changed'
     | 'email_received'
     | 'task_completed';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface Action {
   id: string;
   name: string;
   type: 'send_email' | 'create_task' | 'update_contact' | 'assign_user';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface WorkflowCondition {

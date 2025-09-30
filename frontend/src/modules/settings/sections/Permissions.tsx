@@ -261,7 +261,7 @@ export function Permissions() {
               </div>
               <Select
                 value={filterType}
-                onValueChange={(value: any) => setFilterType(value)}
+                onValueChange={(value: string) => setFilterType(value)}
               >
                 <SelectTrigger className='w-32'>
                   <SelectValue />

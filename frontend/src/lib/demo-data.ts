@@ -41,7 +41,7 @@ export class DemoDataManager {
    * Export demo data as JSON string
    */
   static exportDemoData(): string {
-    const demoData: Record<string, any> = {};
+    const demoData: Record<string, unknown> = {};
 
     // Collect all demo-related data
     for (let i = 0; i < localStorage.length; i++) {

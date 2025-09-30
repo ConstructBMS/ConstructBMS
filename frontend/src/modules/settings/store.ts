@@ -27,34 +27,34 @@ interface SettingsState {
   loadCRMSettings: () => Promise<void>;
 
   // Contact Management Actions
-  addCustomField: (field: any) => void;
-  updateCustomField: (id: string, updates: any) => void;
+  addCustomField: (field: Record<string, unknown>) => void;
+  updateCustomField: (id: string, updates: Record<string, unknown>) => void;
   removeCustomField: (id: string) => void;
 
   // Lead Management Actions
-  addLeadSource: (source: any) => void;
-  updateLeadSource: (id: string, updates: any) => void;
+  addLeadSource: (source: Record<string, unknown>) => void;
+  updateLeadSource: (id: string, updates: Record<string, unknown>) => void;
   removeLeadSource: (id: string) => void;
 
-  addLeadStatus: (status: any) => void;
-  updateLeadStatus: (id: string, updates: any) => void;
+  addLeadStatus: (status: Record<string, unknown>) => void;
+  updateLeadStatus: (id: string, updates: Record<string, unknown>) => void;
   removeLeadStatus: (id: string) => void;
 
   // Pipeline Management Actions
-  addPipelineStage: (stage: any) => void;
-  updatePipelineStage: (id: string, updates: any) => void;
+  addPipelineStage: (stage: Record<string, unknown>) => void;
+  updatePipelineStage: (id: string, updates: Record<string, unknown>) => void;
   removePipelineStage: (id: string) => void;
-  reorderPipelineStages: (stages: any[]) => void;
+  reorderPipelineStages: (stages: Record<string, unknown>[]) => void;
 
   // Communication Actions
-  addEmailTemplate: (template: any) => void;
-  updateEmailTemplate: (id: string, updates: any) => void;
+  addEmailTemplate: (template: Record<string, unknown>) => void;
+  updateEmailTemplate: (id: string, updates: Record<string, unknown>) => void;
   removeEmailTemplate: (id: string) => void;
 
   // Integration Actions
-  updateEmailProvider: (provider: any) => void;
-  updateCalendarProvider: (provider: any) => void;
-  updatePhoneSystem: (system: any) => void;
+  updateEmailProvider: (provider: Record<string, unknown>) => void;
+  updateCalendarProvider: (provider: Record<string, unknown>) => void;
+  updatePhoneSystem: (system: Record<string, unknown>) => void;
 
   // Utility Actions
   clearError: () => void;

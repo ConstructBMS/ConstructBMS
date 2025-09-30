@@ -292,7 +292,7 @@ export function UsersAndRoles() {
               </div>
               <Select
                 value={filterStatus}
-                onValueChange={(value: any) => setFilterStatus(value)}
+                onValueChange={(value: string) => setFilterStatus(value)}
               >
                 <SelectTrigger className='w-32'>
                   <SelectValue />
@@ -307,7 +307,7 @@ export function UsersAndRoles() {
               </Select>
               <Select
                 value={filterRole}
-                onValueChange={(value: any) => setFilterRole(value)}
+                onValueChange={(value: string) => setFilterRole(value)}
               >
                 <SelectTrigger className='w-40'>
                   <SelectValue />

@@ -78,7 +78,10 @@ export class ChatNotificationsService {
   /**
    * Create a notification for a new chat message
    */
-  private createChatNotification(chatId: string, message: any) {
+  private createChatNotification(
+    chatId: string,
+    message: Record<string, unknown>
+  ) {
     const chat = this.chatStore.chats.find(c => c.id === chatId);
     if (!chat) return;
 

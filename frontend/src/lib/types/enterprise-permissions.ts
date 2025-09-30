@@ -110,7 +110,7 @@ export interface LogicCondition {
   id: string;
   field: string;
   operator: PermissionCondition;
-  value: any;
+  value: unknown;
   logicalOperator?: 'AND' | 'OR' | 'NOT';
 }
 
@@ -130,7 +130,7 @@ export interface CustomRole {
   permissions: RolePermission[];
   inheritance?: string[]; // Role IDs this role inherits from
   restrictions?: RoleRestriction[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -178,7 +178,7 @@ export interface EnterpriseUser {
   additionalRoles: string[]; // Additional role IDs
   customPermissions: UserCustomPermission[];
   restrictions: UserRestriction[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -223,7 +223,7 @@ export interface ResourcePermission {
   resourceType: PermissionResource;
   permissions: ResourceAccessPermission[];
   inheritsFrom?: string; // Parent resource ID
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
@@ -252,7 +252,7 @@ export interface FilePermission {
   fileType: string;
   permissions: FileAccessPermission[];
   folderPermissions?: FolderPermission[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
@@ -276,7 +276,7 @@ export interface FolderPermission {
   folderPath: string;
   permissions: FolderAccessPermission[];
   subfolderInheritance: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
@@ -321,7 +321,7 @@ export interface FileCondition {
     | 'owner'
     | 'tags';
   operator: PermissionCondition;
-  value: any;
+  value: unknown;
   logicalOperator?: 'AND' | 'OR' | 'NOT';
 }
 
@@ -346,9 +346,9 @@ export interface PermissionEvaluation {
 export interface PermissionContext {
   userId: string;
   userRoles: string[];
-  userAttributes: Record<string, any>;
-  resourceAttributes: Record<string, any>;
-  environmentAttributes: Record<string, any>;
+  userAttributes: Record<string, unknown>;
+  resourceAttributes: Record<string, unknown>;
+  environmentAttributes: Record<string, unknown>;
   scope: PermissionScope;
   scopeId?: string;
   timestamp: string;
@@ -359,7 +359,7 @@ export interface PermissionResult {
   reason: string;
   restrictions?: string[];
   expiresAt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -373,7 +373,7 @@ export interface PermissionMatrix {
   resources: PermissionMatrixResource[];
   roles: PermissionMatrixRole[];
   permissions: PermissionMatrixEntry[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
@@ -421,7 +421,7 @@ export interface PermissionAuditLog {
   resourceId?: string;
   targetUserId?: string;
   targetRoleId?: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp: string;
@@ -432,7 +432,7 @@ export interface PermissionChangeLog {
   entityType: 'role' | 'permission' | 'user' | 'resource';
   entityId: string;
   changeType: 'create' | 'update' | 'delete';
-  changes: Record<string, { old: any; new: any }>;
+  changes: Record<string, { old: unknown; new: unknown }>;
   changedBy: string;
   reason?: string;
   timestamp: string;
@@ -447,7 +447,7 @@ export interface PermissionApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PaginatedResponse<T> {

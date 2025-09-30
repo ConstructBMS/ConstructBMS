@@ -31,7 +31,7 @@ export interface Notification {
   relatedEntityType?: 'project' | 'task' | 'chat' | 'user' | 'document';
   actionUrl?: string;
   actionText?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   expiresAt?: Date;
   readAt?: Date;

@@ -243,7 +243,7 @@ export function CRM() {
                           />
                           <Select
                             value={field.type}
-                            onValueChange={(value: any) =>
+                            onValueChange={(value: string) =>
                               updateCustomField(field.id, { type: value })
                             }
                           >
@@ -943,7 +943,7 @@ export function CRM() {
                               </Label>
                               <Select
                                 value={template.type}
-                                onValueChange={(value: any) =>
+                                onValueChange={(value: string) =>
                                   updateEmailTemplate(template.id, {
                                     type: value,
                                   })

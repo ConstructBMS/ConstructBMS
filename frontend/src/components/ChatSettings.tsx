@@ -62,7 +62,7 @@ export function ChatSettings({ isOpen, onClose }: ChatSettingsProps) {
 
   if (!isOpen) return null;
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  const updateSetting = (category: string, key: string, value: unknown) => {
     setSettings(prev => ({
       ...prev,
       [category]: {

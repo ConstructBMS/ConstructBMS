@@ -6,7 +6,7 @@ const log = console.log;
 const router = Router();
 
 // Get project status distribution
-router.get('/project-status', async (req: Request, res: Response) => {
+router.get('/project-status', async (_req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('projects')
@@ -91,7 +91,7 @@ router.get('/project-status', async (req: Request, res: Response) => {
 });
 
 // Get revenue trend (6 months)
-router.get('/revenue-trend', async (req: Request, res: Response) => {
+router.get('/revenue-trend', async (_req: Request, res: Response) => {
   try {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -145,7 +145,7 @@ router.get('/revenue-trend', async (req: Request, res: Response) => {
 });
 
 // Get expense breakdown
-router.get('/expense-breakdown', async (req: Request, res: Response) => {
+router.get('/expense-breakdown', async (_req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('expenses')
@@ -279,7 +279,7 @@ router.get('/expense-breakdown', async (req: Request, res: Response) => {
 });
 
 // Get cash flow projection
-router.get('/cash-flow', async (req: Request, res: Response) => {
+router.get('/cash-flow', async (_req: Request, res: Response) => {
   try {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -361,7 +361,7 @@ router.get('/cash-flow', async (req: Request, res: Response) => {
 });
 
 // Get business overview stats
-router.get('/business-overview', async (req: Request, res: Response) => {
+router.get('/business-overview', async (_req: Request, res: Response) => {
   try {
     // Get active projects count
     const { data: projectsData, error: projectsError } = await supabase

@@ -130,7 +130,7 @@ export function NotificationSettings() {
     }));
   };
 
-  const handleQuietHoursChange = (field: string, value: any) => {
+  const handleQuietHoursChange = (field: string, value: unknown) => {
     setFormData(prev => ({
       ...prev,
       quietHours: {
@@ -347,7 +347,7 @@ export function NotificationSettings() {
             <Select
               value={formData.frequency}
               onValueChange={value =>
-                setFormData(prev => ({ ...prev, frequency: value as any }))
+                setFormData(prev => ({ ...prev, frequency: value as string }))
               }
             >
               <SelectTrigger>

@@ -11,7 +11,7 @@ interface PerformanceMetric {
   name: string;
   value: number;
   timestamp: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface ComponentPerformance {
@@ -127,7 +127,7 @@ class PerformanceMonitor {
   public recordMetric(
     name: string,
     value: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ) {
     if (!this.isEnabled) return;
 
@@ -278,5 +278,5 @@ export async function measureAsync<T>(
 
 // Development-only global access
 if (process.env.NODE_ENV === 'development') {
-  (window as any).performanceMonitor = performanceMonitor;
+  (window as Record<string, unknown>).performanceMonitor = performanceMonitor;
 }
