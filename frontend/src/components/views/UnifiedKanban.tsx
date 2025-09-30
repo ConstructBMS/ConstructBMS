@@ -1,11 +1,9 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Edit2, Palette, Plus, Save, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui';
 import { Card, CardContent } from '../ui/card';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 // Color configuration matching sticky notes
 const colorConfig = {
@@ -73,23 +71,79 @@ export function UnifiedKanban({
 }: UnifiedKanbanProps) {
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [editingColumnName, setEditingColumnName] = useState('');
-  const [editingColumnColor, setEditingColumnColor] = useState<KanbanColor>('blue');
+  const [editingColumnColor, setEditingColumnColor] =
+    useState<KanbanColor>('blue');
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<KanbanItem | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Enhanced drag-to-scroll functionality
+  useEffect(() => {
+    if (!isDragging || !containerRef.current) return;
+
+    const container = containerRef.current;
+    let scrollInterval: NodeJS.Timeout;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const scrollThreshold = 100; // Distance from edge to start scrolling
+      const scrollSpeed = 20; // Pixels per scroll step
+      const scrollIntervalMs = 16; // ~60fps
+
+      // Clear existing interval
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+      }
+
+      // Check if mouse is near edges
+      const isNearLeftEdge = e.clientX - rect.left < scrollThreshold;
+      const isNearRightEdge = rect.right - e.clientX < scrollThreshold;
+
+      if (isNearLeftEdge) {
+        scrollInterval = setInterval(() => {
+          container.scrollLeft -= scrollSpeed;
+        }, scrollIntervalMs);
+      } else if (isNearRightEdge) {
+        scrollInterval = setInterval(() => {
+          container.scrollLeft += scrollSpeed;
+        }, scrollIntervalMs);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+      }
+    };
+  }, [isDragging]);
 
   const handleDragStart = (result: any) => {
     const draggedItem = items.find(item => item.id === result.draggableId);
     setDraggedItem(draggedItem || null);
+    setIsDragging(true);
   };
 
   const handleDragUpdate = (result: any) => {
-    // This provides visual feedback during dragging
-    // The drop zone indicator is handled automatically by @hello-pangea/dnd
+    // Track the exact position where the item will be dropped
+    if (result.destination) {
+      setDragOverIndex(result.destination.index);
+    } else {
+      setDragOverIndex(null);
+    }
   };
 
   const handleDragEnd = (result: any) => {
     setDraggedItem(null);
-    
+    setDragOverIndex(null);
+    setIsDragging(false);
+
     if (!result.destination) return;
 
     const { source, destination } = result;
@@ -103,15 +157,21 @@ export function UnifiedKanban({
     }
 
     // Get items for source and destination columns
-    const sourceItems = items.filter(item => item.status === source.droppableId);
-    const destItems = items.filter(item => item.status === destination.droppableId);
-    const otherItems = items.filter(item => 
-      item.status !== source.droppableId && item.status !== destination.droppableId
+    const sourceItems = items.filter(
+      item => item.status === source.droppableId
+    );
+    const destItems = items.filter(
+      item => item.status === destination.droppableId
+    );
+    const otherItems = items.filter(
+      item =>
+        item.status !== source.droppableId &&
+        item.status !== destination.droppableId
     );
 
     // Remove the item from source
     const [movedItem] = sourceItems.splice(source.index, 1);
-    
+
     // Update the item's status
     movedItem.status = destination.droppableId;
     movedItem.metadata = {
@@ -167,45 +227,47 @@ export function UnifiedKanban({
   };
 
   const defaultRenderItem = (item: KanbanItem) => (
-    <Card className="mb-3 cursor-pointer hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
+    <Card className='mb-3 cursor-pointer hover:shadow-md transition-shadow'>
+      <CardContent className='p-4'>
+        <div className='flex items-start justify-between'>
+          <div className='flex-1'>
+            <h4 className='font-semibold text-sm mb-1'>{item.title}</h4>
             {item.description && (
-              <p className="text-xs text-muted-foreground mb-2">
+              <p className='text-xs text-muted-foreground mb-2'>
                 {item.description}
               </p>
             )}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className='flex items-center gap-2 text-xs text-muted-foreground'>
               {item.assignee && <span>👤 {item.assignee}</span>}
-              {item.dueDate && <span>📅 {new Date(item.dueDate).toLocaleDateString()}</span>}
+              {item.dueDate && (
+                <span>📅 {new Date(item.dueDate).toLocaleDateString()}</span>
+              )}
             </div>
           </div>
           {canEdit && (
-            <div className="flex gap-1 ml-2">
+            <div className='flex gap-1 ml-2'>
               {onItemEdit && (
                 <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
+                  size='sm'
+                  variant='ghost'
+                  onClick={e => {
                     e.stopPropagation();
                     onItemEdit(item);
                   }}
                 >
-                  <Edit2 className="h-3 w-3" />
+                  <Edit2 className='h-3 w-3' />
                 </Button>
               )}
               {onItemDelete && (
                 <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
+                  size='sm'
+                  variant='ghost'
+                  onClick={e => {
                     e.stopPropagation();
                     onItemDelete(item);
                   }}
                 >
-                  <X className="h-3 w-3" />
+                  <X className='h-3 w-3' />
                 </Button>
               )}
             </div>
@@ -216,53 +278,63 @@ export function UnifiedKanban({
   );
 
   return (
-    <DragDropContext 
+    <DragDropContext
       onDragStart={handleDragStart}
       onDragUpdate={handleDragUpdate}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-6 overflow-x-auto pb-4">
+      <div 
+        ref={containerRef}
+        className={`flex gap-6 overflow-x-auto pb-4 ${
+          isDragging ? 'scroll-smooth' : ''
+        }`}
+        style={{
+          scrollBehavior: isDragging ? 'smooth' : 'auto',
+        }}
+      >
         {columns
           .sort((a, b) => a.order - b.order)
-          .map((column) => {
+          .map(column => {
             const columnItems = getItemsByColumn(column.id);
             const columnColor = getColumnColor(column.color);
 
             return (
               <div
                 key={column.id}
-                className="flex-1 min-w-80 rounded-lg border-2 border-dashed p-4"
+                className='flex-1 min-w-80 rounded-lg border-2 border-dashed p-4'
                 style={{
                   backgroundColor: columnColor.bg,
                   borderColor: columnColor.border,
                 }}
               >
                 {/* Column Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className='flex items-center justify-between mb-4'>
                   {editingColumn === column.id ? (
-                    <div className="flex-1 flex items-center gap-2">
+                    <div className='flex-1 flex items-center gap-2'>
                       <Input
                         value={editingColumnName}
-                        onChange={(e) => setEditingColumnName(e.target.value)}
-                        className="flex-1"
-                        placeholder="Column name"
+                        onChange={e => setEditingColumnName(e.target.value)}
+                        className='flex-1'
+                        placeholder='Column name'
                       />
-                      <div className="relative">
+                      <div className='relative'>
                         <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setShowColorPicker(
-                            showColorPicker === column.id ? null : column.id
-                          )}
+                          size='sm'
+                          variant='outline'
+                          onClick={() =>
+                            setShowColorPicker(
+                              showColorPicker === column.id ? null : column.id
+                            )
+                          }
                         >
-                          <Palette className="h-3 w-3" />
+                          <Palette className='h-3 w-3' />
                         </Button>
                         {showColorPicker === column.id && (
-                          <div className="absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2">
+                          <div className='absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2'>
                             {Object.entries(colorConfig).map(([key, color]) => (
                               <button
                                 key={key}
-                                className="w-8 h-8 rounded border-2 hover:scale-110 transition-transform"
+                                className='w-8 h-8 rounded border-2 hover:scale-110 transition-transform'
                                 style={{
                                   backgroundColor: color.bg,
                                   borderColor: color.border,
@@ -277,27 +349,33 @@ export function UnifiedKanban({
                           </div>
                         )}
                       </div>
-                      <Button size="sm" onClick={saveColumnEdit}>
-                        <Save className="h-3 w-3" />
+                      <Button size='sm' onClick={saveColumnEdit}>
+                        <Save className='h-3 w-3' />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={cancelColumnEdit}>
-                        <X className="h-3 w-3" />
+                      <Button
+                        size='sm'
+                        variant='ghost'
+                        onClick={cancelColumnEdit}
+                      >
+                        <X className='h-3 w-3' />
                       </Button>
                     </div>
                   ) : (
                     <>
-                      <h3 className="font-semibold text-lg text-gray-800">{column.name}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="bg-white px-2 py-1 rounded-full text-sm font-medium">
+                      <h3 className='font-semibold text-lg text-gray-800'>
+                        {column.name}
+                      </h3>
+                      <div className='flex items-center gap-2'>
+                        <span className='bg-white px-2 py-1 rounded-full text-sm font-medium'>
                           {columnItems.length}
                         </span>
                         {canEdit && (
                           <Button
-                            size="sm"
-                            variant="ghost"
+                            size='sm'
+                            variant='ghost'
                             onClick={() => startEditColumn(column)}
                           >
-                            <Edit2 className="h-3 w-3" />
+                            <Edit2 className='h-3 w-3' />
                           </Button>
                         )}
                       </div>
@@ -308,11 +386,11 @@ export function UnifiedKanban({
                 {/* Add Item Button - Only on first column */}
                 {onAddItem && canEdit && column.order === 0 && (
                   <Button
-                    variant="ghost"
-                    className="w-full mb-3 text-muted-foreground hover:text-foreground"
+                    variant='ghost'
+                    className='w-full mb-3 text-muted-foreground hover:text-foreground'
                     onClick={() => onAddItem(column.id)}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className='h-4 w-4 mr-2' />
                     Add Item
                   </Button>
                 )}
@@ -328,36 +406,60 @@ export function UnifiedKanban({
                       }`}
                     >
                       {columnItems.map((item, index) => (
-                        <Draggable key={item.id} draggableId={item.id} index={index}>
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
                           {(provided, snapshot) => (
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               className={`transition-all duration-200 ${
-                                snapshot.isDragging 
-                                  ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90' 
+                                snapshot.isDragging
+                                  ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90'
                                   : 'hover:shadow-md'
                               }`}
                               onClick={() => onItemClick?.(item)}
                             >
-                              {renderItem ? renderItem(item) : defaultRenderItem(item)}
+                              {renderItem
+                                ? renderItem(item)
+                                : defaultRenderItem(item)}
                             </div>
                           )}
                         </Draggable>
                       ))}
-                      
-                      {/* Drop Zone Indicator */}
-                      {snapshot.isDraggingOver && (
-                        <div className="absolute inset-0 pointer-events-none z-10">
-                          <div className="w-full h-24 border-2 border-dashed border-white bg-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                            <div className="bg-white/90 px-3 py-1 rounded-full">
-                              <span className="text-gray-800 font-medium text-sm">Drop here</span>
-                            </div>
+
+                        {/* Drop Zone Indicator - Show at exact position */}
+                        {snapshot.isDraggingOver && dragOverIndex !== null && (
+                          <div className='relative'>
+                            {columnItems.map((item, index) => {
+                              if (index === dragOverIndex) {
+                                return (
+                                  <div
+                                    key={`drop-indicator-${index}`}
+                                    className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'
+                                  >
+                                    <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
+                                      Drop here
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })}
+                            {/* Show at end if dropping at the end */}
+                            {dragOverIndex === columnItems.length && (
+                              <div className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'>
+                                <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
+                                  Drop here
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      )}
-                      
+                        )}
+
                       {provided.placeholder}
                     </div>
                   )}
