@@ -395,30 +395,13 @@ export class PermissionEvaluator {
     resource: Resource,
     action: Action
   ): string {
-    // Safely stringify the context, handling any non-serializable values
-    const contextKey = JSON.stringify(
-      {
-        userId: context.userId,
-        scope: context.scope,
-        scopeId: context.scopeId,
-        userAttributes: context.userAttributes,
-      },
-      (key, value) => {
-        // Handle non-serializable values
-        if (typeof value === 'object' && value !== null) {
-          return '[Object]';
-        }
-        return value;
-      }
-    );
+    // Create a more specific cache key that includes user attributes
+    const userAttributesKey = Object.keys(context.userAttributes)
+      .sort()
+      .map(key => `${key}:${context.userAttributes[key]}`)
+      .join('|');
 
-    // Use a safer encoding method
-    try {
-      return `perm:${btoa(contextKey)}:${resource}:${action}`;
-    } catch {
-      // Fallback to a simpler key if btoa fails
-      return `perm:${context.userId}:${context.scope}:${context.scopeId || 'global'}:${resource}:${action}`;
-    }
+    return `perm:${context.userId}:${context.scope}:${context.scopeId || 'global'}:${userAttributesKey}:${resource}:${action}`;
   }
 
   /**

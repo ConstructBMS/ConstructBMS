@@ -7,8 +7,8 @@
  * Usage: node scripts/generate-component.js ComponentName [--page] [--with-test]
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Parse command line arguments
 const args = process.argv.slice(2);

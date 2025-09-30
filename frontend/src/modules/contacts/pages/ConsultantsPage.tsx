@@ -114,7 +114,6 @@ export default function ConsultantsPage() {
                 Back to CRM Manager
               </Link>
             </div>
-            <h1 className='text-2xl font-semibold'>Consultant Management</h1>
             <p className='text-muted-foreground'>
               Manage your expert consultants and advisory services
             </p>

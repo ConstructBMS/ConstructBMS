@@ -113,7 +113,6 @@ export default function ClientsPage() {
                 Back to CRM Manager
               </Link>
             </div>
-            <h1 className='text-2xl font-semibold'>Client Management</h1>
             <p className='text-muted-foreground'>
               Manage your client relationships and project portfolio
             </p>

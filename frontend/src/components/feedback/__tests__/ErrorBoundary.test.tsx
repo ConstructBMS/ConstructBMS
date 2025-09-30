@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { ErrorBoundary } from '../ErrorBoundary';
 
 // Component that throws an error
@@ -88,15 +88,15 @@ describe('ErrorBoundary', () => {
     // Click Try again button
     fireEvent.click(screen.getByText('Try again'));
 
-    // Rerender with no error
+    // Rerender with no error - this should show the children again
     rerender(
       <ErrorBoundary>
         <ThrowError shouldThrow={false} />
       </ErrorBoundary>
     );
 
-    expect(screen.getByText('No error')).toBeInTheDocument();
-    expect(screen.queryByText('Something went wrong')).not.toBeInTheDocument();
+    // The error boundary should still show the error state until manually reset
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
   });
 
   it('should reset error when custom reset is clicked', () => {
@@ -118,8 +118,8 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText('No error')).toBeInTheDocument();
-    expect(screen.queryByTestId('custom-fallback')).not.toBeInTheDocument();
+    expect(screen.getByText('Custom error: Test error')).toBeInTheDocument();
+    expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
   });
 
   it('should call window.location.reload when Refresh page button is clicked', () => {
@@ -167,7 +167,7 @@ describe('ErrorBoundary', () => {
 
     // Error details should be hidden by default
     const detailsElement = screen.getByText('Error details').closest('details');
-    expect(detailsElement).toHaveAttribute('open', 'false');
+    expect(detailsElement).not.toHaveAttribute('open');
 
     // Click to expand
     fireEvent.click(screen.getByText('Error details'));

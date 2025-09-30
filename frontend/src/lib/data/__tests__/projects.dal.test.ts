@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
-import { ProjectsDAL } from '../projects';
 import { supabase } from '../../../services/supabase';
+import { ProjectsDAL } from '../projects';
 
 // Mock Supabase
 vi.mock('../../../services/supabase', () => ({
@@ -41,11 +41,10 @@ describe('ProjectsDAL', () => {
       mockSupabase.from.mockReturnValue(mockQuery as Record<string, unknown>);
       mockQuery.order.mockResolvedValue({ data: mockProjects, error: null });
 
-      const result = await ProjectsDAL.listProjects('org-1');
+      const result = await ProjectsDAL.listProjects();
 
       expect(mockSupabase.from).toHaveBeenCalledWith('projects');
       expect(mockQuery.select).toHaveBeenCalledWith('*');
-      expect(mockQuery.eq).toHaveBeenCalledWith('org_id', 'org-1');
       expect(mockQuery.order).toHaveBeenCalledWith('created_at', {
         ascending: false,
       });

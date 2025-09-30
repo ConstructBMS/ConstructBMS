@@ -114,7 +114,6 @@ export default function ContractorsPage() {
                 Back to CRM Manager
               </Link>
             </div>
-            <h1 className='text-2xl font-semibold'>Contractor Management</h1>
             <p className='text-muted-foreground'>
               Manage your skilled contractors and workforce capacity
             </p>

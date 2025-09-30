@@ -103,6 +103,8 @@ describe('featureFlags', () => {
         'pipeline',
         'estimates',
         'purchaseOrders',
+        'contacts',
+        'projects',
       ];
 
       expect(defaultFlags).toHaveLength(expectedFlags.length);
