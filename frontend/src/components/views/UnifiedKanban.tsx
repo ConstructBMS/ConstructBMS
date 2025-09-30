@@ -222,11 +222,11 @@ export function UnifiedKanban({
                           <Palette className="h-3 w-3" />
                         </Button>
                         {showColorPicker === column.id && (
-                          <div className="absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-2 grid grid-cols-4 gap-1">
+                          <div className="absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2">
                             {Object.entries(colorConfig).map(([key, color]) => (
                               <button
                                 key={key}
-                                className="w-6 h-6 rounded border-2 hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded border-2 hover:scale-110 transition-transform"
                                 style={{
                                   backgroundColor: color.bg,
                                   borderColor: color.border,
@@ -250,7 +250,7 @@ export function UnifiedKanban({
                     </div>
                   ) : (
                     <>
-                      <h3 className="font-semibold text-lg">{column.name}</h3>
+                      <h3 className="font-semibold text-lg text-gray-800">{column.name}</h3>
                       <div className="flex items-center gap-2">
                         <span className="bg-white px-2 py-1 rounded-full text-sm font-medium">
                           {columnItems.length}
@@ -269,13 +269,25 @@ export function UnifiedKanban({
                   )}
                 </div>
 
+                {/* Add Item Button - Only on first column */}
+                {onAddItem && canEdit && column.order === 0 && (
+                  <Button
+                    variant="ghost"
+                    className="w-full mb-3 text-muted-foreground hover:text-foreground"
+                    onClick={() => onAddItem(column.id)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Item
+                  </Button>
+                )}
+
                 {/* Column Items */}
                 <Droppable droppableId={column.id}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`min-h-32 ${
+                      className={`min-h-96 ${
                         snapshot.isDraggingOver ? 'bg-opacity-50' : ''
                       }`}
                     >
@@ -300,18 +312,6 @@ export function UnifiedKanban({
                     </div>
                   )}
                 </Droppable>
-
-                {/* Add Item Button */}
-                {onAddItem && canEdit && (
-                  <Button
-                    variant="ghost"
-                    className="w-full mt-2 text-muted-foreground hover:text-foreground"
-                    onClick={() => onAddItem(column.id)}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Item
-                  </Button>
-                )}
               </div>
             );
           })}

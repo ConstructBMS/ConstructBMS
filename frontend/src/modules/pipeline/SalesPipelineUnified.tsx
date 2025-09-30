@@ -74,6 +74,72 @@ const demoOpportunities: Opportunity[] = [
     createdAt: '2024-01-20',
     updatedAt: '2024-01-20',
   },
+  {
+    id: '3',
+    name: 'Residential Development',
+    details: '50-unit residential complex in Manchester',
+    value: 1200000,
+    stage: 'proposal',
+    clientId: '1',
+    notes: 'Detailed proposal with 3D renderings submitted.',
+    createdAt: '2024-01-25',
+    updatedAt: '2024-01-25',
+  },
+  {
+    id: '4',
+    name: 'Retail Space Fit-out',
+    details: 'High-end retail space fit-out for luxury brand',
+    value: 180000,
+    stage: 'negotiation',
+    clientId: '2',
+    notes: 'Price negotiations ongoing. Client very interested.',
+    createdAt: '2024-01-28',
+    updatedAt: '2024-01-28',
+  },
+  {
+    id: '5',
+    name: 'Industrial Facility',
+    details: 'Large-scale industrial facility construction',
+    value: 2500000,
+    stage: 'closed-won',
+    clientId: '1',
+    notes: 'Contract signed! Project starts in March.',
+    createdAt: '2024-01-30',
+    updatedAt: '2024-01-30',
+  },
+  {
+    id: '6',
+    name: 'Hotel Renovation',
+    details: 'Complete hotel renovation and modernization',
+    value: 950000,
+    stage: 'closed-lost',
+    clientId: '2',
+    notes: 'Client chose competitor. Follow up in 6 months.',
+    createdAt: '2024-02-01',
+    updatedAt: '2024-02-01',
+  },
+  {
+    id: '7',
+    name: 'School Extension',
+    details: 'Primary school extension with new classrooms',
+    value: 320000,
+    stage: 'lead',
+    clientId: '1',
+    notes: 'Initial meeting scheduled for next week.',
+    createdAt: '2024-02-05',
+    updatedAt: '2024-02-05',
+  },
+  {
+    id: '8',
+    name: 'Medical Center',
+    details: 'New medical center construction',
+    value: 1800000,
+    stage: 'qualified',
+    clientId: '2',
+    notes: 'Client very interested. Waiting for budget approval.',
+    createdAt: '2024-02-08',
+    updatedAt: '2024-02-08',
+  },
 ];
 
 export default function SalesPipelineUnified() {
@@ -238,7 +304,7 @@ export default function SalesPipelineUnified() {
   );
 
   return (
-    <div className='space-y-6'>
+    <div className='p-6 space-y-6'>
       <div className='flex items-center justify-between'>
         <div>
           <h1 className='text-3xl font-bold'>Sales Pipeline</h1>
