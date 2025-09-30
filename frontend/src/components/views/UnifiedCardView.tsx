@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export interface CardItem {
   id: string;
@@ -16,7 +16,13 @@ export interface CardItem {
     label: string;
     icon?: React.ReactNode;
     onClick: () => void;
-    variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    variant?:
+      | 'default'
+      | 'destructive'
+      | 'outline'
+      | 'secondary'
+      | 'ghost'
+      | 'link';
   }>;
 }
 
@@ -84,27 +90,27 @@ export function UnifiedCardView({
   };
 
   const defaultRenderItem = (item: CardItem) => (
-    <Card 
-      className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+    <Card
+      className='cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02]'
       onClick={() => onItemClick?.(item)}
     >
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-semibold line-clamp-2">
+      <CardHeader className='pb-3'>
+        <div className='flex items-start justify-between'>
+          <CardTitle className='text-lg font-semibold line-clamp-2'>
             {item.title}
           </CardTitle>
-          <div className="flex items-center gap-2 ml-2">
+          <div className='flex items-center gap-2 ml-2'>
             {item.priority && (
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant='outline'
                 className={`text-xs ${getPriorityColor(item.priority)}`}
               >
                 {item.priority.toUpperCase()}
               </Badge>
             )}
             {item.status && (
-              <Badge 
-                variant="outline" 
+              <Badge
+                variant='outline'
                 className={`text-xs ${getStatusColor(item.status)}`}
               >
                 {item.status}
@@ -113,39 +119,39 @@ export function UnifiedCardView({
           </div>
         </div>
       </CardHeader>
-      
-      <CardContent className="pt-0">
+
+      <CardContent className='pt-0'>
         {item.description && (
-          <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+          <p className='text-sm text-muted-foreground mb-3 line-clamp-3'>
             {item.description}
           </p>
         )}
 
         {/* Metadata */}
-        <div className="space-y-2">
+        <div className='space-y-2'>
           {item.assignee && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium">👤</span>
+            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+              <span className='font-medium'>👤</span>
               <span>{item.assignee}</span>
             </div>
           )}
-          
+
           {item.dueDate && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium">📅</span>
+            <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+              <span className='font-medium'>📅</span>
               <span>{formatDate(item.dueDate)}</span>
             </div>
           )}
 
           {item.tags && item.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className='flex flex-wrap gap-1'>
               {item.tags.slice(0, 3).map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
+                <Badge key={index} variant='secondary' className='text-xs'>
                   {tag}
                 </Badge>
               ))}
               {item.tags.length > 3 && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant='secondary' className='text-xs'>
                   +{item.tags.length - 3} more
                 </Badge>
               )}
@@ -155,28 +161,28 @@ export function UnifiedCardView({
 
         {/* Actions */}
         {canEdit && (onItemEdit || onItemDelete || item.actions) && (
-          <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t">
+          <div className='flex items-center justify-end gap-2 mt-4 pt-3 border-t'>
             {item.actions?.map((action, index) => (
               <Button
                 key={index}
-                size="sm"
+                size='sm'
                 variant={action.variant || 'ghost'}
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   action.onClick();
                 }}
-                className="flex items-center gap-1"
+                className='flex items-center gap-1'
               >
                 {action.icon}
-                <span className="hidden sm:inline">{action.label}</span>
+                <span className='hidden sm:inline'>{action.label}</span>
               </Button>
             ))}
-            
+
             {onItemEdit && (
               <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => {
+                size='sm'
+                variant='ghost'
+                onClick={e => {
                   e.stopPropagation();
                   onItemEdit(item);
                 }}
@@ -184,12 +190,12 @@ export function UnifiedCardView({
                 Edit
               </Button>
             )}
-            
+
             {onItemDelete && (
               <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => {
+                size='sm'
+                variant='ghost'
+                onClick={e => {
                   e.stopPropagation();
                   onItemDelete(item);
                 }}
@@ -204,8 +210,10 @@ export function UnifiedCardView({
   );
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ${className}`}>
-      {items.map((item) => (
+    <div
+      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ${className}`}
+    >
+      {items.map(item => (
         <div key={item.id}>
           {renderItem ? renderItem(item) : defaultRenderItem(item)}
         </div>

@@ -1,10 +1,13 @@
+import { DollarSign, Edit2, Trash2, User } from 'lucide-react';
 import { useState } from 'react';
-import { UnifiedKanban } from '../../components/views/UnifiedKanban';
 import { useKanbanStore } from '../../app/store/ui/kanban.store';
-import type { KanbanColumn, KanbanItem } from '../../components/views/UnifiedKanban';
 import { Button } from '../../components/ui';
 import { Card, CardContent } from '../../components/ui/card';
-import { DollarSign, Edit2, Trash2, User } from 'lucide-react';
+import type {
+  KanbanColumn,
+  KanbanItem,
+} from '../../components/views/UnifiedKanban';
+import { UnifiedKanban } from '../../components/views/UnifiedKanban';
 
 // Types
 interface Client {
@@ -75,9 +78,11 @@ const demoOpportunities: Opportunity[] = [
 
 export default function SalesPipelineUnified() {
   const { getConfig, updateColumns } = useKanbanStore();
-  const [opportunities, setOpportunities] = useState<Opportunity[]>(demoOpportunities);
+  const [opportunities, setOpportunities] =
+    useState<Opportunity[]>(demoOpportunities);
   const [clients] = useState<Client[]>(demoClients);
-  const [editingOpportunity, setEditingOpportunity] = useState<Opportunity | null>(null);
+  const [editingOpportunity, setEditingOpportunity] =
+    useState<Opportunity | null>(null);
 
   const moduleId = 'pipeline';
   const config = getConfig(moduleId);
@@ -91,7 +96,8 @@ export default function SalesPipelineUnified() {
       title: opp.name,
       description: opp.details,
       status: opp.stage,
-      priority: opp.value > 500000 ? 'high' : opp.value > 250000 ? 'medium' : 'low',
+      priority:
+        opp.value > 500000 ? 'high' : opp.value > 250000 ? 'medium' : 'low',
       assignee: client?.name,
       dueDate: opp.updatedAt,
       metadata: {
@@ -163,38 +169,40 @@ export default function SalesPipelineUnified() {
   };
 
   const renderOpportunityItem = (item: KanbanItem) => (
-    <Card className="mb-3 cursor-pointer hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
+    <Card className='mb-3 cursor-pointer hover:shadow-md transition-shadow'>
+      <CardContent className='p-4'>
+        <div className='flex items-start justify-between'>
+          <div className='flex-1'>
+            <h4 className='font-semibold text-sm mb-1'>{item.title}</h4>
             {item.description && (
-              <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+              <p className='text-xs text-muted-foreground mb-2 line-clamp-2'>
                 {item.description}
               </p>
             )}
-            
+
             {/* Value and Priority */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm font-medium text-green-600">
-                {formatCurrency(item.metadata?.value as number || 0)}
+            <div className='flex items-center gap-2 mb-2'>
+              <span className='text-sm font-medium text-green-600'>
+                {formatCurrency((item.metadata?.value as number) || 0)}
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(item.priority || 'low')}`}>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(item.priority || 'low')}`}
+              >
                 {item.priority?.toUpperCase()}
               </span>
             </div>
 
             {/* Client and Date Info */}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className='flex items-center gap-2 text-xs text-muted-foreground'>
               {item.assignee && (
-                <div className="flex items-center gap-1">
-                  <User className="h-3 w-3" />
+                <div className='flex items-center gap-1'>
+                  <User className='h-3 w-3' />
                   <span>{item.assignee}</span>
                 </div>
               )}
               {item.dueDate && (
-                <div className="flex items-center gap-1">
-                  <DollarSign className="h-3 w-3" />
+                <div className='flex items-center gap-1'>
+                  <DollarSign className='h-3 w-3' />
                   <span>{new Date(item.dueDate).toLocaleDateString()}</span>
                 </div>
               )}
@@ -202,26 +210,26 @@ export default function SalesPipelineUnified() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-1 ml-2">
+          <div className='flex gap-1 ml-2'>
             <Button
-              size="sm"
-              variant="ghost"
-              onClick={(e) => {
+              size='sm'
+              variant='ghost'
+              onClick={e => {
                 e.stopPropagation();
                 handleItemEdit(item);
               }}
             >
-              <Edit2 className="h-3 w-3" />
+              <Edit2 className='h-3 w-3' />
             </Button>
             <Button
-              size="sm"
-              variant="ghost"
-              onClick={(e) => {
+              size='sm'
+              variant='ghost'
+              onClick={e => {
                 e.stopPropagation();
                 handleItemDelete(item);
               }}
             >
-              <Trash2 className="h-3 w-3" />
+              <Trash2 className='h-3 w-3' />
             </Button>
           </div>
         </div>
@@ -230,17 +238,16 @@ export default function SalesPipelineUnified() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold">Sales Pipeline</h1>
-          <p className="text-muted-foreground">
-            Manage your sales opportunities and track progress through the pipeline
+          <h1 className='text-3xl font-bold'>Sales Pipeline</h1>
+          <p className='text-muted-foreground'>
+            Manage your sales opportunities and track progress through the
+            pipeline
           </p>
         </div>
-        <Button>
-          Add Opportunity
-        </Button>
+        <Button>Add Opportunity</Button>
       </div>
 
       <UnifiedKanban

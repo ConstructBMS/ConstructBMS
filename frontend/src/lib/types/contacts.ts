@@ -28,4 +28,4 @@ export interface Company {
 
 export type ContactType = 'person' | 'company';
 export type ContactCategory = 'client' | 'contractor' | 'consultant' | 'other';
-export type ViewMode = 'list' | 'grid';
+export type ViewMode = 'list' | 'grid' | 'kanban';

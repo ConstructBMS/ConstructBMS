@@ -3,6 +3,7 @@ import {
   Briefcase,
   Building2,
   Grid3X3,
+  Kanban,
   List,
   Search,
   User,
@@ -24,6 +25,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '../../components/ui';
+import { ViewSwitcher } from '../../components/views/ViewSwitcher';
 import {
   Company,
   Contact,
@@ -32,6 +34,7 @@ import {
 } from '../../lib/types/contacts';
 import { ContactForm, ContactFormData } from './ContactForm';
 import { ContactsGrid } from './ContactsGrid';
+import { ContactsKanban } from './ContactsKanban';
 import { ContactsList } from './ContactsList';
 import { useContactsStore } from './store';
 
@@ -421,24 +424,11 @@ function ContactsPage() {
               {/* View Mode Toggle */}
               <div className='flex items-center gap-2'>
                 <span className='text-sm text-muted-foreground'>View:</span>
-                <div className='flex border rounded-md'>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'ghost'}
-                    size='sm'
-                    onClick={() => setViewMode('list')}
-                    className='rounded-r-none'
-                  >
-                    <List className='h-4 w-4' />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                    size='sm'
-                    onClick={() => setViewMode('grid')}
-                    className='rounded-l-none'
-                  >
-                    <Grid3X3 className='h-4 w-4' />
-                  </Button>
-                </div>
+                <ViewSwitcher
+                  currentView={viewMode}
+                  onViewChange={(view) => setViewMode(view as ViewMode)}
+                  availableViews={['list', 'grid', 'kanban']}
+                />
               </div>
             </div>
 
@@ -550,8 +540,15 @@ function ContactsPage() {
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                 />
-              ) : (
+              ) : viewMode === 'grid' ? (
                 <ContactsGrid
+                  contacts={filteredContacts}
+                  companies={filteredCompanies}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ) : (
+                <ContactsKanban
                   contacts={filteredContacts}
                   companies={filteredCompanies}
                   onEdit={handleEdit}
