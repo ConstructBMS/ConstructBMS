@@ -108,30 +108,20 @@ export function UnifiedKanban({
 
       if (isNearLeftEdge) {
         // Immediate scroll for instant response - extremely fast
-        container.scrollBy(-scrollSpeed * 6, 0);
+        container.scrollLeft -= scrollSpeed * 6;
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollLeft = () => {
-          // Use scrollBy with behavior: 'auto' to bypass CSS smooth scrolling
-          container.scrollBy({
-            left: -scrollSpeed,
-            behavior: 'auto'
-          });
-          // Also use direct scrollLeft for extra speed
+          // Use direct scrollLeft manipulation for maximum speed
           container.scrollLeft -= scrollSpeed;
           animationFrameId = requestAnimationFrame(scrollLeft);
         };
         animationFrameId = requestAnimationFrame(scrollLeft);
       } else if (isNearRightEdge) {
         // Immediate scroll for instant response - extremely fast
-        container.scrollBy(scrollSpeed * 6, 0);
+        container.scrollLeft += scrollSpeed * 6;
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollRight = () => {
-          // Use scrollBy with behavior: 'auto' to bypass CSS smooth scrolling
-          container.scrollBy({
-            left: scrollSpeed,
-            behavior: 'auto'
-          });
-          // Also use direct scrollLeft for extra speed
+          // Use direct scrollLeft manipulation for maximum speed
           container.scrollLeft += scrollSpeed;
           animationFrameId = requestAnimationFrame(scrollRight);
         };
@@ -182,15 +172,9 @@ export function UnifiedKanban({
 
         // Smooth scroll to keep the drop zone visible - extremely fast scrolling
         if (mouseX > rect.right - 50) {
-          container.scrollBy({
-            left: 150,
-            behavior: 'auto'
-          });
+          container.scrollLeft += 150;
         } else if (mouseX < rect.left + 50) {
-          container.scrollBy({
-            left: -150,
-            behavior: 'auto'
-          });
+          container.scrollLeft -= 150;
         }
       }
     }
