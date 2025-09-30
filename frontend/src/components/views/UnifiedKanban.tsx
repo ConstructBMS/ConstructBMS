@@ -91,8 +91,8 @@ export function UnifiedKanban({
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      const scrollThreshold = 40; // Distance from edge to start scrolling - much earlier activation
-      const scrollSpeed = 80; // Pixels per scroll step - much faster scrolling
+      const scrollThreshold = 30; // Distance from edge to start scrolling - very early activation
+      const scrollSpeed = 150; // Pixels per scroll step - extremely fast scrolling
 
       // Clear existing intervals and animation frames
       if (scrollInterval) {
@@ -107,20 +107,22 @@ export function UnifiedKanban({
       const isNearRightEdge = rect.right - e.clientX < scrollThreshold;
 
       if (isNearLeftEdge) {
-        // Immediate scroll for instant response - much faster
-        container.scrollLeft -= scrollSpeed * 4;
-        // Use requestAnimationFrame for maximum smoothness and speed
+        // Immediate scroll for instant response - extremely fast
+        container.scrollLeft -= scrollSpeed * 6;
+        // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollLeft = () => {
           container.scrollLeft -= scrollSpeed;
+          container.scrollLeft -= scrollSpeed; // Double scroll for extra speed
           animationFrameId = requestAnimationFrame(scrollLeft);
         };
         animationFrameId = requestAnimationFrame(scrollLeft);
       } else if (isNearRightEdge) {
-        // Immediate scroll for instant response - much faster
-        container.scrollLeft += scrollSpeed * 4;
-        // Use requestAnimationFrame for maximum smoothness and speed
+        // Immediate scroll for instant response - extremely fast
+        container.scrollLeft += scrollSpeed * 6;
+        // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollRight = () => {
           container.scrollLeft += scrollSpeed;
+          container.scrollLeft += scrollSpeed; // Double scroll for extra speed
           animationFrameId = requestAnimationFrame(scrollRight);
         };
         animationFrameId = requestAnimationFrame(scrollRight);
@@ -168,11 +170,11 @@ export function UnifiedKanban({
             ? result.destination.index * 320 // Approximate column width
             : result.destination.index * 320;
 
-        // Smooth scroll to keep the drop zone visible - much faster scrolling
-        if (mouseX > rect.right - 60) {
-          container.scrollLeft += 80;
-        } else if (mouseX < rect.left + 60) {
-          container.scrollLeft -= 80;
+        // Smooth scroll to keep the drop zone visible - extremely fast scrolling
+        if (mouseX > rect.right - 50) {
+          container.scrollLeft += 150;
+        } else if (mouseX < rect.left + 50) {
+          container.scrollLeft -= 150;
         }
       }
     }
