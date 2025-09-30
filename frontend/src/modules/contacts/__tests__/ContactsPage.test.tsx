@@ -91,8 +91,12 @@ describe('ContactsPage', () => {
 
     // Check that dashboard cards link to correct routes
     const clientLink = screen.getByRole('link', { name: /Client Management/i });
-    const contractorLink = screen.getByRole('link', { name: /Contractor Management/i });
-    const consultantLink = screen.getByRole('link', { name: /Consultant Management/i });
+    const contractorLink = screen.getByRole('link', {
+      name: /Contractor Management/i,
+    });
+    const consultantLink = screen.getByRole('link', {
+      name: /Consultant Management/i,
+    });
 
     expect(clientLink).toHaveAttribute('href', '/contacts/clients');
     expect(contractorLink).toHaveAttribute('href', '/contacts/contractors');
