@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
-import { ContactsPage } from '../ContactsPage';
+import ContactsPage from '../ContactsPage';
 
 // Mock the contacts store
 vi.mock('../store', () => ({
@@ -57,7 +57,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-describe.skip('ContactsPage', () => {
+describe('ContactsPage', () => {
   const renderContactsPage = () => {
     return render(
       <BrowserRouter>
@@ -90,9 +90,9 @@ describe.skip('ContactsPage', () => {
     renderContactsPage();
 
     // Check that dashboard cards link to correct routes
-    const clientLink = screen.getByRole('link', { name: /clients/i });
-    const contractorLink = screen.getByRole('link', { name: /contractors/i });
-    const consultantLink = screen.getByRole('link', { name: /consultants/i });
+    const clientLink = screen.getByRole('link', { name: /Client Management/i });
+    const contractorLink = screen.getByRole('link', { name: /Contractor Management/i });
+    const consultantLink = screen.getByRole('link', { name: /Consultant Management/i });
 
     expect(clientLink).toHaveAttribute('href', '/contacts/clients');
     expect(contractorLink).toHaveAttribute('href', '/contacts/contractors');

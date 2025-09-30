@@ -214,7 +214,6 @@ function ContactsPage() {
         {/* Header with actions */}
         <div className='flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
           <div>
-            <h1 className='text-2xl font-semibold'>CRM Manager</h1>
             <p className='text-muted-foreground'>
               Comprehensive contact and relationship management system
             </p>
