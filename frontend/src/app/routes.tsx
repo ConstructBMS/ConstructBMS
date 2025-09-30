@@ -15,6 +15,7 @@ const ContractorsPage = lazy(
 const ConsultantsPage = lazy(
   () => import('../modules/contacts/pages/ConsultantsPage')
 );
+const ProjectsDashboard = lazy(() => import('../modules/projects/ProjectsDashboard'));
 const ProjectsPage = lazy(() => import('../modules/projects/ProjectsPage'));
 const ProjectDetailPage = lazy(
   () => import('../modules/projects/ProjectDetailPage')
@@ -142,6 +143,14 @@ const AppRoutes = [
   },
   {
     path: '/projects',
+    element: (
+      <LazyRoute>
+        <ProjectsDashboard />
+      </LazyRoute>
+    ),
+  },
+  {
+    path: '/projects/management',
     element: (
       <LazyRoute>
         <ProjectsPage />

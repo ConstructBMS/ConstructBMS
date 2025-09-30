@@ -85,9 +85,9 @@ const navigationItems = [
   },
   {
     id: 'projects',
-    label: 'Projects Dashboard',
+    label: 'Projects',
     icon: LayoutDashboard,
-    href: '/projects/dashboard',
+    href: '/projects',
     flag: 'projects' as const,
     children: [
       {

@@ -1,16 +1,12 @@
-import { 
-  Building2, 
-  Calendar, 
-  FileText, 
-  Settings, 
-  Users, 
-  Workflow,
+import {
   Clock,
   DollarSign,
-  Target,
+  FileText,
+  Settings,
   Shield,
-  Database,
-  Zap
+  Target,
+  Workflow,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -34,7 +30,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Textarea,
 } from '../../../components/ui';
 
 export function ProjectSettings() {
@@ -85,7 +80,12 @@ export function ProjectSettings() {
     {
       id: '2',
       name: 'Emergency Project',
-      steps: ['Emergency Initiation', 'Fast Track Approval', 'Execution', 'Review'],
+      steps: [
+        'Emergency Initiation',
+        'Fast Track Approval',
+        'Execution',
+        'Review',
+      ],
       isActive: false,
     },
   ]);
@@ -103,7 +103,7 @@ export function ProjectSettings() {
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -163,11 +163,16 @@ export function ProjectSettings() {
               <div className='grid grid-cols-2 gap-6'>
                 <div className='space-y-4'>
                   <div>
-                    <Label htmlFor='defaultStatus'>Default Project Status</Label>
+                    <Label htmlFor='defaultStatus'>
+                      Default Project Status
+                    </Label>
                     <Select
                       value={projectSettings.defaultProjectStatus}
-                      onValueChange={(value) =>
-                        setProjectSettings(prev => ({ ...prev, defaultProjectStatus: value }))
+                      onValueChange={value =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          defaultProjectStatus: value,
+                        }))
                       }
                     >
                       <SelectTrigger>
@@ -184,11 +189,16 @@ export function ProjectSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor='defaultPriority'>Default Project Priority</Label>
+                    <Label htmlFor='defaultPriority'>
+                      Default Project Priority
+                    </Label>
                     <Select
                       value={projectSettings.defaultProjectPriority}
-                      onValueChange={(value) =>
-                        setProjectSettings(prev => ({ ...prev, defaultProjectPriority: value }))
+                      onValueChange={value =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          defaultProjectPriority: value,
+                        }))
                       }
                     >
                       <SelectTrigger>
@@ -204,15 +214,18 @@ export function ProjectSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor='defaultDuration'>Default Project Duration (days)</Label>
+                    <Label htmlFor='defaultDuration'>
+                      Default Project Duration (days)
+                    </Label>
                     <Input
                       id='defaultDuration'
                       type='number'
                       value={projectSettings.defaultProjectDuration}
-                      onChange={(e) =>
-                        setProjectSettings(prev => ({ 
-                          ...prev, 
-                          defaultProjectDuration: parseInt(e.target.value) || 90 
+                      onChange={e =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          defaultProjectDuration:
+                            parseInt(e.target.value) || 90,
                         }))
                       }
                     />
@@ -222,8 +235,11 @@ export function ProjectSettings() {
                     <Label htmlFor='defaultCurrency'>Default Currency</Label>
                     <Select
                       value={projectSettings.defaultCurrency}
-                      onValueChange={(value) =>
-                        setProjectSettings(prev => ({ ...prev, defaultCurrency: value }))
+                      onValueChange={value =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          defaultCurrency: value,
+                        }))
                       }
                     >
                       <SelectTrigger>
@@ -242,7 +258,9 @@ export function ProjectSettings() {
                 <div className='space-y-4'>
                   <div className='flex items-center justify-between'>
                     <div>
-                      <Label htmlFor='autoArchive'>Auto-archive completed projects</Label>
+                      <Label htmlFor='autoArchive'>
+                        Auto-archive completed projects
+                      </Label>
                       <p className='text-sm text-muted-foreground'>
                         Automatically move completed projects to archive
                       </p>
@@ -250,8 +268,11 @@ export function ProjectSettings() {
                     <Switch
                       id='autoArchive'
                       checked={projectSettings.autoArchiveCompleted}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, autoArchiveCompleted: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          autoArchiveCompleted: checked,
+                        }))
                       }
                     />
                   </div>
@@ -266,15 +287,20 @@ export function ProjectSettings() {
                     <Switch
                       id='requireCode'
                       checked={projectSettings.requireProjectCode}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, requireProjectCode: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          requireProjectCode: checked,
+                        }))
                       }
                     />
                   </div>
 
                   <div className='flex items-center justify-between'>
                     <div>
-                      <Label htmlFor='allowDuplicates'>Allow duplicate project names</Label>
+                      <Label htmlFor='allowDuplicates'>
+                        Allow duplicate project names
+                      </Label>
                       <p className='text-sm text-muted-foreground'>
                         Multiple projects can have the same name
                       </p>
@@ -282,8 +308,11 @@ export function ProjectSettings() {
                     <Switch
                       id='allowDuplicates'
                       checked={projectSettings.allowDuplicateNames}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, allowDuplicateNames: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          allowDuplicateNames: checked,
+                        }))
                       }
                     />
                   </div>
@@ -303,8 +332,11 @@ export function ProjectSettings() {
                     <Switch
                       id='timeTracking'
                       checked={projectSettings.timeTrackingEnabled}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, timeTrackingEnabled: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          timeTrackingEnabled: checked,
+                        }))
                       }
                     />
                   </div>
@@ -317,8 +349,11 @@ export function ProjectSettings() {
                     <Switch
                       id='budgetTracking'
                       checked={projectSettings.budgetTrackingEnabled}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, budgetTrackingEnabled: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          budgetTrackingEnabled: checked,
+                        }))
                       }
                     />
                   </div>
@@ -331,8 +366,11 @@ export function ProjectSettings() {
                     <Switch
                       id='riskManagement'
                       checked={projectSettings.riskManagementEnabled}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, riskManagementEnabled: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          riskManagementEnabled: checked,
+                        }))
                       }
                     />
                   </div>
@@ -340,13 +378,18 @@ export function ProjectSettings() {
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-2'>
                       <Shield className='h-4 w-4' />
-                      <Label htmlFor='qualityAssurance'>Quality Assurance</Label>
+                      <Label htmlFor='qualityAssurance'>
+                        Quality Assurance
+                      </Label>
                     </div>
                     <Switch
                       id='qualityAssurance'
                       checked={projectSettings.qualityAssuranceEnabled}
-                      onCheckedChange={(checked) =>
-                        setProjectSettings(prev => ({ ...prev, qualityAssuranceEnabled: checked }))
+                      onCheckedChange={checked =>
+                        setProjectSettings(prev => ({
+                          ...prev,
+                          qualityAssuranceEnabled: checked,
+                        }))
                       }
                     />
                   </div>
@@ -370,12 +413,14 @@ export function ProjectSettings() {
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                {projectTemplates.map((template) => (
+                {projectTemplates.map(template => (
                   <div key={template.id} className='border rounded-lg p-4'>
                     <div className='flex items-center justify-between'>
                       <div>
                         <h3 className='font-semibold'>{template.name}</h3>
-                        <p className='text-sm text-muted-foreground'>{template.description}</p>
+                        <p className='text-sm text-muted-foreground'>
+                          {template.description}
+                        </p>
                         <div className='flex items-center gap-2 mt-2'>
                           {template.phases.map((phase, index) => (
                             <Badge key={index} variant='secondary'>
@@ -421,14 +466,17 @@ export function ProjectSettings() {
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                {workflows.map((workflow) => (
+                {workflows.map(workflow => (
                   <div key={workflow.id} className='border rounded-lg p-4'>
                     <div className='flex items-center justify-between'>
                       <div>
                         <h3 className='font-semibold'>{workflow.name}</h3>
                         <div className='flex items-center gap-2 mt-2'>
                           {workflow.steps.map((step, index) => (
-                            <div key={index} className='flex items-center gap-2'>
+                            <div
+                              key={index}
+                              className='flex items-center gap-2'
+                            >
                               <Badge variant='outline'>{step}</Badge>
                               {index < workflow.steps.length - 1 && (
                                 <span className='text-muted-foreground'>→</span>
@@ -440,9 +488,13 @@ export function ProjectSettings() {
                       <div className='flex items-center gap-2'>
                         <Switch
                           checked={workflow.isActive}
-                          onCheckedChange={(checked) => {
+                          onCheckedChange={checked => {
                             setWorkflows(prev =>
-                              prev.map(w => w.id === workflow.id ? { ...w, isActive: checked } : w)
+                              prev.map(w =>
+                                w.id === workflow.id
+                                  ? { ...w, isActive: checked }
+                                  : w
+                              )
                             );
                           }}
                         />
@@ -478,7 +530,9 @@ export function ProjectSettings() {
               <div className='space-y-4'>
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='allowCreation'>Allow Project Creation</Label>
+                    <Label htmlFor='allowCreation'>
+                      Allow Project Creation
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Users can create new projects
                     </p>
@@ -486,15 +540,20 @@ export function ProjectSettings() {
                   <Switch
                     id='allowCreation'
                     checked={permissions.allowProjectCreation}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, allowProjectCreation: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        allowProjectCreation: checked,
+                      }))
                     }
                   />
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='allowDeletion'>Allow Project Deletion</Label>
+                    <Label htmlFor='allowDeletion'>
+                      Allow Project Deletion
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Users can delete projects
                     </p>
@@ -502,15 +561,20 @@ export function ProjectSettings() {
                   <Switch
                     id='allowDeletion'
                     checked={permissions.allowProjectDeletion}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, allowProjectDeletion: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        allowProjectDeletion: checked,
+                      }))
                     }
                   />
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='requireApproval'>Require Approval for Projects</Label>
+                    <Label htmlFor='requireApproval'>
+                      Require Approval for Projects
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       All projects must be approved before starting
                     </p>
@@ -518,15 +582,20 @@ export function ProjectSettings() {
                   <Switch
                     id='requireApproval'
                     checked={permissions.requireApprovalForProjects}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, requireApprovalForProjects: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        requireApprovalForProjects: checked,
+                      }))
                     }
                   />
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='allowBudgetMod'>Allow Budget Modification</Label>
+                    <Label htmlFor='allowBudgetMod'>
+                      Allow Budget Modification
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Users can modify project budgets
                     </p>
@@ -534,15 +603,20 @@ export function ProjectSettings() {
                   <Switch
                     id='allowBudgetMod'
                     checked={permissions.allowBudgetModification}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, allowBudgetModification: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        allowBudgetModification: checked,
+                      }))
                     }
                   />
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='allowScheduleMod'>Allow Schedule Modification</Label>
+                    <Label htmlFor='allowScheduleMod'>
+                      Allow Schedule Modification
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Users can modify project schedules
                     </p>
@@ -550,15 +624,20 @@ export function ProjectSettings() {
                   <Switch
                     id='allowScheduleMod'
                     checked={permissions.allowScheduleModification}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, allowScheduleModification: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        allowScheduleModification: checked,
+                      }))
                     }
                   />
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <div>
-                    <Label htmlFor='allowResourceAlloc'>Allow Resource Allocation</Label>
+                    <Label htmlFor='allowResourceAlloc'>
+                      Allow Resource Allocation
+                    </Label>
                     <p className='text-sm text-muted-foreground'>
                       Users can allocate resources to projects
                     </p>
@@ -566,8 +645,11 @@ export function ProjectSettings() {
                   <Switch
                     id='allowResourceAlloc'
                     checked={permissions.allowResourceAllocation}
-                    onCheckedChange={(checked) =>
-                      setPermissions(prev => ({ ...prev, allowResourceAllocation: checked }))
+                    onCheckedChange={checked =>
+                      setPermissions(prev => ({
+                        ...prev,
+                        allowResourceAllocation: checked,
+                      }))
                     }
                   />
                 </div>
