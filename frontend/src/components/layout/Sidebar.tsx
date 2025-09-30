@@ -18,8 +18,8 @@ import {
   Users,
   Workflow,
 } from 'lucide-react';
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureFlag } from '../../app/store/featureFlags.store';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
 import { cn } from '../../lib/utils/cn';
@@ -140,7 +140,25 @@ const navigationItems = [
 export function Sidebar() {
   const { collapsed, toggle } = useSidebarStore();
   const location = useLocation();
+  const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  // Persist expansion state in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar-expanded-items');
+    if (saved) {
+      try {
+        setExpandedItems(new Set(JSON.parse(saved)));
+      } catch (e) {
+        // Ignore invalid JSON
+      }
+    }
+  }, []);
+
+  // Save expansion state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('sidebar-expanded-items', JSON.stringify([...expandedItems]));
+  }, [expandedItems]);
 
   const toggleExpanded = (itemId: string) => {
     setExpandedItems(prev => {
@@ -267,8 +285,8 @@ export function Sidebar() {
                     onClick={() => {
                       // Toggle expansion state
                       toggleExpanded(item.id);
-                      // Navigate to parent page
-                      window.location.href = item.href;
+                      // Navigate to parent page using React Router
+                      navigate(item.href);
                     }}
                     title={collapsed ? item.label : undefined}
                   >
