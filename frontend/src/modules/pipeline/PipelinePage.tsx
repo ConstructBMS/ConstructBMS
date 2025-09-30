@@ -1,5 +1,5 @@
-import SalesPipeline from './SalesPipeline';
+import SalesPipelineUnified from './SalesPipelineUnified';
 
 export default function PipelinePage() {
-  return <SalesPipeline />;
+  return <SalesPipelineUnified />;
 }
