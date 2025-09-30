@@ -256,33 +256,47 @@ export function Sidebar() {
           return (
             <div key={item.id}>
               <div className='flex items-center'>
-                <Link
-                  to={item.href}
-                  className={cn(
-                    'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1',
-                    collapsed && 'justify-center',
-                    isActive && 'bg-accent text-accent-foreground'
-                  )}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <item.icon className='h-5 w-5 flex-shrink-0' />
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-
-                {/* Expand/Collapse Button */}
-                {hasChildren && !collapsed && (
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => toggleExpanded(item.id)}
-                    className='h-8 w-8 ml-1'
-                  >
-                    {isExpanded ? (
-                      <ChevronUp className='h-4 w-4' />
-                    ) : (
-                      <ChevronDown className='h-4 w-4' />
+                {hasChildren ? (
+                  // Parent item with children - click to expand/collapse and navigate
+                  <div
+                    className={cn(
+                      'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1 cursor-pointer',
+                      collapsed && 'justify-center',
+                      isActive && 'bg-accent text-accent-foreground'
                     )}
-                  </Button>
+                    onClick={() => {
+                      toggleExpanded(item.id);
+                      // Navigate to parent route
+                      window.location.href = item.href;
+                    }}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <item.icon className='h-5 w-5 flex-shrink-0' />
+                    {!collapsed && <span>{item.label}</span>}
+                    {!collapsed && (
+                      <div className='ml-auto'>
+                        {isExpanded ? (
+                          <ChevronUp className='h-4 w-4' />
+                        ) : (
+                          <ChevronDown className='h-4 w-4' />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Regular item without children - click to navigate
+                  <Link
+                    to={item.href}
+                    className={cn(
+                      'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1',
+                      collapsed && 'justify-center',
+                      isActive && 'bg-accent text-accent-foreground'
+                    )}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <item.icon className='h-5 w-5 flex-shrink-0' />
+                    {!collapsed && <span>{item.label}</span>}
+                  </Link>
                 )}
               </div>
 
