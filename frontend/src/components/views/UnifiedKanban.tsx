@@ -90,24 +90,28 @@ export function UnifiedKanban({
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      const scrollThreshold = 80; // Distance from edge to start scrolling
-      const scrollSpeed = 30; // Pixels per scroll step - increased for faster scrolling
-      const scrollIntervalMs = 12; // ~83fps for smoother scrolling
+      const scrollThreshold = 60; // Distance from edge to start scrolling - reduced for earlier activation
+      const scrollSpeed = 50; // Pixels per scroll step - significantly increased for much faster scrolling
+      const scrollIntervalMs = 8; // ~125fps for very smooth and fast scrolling
 
       // Clear existing interval
       if (scrollInterval) {
         clearInterval(scrollInterval);
       }
 
-      // Check if mouse is near edges
+      // Check if mouse is near edges - more aggressive detection
       const isNearLeftEdge = e.clientX - rect.left < scrollThreshold;
       const isNearRightEdge = rect.right - e.clientX < scrollThreshold;
 
       if (isNearLeftEdge) {
+        // Immediate scroll for instant response
+        container.scrollLeft -= scrollSpeed * 2;
         scrollInterval = setInterval(() => {
           container.scrollLeft -= scrollSpeed;
         }, scrollIntervalMs);
       } else if (isNearRightEdge) {
+        // Immediate scroll for instant response
+        container.scrollLeft += scrollSpeed * 2;
         scrollInterval = setInterval(() => {
           container.scrollLeft += scrollSpeed;
         }, scrollIntervalMs);
@@ -152,11 +156,11 @@ export function UnifiedKanban({
             ? result.destination.index * 320 // Approximate column width
             : result.destination.index * 320;
 
-        // Smooth scroll to keep the drop zone visible
-        if (mouseX > rect.right - 100) {
-          container.scrollLeft += 20;
-        } else if (mouseX < rect.left + 100) {
-          container.scrollLeft -= 20;
+        // Smooth scroll to keep the drop zone visible - much faster scrolling
+        if (mouseX > rect.right - 80) {
+          container.scrollLeft += 40;
+        } else if (mouseX < rect.left + 80) {
+          container.scrollLeft -= 40;
         }
       }
     }
