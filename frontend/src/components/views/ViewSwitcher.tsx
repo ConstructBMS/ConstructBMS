@@ -1,4 +1,4 @@
-import { Grid3X3, Kanban, List, Timeline } from 'lucide-react';
+import { Clock, Grid3X3, Kanban, List } from 'lucide-react';
 import { Button } from '../ui';
 
 export type ViewMode = 'list' | 'grid' | 'kanban' | 'timeline';
@@ -27,7 +27,7 @@ const viewConfig = {
     description: 'Drag-and-drop board view',
   },
   timeline: {
-    icon: Timeline,
+    icon: Clock,
     label: 'Timeline',
     description: 'Chronological timeline view',
   },
@@ -41,7 +41,7 @@ export function ViewSwitcher({
 }: ViewSwitcherProps) {
   return (
     <div className={`flex items-center gap-1 ${className}`}>
-      {availableViews.map((view) => {
+      {availableViews.map(view => {
         const config = viewConfig[view];
         const Icon = config.icon;
         const isActive = currentView === view;
@@ -50,13 +50,13 @@ export function ViewSwitcher({
           <Button
             key={view}
             variant={isActive ? 'default' : 'ghost'}
-            size="sm"
+            size='sm'
             onClick={() => onViewChange(view)}
-            className="flex items-center gap-2"
+            className='flex items-center gap-2'
             title={config.description}
           >
-            <Icon className="h-4 w-4" />
-            <span className="hidden sm:inline">{config.label}</span>
+            <Icon className='h-4 w-4' />
+            <span className='hidden sm:inline'>{config.label}</span>
           </Button>
         );
       })}

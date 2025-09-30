@@ -1,6 +1,6 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { Edit2, Palette, Plus, Save, X } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui';
 import { Card, CardContent } from '../ui/card';
 import { Input } from '../ui/input';
@@ -90,9 +90,9 @@ export function UnifiedKanban({
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      const scrollThreshold = 100; // Distance from edge to start scrolling
-      const scrollSpeed = 20; // Pixels per scroll step
-      const scrollIntervalMs = 16; // ~60fps
+      const scrollThreshold = 80; // Distance from edge to start scrolling
+      const scrollSpeed = 30; // Pixels per scroll step - increased for faster scrolling
+      const scrollIntervalMs = 12; // ~83fps for smoother scrolling
 
       // Clear existing interval
       if (scrollInterval) {
@@ -137,14 +137,41 @@ export function UnifiedKanban({
     } else {
       setDragOverIndex(null);
     }
+
+    // Provide visual feedback during drag
+    if (
+      result.destination &&
+      result.destination.droppableId !== result.source.droppableId
+    ) {
+      // When dragging between columns, ensure smooth transition
+      const container = containerRef.current;
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        const mouseX =
+          result.destination.droppableId === result.source.droppableId
+            ? result.destination.index * 320 // Approximate column width
+            : result.destination.index * 320;
+
+        // Smooth scroll to keep the drop zone visible
+        if (mouseX > rect.right - 100) {
+          container.scrollLeft += 20;
+        } else if (mouseX < rect.left + 100) {
+          container.scrollLeft -= 20;
+        }
+      }
+    }
   };
 
   const handleDragEnd = (result: any) => {
+    // Always reset drag state
     setDraggedItem(null);
     setDragOverIndex(null);
     setIsDragging(false);
 
-    if (!result.destination) return;
+    // If no destination, just return (item stays in original position)
+    if (!result.destination) {
+      return;
+    }
 
     const { source, destination } = result;
 
@@ -169,8 +196,19 @@ export function UnifiedKanban({
         item.status !== destination.droppableId
     );
 
+    // Validate source index
+    if (source.index >= sourceItems.length) {
+      console.warn('Invalid source index:', source.index);
+      return;
+    }
+
     // Remove the item from source
     const [movedItem] = sourceItems.splice(source.index, 1);
+
+    if (!movedItem) {
+      console.warn('No item found at source index:', source.index);
+      return;
+    }
 
     // Update the item's status
     movedItem.status = destination.droppableId;
@@ -181,13 +219,21 @@ export function UnifiedKanban({
 
     // If moving within the same column
     if (source.droppableId === destination.droppableId) {
+      // Validate destination index for same column
+      const maxIndex = sourceItems.length;
+      const validDestinationIndex = Math.min(destination.index, maxIndex);
+
       // Insert at new position
-      sourceItems.splice(destination.index, 0, movedItem);
+      sourceItems.splice(validDestinationIndex, 0, movedItem);
       const newItems = [...otherItems, ...sourceItems];
       onItemsChange(newItems);
     } else {
       // Moving between different columns
-      destItems.splice(destination.index, 0, movedItem);
+      // Validate destination index for different column
+      const maxIndex = destItems.length;
+      const validDestinationIndex = Math.min(destination.index, maxIndex);
+
+      destItems.splice(validDestinationIndex, 0, movedItem);
       const newItems = [...otherItems, ...sourceItems, ...destItems];
       onItemsChange(newItems);
     }
@@ -278,162 +324,163 @@ export function UnifiedKanban({
   );
 
   return (
-    <DragDropContext
-      onDragStart={handleDragStart}
-      onDragUpdate={handleDragUpdate}
-      onDragEnd={handleDragEnd}
+    <div
+      ref={containerRef}
+      className={`overflow-x-auto pb-4 ${isDragging ? 'scroll-smooth' : ''}`}
+      style={{
+        scrollBehavior: isDragging ? 'smooth' : 'auto',
+      }}
     >
-      <div 
-        ref={containerRef}
-        className={`flex gap-6 overflow-x-auto pb-4 ${
-          isDragging ? 'scroll-smooth' : ''
-        }`}
-        style={{
-          scrollBehavior: isDragging ? 'smooth' : 'auto',
-        }}
+      <DragDropContext
+        onDragStart={handleDragStart}
+        onDragUpdate={handleDragUpdate}
+        onDragEnd={handleDragEnd}
       >
-        {columns
-          .sort((a, b) => a.order - b.order)
-          .map(column => {
-            const columnItems = getItemsByColumn(column.id);
-            const columnColor = getColumnColor(column.color);
+        <div className='flex gap-6 min-w-max'>
+          {columns
+            .sort((a, b) => a.order - b.order)
+            .map(column => {
+              const columnItems = getItemsByColumn(column.id);
+              const columnColor = getColumnColor(column.color);
 
-            return (
-              <div
-                key={column.id}
-                className='flex-1 min-w-80 rounded-lg border-2 border-dashed p-4'
-                style={{
-                  backgroundColor: columnColor.bg,
-                  borderColor: columnColor.border,
-                }}
-              >
-                {/* Column Header */}
-                <div className='flex items-center justify-between mb-4'>
-                  {editingColumn === column.id ? (
-                    <div className='flex-1 flex items-center gap-2'>
-                      <Input
-                        value={editingColumnName}
-                        onChange={e => setEditingColumnName(e.target.value)}
-                        className='flex-1'
-                        placeholder='Column name'
-                      />
-                      <div className='relative'>
-                        <Button
-                          size='sm'
-                          variant='outline'
-                          onClick={() =>
-                            setShowColorPicker(
-                              showColorPicker === column.id ? null : column.id
-                            )
-                          }
-                        >
-                          <Palette className='h-3 w-3' />
-                        </Button>
-                        {showColorPicker === column.id && (
-                          <div className='absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2'>
-                            {Object.entries(colorConfig).map(([key, color]) => (
-                              <button
-                                key={key}
-                                className='w-8 h-8 rounded border-2 hover:scale-110 transition-transform'
-                                style={{
-                                  backgroundColor: color.bg,
-                                  borderColor: color.border,
-                                }}
-                                onClick={() => {
-                                  setEditingColumnColor(key as KanbanColor);
-                                  setShowColorPicker(null);
-                                }}
-                                title={color.name}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <Button size='sm' onClick={saveColumnEdit}>
-                        <Save className='h-3 w-3' />
-                      </Button>
-                      <Button
-                        size='sm'
-                        variant='ghost'
-                        onClick={cancelColumnEdit}
-                      >
-                        <X className='h-3 w-3' />
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <h3 className='font-semibold text-lg text-gray-800'>
-                        {column.name}
-                      </h3>
-                      <div className='flex items-center gap-2'>
-                        <span className='bg-white px-2 py-1 rounded-full text-sm font-medium'>
-                          {columnItems.length}
-                        </span>
-                        {canEdit && (
+              return (
+                <div
+                  key={column.id}
+                  className='flex-shrink-0 w-80 rounded-lg border-2 border-dashed p-4'
+                  style={{
+                    backgroundColor: columnColor.bg,
+                    borderColor: columnColor.border,
+                  }}
+                >
+                  {/* Column Header */}
+                  <div className='flex items-center justify-between mb-4'>
+                    {editingColumn === column.id ? (
+                      <div className='flex-1 flex items-center gap-2'>
+                        <Input
+                          value={editingColumnName}
+                          onChange={e => setEditingColumnName(e.target.value)}
+                          className='flex-1'
+                          placeholder='Column name'
+                        />
+                        <div className='relative'>
                           <Button
                             size='sm'
-                            variant='ghost'
-                            onClick={() => startEditColumn(column)}
+                            variant='outline'
+                            onClick={() =>
+                              setShowColorPicker(
+                                showColorPicker === column.id ? null : column.id
+                              )
+                            }
                           >
-                            <Edit2 className='h-3 w-3' />
+                            <Palette className='h-3 w-3' />
                           </Button>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Add Item Button - Only on first column */}
-                {onAddItem && canEdit && column.order === 0 && (
-                  <Button
-                    variant='ghost'
-                    className='w-full mb-3 text-muted-foreground hover:text-foreground'
-                    onClick={() => onAddItem(column.id)}
-                  >
-                    <Plus className='h-4 w-4 mr-2' />
-                    Add Item
-                  </Button>
-                )}
-
-                {/* Column Items */}
-                <Droppable droppableId={column.id}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className={`min-h-96 relative ${
-                        snapshot.isDraggingOver ? 'bg-opacity-50' : ''
-                      }`}
-                    >
-                      {columnItems.map((item, index) => (
-                        <Draggable
-                          key={item.id}
-                          draggableId={item.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className={`transition-all duration-200 ${
-                                snapshot.isDragging
-                                  ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90'
-                                  : 'hover:shadow-md'
-                              }`}
-                              onClick={() => onItemClick?.(item)}
-                            >
-                              {renderItem
-                                ? renderItem(item)
-                                : defaultRenderItem(item)}
+                          {showColorPicker === column.id && (
+                            <div className='absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2'>
+                              {Object.entries(colorConfig).map(
+                                ([key, color]) => (
+                                  <button
+                                    key={key}
+                                    className='w-8 h-8 rounded border-2 hover:scale-110 transition-transform'
+                                    style={{
+                                      backgroundColor: color.bg,
+                                      borderColor: color.border,
+                                    }}
+                                    onClick={() => {
+                                      setEditingColumnColor(key as KanbanColor);
+                                      setShowColorPicker(null);
+                                    }}
+                                    title={color.name}
+                                  />
+                                )
+                              )}
                             </div>
                           )}
-                        </Draggable>
-                      ))}
+                        </div>
+                        <Button size='sm' onClick={saveColumnEdit}>
+                          <Save className='h-3 w-3' />
+                        </Button>
+                        <Button
+                          size='sm'
+                          variant='ghost'
+                          onClick={cancelColumnEdit}
+                        >
+                          <X className='h-3 w-3' />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <h3 className='font-semibold text-lg text-gray-800'>
+                          {column.name}
+                        </h3>
+                        <div className='flex items-center gap-2'>
+                          <span className='bg-white px-2 py-1 rounded-full text-sm font-medium'>
+                            {columnItems.length}
+                          </span>
+                          {canEdit && (
+                            <Button
+                              size='sm'
+                              variant='ghost'
+                              onClick={() => startEditColumn(column)}
+                            >
+                              <Edit2 className='h-3 w-3' />
+                            </Button>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Add Item Button - Only on first column */}
+                  {onAddItem && canEdit && column.order === 0 && (
+                    <Button
+                      variant='ghost'
+                      className='w-full mb-3 text-muted-foreground hover:text-foreground'
+                      onClick={() => onAddItem(column.id)}
+                    >
+                      <Plus className='h-4 w-4 mr-2' />
+                      Add Item
+                    </Button>
+                  )}
+
+                  {/* Column Items */}
+                  <Droppable droppableId={column.id}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className={`min-h-96 relative ${
+                          snapshot.isDraggingOver ? 'bg-opacity-50' : ''
+                        }`}
+                      >
+                        {columnItems.map((item, index) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                className={`transition-all duration-200 ${
+                                  snapshot.isDragging
+                                    ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90'
+                                    : 'hover:shadow-md'
+                                }`}
+                                onClick={() => onItemClick?.(item)}
+                              >
+                                {renderItem
+                                  ? renderItem(item)
+                                  : defaultRenderItem(item)}
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
 
                         {/* Drop Zone Indicator - Show at exact position */}
                         {snapshot.isDraggingOver && dragOverIndex !== null && (
-                          <div className='relative'>
+                          <>
                             {columnItems.map((item, index) => {
                               if (index === dragOverIndex) {
                                 return (
@@ -457,17 +504,18 @@ export function UnifiedKanban({
                                 </div>
                               </div>
                             )}
-                          </div>
+                          </>
                         )}
 
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </div>
-            );
-          })}
-      </div>
-    </DragDropContext>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              );
+            })}
+        </div>
+      </DragDropContext>
+    </div>
   );
 }

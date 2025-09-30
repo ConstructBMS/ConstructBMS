@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react';
 
 export function Page({ title, breadcrumbs, actions, children }: PageProps) {
   return (
-    <div className='flex-1 space-y-6 p-6'>
+    <div className='flex-1 space-y-6 p-6 overflow-auto h-full'>
       {/* Header */}
       <div className='space-y-2'>
         {/* Breadcrumbs */}

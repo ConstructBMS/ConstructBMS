@@ -98,7 +98,7 @@ function AppLayout() {
         </div>
 
         {/* Main Content */}
-        <main className='col-start-2 row-start-2 overflow-auto'>
+        <main className='col-start-2 row-start-2'>
           <Outlet />
         </main>
       </div>
