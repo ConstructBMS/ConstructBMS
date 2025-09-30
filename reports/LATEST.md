@@ -1,4 +1,4 @@
-## Build summary — e19059fcb479d619662a8d2cc8225db23d5886be
+## Build summary — e73c4f0da4b148462a4058cc2267e41d4843b438
 
 **Branch:** main **Author:** Napwood Construction Ltd <napwoodconstruction@users.noreply.github.com>
 **Commit message:** Merge branch 'main' of https://github.com/ConstructBMS/ConstructBMS
@@ -7,11 +7,12 @@
 
 - M reports/LATEST.md
 - A reports/b6da8f44acf0da9ed942533db185ca851d6a6aa0.md
+- A reports/e19059fcb479d619662a8d2cc8225db23d5886be.md
 
 ### Shortstat
 
-2 files changed, 41 insertions(+), 10 deletions(-)
+3 files changed, 62 insertions(+), 25 deletions(-)
 
 ### By top-level directory
 
--       2 reports
+-       3 reports
