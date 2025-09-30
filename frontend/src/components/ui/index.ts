@@ -1,4 +1,4 @@
-export { Avatar, AvatarImage, AvatarFallback } from './avatar';
+export { Avatar, AvatarFallback, AvatarImage } from './avatar';
 export { Badge } from './badge';
 export { Button } from './button';
 export {
@@ -19,20 +19,20 @@ export {
 } from './dialog';
 export {
   DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuCheckboxItem,
-  DropdownMenuRadioItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuGroup,
-  DropdownMenuPortal,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup,
+  DropdownMenuTrigger,
 } from './dropdown-menu';
 export { Input } from './input';
 export { Label } from './label';
@@ -44,6 +44,8 @@ export {
   SelectTrigger,
   SelectValue,
 } from './select';
+export { Separator } from './separator';
+export { Slider } from './slider';
 export { Switch } from './switch';
 export {
   Table,
@@ -56,6 +58,4 @@ export {
 } from './table';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
-export { Separator } from './separator';
-export { Slider } from './slider';
 export { Toggle, toggleVariants } from './toggle';

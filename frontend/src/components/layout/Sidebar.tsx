@@ -149,7 +149,7 @@ export function Sidebar() {
     if (saved) {
       try {
         setExpandedItems(new Set(JSON.parse(saved)));
-      } catch (e) {
+      } catch {
         // Ignore invalid JSON
       }
     }

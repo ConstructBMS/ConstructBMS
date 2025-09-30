@@ -52,7 +52,7 @@ export function ProjectSettings() {
   });
 
   // Project Templates
-  const [projectTemplates, setProjectTemplates] = useState([
+  const [projectTemplates] = useState([
     {
       id: '1',
       name: 'Construction Project',
@@ -108,7 +108,7 @@ export function ProjectSettings() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Project settings saved:', projectSettings);
-    } catch (err) {
+    } catch {
       setError('Failed to save project settings');
     } finally {
       setIsSaving(false);

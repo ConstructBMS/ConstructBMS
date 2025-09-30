@@ -1,30 +1,32 @@
 import {
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  BarChart3,
   Calendar,
-  CheckCircle,
+  CheckCircle2,
   Clock,
   DollarSign,
   FolderOpen,
-  Plus,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  BarChart3,
-  PieChart,
-  Activity,
-  Target,
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
   Pause,
+  PieChart,
   Play,
+  Plus,
+  Target,
+  Users,
+  XCircle,
 } from 'lucide-react';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import { Button } from '../../components/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Progress } from '../../components/ui/progress';
 
 // Mock data for demonstration
@@ -131,7 +133,8 @@ const mockRecentActivity = [
   {
     id: '2',
     type: 'milestone_completed',
-    message: 'Milestone "Foundation Complete" achieved for Shopping Center Expansion',
+    message:
+      'Milestone "Foundation Complete" achieved for Shopping Center Expansion',
     timestamp: '4 hours ago',
     user: 'Lisa Brown',
   },
@@ -184,7 +187,6 @@ const mockUpcomingMilestones = [
 
 export function ProjectsDashboard() {
   const navigate = useNavigate();
-  const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -257,10 +259,6 @@ export function ProjectsDashboard() {
     return Math.round((mockMetrics.totalSpent / mockMetrics.totalBudget) * 100);
   };
 
-  const getOverdueProjects = () => {
-    return mockProjects.filter(project => project.overdue);
-  };
-
   const getHighRiskProjects = () => {
     return mockProjects.filter(project => project.riskLevel === 'high');
   };
@@ -271,17 +269,24 @@ export function ProjectsDashboard() {
         {/* Header Actions */}
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-bold tracking-tight'>Projects Dashboard</h1>
+            <h1 className='text-3xl font-bold tracking-tight'>
+              Projects Dashboard
+            </h1>
             <p className='text-muted-foreground'>
               Overview of all projects, metrics, and key performance indicators
             </p>
           </div>
           <div className='flex items-center space-x-2'>
-            <Button variant='outline' onClick={() => navigate('/projects/management')}>
+            <Button
+              variant='outline'
+              onClick={() => navigate('/projects/management')}
+            >
               <FolderOpen className='h-4 w-4 mr-2' />
               Manage Projects
             </Button>
-            <Button onClick={() => navigate('/projects/management?action=create')}>
+            <Button
+              onClick={() => navigate('/projects/management?action=create')}
+            >
               <Plus className='h-4 w-4 mr-2' />
               New Project
             </Button>
@@ -292,11 +297,15 @@ export function ProjectsDashboard() {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Total Projects</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Total Projects
+              </CardTitle>
               <FolderOpen className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>{mockMetrics.totalProjects}</div>
+              <div className='text-2xl font-bold'>
+                {mockMetrics.totalProjects}
+              </div>
               <p className='text-xs text-muted-foreground'>
                 <span className='text-green-600'>+2</span> from last month
               </p>
@@ -305,11 +314,15 @@ export function ProjectsDashboard() {
 
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Active Projects</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Active Projects
+              </CardTitle>
               <Activity className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>{mockMetrics.activeProjects}</div>
+              <div className='text-2xl font-bold'>
+                {mockMetrics.activeProjects}
+              </div>
               <p className='text-xs text-muted-foreground'>
                 <span className='text-blue-600'>+1</span> from last week
               </p>
@@ -318,11 +331,15 @@ export function ProjectsDashboard() {
 
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Total Budget</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Total Budget
+              </CardTitle>
               <DollarSign className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>{formatCurrency(mockMetrics.totalBudget)}</div>
+              <div className='text-2xl font-bold'>
+                {formatCurrency(mockMetrics.totalBudget)}
+              </div>
               <p className='text-xs text-muted-foreground'>
                 <span className='text-green-600'>+5.2%</span> from last month
               </p>
@@ -331,11 +348,15 @@ export function ProjectsDashboard() {
 
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Budget Utilized</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Budget Utilized
+              </CardTitle>
               <BarChart3 className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>{calculateBudgetUtilization()}%</div>
+              <div className='text-2xl font-bold'>
+                {calculateBudgetUtilization()}%
+              </div>
               <Progress value={calculateBudgetUtilization()} className='mt-2' />
             </CardContent>
           </Card>
@@ -357,21 +378,27 @@ export function ProjectsDashboard() {
                     <CheckCircle2 className='h-4 w-4 text-green-500' />
                     <span className='text-sm'>Completed</span>
                   </div>
-                  <span className='font-semibold'>{mockMetrics.completedProjects}</span>
+                  <span className='font-semibold'>
+                    {mockMetrics.completedProjects}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <Play className='h-4 w-4 text-blue-500' />
                     <span className='text-sm'>In Progress</span>
                   </div>
-                  <span className='font-semibold'>{mockMetrics.activeProjects}</span>
+                  <span className='font-semibold'>
+                    {mockMetrics.activeProjects}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <Pause className='h-4 w-4 text-yellow-500' />
                     <span className='text-sm'>On Hold</span>
                   </div>
-                  <span className='font-semibold'>{mockMetrics.onHoldProjects}</span>
+                  <span className='font-semibold'>
+                    {mockMetrics.onHoldProjects}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
@@ -398,21 +425,27 @@ export function ProjectsDashboard() {
                     <AlertTriangle className='h-4 w-4 text-red-500' />
                     <span className='text-sm'>High Risk Projects</span>
                   </div>
-                  <span className='font-semibold text-red-600'>{getHighRiskProjects().length}</span>
+                  <span className='font-semibold text-red-600'>
+                    {getHighRiskProjects().length}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <XCircle className='h-4 w-4 text-orange-500' />
                     <span className='text-sm'>Overdue Projects</span>
                   </div>
-                  <span className='font-semibold text-orange-600'>{mockMetrics.overdueProjects}</span>
+                  <span className='font-semibold text-orange-600'>
+                    {mockMetrics.overdueProjects}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
                     <Target className='h-4 w-4 text-blue-500' />
                     <span className='text-sm'>Average Progress</span>
                   </div>
-                  <span className='font-semibold'>{mockMetrics.averageProgress}%</span>
+                  <span className='font-semibold'>
+                    {mockMetrics.averageProgress}%
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -429,7 +462,9 @@ export function ProjectsDashboard() {
               <div className='space-y-4'>
                 <div className='flex items-center justify-between'>
                   <span className='text-sm'>Total Team Members</span>
-                  <span className='font-semibold'>{mockMetrics.teamMembers}</span>
+                  <span className='font-semibold'>
+                    {mockMetrics.teamMembers}
+                  </span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <span className='text-sm'>Active Clients</span>
@@ -438,7 +473,9 @@ export function ProjectsDashboard() {
                 <div className='flex items-center justify-between'>
                   <span className='text-sm'>Projects per Team Member</span>
                   <span className='font-semibold'>
-                    {Math.round(mockMetrics.totalProjects / mockMetrics.teamMembers)}
+                    {Math.round(
+                      mockMetrics.totalProjects / mockMetrics.teamMembers
+                    )}
                   </span>
                 </div>
               </div>
@@ -459,22 +496,31 @@ export function ProjectsDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              {mockProjects.slice(0, 5).map((project) => (
-                <div key={project.id} className='flex items-center justify-between p-4 border rounded-lg'>
+              {mockProjects.slice(0, 5).map(project => (
+                <div
+                  key={project.id}
+                  className='flex items-center justify-between p-4 border rounded-lg'
+                >
                   <div className='flex items-center gap-4'>
                     {getStatusIcon(project.status)}
                     <div>
                       <h3 className='font-semibold'>{project.name}</h3>
-                      <p className='text-sm text-muted-foreground'>{project.client}</p>
+                      <p className='text-sm text-muted-foreground'>
+                        {project.client}
+                      </p>
                     </div>
                   </div>
                   <div className='flex items-center gap-4'>
                     <div className='text-right'>
-                      <div className='text-sm font-medium'>{project.progress}%</div>
+                      <div className='text-sm font-medium'>
+                        {project.progress}%
+                      </div>
                       <Progress value={project.progress} className='w-20' />
                     </div>
                     <div className='text-right'>
-                      <div className='text-sm font-medium'>{formatCurrency(project.budget)}</div>
+                      <div className='text-sm font-medium'>
+                        {formatCurrency(project.budget)}
+                      </div>
                       <div className='text-xs text-muted-foreground'>
                         {formatCurrency(project.spent)} spent
                       </div>
@@ -490,7 +536,9 @@ export function ProjectsDashboard() {
                         <Badge variant='destructive'>Overdue</Badge>
                       )}
                     </div>
-                    <div className={`text-sm ${getRiskColor(project.riskLevel)}`}>
+                    <div
+                      className={`text-sm ${getRiskColor(project.riskLevel)}`}
+                    >
                       Risk: {project.riskLevel}
                     </div>
                   </div>
@@ -513,20 +561,29 @@ export function ProjectsDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              {mockUpcomingMilestones.map((milestone) => (
-                <div key={milestone.id} className='flex items-center justify-between p-4 border rounded-lg'>
+              {mockUpcomingMilestones.map(milestone => (
+                <div
+                  key={milestone.id}
+                  className='flex items-center justify-between p-4 border rounded-lg'
+                >
                   <div>
                     <h3 className='font-semibold'>{milestone.milestone}</h3>
-                    <p className='text-sm text-muted-foreground'>{milestone.project}</p>
+                    <p className='text-sm text-muted-foreground'>
+                      {milestone.project}
+                    </p>
                   </div>
                   <div className='flex items-center gap-4'>
                     <div className='text-right'>
-                      <div className='text-sm font-medium'>{milestone.dueDate}</div>
-                      <div className='text-xs text-muted-foreground'>Due Date</div>
+                      <div className='text-sm font-medium'>
+                        {milestone.dueDate}
+                      </div>
+                      <div className='text-xs text-muted-foreground'>
+                        Due Date
+                      </div>
                     </div>
-                    <Badge 
+                    <Badge
                       className={
-                        milestone.status === 'on_track' 
+                        milestone.status === 'on_track'
                           ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                       }
@@ -553,8 +610,11 @@ export function ProjectsDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              {mockRecentActivity.map((activity) => (
-                <div key={activity.id} className='flex items-center gap-4 p-4 border rounded-lg'>
+              {mockRecentActivity.map(activity => (
+                <div
+                  key={activity.id}
+                  className='flex items-center gap-4 p-4 border rounded-lg'
+                >
                   <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
                   <div className='flex-1'>
                     <p className='text-sm'>{activity.message}</p>
