@@ -75,8 +75,21 @@ export function UnifiedKanban({
   const [editingColumnName, setEditingColumnName] = useState('');
   const [editingColumnColor, setEditingColumnColor] = useState<KanbanColor>('blue');
   const [showColorPicker, setShowColorPicker] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<KanbanItem | null>(null);
+
+  const handleDragStart = (result: any) => {
+    const draggedItem = items.find(item => item.id === result.draggableId);
+    setDraggedItem(draggedItem || null);
+  };
+
+  const handleDragUpdate = (result: any) => {
+    // This provides visual feedback during dragging
+    // The drop zone indicator is handled automatically by @hello-pangea/dnd
+  };
 
   const handleDragEnd = (result: any) => {
+    setDraggedItem(null);
+    
     if (!result.destination) return;
 
     const { source, destination } = result;
@@ -89,16 +102,35 @@ export function UnifiedKanban({
       return;
     }
 
-    const newItems = Array.from(items);
-    const [movedItem] = newItems.splice(source.index, 1);
+    // Get items for source and destination columns
+    const sourceItems = items.filter(item => item.status === source.droppableId);
+    const destItems = items.filter(item => item.status === destination.droppableId);
+    const otherItems = items.filter(item => 
+      item.status !== source.droppableId && item.status !== destination.droppableId
+    );
+
+    // Remove the item from source
+    const [movedItem] = sourceItems.splice(source.index, 1);
+    
+    // Update the item's status
     movedItem.status = destination.droppableId;
     movedItem.metadata = {
       ...movedItem.metadata,
       updatedAt: new Date().toISOString(),
     };
 
-    newItems.splice(destination.index, 0, movedItem);
-    onItemsChange(newItems);
+    // If moving within the same column
+    if (source.droppableId === destination.droppableId) {
+      // Insert at new position
+      sourceItems.splice(destination.index, 0, movedItem);
+      const newItems = [...otherItems, ...sourceItems];
+      onItemsChange(newItems);
+    } else {
+      // Moving between different columns
+      destItems.splice(destination.index, 0, movedItem);
+      const newItems = [...otherItems, ...sourceItems, ...destItems];
+      onItemsChange(newItems);
+    }
   };
 
   const startEditColumn = (column: KanbanColumn) => {
@@ -184,7 +216,11 @@ export function UnifiedKanban({
   );
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext 
+      onDragStart={handleDragStart}
+      onDragUpdate={handleDragUpdate}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex gap-6 overflow-x-auto pb-4">
         {columns
           .sort((a, b) => a.order - b.order)
@@ -287,7 +323,7 @@ export function UnifiedKanban({
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`min-h-96 ${
+                      className={`min-h-96 relative ${
                         snapshot.isDraggingOver ? 'bg-opacity-50' : ''
                       }`}
                     >
@@ -298,8 +334,10 @@ export function UnifiedKanban({
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`${
-                                snapshot.isDragging ? 'rotate-2 shadow-lg' : ''
+                              className={`transition-all duration-200 ${
+                                snapshot.isDragging 
+                                  ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90' 
+                                  : 'hover:shadow-md'
                               }`}
                               onClick={() => onItemClick?.(item)}
                             >
@@ -308,6 +346,18 @@ export function UnifiedKanban({
                           )}
                         </Draggable>
                       ))}
+                      
+                      {/* Drop Zone Indicator */}
+                      {snapshot.isDraggingOver && (
+                        <div className="absolute inset-0 pointer-events-none z-10">
+                          <div className="w-full h-24 border-2 border-dashed border-white bg-white/30 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                            <div className="bg-white/90 px-3 py-1 rounded-full">
+                              <span className="text-gray-800 font-medium text-sm">Drop here</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
                       {provided.placeholder}
                     </div>
                   )}
