@@ -258,41 +258,23 @@ export function Sidebar() {
               <div className='flex items-center'>
                 {hasChildren ? (
                   // Parent item with children - click to expand/collapse only
-                  <div className='flex items-center'>
-                    <div
-                      className={cn(
-                        'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1 cursor-pointer',
-                        collapsed && 'justify-center',
-                        isActive && 'bg-accent text-accent-foreground'
-                      )}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleExpanded(item.id);
-                      }}
-                      title={collapsed ? item.label : undefined}
-                    >
-                      <item.icon className='h-5 w-5 flex-shrink-0' />
-                      {!collapsed && <span>{item.label}</span>}
-                    </div>
-                    
-                    {/* Navigation button for parent route */}
-                    {!collapsed && (
-                      <Link
-                        to={item.href}
-                        className={cn(
-                          'flex items-center justify-center w-8 h-8 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ml-1',
-                          isActive && 'bg-accent text-accent-foreground'
-                        )}
-                        title={`Go to ${item.label}`}
-                      >
-                        <item.icon className='h-4 w-4' />
-                      </Link>
+                  <div
+                    className={cn(
+                      'flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground flex-1 cursor-pointer',
+                      collapsed && 'justify-center',
+                      isActive && 'bg-accent text-accent-foreground'
                     )}
-                    
-                    {/* Expand/Collapse indicator */}
+                    onClick={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleExpanded(item.id);
+                    }}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    <item.icon className='h-5 w-5 flex-shrink-0' />
+                    {!collapsed && <span>{item.label}</span>}
                     {!collapsed && (
-                      <div className='ml-1'>
+                      <div className='ml-auto'>
                         {isExpanded ? (
                           <ChevronUp className='h-4 w-4' />
                         ) : (
