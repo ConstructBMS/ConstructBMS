@@ -85,16 +85,16 @@ const navigationItems = [
   },
   {
     id: 'projects',
-    label: 'Projects',
-    icon: FolderOpen,
-    href: '/projects',
+    label: 'Projects Dashboard',
+    icon: LayoutDashboard,
+    href: '/projects/dashboard',
     flag: 'projects' as const,
     children: [
       {
-        id: 'projects-list',
-        label: 'Projects',
+        id: 'projects-management',
+        label: 'Project Management',
         icon: FolderOpen,
-        href: '/projects',
+        href: '/projects/management',
         flag: 'projects' as const,
       },
       {
@@ -287,10 +287,10 @@ export function Sidebar() {
                     )}
                     onClick={() => {
                       const isCurrentlyExpanded = expandedItems.has(item.id);
-                      
+
                       // Toggle expansion state
                       toggleExpanded(item.id);
-                      
+
                       // Only navigate to parent page if we're expanding (not collapsing)
                       if (!isCurrentlyExpanded) {
                         navigate(item.href);

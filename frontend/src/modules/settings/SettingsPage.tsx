@@ -8,6 +8,7 @@ import {
   Shield,
   Tag,
   Users,
+  FolderOpen,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Page } from '../../components/layout/Page';
@@ -23,6 +24,7 @@ import {
   Permissions,
   UsersAndRoles,
 } from './sections';
+import { ProjectSettings } from './sections/ProjectSettings';
 import { Tags } from './sections/Tags';
 
 export default function SettingsPage() {
@@ -41,6 +43,12 @@ export default function SettingsPage() {
       label: 'CRM',
       icon: Users,
       component: CRM,
+    },
+    {
+      id: 'project-settings',
+      label: 'Project Settings',
+      icon: FolderOpen,
+      component: ProjectSettings,
     },
     {
       id: 'footer',
