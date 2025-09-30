@@ -79,24 +79,27 @@ export function UnifiedKanban({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced drag-to-scroll functionality
+  // Enhanced drag-to-scroll functionality with requestAnimationFrame for maximum speed
   useEffect(() => {
     if (!isDragging || !containerRef.current) return;
 
     const container = containerRef.current;
+    let animationFrameId: number;
     let scrollInterval: NodeJS.Timeout;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      const scrollThreshold = 60; // Distance from edge to start scrolling - reduced for earlier activation
-      const scrollSpeed = 50; // Pixels per scroll step - significantly increased for much faster scrolling
-      const scrollIntervalMs = 8; // ~125fps for very smooth and fast scrolling
+      const scrollThreshold = 40; // Distance from edge to start scrolling - much earlier activation
+      const scrollSpeed = 80; // Pixels per scroll step - much faster scrolling
 
-      // Clear existing interval
+      // Clear existing intervals and animation frames
       if (scrollInterval) {
         clearInterval(scrollInterval);
+      }
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
 
       // Check if mouse is near edges - more aggressive detection
@@ -104,17 +107,23 @@ export function UnifiedKanban({
       const isNearRightEdge = rect.right - e.clientX < scrollThreshold;
 
       if (isNearLeftEdge) {
-        // Immediate scroll for instant response
-        container.scrollLeft -= scrollSpeed * 2;
-        scrollInterval = setInterval(() => {
+        // Immediate scroll for instant response - much faster
+        container.scrollLeft -= scrollSpeed * 4;
+        // Use requestAnimationFrame for maximum smoothness and speed
+        const scrollLeft = () => {
           container.scrollLeft -= scrollSpeed;
-        }, scrollIntervalMs);
+          animationFrameId = requestAnimationFrame(scrollLeft);
+        };
+        animationFrameId = requestAnimationFrame(scrollLeft);
       } else if (isNearRightEdge) {
-        // Immediate scroll for instant response
-        container.scrollLeft += scrollSpeed * 2;
-        scrollInterval = setInterval(() => {
+        // Immediate scroll for instant response - much faster
+        container.scrollLeft += scrollSpeed * 4;
+        // Use requestAnimationFrame for maximum smoothness and speed
+        const scrollRight = () => {
           container.scrollLeft += scrollSpeed;
-        }, scrollIntervalMs);
+          animationFrameId = requestAnimationFrame(scrollRight);
+        };
+        animationFrameId = requestAnimationFrame(scrollRight);
       }
     };
 
@@ -124,6 +133,9 @@ export function UnifiedKanban({
       document.removeEventListener('mousemove', handleMouseMove);
       if (scrollInterval) {
         clearInterval(scrollInterval);
+      }
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
     };
   }, [isDragging]);
@@ -157,10 +169,10 @@ export function UnifiedKanban({
             : result.destination.index * 320;
 
         // Smooth scroll to keep the drop zone visible - much faster scrolling
-        if (mouseX > rect.right - 80) {
-          container.scrollLeft += 40;
-        } else if (mouseX < rect.left + 80) {
-          container.scrollLeft -= 40;
+        if (mouseX > rect.right - 60) {
+          container.scrollLeft += 80;
+        } else if (mouseX < rect.left + 60) {
+          container.scrollLeft -= 80;
         }
       }
     }
