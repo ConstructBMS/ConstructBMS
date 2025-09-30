@@ -631,3 +631,5 @@ export function ProjectsDashboard() {
     </Page>
   );
 }
+
+export default ProjectsDashboard;
