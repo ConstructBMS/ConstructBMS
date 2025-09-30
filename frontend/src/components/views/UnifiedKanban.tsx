@@ -111,7 +111,11 @@ export function UnifiedKanban({
         container.scrollLeft -= scrollSpeed * 6;
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollLeft = () => {
-          container.scrollLeft -= scrollSpeed;
+          // Use scrollTo with behavior: 'auto' to bypass CSS smooth scrolling
+          container.scrollTo({
+            left: container.scrollLeft - scrollSpeed,
+            behavior: 'auto'
+          });
           container.scrollLeft -= scrollSpeed; // Double scroll for extra speed
           animationFrameId = requestAnimationFrame(scrollLeft);
         };
@@ -121,7 +125,11 @@ export function UnifiedKanban({
         container.scrollLeft += scrollSpeed * 6;
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollRight = () => {
-          container.scrollLeft += scrollSpeed;
+          // Use scrollTo with behavior: 'auto' to bypass CSS smooth scrolling
+          container.scrollTo({
+            left: container.scrollLeft + scrollSpeed,
+            behavior: 'auto'
+          });
           container.scrollLeft += scrollSpeed; // Double scroll for extra speed
           animationFrameId = requestAnimationFrame(scrollRight);
         };
@@ -172,9 +180,15 @@ export function UnifiedKanban({
 
         // Smooth scroll to keep the drop zone visible - extremely fast scrolling
         if (mouseX > rect.right - 50) {
-          container.scrollLeft += 150;
+          container.scrollTo({
+            left: container.scrollLeft + 150,
+            behavior: 'auto'
+          });
         } else if (mouseX < rect.left + 50) {
-          container.scrollLeft -= 150;
+          container.scrollTo({
+            left: container.scrollLeft - 150,
+            behavior: 'auto'
+          });
         }
       }
     }
@@ -346,7 +360,9 @@ export function UnifiedKanban({
       ref={containerRef}
       className={`overflow-x-auto pb-4 ${isDragging ? 'scroll-smooth' : ''}`}
       style={{
-        scrollBehavior: isDragging ? 'smooth' : 'auto',
+        scrollBehavior: 'auto !important', // Force auto to override CSS smooth behavior
+        scrollSnapType: 'none', // Disable scroll snapping
+        scrollPadding: '0', // Remove scroll padding
       }}
     >
       <DragDropContext
