@@ -1,5 +1,5 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
-import { Edit2, Palette, Plus, Save, X } from 'lucide-react';
+import { Edit2, Palette, Plus, Save, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui';
 import { Card, CardContent } from '../ui/card';
@@ -77,7 +77,31 @@ export function UnifiedKanban({
   const [draggedItem, setDraggedItem] = useState<KanbanItem | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll functions
+  const scrollLeft = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft -= 320; // Scroll by one column width
+    }
+  };
+
+  const scrollRight = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollLeft += 320; // Scroll by one column width
+    }
+  };
+
+  // Update scroll button states
+  const updateScrollButtons = () => {
+    if (containerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+    }
+  };
 
   // Enhanced drag-to-scroll functionality with requestAnimationFrame for maximum speed
   useEffect(() => {
@@ -141,6 +165,41 @@ export function UnifiedKanban({
       }
     };
   }, [isDragging]);
+
+  // Handle scroll events to update button states
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      updateScrollButtons();
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    updateScrollButtons(); // Initial check
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' && canScrollLeft) {
+        e.preventDefault();
+        scrollLeft();
+      } else if (e.key === 'ArrowRight' && canScrollRight) {
+        e.preventDefault();
+        scrollRight();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [canScrollLeft, canScrollRight]);
 
   const handleDragStart = (result: any) => {
     const draggedItem = items.find(item => item.id === result.draggableId);
@@ -342,24 +401,51 @@ export function UnifiedKanban({
   );
 
   return (
-    <div
-      ref={containerRef}
-      className={`overflow-x-auto pb-4`}
-      style={{
-        scrollBehavior: 'auto !important', // Force auto to override CSS smooth behavior
-        scrollSnapType: 'none', // Disable scroll snapping
-        scrollPadding: '0', // Remove scroll padding
-        // Override all possible CSS smooth scrolling
-        scrollMargin: '0',
-        scrollMarginTop: '0',
-        scrollMarginBottom: '0',
-        scrollMarginLeft: '0',
-        scrollMarginRight: '0',
-        // Force immediate scrolling without any transitions
-        transition: 'none !important',
-        animation: 'none !important',
-      }}
-    >
+    <div className="relative">
+      {/* Scroll Buttons */}
+      <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={scrollLeft}
+          disabled={!canScrollLeft}
+          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+      </div>
+      
+      <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={scrollRight}
+          disabled={!canScrollRight}
+          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Kanban Container */}
+      <div
+        ref={containerRef}
+        className={`overflow-x-auto pb-4`}
+        style={{
+          scrollBehavior: 'auto !important', // Force auto to override CSS smooth behavior
+          scrollSnapType: 'none', // Disable scroll snapping
+          scrollPadding: '0', // Remove scroll padding
+          // Override all possible CSS smooth scrolling
+          scrollMargin: '0',
+          scrollMarginTop: '0',
+          scrollMarginBottom: '0',
+          scrollMarginLeft: '0',
+          scrollMarginRight: '0',
+          // Force immediate scrolling without any transitions
+          transition: 'none !important',
+          animation: 'none !important',
+        }}
+      >
       <DragDropContext
         onDragStart={handleDragStart}
         onDragUpdate={handleDragUpdate}
@@ -545,6 +631,7 @@ export function UnifiedKanban({
             })}
         </div>
       </DragDropContext>
+      </div>
     </div>
   );
 }
