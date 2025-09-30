@@ -18,7 +18,7 @@ import {
   Users,
   Workflow,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureFlag } from '../../app/store/featureFlags.store';
 import { useSidebarStore } from '../../app/store/ui/sidebar.store';
@@ -157,7 +157,10 @@ export function Sidebar() {
 
   // Save expansion state to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('sidebar-expanded-items', JSON.stringify([...expandedItems]));
+    localStorage.setItem(
+      'sidebar-expanded-items',
+      JSON.stringify([...expandedItems])
+    );
   }, [expandedItems]);
 
   const toggleExpanded = (itemId: string) => {
@@ -283,10 +286,15 @@ export function Sidebar() {
                       isActive && 'bg-accent text-accent-foreground'
                     )}
                     onClick={() => {
+                      const isCurrentlyExpanded = expandedItems.has(item.id);
+                      
                       // Toggle expansion state
                       toggleExpanded(item.id);
-                      // Navigate to parent page using React Router
-                      navigate(item.href);
+                      
+                      // Only navigate to parent page if we're expanding (not collapsing)
+                      if (!isCurrentlyExpanded) {
+                        navigate(item.href);
+                      }
                     }}
                     title={collapsed ? item.label : undefined}
                   >
