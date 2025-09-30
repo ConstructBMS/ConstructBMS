@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-28] - Fixed Drag-Drop Issues and Nested Scroll Container Warnings
+
+### Fixed
+
+- **Nested Scroll Container Warnings**: Resolved @hello-pangea/dnd warnings about unsupported nested scroll containers
+  - Removed `overflow-auto` from main content area in AppShell to prevent nested scroll containers
+  - Added proper scrolling to Page component with `overflow-auto` and `h-full` classes
+  - Drag and drop now works without console warnings about nested scroll containers
+  - Improved overall scroll behavior across the application
+
+- **Timeline Import Error**: Fixed lucide-react import error in ViewSwitcher component
+  - Replaced non-existent `Timeline` icon with `Clock` icon from lucide-react
+  - ViewSwitcher component now loads without import errors
+  - Timeline view functionality preserved with Clock icon
+
+- **Kanban Drag-Drop Improvements**: Enhanced drag and drop functionality across all Kanban boards
+  - Fixed card bouncing back issues when dragging between columns
+  - Added comprehensive validation for drag indices to prevent invalid operations
+  - Improved drop zone indicator positioning to show exact drop position
+  - Enhanced drag-to-scroll speed and responsiveness (increased from 20px to 30px per step)
+  - Reduced scroll interval from 16ms to 12ms (~83fps) for smoother scrolling
+  - Added error handling and logging for debugging drag operations
+
+- **HMR (Hot Module Reload) Errors**: Fixed module reload errors in UnifiedKanban component
+  - Resolved syntax and import issues causing HMR failures
+  - Component now reloads properly during development
+  - Improved code formatting and consistency
+
+### Technical Improvements
+
+- **Drag-Drop Validation**: Added comprehensive validation for drag operations
+  - Source index validation to prevent out-of-bounds errors
+  - Destination index validation with bounds checking
+  - Improved state management in drag handlers
+  - Better error logging for debugging drag issues
+
+- **Scroll Performance**: Enhanced scroll behavior for better user experience
+  - Increased scroll speed for more responsive dragging
+  - Reduced scroll threshold from 100px to 80px for earlier activation
+  - Added continuous scrolling with proper cleanup of intervals
+  - Improved scroll behavior during drag operations
+
 ## [2025-01-28] - Fixed Theme System and Authentication Issues
 
 ### Fixed
