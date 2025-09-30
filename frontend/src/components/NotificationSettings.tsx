@@ -33,8 +33,7 @@ import {
 import { Switch } from './ui/switch';
 
 export function NotificationSettings() {
-  const { settings, permissions, updateSettings, getSettings, getPermission } =
-    useNotificationsStore();
+  const { updateSettings, getSettings } = useNotificationsStore();
 
   const [activeCategory, setActiveCategory] = useState('chat');
   const [isSaving, setIsSaving] = useState(false);

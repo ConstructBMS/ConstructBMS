@@ -145,7 +145,7 @@ export function CreateDashboardDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState('simple');
   const [selectedWidgets, setSelectedWidgets] = useState<string[]>([]);
-  const [customLayout, setCustomLayout] = useState<any[]>([]);
+  const [, setCustomLayout] = useState<Record<string, unknown>[]>([]);
 
   const addDashboard = useDashboardStore(state => state.addDashboard);
 

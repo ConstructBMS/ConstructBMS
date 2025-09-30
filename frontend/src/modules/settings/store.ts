@@ -62,7 +62,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
-    (set, get) => ({
+    set => ({
       // Initial State
       crmSettings: defaultCRMSettings,
       isLoading: false,

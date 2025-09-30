@@ -84,9 +84,8 @@ class PerformanceMonitor {
     });
 
     // Track route changes
-    let routeStartTime = 0;
     window.addEventListener('popstate', () => {
-      routeStartTime = performance.now();
+      performance.now();
     });
 
     // Track API response times
@@ -195,7 +194,6 @@ class PerformanceMonitor {
 
   public generateReport(): string {
     const metrics = this.getMetrics();
-    const components = this.getComponentMetrics();
     const slowComponents = this.getSlowComponents();
 
     const report = `

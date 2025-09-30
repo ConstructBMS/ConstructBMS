@@ -28,7 +28,6 @@ import { useSettingsStore } from '../store';
 export function CRM() {
   const {
     crmSettings,
-    isLoading,
     isSaving,
     error,
     updateCRMSettings,

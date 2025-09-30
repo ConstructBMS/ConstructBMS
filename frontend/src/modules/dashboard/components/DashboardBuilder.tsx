@@ -242,7 +242,7 @@ export function DashboardBuilder({
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState('project-manager');
   const [selectedWidgets, setSelectedWidgets] = useState<string[]>([]);
-  const [customLayout, setCustomLayout] = useState<any[]>([]);
+  const [, setCustomLayout] = useState<Record<string, unknown>[]>([]);
   const [dashboardName, setDashboardName] = useState('');
   const [dashboardDescription, setDashboardDescription] = useState('');
 

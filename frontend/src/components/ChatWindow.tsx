@@ -24,10 +24,7 @@ interface ChatWindowProps {
 export function ChatWindow({ chat }: ChatWindowProps) {
   const {
     messages,
-    users,
     sendMessage,
-    addUserToChat,
-    removeUserFromChat,
     pinChat,
     muteChat,
     archiveChat,
@@ -37,7 +34,7 @@ export function ChatWindow({ chat }: ChatWindowProps) {
   } = useChatStore();
 
   const [showMenu, setShowMenu] = useState(false);
-  const [showAddUsers, setShowAddUsers] = useState(false);
+  const [, setShowAddUsers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatMessages = messages[chat.id] || [];
   const chatUsers = getChatUsers(chat.id);

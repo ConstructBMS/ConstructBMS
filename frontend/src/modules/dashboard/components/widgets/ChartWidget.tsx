@@ -30,20 +30,6 @@ interface BarChartData {
   outflow: number;
 }
 
-interface MultiBarChartData {
-  metric: string;
-  efficiency: number;
-  quality: number;
-  delivery: number;
-}
-
-interface MultiLineChartData {
-  month: string;
-  revenue: number;
-  projects: number;
-  clients: number;
-}
-
 export function ChartWidget({ widget }: ChartWidgetProps) {
   const { data } = widget;
 

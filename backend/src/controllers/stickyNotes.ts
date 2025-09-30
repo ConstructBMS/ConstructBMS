@@ -5,7 +5,19 @@ export interface StickyNote {
   id: string;
   title: string;
   content: string;
-  color: 'yellow' | 'pink' | 'blue' | 'gray' | 'green' | 'orange' | 'purple' | 'red' | 'teal' | 'indigo' | 'lime' | 'rose';
+  color:
+    | 'yellow'
+    | 'pink'
+    | 'blue'
+    | 'gray'
+    | 'green'
+    | 'orange'
+    | 'purple'
+    | 'red'
+    | 'teal'
+    | 'indigo'
+    | 'lime'
+    | 'rose';
   position_x: number;
   position_y: number;
   width: number;
@@ -24,7 +36,8 @@ export const getStickyNotes = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
       .from('notes')
-      .select(`
+      .select(
+        `
         id,
         title,
         content,
@@ -46,7 +59,8 @@ export const getStickyNotes = async (req: Request, res: Response) => {
           type,
           url
         )
-      `)
+      `
+      )
       .eq('author_id', req.user?.id)
       .order('created_at', { ascending: false });
 
@@ -75,7 +89,7 @@ export const createStickyNote = async (req: Request, res: Response) => {
       category,
       tags = [],
       project_id,
-      opportunity_id
+      opportunity_id,
     } = req.body;
 
     const { data, error } = await supabase
@@ -92,7 +106,7 @@ export const createStickyNote = async (req: Request, res: Response) => {
         tags,
         project_id,
         opportunity_id,
-        author_id: req.user?.id
+        author_id: req.user?.id,
       })
       .select()
       .single();
@@ -123,7 +137,7 @@ export const updateStickyNote = async (req: Request, res: Response) => {
       category,
       tags,
       project_id,
-      opportunity_id
+      opportunity_id,
     } = req.body;
 
     const { data, error } = await supabase
@@ -140,7 +154,7 @@ export const updateStickyNote = async (req: Request, res: Response) => {
         tags,
         project_id,
         opportunity_id,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('author_id', req.user?.id)
@@ -196,7 +210,7 @@ export const addAttachment = async (req: Request, res: Response) => {
         note_id: id,
         name,
         type,
-        url
+        url,
       })
       .select()
       .single();

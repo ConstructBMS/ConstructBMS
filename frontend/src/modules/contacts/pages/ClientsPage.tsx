@@ -80,7 +80,7 @@ export default function ClientsPage() {
     };
   }, [clientContacts, clientCompanies]);
 
-  const handleEdit = (client: any) => {
+  const handleEdit = (client: Record<string, unknown>) => {
     console.log('Edit client:', client);
   };
 

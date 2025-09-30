@@ -2,7 +2,7 @@ import { supabase, TABLES } from '../../services/supabase';
 import type { Project, ProjectFormData } from '../types/projects';
 
 export class ProjectsDAL {
-  static async listProjects(orgId: string): Promise<Project[]> {
+  static async listProjects(): Promise<Project[]> {
     // For now, we'll fetch all projects since org_id column may not exist yet
     // TODO: Update this once the org_id migration is applied
     const { data, error } = await supabase

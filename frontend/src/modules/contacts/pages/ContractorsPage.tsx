@@ -5,12 +5,10 @@ import {
   Clock,
   HardHat,
   Mail,
-  MapPin,
   Phone,
   Plus,
   Search,
   Shield,
-  Star,
   Wrench,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -83,7 +81,7 @@ export default function ContractorsPage() {
     };
   }, [contractorContacts, contractorCompanies]);
 
-  const handleEdit = (contractor: any) => {
+  const handleEdit = (contractor: Record<string, unknown>) => {
     console.log('Edit contractor:', contractor);
   };
 

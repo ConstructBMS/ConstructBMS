@@ -83,7 +83,7 @@ const colorOptions = [
 export function Tags() {
   const [tags, setTags] = useState<TagItem[]>(defaultTags);
   const [isCreating, setIsCreating] = useState(false);
-  const [editingTag, setEditingTag] = useState<string | null>(null);
+  const [, setEditingTag] = useState<string | null>(null);
   const [newTag, setNewTag] = useState({
     name: '',
     color: '#3b82f6',
@@ -103,13 +103,6 @@ export function Tags() {
       setNewTag({ name: '', color: '#3b82f6', description: '' });
       setIsCreating(false);
     }
-  };
-
-  const handleEditTag = (id: string, updates: Partial<TagItem>) => {
-    setTags(prev =>
-      prev.map(tag => (tag.id === id ? { ...tag, ...updates } : tag))
-    );
-    setEditingTag(null);
   };
 
   const handleDeleteTag = (id: string) => {

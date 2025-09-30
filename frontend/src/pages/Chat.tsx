@@ -121,7 +121,7 @@ export function Chat() {
       <UserSelector
         isOpen={showUserSelector}
         onClose={() => setShowUserSelector(false)}
-        onUsersSelected={userIds => {
+        onUsersSelected={() => {
           // Create new chat logic here
           setShowUserSelector(false);
         }}

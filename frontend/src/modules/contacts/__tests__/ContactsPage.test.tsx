@@ -42,8 +42,8 @@ vi.mock('../store', () => ({
     updateCompany: vi.fn(),
     removeContact: vi.fn(),
     removeCompany: vi.fn(),
-    searchContacts: vi.fn(query => []),
-    searchCompanies: vi.fn(query => []),
+    searchContacts: vi.fn(() => []),
+    searchCompanies: vi.fn(() => []),
   }),
 }));
 

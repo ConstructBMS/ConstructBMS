@@ -1,15 +1,10 @@
 import {
   ArrowLeft,
-  Award,
-  BookOpen,
   Brain,
   Briefcase,
-  Calendar,
   CheckCircle,
-  GraduationCap,
   Lightbulb,
   Mail,
-  MapPin,
   Phone,
   Plus,
   Search,
@@ -86,7 +81,7 @@ export default function ConsultantsPage() {
     };
   }, [consultantContacts, consultantCompanies]);
 
-  const handleEdit = (consultant: any) => {
+  const handleEdit = (consultant: Record<string, unknown>) => {
     console.log('Edit consultant:', consultant);
   };
 

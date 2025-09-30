@@ -34,17 +34,6 @@ export function StatsWidget({ widget }: StatsWidgetProps) {
     }
   };
 
-  const getTrendColor = (trend?: string) => {
-    switch (trend) {
-      case 'up':
-        return 'text-green-600';
-      case 'down':
-        return 'text-red-600';
-      default:
-        return 'text-muted-foreground';
-    }
-  };
-
   return (
     <Card className='overflow-hidden h-full flex flex-col'>
       <CardHeader>

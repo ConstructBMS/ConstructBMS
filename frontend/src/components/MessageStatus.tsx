@@ -50,9 +50,10 @@ export function MessageStatus({ message, isOwn }: MessageStatusProps) {
         return 'Sent';
       case 'delivered':
         return 'Delivered';
-      case 'read':
+      case 'read': {
         const readCount = Object.keys(message.readBy).length;
         return `Read by ${readCount} ${readCount === 1 ? 'person' : 'people'}`;
+      }
       default:
         return '';
     }

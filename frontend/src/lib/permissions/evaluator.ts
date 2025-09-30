@@ -415,7 +415,7 @@ export class PermissionEvaluator {
     // Use a safer encoding method
     try {
       return `perm:${btoa(contextKey)}:${resource}:${action}`;
-    } catch (error) {
+    } catch {
       // Fallback to a simpler key if btoa fails
       return `perm:${context.userId}:${context.scope}:${context.scopeId || 'global'}:${resource}:${action}`;
     }

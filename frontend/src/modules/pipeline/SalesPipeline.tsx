@@ -146,7 +146,7 @@ export default function SalesPipeline() {
   );
   const [showNewClientModal, setShowNewClientModal] = useState(false);
   const [showNewOpportunityModal, setShowNewOpportunityModal] = useState(false);
-  const [selectedStage, setSelectedStage] = useState<string>('lead');
+  const [selectedStage] = useState<string>('lead');
 
   // New opportunity form state
   const [newOpportunity, setNewOpportunity] = useState({
@@ -178,15 +178,15 @@ export default function SalesPipeline() {
     notes: '',
   });
 
-  const handleDragUpdate = (result: any) => {
+  const handleDragUpdate = () => {
     // This provides visual feedback during dragging
     // The drop zone indicator is handled automatically by @hello-pangea/dnd
   };
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: Record<string, unknown>) => {
     if (!result.destination) return;
 
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
 
     // If dropped in the same position, do nothing
     if (

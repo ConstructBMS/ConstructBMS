@@ -44,19 +44,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '../../../components/ui';
-import type {
-  CustomRole,
-  EnterpriseUser,
-} from '../../../lib/types/enterprise-permissions';
+import type { EnterpriseUser } from '../../../lib/types/enterprise-permissions';
 
 export function UsersAndRoles() {
   const {
     roles,
     users,
-    selectedRole,
-    selectedUser,
-    isCreatingRole,
-    isCreatingUser,
     getRoleSummary,
     getUserSummary,
     setSelectedRole,
@@ -67,9 +60,6 @@ export function UsersAndRoles() {
     createUser,
     updateUser,
     deleteUser,
-    assignRole,
-    removeRole,
-    addCustomPermission,
     removeCustomPermission,
   } = useEnterprisePermissionsStore();
 
@@ -173,22 +163,6 @@ export function UsersAndRoles() {
     }
   };
 
-  const handleAssignRole = async (userId: string, roleId: string) => {
-    try {
-      await assignRole(userId, roleId);
-    } catch (error) {
-      console.error('Failed to assign role:', error);
-    }
-  };
-
-  const handleRemoveRole = async (userId: string, roleId: string) => {
-    try {
-      await removeRole(userId, roleId);
-    } catch (error) {
-      console.error('Failed to remove role:', error);
-    }
-  };
-
   const handleToggleUserStatus = async (userId: string, isActive: boolean) => {
     try {
       await updateUser(userId, { isActive });
@@ -197,25 +171,8 @@ export function UsersAndRoles() {
     }
   };
 
-  const handleToggleUserVerification = async (
-    userId: string,
-    isVerified: boolean
-  ) => {
-    try {
-      await updateUser(userId, { isVerified });
-    } catch (error) {
-      console.error('Failed to update user verification:', error);
-    }
-  };
-
   const getUserInitials = (user: EnterpriseUser) => {
     return `${user.firstName[0]}${user.lastName[0]}`.toUpperCase();
-  };
-
-  const getUserRoles = (user: EnterpriseUser) => {
-    return [user.primaryRole, ...user.additionalRoles]
-      .map(roleId => roles.find(role => role.id === roleId))
-      .filter(Boolean) as CustomRole[];
   };
 
   return (
@@ -376,7 +333,6 @@ export function UsersAndRoles() {
 
           <div className='space-y-2'>
             {filteredUsers.map(user => {
-              const userRoles = getUserRoles(user);
               const primaryRole = roles.find(
                 role => role.id === user.primaryRole
               );

@@ -69,10 +69,6 @@ class StickyNotesService {
 
   async getStickyNotes(): Promise<StickyNote[]> {
     try {
-      // Check if we're in demo mode
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
       // Always use demo mode for now
       const isDemo = true;
 
@@ -117,10 +113,6 @@ class StickyNotesService {
       } = await supabase.auth.getUser();
 
       if (authError || !user) {
-        // Check if we're in demo mode
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
         // Always use demo mode when no authenticated user
         const isDemo = true;
 
@@ -129,7 +121,7 @@ class StickyNotesService {
           const demoUserId = '550e8400-e29b-41d4-a716-446655440000';
 
           // Use notes table with demo user
-          let { data, error } = await supabase
+          const { data, error } = await supabase
             .from('notes')
             .insert({
               title: noteData.title,
@@ -153,7 +145,7 @@ class StickyNotesService {
       }
 
       // Use notes table with sticky note columns
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('notes')
         .insert({
           title: noteData.title,
@@ -181,10 +173,6 @@ class StickyNotesService {
     noteData: UpdateStickyNoteData
   ): Promise<StickyNote> {
     try {
-      // Check if we're in demo mode
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
       // Always use demo mode for now
       const isDemo = true;
 
@@ -211,7 +199,7 @@ class StickyNotesService {
         query = query.eq('author_id', '550e8400-e29b-41d4-a716-446655440000');
       }
 
-      let { data, error } = await query.select().single();
+      const { data, error } = await query.select().single();
 
       // Handle any errors
       if (error) {

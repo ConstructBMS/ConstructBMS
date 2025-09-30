@@ -25,7 +25,6 @@ export function NotificationsModal({
   onClose,
 }: NotificationsModalProps) {
   const {
-    notifications,
     selectedCategory,
     searchQuery,
     filterUnread,
@@ -37,7 +36,6 @@ export function NotificationsModal({
     markAllAsRead,
     getFilteredNotifications,
     getUnreadCount,
-    getNotificationStats,
   } = useNotificationsStore();
 
   const [activeTab, setActiveTab] = useState<'notifications' | 'settings'>(
@@ -47,7 +45,6 @@ export function NotificationsModal({
 
   const filteredNotifications = getFilteredNotifications();
   const unreadCount = getUnreadCount();
-  const stats = getNotificationStats();
 
   const categories = [
     { value: 'all', label: 'All Categories' },

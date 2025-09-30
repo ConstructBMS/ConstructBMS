@@ -84,7 +84,10 @@ interface ChatStore {
 
   // Message Management
   sendMessage: (
-    message: Omit<Message, 'id' | 'timestamp' | 'reactions' | 'isRead' | 'status' | 'readBy'>
+    message: Omit<
+      Message,
+      'id' | 'timestamp' | 'reactions' | 'isRead' | 'status' | 'readBy'
+    >
   ) => void;
   editMessage: (messageId: string, content: string) => void;
   deleteMessage: (messageId: string) => void;
@@ -92,7 +95,10 @@ interface ChatStore {
   removeReaction: (messageId: string, userId: string) => void;
   markAsRead: (chatId: string, messageId: string) => void;
   markChatAsRead: (chatId: string) => void;
-  updateMessageStatus: (messageId: string, status: 'sent' | 'delivered' | 'read') => void;
+  updateMessageStatus: (
+    messageId: string,
+    status: 'sent' | 'delivered' | 'read'
+  ) => void;
   markMessageAsRead: (messageId: string, userId: string) => void;
 
   // User Management
@@ -180,7 +186,10 @@ export const useChatStore = create<ChatStore>()(
             reactions: {},
             isRead: true,
             status: 'read',
-            readBy: { 'user-2': new Date(Date.now() - 86400000 * 6), 'user-3': new Date(Date.now() - 86400000 * 5) },
+            readBy: {
+              'user-2': new Date(Date.now() - 86400000 * 6),
+              'user-3': new Date(Date.now() - 86400000 * 5),
+            },
           },
           {
             id: 'msg-2',
@@ -193,7 +202,10 @@ export const useChatStore = create<ChatStore>()(
             reactions: { 'user-1': '👍' },
             isRead: true,
             status: 'read',
-            readBy: { 'user-1': new Date(Date.now() - 86400000 * 5), 'user-3': new Date(Date.now() - 86400000 * 4) },
+            readBy: {
+              'user-1': new Date(Date.now() - 86400000 * 5),
+              'user-3': new Date(Date.now() - 86400000 * 4),
+            },
           },
           {
             id: 'msg-3',
@@ -233,7 +245,11 @@ export const useChatStore = create<ChatStore>()(
             reactions: { 'user-2': '👋', 'user-3': '👋' },
             isRead: true,
             status: 'read',
-            readBy: { 'user-2': new Date(Date.now() - 14000000), 'user-3': new Date(Date.now() - 13800000), 'user-4': new Date(Date.now() - 13600000) },
+            readBy: {
+              'user-2': new Date(Date.now() - 14000000),
+              'user-3': new Date(Date.now() - 13800000),
+              'user-4': new Date(Date.now() - 13600000),
+            },
           },
         ],
       },
@@ -462,9 +478,7 @@ export const useChatStore = create<ChatStore>()(
             Object.entries(state.messages).map(([chatId, messages]) => [
               chatId,
               messages.map(msg =>
-                msg.id === messageId
-                  ? { ...msg, status }
-                  : msg
+                msg.id === messageId ? { ...msg, status } : msg
               ),
             ])
           ),

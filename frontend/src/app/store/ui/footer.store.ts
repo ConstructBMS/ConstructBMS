@@ -87,7 +87,7 @@ const defaultConfig: FooterConfig = {
 
 export const useFooterStore = create<FooterState>()(
   persist(
-    (set, get) => ({
+    set => ({
       config: defaultConfig,
       setConfig: config => set({ config }),
       updateConfig: updates =>

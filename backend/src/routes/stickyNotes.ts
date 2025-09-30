@@ -6,7 +6,7 @@ import {
   updateStickyNote,
   deleteStickyNote,
   addAttachment,
-  removeAttachment
+  removeAttachment,
 } from '../controllers/stickyNotes';
 
 const router = Router();

@@ -75,6 +75,7 @@ supabase db reset --linked
 Once the migration is complete:
 
 1. **Restart your development servers:**
+
    ```bash
    npm run dev:restart
    ```
@@ -89,14 +90,17 @@ Once the migration is complete:
 ## 🚨 **Troubleshooting**
 
 ### **If you get column errors:**
+
 - The migration hasn't been applied yet
 - Run the SQL in Supabase Dashboard
 
 ### **If you get relationship errors:**
+
 - The `note_attachments` table doesn't exist
 - Make sure all SQL statements were executed
 
 ### **If notes don't persist:**
+
 - Check that the migration was successful
 - Verify the columns exist in the `notes` table
 - Check the browser console for errors
@@ -104,6 +108,7 @@ Once the migration is complete:
 ## ✨ **Expected Results**
 
 After migration, you should see:
+
 - ✅ Sticky notes persist across browser refreshes
 - ✅ Color changes are saved
 - ✅ Inline editing works perfectly

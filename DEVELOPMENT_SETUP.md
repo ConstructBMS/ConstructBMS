@@ -1,6 +1,7 @@
 # 🛠️ ConstructBMS Development Setup Guide
 
-This guide will help you set up essential development tools to reduce debugging time and improve productivity.
+This guide will help you set up essential development tools to reduce debugging time and improve
+productivity.
 
 ## 🚀 Essential Tools to Install
 
@@ -97,34 +98,41 @@ npm run clean                 # Clean all caches
 ## 🔧 Common Issues & Solutions
 
 ### **Hot Reload Issues**
+
 - Use `npm run dev:restart` to fix Fast Refresh problems
 - The helper script automatically cleans caches and restarts
 
 ### **Port Conflicts**
+
 - Use `npm run dev:check` to see what's using ports 5173/5174
 - Use `npm run dev:kill` to kill conflicting processes
 
 ### **TypeScript Errors**
+
 - Run `npm run typecheck` to see all TypeScript issues
 - Use `npm run quality` to fix formatting and linting issues
 
 ### **Dependency Issues**
+
 - Use `./scripts/dev-helper.sh deps` to check and reinstall dependencies
 - Use `npm run clean` to clear all caches
 
 ## 🎯 Recommended Workflow
 
 1. **Start Development:**
+
    ```bash
    npm run dev:restart
    ```
 
 2. **Before Committing:**
+
    ```bash
    npm run quality
    ```
 
 3. **When Things Break:**
+
    ```bash
    npm run dev:restart
    ```
@@ -139,6 +147,7 @@ npm run clean                 # Clean all caches
 ## 🚀 Additional Tools (Optional)
 
 ### **Neovim** (if you want terminal-based editing)
+
 ```bash
 # Install via Homebrew
 brew install neovim
@@ -152,6 +161,7 @@ brew install neovim
 ```
 
 ### **Additional CLI Tools**
+
 ```bash
 # Better Git experience
 brew install git-delta
@@ -204,13 +214,13 @@ With this setup, you'll have:
 
 ## 🆘 Quick Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| Port in use | `npm run dev:kill` |
-| Hot reload broken | `npm run dev:restart` |
-| TypeScript errors | `npm run typecheck` |
-| Linting errors | `npm run lint` |
-| Cache issues | `npm run clean` |
+| Problem              | Solution                       |
+| -------------------- | ------------------------------ |
+| Port in use          | `npm run dev:kill`             |
+| Hot reload broken    | `npm run dev:restart`          |
+| TypeScript errors    | `npm run typecheck`            |
+| Linting errors       | `npm run lint`                 |
+| Cache issues         | `npm run clean`                |
 | Dependencies missing | `./scripts/dev-helper.sh deps` |
 
 This setup should significantly reduce the time spent on debugging and troubleshooting! 🚀

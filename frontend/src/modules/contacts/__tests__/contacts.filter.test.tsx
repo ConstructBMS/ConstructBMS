@@ -26,7 +26,7 @@ vi.mock('../../../components/layout/Page', () => ({
 
 // Mock the ContactsList and ContactsGrid components
 vi.mock('../ContactsList', () => ({
-  ContactsList: ({ contacts }: { contacts: any[] }) => (
+  ContactsList: ({ contacts }: { contacts: Record<string, unknown>[] }) => (
     <div data-testid='contacts-list'>
       {contacts.map(contact => (
         <div key={contact.id} data-testid={`contact-${contact.id}`}>
@@ -38,7 +38,7 @@ vi.mock('../ContactsList', () => ({
 }));
 
 vi.mock('../ContactsGrid', () => ({
-  ContactsGrid: ({ contacts }: { contacts: any[] }) => (
+  ContactsGrid: ({ contacts }: { contacts: Record<string, unknown>[] }) => (
     <div data-testid='contacts-grid'>
       {contacts.map(contact => (
         <div key={contact.id} data-testid={`contact-${contact.id}`}>
@@ -49,7 +49,7 @@ vi.mock('../ContactsGrid', () => ({
   ),
 }));
 
-const mockUseContactsStore = useContactsStore as any;
+const mockUseContactsStore = useContactsStore as Record<string, unknown>;
 
 const createTestQueryClient = () =>
   new QueryClient({
@@ -106,7 +106,7 @@ describe('Contacts Filter Tests', () => {
       viewMode: 'list' as const,
       contacts: mockContacts,
       companies: mockCompanies,
-    } as any);
+    } as Record<string, unknown>);
   });
 
   describe('ClientsPage', () => {
@@ -137,7 +137,7 @@ describe('Contacts Filter Tests', () => {
         viewMode: 'list' as const,
         contacts: [],
         companies: [],
-      } as any);
+      } as Record<string, unknown>);
 
       renderWithProviders(<ClientsPage />);
 
@@ -206,7 +206,7 @@ describe('Contacts Filter Tests', () => {
         viewMode: 'list' as const,
         contacts: mockContacts,
         companies: mockCompanies,
-      } as any);
+      } as Record<string, unknown>);
 
       renderWithProviders(<ClientsPage />);
 
@@ -219,7 +219,7 @@ describe('Contacts Filter Tests', () => {
         viewMode: 'grid' as const,
         contacts: mockContacts,
         companies: mockCompanies,
-      } as any);
+      } as Record<string, unknown>);
 
       renderWithProviders(<ClientsPage />);
 

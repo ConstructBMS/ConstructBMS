@@ -69,27 +69,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const [editingNote, setEditingNote] = useState<string | null>(null);
 
-  // Helper function to clean and format HTML content for display
-  // Updated to fix truncateHtmlContent reference error
-  const formatContentForDisplay = (html: string, maxLength: number = 300) => {
-    if (!html) return '<p>No content</p>';
-
-    // Clean up the HTML and ensure proper formatting
-    let cleanHtml = html
-      .replace(/<br\s*\/?>/gi, '<br>')
-      .replace(/<p><\/p>/gi, '')
-      .replace(/<p>\s*<\/p>/gi, '')
-      .trim();
-
-    // If content is empty after cleaning, add a placeholder
-    if (!cleanHtml || cleanHtml.trim() === '') {
-      return '<p>No content</p>';
-    }
-
-    // Return the full content - let CSS handle the height limits
-    return cleanHtml;
-  };
-
   // Helper function to clean HTML content for contentEditable - keep HTML but clean it
   const cleanHtmlForQuill = (html: string) => {
     if (!html) return '';
@@ -99,7 +78,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     tempDiv.innerHTML = html;
 
     // Clean up the HTML but keep formatting
-    let cleanHtml = tempDiv.innerHTML
+    const cleanHtml = tempDiv.innerHTML
       .replace(/<p><\/p>/g, '') // Remove empty paragraphs
       .replace(/<p>\s*<\/p>/g, '') // Remove empty paragraphs with whitespace
       .replace(/<br\s*\/?>/g, '<br>') // Normalize line breaks
@@ -108,23 +87,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
     return cleanHtml;
   };
 
-  // Simple markdown to HTML converter for display
-  const markdownToHtml = (text: string) => {
-    if (!text) return '';
-
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>') // H1
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>') // H2
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>') // H3
-      .replace(/^- (.*$)/gim, '<li>$1</li>') // Bullet lists
-      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>') // Numbered lists
-      .replace(/\n/g, '<br>') // Line breaks
-      .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>') // Wrap lists
-      .replace(/<\/ul><br><ul>/g, '') // Remove extra ul tags
-      .replace(/<ul><li>(.*?)<\/li><\/ul>/g, '<ul><li>$1</li></ul>'); // Clean up lists
-  };
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'full'>('grid');
@@ -144,10 +106,9 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
   const [inlineEditOpportunityId, setInlineEditOpportunityId] =
     useState<string>('');
   const [newTag, setNewTag] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState<StickyNote[]>([]);
-  const [draggedNoteId, setDraggedNoteId] = useState<string | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [, setDraggedNoteId] = useState<string | null>(null);
+  const [, setDragOverIndex] = useState<number | null>(null);
   const contentEditableRef = useRef<HTMLDivElement>(null);
 
   // Set content when inline editing starts (only when note changes, not content)
@@ -323,10 +284,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       // Ensure content is properly formatted for ReactQuill
       setEditContent(cleanHtmlForQuill(note.content || ''));
     }
-  };
-
-  const handleNoteDoubleClick = (noteId: string) => {
-    startInlineEdit(noteId);
   };
 
   // Color configuration with expanded options
@@ -619,19 +576,6 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
       )
     );
   };
-
-  // Convert notes to grid layout format
-  const gridLayout = filteredNotes.map(note => ({
-    i: note.id.toString(),
-    x: note.x || 0,
-    y: note.y || 0,
-    w: note.w || 2,
-    h: note.h || 2,
-    minW: 1,
-    minH: 1,
-    maxW: 4,
-    maxH: 4,
-  }));
 
   if (!isOpen) return null;
 
@@ -1593,7 +1537,7 @@ export function StickyNotesModal({ isOpen, onClose }: StickyNotesModalProps) {
                               index={index}
                               isDragDisabled={inlineEditingNote === note.id}
                             >
-                              {(provided, snapshot) => (
+                              {provided => (
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}

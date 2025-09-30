@@ -724,36 +724,41 @@ export const useEnterprisePermissionsStore =
         },
 
         // Permission Rule Actions (simplified for now)
-        createPermissionRule: async (_ruleData: PermissionRuleForm) => {
+        createPermissionRule: async (ruleData: PermissionRuleForm) => {
           // TODO: Implement permission rule creation
+          console.log('Creating permission rule:', ruleData);
           throw new Error('Not implemented yet');
         },
 
         updatePermissionRule: async (
-          _ruleId: string,
-          _updates: Partial<PermissionRule>
+          ruleId: string,
+          updates: Partial<PermissionRule>
         ) => {
           // TODO: Implement permission rule update
+          console.log('Updating permission rule:', ruleId, updates);
           throw new Error('Not implemented yet');
         },
 
-        deletePermissionRule: async (_ruleId: string) => {
+        deletePermissionRule: async (ruleId: string) => {
           // TODO: Implement permission rule deletion
+          console.log('Deleting permission rule:', ruleId);
           throw new Error('Not implemented yet');
         },
 
-        enableRule: async (_ruleId: string) => {
+        enableRule: async (ruleId: string) => {
           // TODO: Implement rule enabling
+          console.log('Enabling rule:', ruleId);
           throw new Error('Not implemented yet');
         },
 
-        disableRule: async (_ruleId: string) => {
+        disableRule: async (ruleId: string) => {
           // TODO: Implement rule disabling
+          console.log('Disabling rule:', ruleId);
           throw new Error('Not implemented yet');
         },
 
-        getRule: (_ruleId: string) => {
-          return get().permissionRules.find(rule => rule.id === _ruleId);
+        getRule: (ruleId: string) => {
+          return get().permissionRules.find(rule => rule.id === ruleId);
         },
 
         getRulesByResource: (resource: string) => {
@@ -764,18 +769,24 @@ export const useEnterprisePermissionsStore =
 
         // Resource Permission Actions (simplified for now)
         setResourcePermission: async (
-          _resourceId: string,
-          _permission: any
+          resourceId: string,
+          permission: Record<string, unknown>
         ) => {
           // TODO: Implement resource permission setting
+          console.log('Setting resource permission:', resourceId, permission);
           throw new Error('Not implemented yet');
         },
 
         removeResourcePermission: async (
-          _resourceId: string,
-          _permissionId: string
+          resourceId: string,
+          permissionId: string
         ) => {
           // TODO: Implement resource permission removal
+          console.log(
+            'Removing resource permission:',
+            resourceId,
+            permissionId
+          );
           throw new Error('Not implemented yet');
         },
 
@@ -786,29 +797,36 @@ export const useEnterprisePermissionsStore =
         },
 
         // File/Folder Permission Actions (simplified for now)
-        setFilePermission: async (_fileId: string, _permission: any) => {
-          // TODO: Implement file permission setting
-          throw new Error('Not implemented yet');
-        },
-
-        removeFilePermission: async (
-          _fileId: string,
-          _permissionId: string
+        setFilePermission: async (
+          fileId: string,
+          permission: Record<string, unknown>
         ) => {
-          // TODO: Implement file permission removal
+          // TODO: Implement file permission setting
+          console.log('Setting file permission:', fileId, permission);
           throw new Error('Not implemented yet');
         },
 
-        setFolderPermission: async (_folderId: string, _permission: any) => {
+        removeFilePermission: async (fileId: string, permissionId: string) => {
+          // TODO: Implement file permission removal
+          console.log('Removing file permission:', fileId, permissionId);
+          throw new Error('Not implemented yet');
+        },
+
+        setFolderPermission: async (
+          folderId: string,
+          permission: Record<string, unknown>
+        ) => {
           // TODO: Implement folder permission setting
+          console.log('Setting folder permission:', folderId, permission);
           throw new Error('Not implemented yet');
         },
 
         removeFolderPermission: async (
-          _folderId: string,
-          _permissionId: string
+          folderId: string,
+          permissionId: string
         ) => {
           // TODO: Implement folder permission removal
+          console.log('Removing folder permission:', folderId, permissionId);
           throw new Error('Not implemented yet');
         },
 
@@ -822,47 +840,59 @@ export const useEnterprisePermissionsStore =
 
         // Permission Matrix Actions (simplified for now)
         createPermissionMatrix: async (
-          _matrixData: Partial<PermissionMatrix>
+          matrixData: Partial<PermissionMatrix>
         ) => {
           // TODO: Implement permission matrix creation
+          console.log('Creating permission matrix:', matrixData);
           throw new Error('Not implemented yet');
         },
 
         updatePermissionMatrix: async (
-          _matrixId: string,
-          _updates: Partial<PermissionMatrix>
+          matrixId: string,
+          updates: Partial<PermissionMatrix>
         ) => {
           // TODO: Implement permission matrix update
+          console.log('Updating permission matrix:', matrixId, updates);
           throw new Error('Not implemented yet');
         },
 
-        deletePermissionMatrix: async (_matrixId: string) => {
+        deletePermissionMatrix: async (matrixId: string) => {
           // TODO: Implement permission matrix deletion
+          console.log('Deleting permission matrix:', matrixId);
           throw new Error('Not implemented yet');
         },
 
-        getPermissionMatrix: (matrixId: string) => {
+        getPermissionMatrix: () => {
           return get().permissionMatrix;
         },
 
         // Permission Evaluation Actions (simplified for now)
         evaluatePermission: async (
-          _userId: string,
-          _resource: string,
-          _action: string,
-          _context?: any
+          userId: string,
+          resource: string,
+          action: string,
+          context?: Record<string, unknown>
         ) => {
           // TODO: Implement permission evaluation
+          console.log(
+            'Evaluating permission:',
+            userId,
+            resource,
+            action,
+            context
+          );
           throw new Error('Not implemented yet');
         },
 
-        evaluateUserPermissions: async (_userId: string) => {
+        evaluateUserPermissions: async (userId: string) => {
           // TODO: Implement user permission evaluation
+          console.log('Evaluating user permissions:', userId);
           throw new Error('Not implemented yet');
         },
 
-        evaluateRolePermissions: async (_roleId: string) => {
+        evaluateRolePermissions: async (roleId: string) => {
           // TODO: Implement role permission evaluation
+          console.log('Evaluating role permissions:', roleId);
           throw new Error('Not implemented yet');
         },
 
@@ -871,6 +901,7 @@ export const useEnterprisePermissionsStore =
           change: Omit<PermissionChangeLog, 'id' | 'timestamp'>
         ) => {
           // TODO: Implement permission change logging
+          console.log('Logging permission change:', change);
           throw new Error('Not implemented yet');
         },
 
@@ -878,16 +909,19 @@ export const useEnterprisePermissionsStore =
           audit: Omit<PermissionAuditLog, 'id' | 'timestamp'>
         ) => {
           // TODO: Implement permission audit logging
+          console.log('Logging permission audit:', audit);
           throw new Error('Not implemented yet');
         },
 
-        getAuditLogs: async (_filters?: any) => {
+        getAuditLogs: async (filters?: Record<string, unknown>) => {
           // TODO: Implement audit log retrieval
+          console.log('Getting audit logs:', filters);
           throw new Error('Not implemented yet');
         },
 
-        getChangeLogs: async (_filters?: any) => {
+        getChangeLogs: async (filters?: Record<string, unknown>) => {
           // TODO: Implement change log retrieval
+          console.log('Getting change logs:', filters);
           throw new Error('Not implemented yet');
         },
 
@@ -954,16 +988,18 @@ export const useEnterprisePermissionsStore =
           };
         },
 
-        exportPermissions: async (_format: 'json' | 'csv' | 'xlsx') => {
+        exportPermissions: async (format: 'json' | 'csv' | 'xlsx') => {
           // TODO: Implement permissions export
+          console.log('Exporting permissions in format:', format);
           throw new Error('Not implemented yet');
         },
 
         importPermissions: async (
-          _data: string,
-          _format: 'json' | 'csv' | 'xlsx'
+          data: string,
+          format: 'json' | 'csv' | 'xlsx'
         ) => {
           // TODO: Implement permissions import
+          console.log('Importing permissions:', data, format);
           throw new Error('Not implemented yet');
         },
 

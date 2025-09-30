@@ -9,8 +9,8 @@ import {
   UserCheck,
   Users,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Page } from '../../components/layout/Page';
 import {
   Button,
@@ -49,7 +49,6 @@ function ContactsPage() {
     searchCompanies,
   } = useContactsStore();
 
-  const [searchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'person' | 'company'>(
