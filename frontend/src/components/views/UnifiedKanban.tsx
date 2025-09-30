@@ -108,29 +108,31 @@ export function UnifiedKanban({
 
       if (isNearLeftEdge) {
         // Immediate scroll for instant response - extremely fast
-        container.scrollLeft -= scrollSpeed * 6;
+        container.scrollBy(-scrollSpeed * 6, 0);
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollLeft = () => {
-          // Use scrollTo with behavior: 'auto' to bypass CSS smooth scrolling
-          container.scrollTo({
-            left: container.scrollLeft - scrollSpeed,
+          // Use scrollBy with behavior: 'auto' to bypass CSS smooth scrolling
+          container.scrollBy({
+            left: -scrollSpeed,
             behavior: 'auto'
           });
-          container.scrollLeft -= scrollSpeed; // Double scroll for extra speed
+          // Also use direct scrollLeft for extra speed
+          container.scrollLeft -= scrollSpeed;
           animationFrameId = requestAnimationFrame(scrollLeft);
         };
         animationFrameId = requestAnimationFrame(scrollLeft);
       } else if (isNearRightEdge) {
         // Immediate scroll for instant response - extremely fast
-        container.scrollLeft += scrollSpeed * 6;
+        container.scrollBy(scrollSpeed * 6, 0);
         // Use requestAnimationFrame for maximum smoothness and speed - much faster
         const scrollRight = () => {
-          // Use scrollTo with behavior: 'auto' to bypass CSS smooth scrolling
-          container.scrollTo({
-            left: container.scrollLeft + scrollSpeed,
+          // Use scrollBy with behavior: 'auto' to bypass CSS smooth scrolling
+          container.scrollBy({
+            left: scrollSpeed,
             behavior: 'auto'
           });
-          container.scrollLeft += scrollSpeed; // Double scroll for extra speed
+          // Also use direct scrollLeft for extra speed
+          container.scrollLeft += scrollSpeed;
           animationFrameId = requestAnimationFrame(scrollRight);
         };
         animationFrameId = requestAnimationFrame(scrollRight);
@@ -180,13 +182,13 @@ export function UnifiedKanban({
 
         // Smooth scroll to keep the drop zone visible - extremely fast scrolling
         if (mouseX > rect.right - 50) {
-          container.scrollTo({
-            left: container.scrollLeft + 150,
+          container.scrollBy({
+            left: 150,
             behavior: 'auto'
           });
         } else if (mouseX < rect.left + 50) {
-          container.scrollTo({
-            left: container.scrollLeft - 150,
+          container.scrollBy({
+            left: -150,
             behavior: 'auto'
           });
         }
@@ -358,11 +360,20 @@ export function UnifiedKanban({
   return (
     <div
       ref={containerRef}
-      className={`overflow-x-auto pb-4 ${isDragging ? 'scroll-smooth' : ''}`}
+      className={`overflow-x-auto pb-4`}
       style={{
         scrollBehavior: 'auto !important', // Force auto to override CSS smooth behavior
         scrollSnapType: 'none', // Disable scroll snapping
         scrollPadding: '0', // Remove scroll padding
+        // Override all possible CSS smooth scrolling
+        scrollMargin: '0',
+        scrollMarginTop: '0',
+        scrollMarginBottom: '0',
+        scrollMarginLeft: '0',
+        scrollMarginRight: '0',
+        // Force immediate scrolling without any transitions
+        transition: 'none !important',
+        animation: 'none !important',
       }}
     >
       <DragDropContext
