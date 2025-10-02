@@ -121,8 +121,12 @@ export function UnifiedKanban({
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-      // Update left button offset to follow scroll
-      setLeftButtonOffset(scrollLeft);
+      // Update left button offset to follow scroll only during drag operations
+      if (isDragging) {
+        setLeftButtonOffset(scrollLeft);
+      } else {
+        setLeftButtonOffset(0); // Reset to default position when not dragging
+      }
     }
   };
 
@@ -204,7 +208,12 @@ export function UnifiedKanban({
     return () => {
       container.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isDragging]); // Re-run when drag state changes
+
+  // Update button position when drag state changes
+  useEffect(() => {
+    updateScrollButtons();
+  }, [isDragging]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -426,7 +435,7 @@ export function UnifiedKanban({
   return (
     <div className='relative'>
       {/* Scroll Buttons */}
-      <div 
+      <div
         className='absolute top-0 bottom-0 z-10 flex items-center'
         style={{ left: `${leftButtonOffset}px` }}
       >
