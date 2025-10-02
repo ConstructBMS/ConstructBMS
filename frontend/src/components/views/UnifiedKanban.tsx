@@ -123,7 +123,6 @@ export function UnifiedKanban({
     const scrolled = scrollLeft > 0;
     setIsScrolled(scrolled);
 
-
     // Left button positioning
     if (scrolled) {
       setLeftButtonOffset(16); // Jump to left of viewport
@@ -202,11 +201,11 @@ export function UnifiedKanban({
 
     const checkScroll = () => {
       const currentScrollLeft = window.scrollX;
-      
+
       // Only update when scroll position actually changes
       if (currentScrollLeft !== lastScrollLeft) {
         lastScrollLeft = currentScrollLeft;
-        
+
         // Update scroll state based on window scroll
         setIsScrolled(currentScrollLeft > 0);
         updateScrollButtons();
@@ -445,13 +444,12 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-
       {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
       <div
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
         style={{
           left: isScrolled ? '16px' : '272px',
-          transition: 'left 0.3s ease-in-out', // Add smooth transition
+          transition: isScrolled ? 'left 0.2s ease-out' : 'left 0.1s ease-in', // Faster return animation
         }}
       >
         <Button
