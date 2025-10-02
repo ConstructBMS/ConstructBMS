@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-01-28] - Fixed Horizontal Scroll Buttons in Sales Pipeline
+
+### Fixed
+
+- **Sales Pipeline Scroll Navigation**: Fixed horizontal scroll buttons in UnifiedKanban component
+  - Changed scroll buttons from absolute to fixed positioning to stay visible on screen at all times
+  - Right scroll button now appears on the right side of the visible screen instead of at the end of columns
+  - Buttons positioned at left-4 and right-4 with center vertical alignment for consistent placement
+  - Enhanced button design with larger size (12x12) and bigger directional arrows (6x6)
+  - Added hover scale animation and improved visual feedback for better user experience
+  - Fixed z-index to ensure buttons stay above all content with proper layering
+  - Horizontal scrolling now works properly for navigating the sales pipeline
+
 ## [2025-01-28] - Fixed Drag-Drop Issues and Nested Scroll Container Warnings
 
 ### Fixed
