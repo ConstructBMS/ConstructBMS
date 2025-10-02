@@ -93,49 +93,44 @@ export function UnifiedKanban({
 
   // Scroll functions
   const scrollLeft = () => {
-    if (containerRef.current) {
-      const container = containerRef.current;
-      const currentScroll = container.scrollLeft;
-      const scrollAmount = 320; // Scroll by one column width
-      container.scrollTo({
-        left: currentScroll - scrollAmount,
-        behavior: 'smooth',
-      });
-    }
+    const currentScroll = window.scrollX;
+    const scrollAmount = 320; // Scroll by one column width
+    window.scrollTo({
+      left: currentScroll - scrollAmount,
+      behavior: 'smooth',
+    });
   };
 
   const scrollRight = () => {
-    if (containerRef.current) {
-      const container = containerRef.current;
-      const currentScroll = container.scrollLeft;
-      const scrollAmount = 320; // Scroll by one column width
-      container.scrollTo({
-        left: currentScroll + scrollAmount,
-        behavior: 'smooth',
-      });
-    }
+    const currentScroll = window.scrollX;
+    const scrollAmount = 320; // Scroll by one column width
+    window.scrollTo({
+      left: currentScroll + scrollAmount,
+      behavior: 'smooth',
+    });
   };
 
   // Update scroll button states
   const updateScrollButtons = () => {
-    if (containerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-
-      // Update scroll state
-      const scrolled = scrollLeft > 0;
-      setIsScrolled(scrolled);
-
-      // Debug logging
-      console.log('Scroll position:', scrollLeft, 'Scrolled:', scrolled);
-
-      // Left button positioning
-      if (scrolled) {
-        setLeftButtonOffset(16); // Jump to left of viewport
-      } else {
-        setLeftButtonOffset(0); // Stay at sidebar position
-      }
+    const scrollLeft = window.scrollX;
+    const scrollWidth = document.documentElement.scrollWidth;
+    const clientWidth = window.innerWidth;
+    
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+    
+    // Update scroll state
+    const scrolled = scrollLeft > 0;
+    setIsScrolled(scrolled);
+    
+    // Debug logging
+    console.log('Scroll position:', scrollLeft, 'Scrolled:', scrolled);
+    
+    // Left button positioning
+    if (scrolled) {
+      setLeftButtonOffset(16); // Jump to left of viewport
+    } else {
+      setLeftButtonOffset(0); // Stay at sidebar position
     }
   };
 
@@ -211,7 +206,7 @@ export function UnifiedKanban({
 
     const checkScroll = () => {
       const currentScrollLeft = window.scrollX;
-      
+
       // Only log when scroll position actually changes
       if (currentScrollLeft !== lastScrollLeft) {
         console.log('Window scroll position changed:', {
@@ -220,7 +215,7 @@ export function UnifiedKanban({
           documentWidth: document.documentElement.scrollWidth,
         });
         lastScrollLeft = currentScrollLeft;
-        
+
         // Update scroll state based on window scroll
         setIsScrolled(currentScrollLeft > 0);
         updateScrollButtons();
