@@ -127,6 +127,9 @@ export function UnifiedKanban({
       const scrolled = scrollLeft > 0;
       setIsScrolled(scrolled);
       
+      // Debug logging
+      console.log('Scroll position:', scrollLeft, 'Scrolled:', scrolled);
+      
       // Left button positioning
       if (scrolled) {
         setLeftButtonOffset(16); // Jump to left of viewport
@@ -435,11 +438,17 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
+      {/* Debug info */}
+      <div className='fixed top-4 left-4 bg-black text-white p-2 rounded z-30 text-xs'>
+        Scrolled: {isScrolled ? 'Yes' : 'No'} | Position: {isScrolled ? '16px' : '272px'}
+      </div>
+
       {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
       <div
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
         style={{
           left: isScrolled ? '16px' : '272px',
+          transition: 'left 0.3s ease-in-out', // Add smooth transition
         }}
       >
         <Button
