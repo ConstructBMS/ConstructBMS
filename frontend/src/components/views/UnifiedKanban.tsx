@@ -429,10 +429,10 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-      {/* Scroll Buttons - Left button jumps between sidebar and viewport left */}
+      {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
       <div 
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
-        style={{ left: leftButtonOffset === 0 ? '256px' : '16px' }}
+        style={{ left: leftButtonOffset === 0 ? '272px' : '16px' }}
       >
         <Button
           variant='outline'
