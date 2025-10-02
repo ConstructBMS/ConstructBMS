@@ -115,17 +115,15 @@ export function UnifiedKanban({
     const scrollLeft = window.scrollX;
     const scrollWidth = document.documentElement.scrollWidth;
     const clientWidth = window.innerWidth;
-    
+
     setCanScrollLeft(scrollLeft > 0);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-    
+
     // Update scroll state
     const scrolled = scrollLeft > 0;
     setIsScrolled(scrolled);
-    
-    // Debug logging
-    console.log('Scroll position:', scrollLeft, 'Scrolled:', scrolled);
-    
+
+
     // Left button positioning
     if (scrolled) {
       setLeftButtonOffset(16); // Jump to left of viewport
@@ -199,23 +197,16 @@ export function UnifiedKanban({
 
   // Handle scroll events to update button states - Monitor window scroll
   useEffect(() => {
-    console.log('Setting up window scroll detection');
-
     let lastScrollLeft = 0;
     let animationFrameId: number;
 
     const checkScroll = () => {
       const currentScrollLeft = window.scrollX;
-
-      // Only log when scroll position actually changes
+      
+      // Only update when scroll position actually changes
       if (currentScrollLeft !== lastScrollLeft) {
-        console.log('Window scroll position changed:', {
-          scrollX: currentScrollLeft,
-          windowWidth: window.innerWidth,
-          documentWidth: document.documentElement.scrollWidth,
-        });
         lastScrollLeft = currentScrollLeft;
-
+        
         // Update scroll state based on window scroll
         setIsScrolled(currentScrollLeft > 0);
         updateScrollButtons();
@@ -454,11 +445,6 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-      {/* Debug info */}
-      <div className='fixed top-4 left-4 bg-black text-white p-2 rounded z-30 text-xs'>
-        Scrolled: {isScrolled ? 'Yes' : 'No'} | Position:{' '}
-        {isScrolled ? '16px' : '272px'}
-      </div>
 
       {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
       <div
