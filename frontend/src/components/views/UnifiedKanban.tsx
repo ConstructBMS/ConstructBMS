@@ -121,8 +121,12 @@ export function UnifiedKanban({
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-      // Update left button offset to follow scroll
-      setLeftButtonOffset(scrollLeft);
+      // Left button jumps to viewport left when scrolling, stays at sidebar when at left
+      if (scrollLeft > 0) {
+        setLeftButtonOffset(16); // Jump to left of viewport
+      } else {
+        setLeftButtonOffset(0); // Stay at sidebar position
+      }
     }
   };
 
@@ -425,10 +429,10 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-      {/* Scroll Buttons - Both fixed to viewport, left follows scroll */}
+      {/* Scroll Buttons - Left button jumps between sidebar and viewport left */}
       <div 
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
-        style={{ left: `${leftButtonOffset + 16}px` }}
+        style={{ left: `${leftButtonOffset + 256}px` }}
       >
         <Button
           variant='outline'
