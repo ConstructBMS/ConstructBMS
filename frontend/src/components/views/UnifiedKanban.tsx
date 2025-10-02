@@ -202,91 +202,31 @@ export function UnifiedKanban({
     };
   }, [isDragging]);
 
-  // Handle scroll events to update button states - Alternative approach
+  // Handle scroll events to update button states - Monitor window scroll
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) {
-      console.log('Container not found, retrying...');
-      return;
-    }
-
-    console.log('Setting up scroll detection on container:', container);
-
-    // Check parent containers for scrolling
-    let parent = container.parentElement;
-    let level = 0;
-    while (parent && level < 5) {
-      console.log(
-        `Parent ${level}:`,
-        parent,
-        'scrollLeft:',
-        parent.scrollLeft,
-        'scrollWidth:',
-        parent.scrollWidth,
-        'clientWidth:',
-        parent.clientWidth
-      );
-      parent = parent.parentElement;
-      level++;
-    }
+    console.log('Setting up window scroll detection');
 
     let lastScrollLeft = 0;
     let animationFrameId: number;
 
     const checkScroll = () => {
-      if (container) {
-        const currentScrollLeft = container.scrollLeft;
-        const scrollWidth = container.scrollWidth;
-        const clientWidth = container.clientWidth;
-
-        // Only log when scroll position actually changes
-        if (currentScrollLeft !== lastScrollLeft) {
-          console.log('Scroll position changed:', {
-            scrollLeft: currentScrollLeft,
-            scrollWidth: scrollWidth,
-            clientWidth: clientWidth,
-            canScroll: scrollWidth > clientWidth,
-          });
-          lastScrollLeft = currentScrollLeft;
-          updateScrollButtons();
-        }
-
-        // Check if we need to find a different container
-        if (scrollWidth <= clientWidth && currentScrollLeft === 0) {
-          // Try to find a scrollable parent or child
-          const scrollableParent = findScrollableElement(container);
-          if (scrollableParent && scrollableParent !== container) {
-            console.log('Found scrollable parent:', scrollableParent);
-            // Update container reference
-            containerRef.current = scrollableParent;
-            return;
-          }
-        }
-
-        animationFrameId = requestAnimationFrame(checkScroll);
-      }
-    };
-
-    // Helper function to find scrollable element
-    const findScrollableElement = (element: HTMLElement): HTMLElement | null => {
-      // Check parent elements
-      let parent = element.parentElement;
-      while (parent) {
-        if (parent.scrollWidth > parent.clientWidth) {
-          return parent;
-        }
-        parent = parent.parentElement;
-      }
+      const currentScrollLeft = window.scrollX;
       
-      // Check child elements
-      const children = element.querySelectorAll('*');
-      for (const child of children) {
-        if (child.scrollWidth > child.clientWidth) {
-          return child as HTMLElement;
-        }
+      // Only log when scroll position actually changes
+      if (currentScrollLeft !== lastScrollLeft) {
+        console.log('Window scroll position changed:', {
+          scrollX: currentScrollLeft,
+          windowWidth: window.innerWidth,
+          documentWidth: document.documentElement.scrollWidth,
+        });
+        lastScrollLeft = currentScrollLeft;
+        
+        // Update scroll state based on window scroll
+        setIsScrolled(currentScrollLeft > 0);
+        updateScrollButtons();
       }
-      
-      return null;
+
+      animationFrameId = requestAnimationFrame(checkScroll);
     };
 
     // Start polling
