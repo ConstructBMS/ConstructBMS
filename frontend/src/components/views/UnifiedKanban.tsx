@@ -92,13 +92,25 @@ export function UnifiedKanban({
   // Scroll functions
   const scrollLeft = () => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft -= 320; // Scroll by one column width
+      const container = containerRef.current;
+      const currentScroll = container.scrollLeft;
+      const scrollAmount = 320; // Scroll by one column width
+      container.scrollTo({
+        left: currentScroll - scrollAmount,
+        behavior: 'smooth'
+      });
     }
   };
 
   const scrollRight = () => {
     if (containerRef.current) {
-      containerRef.current.scrollLeft += 320; // Scroll by one column width
+      const container = containerRef.current;
+      const currentScroll = container.scrollLeft;
+      const scrollAmount = 320; // Scroll by one column width
+      container.scrollTo({
+        left: currentScroll + scrollAmount,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -410,8 +422,8 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-      {/* Scroll Buttons - Fixed to viewport */}
-      <div className='fixed left-4 top-1/2 -translate-y-1/2 z-20 flex items-center'>
+      {/* Scroll Buttons */}
+      <div className='absolute left-0 top-0 bottom-0 z-10 flex items-center'>
         <Button
           variant='outline'
           size='lg'
@@ -419,7 +431,7 @@ export function UnifiedKanban({
           disabled={!canScrollLeft}
           className='h-12 w-12 p-0 bg-white/95 hover:bg-white shadow-lg border-2 hover:scale-105 transition-all duration-200'
         >
-          <ChevronLeft className='h-6 w-6' />
+          <ChevronLeft className='h-6 w-6 text-gray-800' />
         </Button>
       </div>
 
@@ -431,7 +443,7 @@ export function UnifiedKanban({
           disabled={!canScrollRight}
           className='h-12 w-12 p-0 bg-white/95 hover:bg-white shadow-lg border-2 hover:scale-105 transition-all duration-200'
         >
-          <ChevronRight className='h-6 w-6' />
+          <ChevronRight className='h-6 w-6 text-gray-800' />
         </Button>
       </div>
 
@@ -440,18 +452,13 @@ export function UnifiedKanban({
         ref={containerRef}
         className={`overflow-x-auto pb-4`}
         style={{
-          scrollBehavior: 'auto !important', // Force auto to override CSS smooth behavior
           scrollSnapType: 'none', // Disable scroll snapping
           scrollPadding: '0', // Remove scroll padding
-          // Override all possible CSS smooth scrolling
           scrollMargin: '0',
           scrollMarginTop: '0',
           scrollMarginBottom: '0',
           scrollMarginLeft: '0',
           scrollMarginRight: '0',
-          // Force immediate scrolling without any transitions
-          transition: 'none !important',
-          animation: 'none !important',
         }}
       >
         <DragDropContext
