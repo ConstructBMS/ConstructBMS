@@ -425,9 +425,9 @@ export function UnifiedKanban({
 
   return (
     <div className='relative'>
-      {/* Scroll Buttons - Left button follows viewport, right button fixed */}
+      {/* Scroll Buttons - Both fixed to viewport, left follows scroll */}
       <div 
-        className='absolute top-1/2 -translate-y-1/2 z-20 flex items-center'
+        className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
         style={{ left: `${leftButtonOffset + 16}px` }}
       >
         <Button
