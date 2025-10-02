@@ -87,6 +87,7 @@ export function UnifiedKanban({
   const [isDragging, setIsDragging] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [leftButtonOffset, setLeftButtonOffset] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Scroll functions
@@ -97,7 +98,7 @@ export function UnifiedKanban({
       const scrollAmount = 320; // Scroll by one column width
       container.scrollTo({
         left: currentScroll - scrollAmount,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -109,7 +110,7 @@ export function UnifiedKanban({
       const scrollAmount = 320; // Scroll by one column width
       container.scrollTo({
         left: currentScroll + scrollAmount,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   };
@@ -120,6 +121,8 @@ export function UnifiedKanban({
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+      // Update left button offset to follow scroll
+      setLeftButtonOffset(scrollLeft);
     }
   };
 
@@ -423,7 +426,10 @@ export function UnifiedKanban({
   return (
     <div className='relative'>
       {/* Scroll Buttons */}
-      <div className='absolute left-0 top-0 bottom-0 z-10 flex items-center'>
+      <div 
+        className='absolute top-0 bottom-0 z-10 flex items-center'
+        style={{ left: `${leftButtonOffset}px` }}
+      >
         <Button
           variant='outline'
           size='lg'
