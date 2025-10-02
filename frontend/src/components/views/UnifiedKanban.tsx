@@ -449,7 +449,7 @@ export function UnifiedKanban({
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
         style={{
           left: isScrolled ? '16px' : '272px',
-          transition: isScrolled ? 'left 0.2s ease-out' : 'left 0.1s ease-in', // Faster return animation
+          transition: isScrolled ? 'left 0.2s ease-out' : 'left 0ms ease-in', // Instant return animation
         }}
       >
         <Button
