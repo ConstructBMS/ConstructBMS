@@ -211,6 +211,15 @@ export function UnifiedKanban({
     }
 
     console.log('Setting up scroll detection on container:', container);
+    
+    // Check parent containers for scrolling
+    let parent = container.parentElement;
+    let level = 0;
+    while (parent && level < 5) {
+      console.log(`Parent ${level}:`, parent, 'scrollLeft:', parent.scrollLeft, 'scrollWidth:', parent.scrollWidth, 'clientWidth:', parent.clientWidth);
+      parent = parent.parentElement;
+      level++;
+    }
 
     let lastScrollLeft = 0;
     let animationFrameId: number;
@@ -218,11 +227,26 @@ export function UnifiedKanban({
     const checkScroll = () => {
       if (container) {
         const currentScrollLeft = container.scrollLeft;
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+        
+        // Debug all scroll properties
         if (currentScrollLeft !== lastScrollLeft) {
-          console.log('Scroll position changed:', currentScrollLeft);
+          console.log('Scroll position changed:', {
+            scrollLeft: currentScrollLeft,
+            scrollWidth: scrollWidth,
+            clientWidth: clientWidth,
+            canScroll: scrollWidth > clientWidth
+          });
           lastScrollLeft = currentScrollLeft;
           updateScrollButtons();
         }
+        
+        // Also check if we can scroll at all
+        if (scrollWidth <= clientWidth) {
+          console.log('Container is not scrollable - scrollWidth:', scrollWidth, 'clientWidth:', clientWidth);
+        }
+        
         animationFrameId = requestAnimationFrame(checkScroll);
       }
     };
