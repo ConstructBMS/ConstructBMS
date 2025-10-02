@@ -88,6 +88,7 @@ export function UnifiedKanban({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [leftButtonOffset, setLeftButtonOffset] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Scroll functions
@@ -121,8 +122,13 @@ export function UnifiedKanban({
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-      // Left button jumps to viewport left when scrolling, stays at sidebar when at left
-      if (scrollLeft > 0) {
+      
+      // Update scroll state
+      const scrolled = scrollLeft > 0;
+      setIsScrolled(scrolled);
+      
+      // Left button positioning
+      if (scrolled) {
         setLeftButtonOffset(16); // Jump to left of viewport
       } else {
         setLeftButtonOffset(0); // Stay at sidebar position
@@ -430,9 +436,11 @@ export function UnifiedKanban({
   return (
     <div className='relative'>
       {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
-      <div 
+      <div
         className='fixed top-1/2 -translate-y-1/2 z-20 flex items-center'
-        style={{ left: leftButtonOffset === 0 ? '272px' : `${leftButtonOffset}px` }}
+        style={{
+          left: isScrolled ? '16px' : '272px',
+        }}
       >
         <Button
           variant='outline'
