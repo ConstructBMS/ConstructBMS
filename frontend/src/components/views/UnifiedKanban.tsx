@@ -122,14 +122,14 @@ export function UnifiedKanban({
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-      
+
       // Update scroll state
       const scrolled = scrollLeft > 0;
       setIsScrolled(scrolled);
-      
+
       // Debug logging
       console.log('Scroll position:', scrollLeft, 'Scrolled:', scrolled);
-      
+
       // Left button positioning
       if (scrolled) {
         setLeftButtonOffset(16); // Jump to left of viewport
@@ -205,17 +205,29 @@ export function UnifiedKanban({
   // Handle scroll events to update button states
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container) {
+      console.log('Container not found, retrying...');
+      return;
+    }
 
-    const handleScroll = () => {
+    console.log('Setting up scroll listener on container:', container);
+
+    const handleScroll = (e) => {
+      console.log('Scroll event triggered:', e.target.scrollLeft);
       updateScrollButtons();
     };
 
-    container.addEventListener('scroll', handleScroll);
+    // Try multiple approaches to ensure scroll detection works
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    container.addEventListener('wheel', handleScroll, { passive: true });
+    container.addEventListener('touchmove', handleScroll, { passive: true });
+    
     updateScrollButtons(); // Initial check
 
     return () => {
       container.removeEventListener('scroll', handleScroll);
+      container.removeEventListener('wheel', handleScroll);
+      container.removeEventListener('touchmove', handleScroll);
     };
   }, []);
 
@@ -440,7 +452,8 @@ export function UnifiedKanban({
     <div className='relative'>
       {/* Debug info */}
       <div className='fixed top-4 left-4 bg-black text-white p-2 rounded z-30 text-xs'>
-        Scrolled: {isScrolled ? 'Yes' : 'No'} | Position: {isScrolled ? '16px' : '272px'}
+        Scrolled: {isScrolled ? 'Yes' : 'No'} | Position:{' '}
+        {isScrolled ? '16px' : '272px'}
       </div>
 
       {/* Scroll Buttons - Left button detaches from sidebar to hug left edge */}
