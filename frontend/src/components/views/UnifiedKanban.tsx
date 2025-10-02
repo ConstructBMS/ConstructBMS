@@ -1,5 +1,13 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
-import { Edit2, Palette, Plus, Save, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Edit2,
+  Palette,
+  Plus,
+  Save,
+  X,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui';
 import { Card, CardContent } from '../ui/card';
@@ -401,29 +409,29 @@ export function UnifiedKanban({
   );
 
   return (
-    <div className="relative">
-      {/* Scroll Buttons */}
-      <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center">
+    <div className='relative'>
+      {/* Scroll Buttons - Fixed to viewport */}
+      <div className='fixed left-4 top-1/2 -translate-y-1/2 z-20 flex items-center'>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='lg'
           onClick={scrollLeft}
           disabled={!canScrollLeft}
-          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+          className='h-12 w-12 p-0 bg-white/95 hover:bg-white shadow-lg border-2 hover:scale-105 transition-all duration-200'
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className='h-6 w-6' />
         </Button>
       </div>
-      
-      <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center">
+
+      <div className='fixed right-4 top-1/2 -translate-y-1/2 z-20 flex items-center'>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='lg'
           onClick={scrollRight}
           disabled={!canScrollRight}
-          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+          className='h-12 w-12 p-0 bg-white/95 hover:bg-white shadow-lg border-2 hover:scale-105 transition-all duration-200'
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className='h-6 w-6' />
         </Button>
       </div>
 
@@ -446,191 +454,196 @@ export function UnifiedKanban({
           animation: 'none !important',
         }}
       >
-      <DragDropContext
-        onDragStart={handleDragStart}
-        onDragUpdate={handleDragUpdate}
-        onDragEnd={handleDragEnd}
-      >
-        <div className='flex gap-6 min-w-max'>
-          {columns
-            .sort((a, b) => a.order - b.order)
-            .map(column => {
-              const columnItems = getItemsByColumn(column.id);
-              const columnColor = getColumnColor(column.color);
+        <DragDropContext
+          onDragStart={handleDragStart}
+          onDragUpdate={handleDragUpdate}
+          onDragEnd={handleDragEnd}
+        >
+          <div className='flex gap-6 min-w-max'>
+            {columns
+              .sort((a, b) => a.order - b.order)
+              .map(column => {
+                const columnItems = getItemsByColumn(column.id);
+                const columnColor = getColumnColor(column.color);
 
-              return (
-                <div
-                  key={column.id}
-                  className='flex-shrink-0 w-80 rounded-lg border-2 border-dashed p-4'
-                  style={{
-                    backgroundColor: columnColor.bg,
-                    borderColor: columnColor.border,
-                  }}
-                >
-                  {/* Column Header */}
-                  <div className='flex items-center justify-between mb-4'>
-                    {editingColumn === column.id ? (
-                      <div className='flex-1 flex items-center gap-2'>
-                        <Input
-                          value={editingColumnName}
-                          onChange={e => setEditingColumnName(e.target.value)}
-                          className='flex-1'
-                          placeholder='Column name'
-                        />
-                        <div className='relative'>
-                          <Button
-                            size='sm'
-                            variant='outline'
-                            onClick={() =>
-                              setShowColorPicker(
-                                showColorPicker === column.id ? null : column.id
-                              )
-                            }
-                          >
-                            <Palette className='h-3 w-3' />
-                          </Button>
-                          {showColorPicker === column.id && (
-                            <div className='absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2'>
-                              {Object.entries(colorConfig).map(
-                                ([key, color]) => (
-                                  <button
-                                    key={key}
-                                    className='w-8 h-8 rounded border-2 hover:scale-110 transition-transform'
-                                    style={{
-                                      backgroundColor: color.bg,
-                                      borderColor: color.border,
-                                    }}
-                                    onClick={() => {
-                                      setEditingColumnColor(key as KanbanColor);
-                                      setShowColorPicker(null);
-                                    }}
-                                    title={color.name}
-                                  />
-                                )
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        <Button size='sm' onClick={saveColumnEdit}>
-                          <Save className='h-3 w-3' />
-                        </Button>
-                        <Button
-                          size='sm'
-                          variant='ghost'
-                          onClick={cancelColumnEdit}
-                        >
-                          <X className='h-3 w-3' />
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <h3 className='font-semibold text-lg text-gray-800'>
-                          {column.name}
-                        </h3>
-                        <div className='flex items-center gap-2'>
-                          <span className='bg-white px-2 py-1 rounded-full text-sm font-medium'>
-                            {columnItems.length}
-                          </span>
-                          {canEdit && (
+                return (
+                  <div
+                    key={column.id}
+                    className='flex-shrink-0 w-80 rounded-lg border-2 border-dashed p-4'
+                    style={{
+                      backgroundColor: columnColor.bg,
+                      borderColor: columnColor.border,
+                    }}
+                  >
+                    {/* Column Header */}
+                    <div className='flex items-center justify-between mb-4'>
+                      {editingColumn === column.id ? (
+                        <div className='flex-1 flex items-center gap-2'>
+                          <Input
+                            value={editingColumnName}
+                            onChange={e => setEditingColumnName(e.target.value)}
+                            className='flex-1'
+                            placeholder='Column name'
+                          />
+                          <div className='relative'>
                             <Button
                               size='sm'
-                              variant='ghost'
-                              onClick={() => startEditColumn(column)}
+                              variant='outline'
+                              onClick={() =>
+                                setShowColorPicker(
+                                  showColorPicker === column.id
+                                    ? null
+                                    : column.id
+                                )
+                              }
                             >
-                              <Edit2 className='h-3 w-3' />
+                              <Palette className='h-3 w-3' />
                             </Button>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Add Item Button - Only on first column */}
-                  {onAddItem && canEdit && column.order === 0 && (
-                    <Button
-                      variant='ghost'
-                      className='w-full mb-3 text-muted-foreground hover:text-foreground'
-                      onClick={() => onAddItem(column.id)}
-                    >
-                      <Plus className='h-4 w-4 mr-2' />
-                      Add Item
-                    </Button>
-                  )}
-
-                  {/* Column Items */}
-                  <Droppable droppableId={column.id}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className={`min-h-96 relative ${
-                          snapshot.isDraggingOver ? 'bg-opacity-50' : ''
-                        }`}
-                      >
-                        {columnItems.map((item, index) => (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
-                          >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className={`transition-all duration-200 ${
-                                  snapshot.isDragging
-                                    ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90'
-                                    : 'hover:shadow-md'
-                                }`}
-                                onClick={() => onItemClick?.(item)}
-                              >
-                                {renderItem
-                                  ? renderItem(item)
-                                  : defaultRenderItem(item)}
+                            {showColorPicker === column.id && (
+                              <div className='absolute top-8 right-0 z-10 bg-white border rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2'>
+                                {Object.entries(colorConfig).map(
+                                  ([key, color]) => (
+                                    <button
+                                      key={key}
+                                      className='w-8 h-8 rounded border-2 hover:scale-110 transition-transform'
+                                      style={{
+                                        backgroundColor: color.bg,
+                                        borderColor: color.border,
+                                      }}
+                                      onClick={() => {
+                                        setEditingColumnColor(
+                                          key as KanbanColor
+                                        );
+                                        setShowColorPicker(null);
+                                      }}
+                                      title={color.name}
+                                    />
+                                  )
+                                )}
                               </div>
                             )}
-                          </Draggable>
-                        ))}
+                          </div>
+                          <Button size='sm' onClick={saveColumnEdit}>
+                            <Save className='h-3 w-3' />
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='ghost'
+                            onClick={cancelColumnEdit}
+                          >
+                            <X className='h-3 w-3' />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <h3 className='font-semibold text-lg text-gray-800'>
+                            {column.name}
+                          </h3>
+                          <div className='flex items-center gap-2'>
+                            <span className='bg-white px-2 py-1 rounded-full text-sm font-medium'>
+                              {columnItems.length}
+                            </span>
+                            {canEdit && (
+                              <Button
+                                size='sm'
+                                variant='ghost'
+                                onClick={() => startEditColumn(column)}
+                              >
+                                <Edit2 className='h-3 w-3' />
+                              </Button>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
 
-                        {/* Drop Zone Indicator - Show at exact position */}
-                        {snapshot.isDraggingOver && dragOverIndex !== null && (
-                          <>
-                            {columnItems.map((item, index) => {
-                              if (index === dragOverIndex) {
-                                return (
-                                  <div
-                                    key={`drop-indicator-${index}`}
-                                    className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'
-                                  >
+                    {/* Add Item Button - Only on first column */}
+                    {onAddItem && canEdit && column.order === 0 && (
+                      <Button
+                        variant='ghost'
+                        className='w-full mb-3 text-muted-foreground hover:text-foreground'
+                        onClick={() => onAddItem(column.id)}
+                      >
+                        <Plus className='h-4 w-4 mr-2' />
+                        Add Item
+                      </Button>
+                    )}
+
+                    {/* Column Items */}
+                    <Droppable droppableId={column.id}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className={`min-h-96 relative ${
+                            snapshot.isDraggingOver ? 'bg-opacity-50' : ''
+                          }`}
+                        >
+                          {columnItems.map((item, index) => (
+                            <Draggable
+                              key={item.id}
+                              draggableId={item.id}
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`transition-all duration-200 ${
+                                    snapshot.isDragging
+                                      ? 'rotate-2 shadow-2xl z-50 scale-105 opacity-90'
+                                      : 'hover:shadow-md'
+                                  }`}
+                                  onClick={() => onItemClick?.(item)}
+                                >
+                                  {renderItem
+                                    ? renderItem(item)
+                                    : defaultRenderItem(item)}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+
+                          {/* Drop Zone Indicator - Show at exact position */}
+                          {snapshot.isDraggingOver &&
+                            dragOverIndex !== null && (
+                              <>
+                                {columnItems.map((item, index) => {
+                                  if (index === dragOverIndex) {
+                                    return (
+                                      <div
+                                        key={`drop-indicator-${index}`}
+                                        className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'
+                                      >
+                                        <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
+                                          Drop here
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  return null;
+                                })}
+                                {/* Show at end if dropping at the end */}
+                                {dragOverIndex === columnItems.length && (
+                                  <div className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'>
                                     <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
                                       Drop here
                                     </div>
                                   </div>
-                                );
-                              }
-                              return null;
-                            })}
-                            {/* Show at end if dropping at the end */}
-                            {dragOverIndex === columnItems.length && (
-                              <div className='mb-3 h-20 border-2 border-dashed border-blue-400 bg-blue-100/50 rounded-lg flex items-center justify-center'>
-                                <div className='bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium'>
-                                  Drop here
-                                </div>
-                              </div>
+                                )}
+                              </>
                             )}
-                          </>
-                        )}
 
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
-              );
-            })}
-        </div>
-      </DragDropContext>
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
+                );
+              })}
+          </div>
+        </DragDropContext>
       </div>
     </div>
   );
