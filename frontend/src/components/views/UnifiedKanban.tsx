@@ -202,7 +202,7 @@ export function UnifiedKanban({
     };
   }, [isDragging]);
 
-  // Handle scroll events to update button states
+  // Handle scroll events to update button states - Alternative approach
   useEffect(() => {
     const container = containerRef.current;
     if (!container) {
@@ -210,24 +210,31 @@ export function UnifiedKanban({
       return;
     }
 
-    console.log('Setting up scroll listener on container:', container);
+    console.log('Setting up scroll detection on container:', container);
 
-    const handleScroll = (e) => {
-      console.log('Scroll event triggered:', e.target.scrollLeft);
-      updateScrollButtons();
+    let lastScrollLeft = 0;
+    let animationFrameId: number;
+
+    const checkScroll = () => {
+      if (container) {
+        const currentScrollLeft = container.scrollLeft;
+        if (currentScrollLeft !== lastScrollLeft) {
+          console.log('Scroll position changed:', currentScrollLeft);
+          lastScrollLeft = currentScrollLeft;
+          updateScrollButtons();
+        }
+        animationFrameId = requestAnimationFrame(checkScroll);
+      }
     };
 
-    // Try multiple approaches to ensure scroll detection works
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    container.addEventListener('wheel', handleScroll, { passive: true });
-    container.addEventListener('touchmove', handleScroll, { passive: true });
-    
+    // Start polling
+    animationFrameId = requestAnimationFrame(checkScroll);
     updateScrollButtons(); // Initial check
 
     return () => {
-      container.removeEventListener('scroll', handleScroll);
-      container.removeEventListener('wheel', handleScroll);
-      container.removeEventListener('touchmove', handleScroll);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, []);
 
