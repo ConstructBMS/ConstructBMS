@@ -1,5 +1,5 @@
 import { DollarSign, Edit2, Trash2, User } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useKanbanStore } from '../../app/store/ui/kanban.store';
 import { Button } from '../../components/ui';
 import { Card, CardContent } from '../../components/ui/card';
@@ -8,6 +8,10 @@ import type {
   KanbanItem,
 } from '../../components/views/UnifiedKanban';
 import { UnifiedKanban } from '../../components/views/UnifiedKanban';
+import {
+  Opportunity as ModalOpportunity,
+  OpportunityModal,
+} from '../../components/modals/OpportunityModal';
 
 // Types
 interface Client {
@@ -149,6 +153,9 @@ export default function SalesPipelineUnified() {
   const [clients] = useState<Client[]>(demoClients);
   const [editingOpportunity, setEditingOpportunity] =
     useState<Opportunity | null>(null);
+  const [isOpportunityModalOpen, setIsOpportunityModalOpen] = useState(false);
+  const [modalOpportunity, setModalOpportunity] =
+    useState<ModalOpportunity | undefined>(undefined);
 
   const moduleId = 'pipeline';
   const config = getConfig(moduleId);
@@ -193,15 +200,59 @@ export default function SalesPipelineUnified() {
     setOpportunities(updatedOpportunities);
   };
 
+  const mapToModalOpportunity = (opp: Opportunity): ModalOpportunity => {
+    const client = clients.find(c => c.id === opp.clientId);
+    return {
+      id: opp.id,
+      title: opp.name,
+      description: opp.details,
+      amount: opp.value,
+      stage: opp.stage,
+      customer: client
+        ? { id: client.id, name: client.name, email: client.email, phone: client.phone }
+        : undefined,
+      contact: undefined,
+      startDate: opp.createdAt,
+      endDate: opp.updatedAt,
+      source: 'Pipeline',
+      owner: 'Unassigned',
+      tags: [],
+      activities: [],
+      createdAt: opp.createdAt,
+      updatedAt: opp.updatedAt,
+    };
+  };
+
+  const mapFromModalOpportunity = (
+    modal: ModalOpportunity,
+    previous?: Opportunity
+  ): Opportunity => {
+    return {
+      id: previous?.id || modal.id || String(Date.now()),
+      name: modal.title,
+      details: modal.description || '',
+      value: modal.amount || 0,
+      stage: modal.stage,
+      clientId: modal.customer?.id || previous?.clientId || clients[0]?.id || '1',
+      notes: previous?.notes || '',
+      createdAt: previous?.createdAt || modal.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  };
+
   const handleItemClick = (item: KanbanItem) => {
-    console.log('Item clicked:', item);
-    // Handle item click - could open detail modal
+    const opp = opportunities.find(o => o.id === item.id);
+    if (!opp) return;
+    setModalOpportunity(mapToModalOpportunity(opp));
+    setIsOpportunityModalOpen(true);
   };
 
   const handleItemEdit = (item: KanbanItem) => {
     const opportunity = opportunities.find(opp => opp.id === item.id);
     if (opportunity) {
       setEditingOpportunity(opportunity);
+      setModalOpportunity(mapToModalOpportunity(opportunity));
+      setIsOpportunityModalOpen(true);
     }
   };
 
@@ -210,8 +261,17 @@ export default function SalesPipelineUnified() {
   };
 
   const handleAddItem = (columnId: string) => {
-    console.log('Add item to column:', columnId);
-    // Handle adding new opportunity
+    const newModalOpp: ModalOpportunity = {
+      id: '',
+      title: '',
+      description: '',
+      amount: 0,
+      stage: columnId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    } as ModalOpportunity;
+    setModalOpportunity(newModalOpp);
+    setIsOpportunityModalOpen(true);
   };
 
   const formatCurrency = (amount: number) => {
@@ -329,6 +389,33 @@ export default function SalesPipelineUnified() {
         canEdit={true}
         moduleId={moduleId}
       />
+
+      {isOpportunityModalOpen && (
+        <OpportunityModal
+          isOpen={isOpportunityModalOpen}
+          onClose={() => {
+            setIsOpportunityModalOpen(false);
+            setModalOpportunity(undefined);
+          }}
+          opportunity={modalOpportunity}
+          onSave={saved => {
+            // Map back to local model and update state
+            const existing = opportunities.find(o => o.id === (saved.id || ''));
+            if (existing) {
+              const updated = mapFromModalOpportunity(saved, existing);
+              setOpportunities(prev => prev.map(o => (o.id === existing.id ? updated : o)));
+            } else {
+              const created = mapFromModalOpportunity(saved);
+              setOpportunities(prev => [...prev, created]);
+            }
+            setIsOpportunityModalOpen(false);
+            setModalOpportunity(undefined);
+          }}
+          onDelete={id => {
+            setOpportunities(prev => prev.filter(o => o.id !== id));
+          }}
+        />
+      )}
     </div>
   );
 }
