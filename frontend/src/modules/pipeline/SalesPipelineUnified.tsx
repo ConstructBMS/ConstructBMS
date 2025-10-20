@@ -215,6 +215,7 @@ export default function SalesPipelineUnified() {
   };
 
   const handleItemsChange = (newItems: KanbanItem[]) => {
+    console.log('Kanban items changed:', newItems.length, 'items');
     // Convert Kanban items back to opportunities
     const updatedOpportunities = newItems.map(item => {
       const originalOpp = opportunities.find(opp => opp.id === item.id);
@@ -224,6 +225,7 @@ export default function SalesPipelineUnified() {
         updatedAt: new Date().toISOString(),
       };
     });
+    console.log('Updating opportunities from kanban change:', updatedOpportunities.length, 'items');
     setOpportunities(updatedOpportunities);
   };
 
@@ -426,13 +428,16 @@ export default function SalesPipelineUnified() {
           }}
           opportunity={modalOpportunity}
           onSave={saved => {
+            console.log('Modal save triggered:', saved.id, saved.stage);
             // Map back to local model and update state
             const existing = opportunities.find(o => o.id === (saved.id || ''));
             if (existing) {
               const updated = mapFromModalOpportunity(saved, existing);
+              console.log('Updating existing opportunity:', updated.id, updated.stage);
               setOpportunities(prev => prev.map(o => (o.id === existing.id ? updated : o)));
             } else {
               const created = mapFromModalOpportunity(saved);
+              console.log('Creating new opportunity:', created.id, created.stage);
               setOpportunities(prev => [...prev, created]);
             }
             setIsOpportunityModalOpen(false);

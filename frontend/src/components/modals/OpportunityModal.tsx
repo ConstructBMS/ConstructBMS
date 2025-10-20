@@ -146,6 +146,17 @@ export function OpportunityModal({
     setIsEditing(false);
   };
 
+  const handleStageChange = (stageId: string) => {
+    const next = {
+      ...formData,
+      stage: stageId,
+      updatedAt: new Date().toISOString(),
+    };
+    setFormData(next);
+    // Save the stage change without closing the modal
+    onSave(next);
+  };
+
   const handleAddActivity = () => {
     if (!newActivity.title.trim()) return;
 
@@ -376,14 +387,8 @@ export function OpportunityModal({
                                  onClick={e => {
                                    console.log('Stage button clicked:', stage.name, e.target);
                                    e.stopPropagation(); // Prevent any event bubbling
-                                   const next = {
-                                     ...formData,
-                                     stage: stage.id,
-                                     updatedAt: new Date().toISOString(),
-                                   };
-                                   setFormData(next);
-                                   // Persist immediately so kanban/card update
-                                   onSave(next);
+                                   e.preventDefault(); // Prevent default behavior
+                                   handleStageChange(stage.id);
                                  }}
                               >
                                 {stage.name}
