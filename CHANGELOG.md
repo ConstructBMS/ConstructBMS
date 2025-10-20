@@ -2,13 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025-10-20] - Development Environment Clean, Tooling Update, and Restart
+
+### Changed
+
+- Updated pnpm to 10.18.3 and reinstalled workspace dependencies for consistency.
+- Rebuilt frontend and backend workspaces from a clean state.
+
+### Maintenance
+
+- Killed any processes on fixed ports 5173/5174 and verified ports availability.
+- Performed a nuclear clean: removed node_modules, caches, and build artifacts.
+- Pulled latest changes from main and restarted both dev servers on ports 5173/5174.
+- Verified health endpoints: frontend `/healthz` (dev index served) and API `/health` OK.
+- Preserved local working changes by stashing during the upgrade (excluding node_modules).
+
 ## [2025-01-28] - Fixed Horizontal Scroll Buttons in Sales Pipeline
 
 ### Fixed
 
 - **Sales Pipeline Scroll Navigation**: Fixed horizontal scroll buttons in UnifiedKanban component
   - Changed scroll buttons from absolute to fixed positioning to stay visible on screen at all times
-  - Right scroll button now appears on the right side of the visible screen instead of at the end of columns
+  - Right scroll button now appears on the right side of the visible screen instead of at the end of
+    columns
   - Buttons positioned at left-4 and right-4 with center vertical alignment for consistent placement
   - Enhanced button design with larger size (12x12) and bigger directional arrows (6x6)
   - Added hover scale animation and improved visual feedback for better user experience
@@ -19,7 +35,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Nested Scroll Container Warnings**: Resolved @hello-pangea/dnd warnings about unsupported nested scroll containers
+- **Nested Scroll Container Warnings**: Resolved @hello-pangea/dnd warnings about unsupported nested
+  scroll containers
   - Removed `overflow-auto` from main content area in AppShell to prevent nested scroll containers
   - Added proper scrolling to Page component with `overflow-auto` and `h-full` classes
   - Drag and drop now works without console warnings about nested scroll containers
