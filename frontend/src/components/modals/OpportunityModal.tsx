@@ -316,13 +316,15 @@ export function OpportunityModal({
           onValueChange={setActiveTab}
           className='flex-1 flex flex-col'
         >
-          <TabsList className='grid w-full grid-cols-6 mx-6 mt-4'>
-            <TabsTrigger value='main'>Main</TabsTrigger>
-            <TabsTrigger value='activities'>Activities</TabsTrigger>
-            <TabsTrigger value='email'>Email</TabsTrigger>
-            <TabsTrigger value='calls'>Calls</TabsTrigger>
-            <TabsTrigger value='documents'>Documents</TabsTrigger>
-            <TabsTrigger value='settings'>Settings</TabsTrigger>
+          <TabsList className='mx-6 mt-4 overflow-x-auto no-scrollbar flex gap-2 pr-2'>
+            <div className='flex gap-2 min-w-max'>
+              <TabsTrigger className='shrink-0' value='main'>Main</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='activities'>Activities</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='email'>Email</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='calls'>Calls</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='documents'>Documents</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='settings'>Settings</TabsTrigger>
+            </div>
           </TabsList>
 
           <div className='flex-1 overflow-y-auto p-6'>
@@ -337,41 +339,13 @@ export function OpportunityModal({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  <div className='flex items-center gap-4'>
-                    <Label htmlFor='stage'>Current Stage</Label>
-                    <Select
-                      value={formData.stage}
-                      onValueChange={value =>
-                        setFormData(prev => ({ ...prev, stage: value }))
-                      }
-                      disabled={!isEditing}
-                    >
-                      <SelectTrigger className='w-48'>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {stages.map(stage => (
-                          <SelectItem key={stage.id} value={stage.id}>
-                            <div className='flex items-center gap-2'>
-                              <div
-                                className='w-3 h-3 rounded-full'
-                                style={{ backgroundColor: stage.color }}
-                              />
-                              {stage.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Compact Progress Bar */}
-                  <div className='mt-4'>
+                  {/* Clickable Progress Bar (updates immediately) */}
+                  <div className='mt-2'>
                     <div className='flex items-center justify-between'>
                       <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                        Progress
+                        Workflow
                       </span>
-                      <div className='flex items-center space-x-1'>
+                      <div className='flex items-center space-x-1 overflow-x-auto no-scrollbar p-1 rounded'>
                         {stages.map((stage, index) => {
                           const isActive = stage.id === formData.stage;
                           const isCompleted =
@@ -383,22 +357,25 @@ export function OpportunityModal({
 
                           return (
                             <div key={stage.id} className='flex items-center'>
-                              <div
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                              <button
+                                type='button'
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                                   isActive
                                     ? 'text-white'
                                     : isCompleted
                                       ? 'bg-green-500 text-white'
                                       : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                                 }`}
-                                style={
-                                  isActive
-                                    ? { backgroundColor: stageColor }
-                                    : {}
-                                }
+                                style={isActive ? { backgroundColor: stageColor } : {}}
+                                onClick={() => {
+                                  const next = { ...formData, stage: stage.id, updatedAt: new Date().toISOString() };
+                                  setFormData(next);
+                                  // Persist immediately so kanban/card update
+                                  onSave(next);
+                                }}
                               >
                                 {stage.name}
-                              </div>
+                              </button>
                               {index < stages.length - 1 && (
                                 <div
                                   className={`w-2 h-0.5 mx-1 ${
