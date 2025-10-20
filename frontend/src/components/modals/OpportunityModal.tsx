@@ -367,7 +367,8 @@ export function OpportunityModal({
                                       : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                                 }`}
                                 style={isActive ? { backgroundColor: stageColor } : {}}
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   const next = { ...formData, stage: stage.id, updatedAt: new Date().toISOString() };
                                   setFormData(next);
                                   // Persist immediately so kanban/card update
