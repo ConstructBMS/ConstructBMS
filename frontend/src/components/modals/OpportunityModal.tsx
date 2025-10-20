@@ -141,13 +141,16 @@ export function OpportunityModal({
     }
   }, [formData, opportunity]);
 
-  // Click away handler - simplified to only close on backdrop clicks
+  // Click away handler - only close when clicking the backdrop
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Only close if clicking the backdrop (not any child elements)
+      // Check if click is on the backdrop (the fixed overlay div)
+      const target = event.target as HTMLElement;
       if (
         modalRef.current &&
-        event.target === modalRef.current.parentElement
+        target.classList.contains('fixed') &&
+        target.classList.contains('inset-0') &&
+        !modalRef.current.contains(target)
       ) {
         if (hasUnsavedChanges) {
           const shouldClose = window.confirm(
