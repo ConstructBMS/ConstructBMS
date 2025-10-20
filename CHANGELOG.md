@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [2025-10-20] - Development Environment Clean, Tooling Update, and Restart
 
+## [2025-10-20] - Sales Pipeline Opportunity Modal
+
+### Added
+
+- OpportunityModal component wired into sales pipeline.
+- Open opportunity modal on card click; supports create, edit, delete.
+- Bidirectional mapping between kanban items and opportunity schema.
+
 ### Changed
 
 - Updated pnpm to 10.18.3 and reinstalled workspace dependencies for consistency.
