@@ -181,30 +181,6 @@ export default function SalesPipelineUnified() {
     }
   }, [opportunities]);
 
-  // Also save kanban items state for persistence
-  useEffect(() => {
-    const kanbanItems = opportunities.map(opp => {
-      const client = clients.find(c => c.id === opp.clientId);
-      return {
-        id: opp.id,
-        title: opp.name,
-        description: opp.details,
-        status: opp.stage,
-        priority: opp.value > 500000 ? 'high' : opp.value > 250000 ? 'medium' : 'low',
-        assignee: client?.name,
-        dueDate: opp.updatedAt,
-        metadata: {
-          value: opp.value,
-          clientId: opp.clientId,
-          notes: opp.notes,
-          createdAt: opp.createdAt,
-          updatedAt: opp.updatedAt,
-        },
-      };
-    });
-    localStorage.setItem('pipeline-kanban-items', JSON.stringify(kanbanItems));
-  }, [opportunities, clients]);
-
   const moduleId = 'pipeline';
   const config = getConfig(moduleId);
   const columns = config?.columns || [];

@@ -141,40 +141,6 @@ export function OpportunityModal({
     }
   }, [formData, opportunity]);
 
-  // Click away handler - only close when clicking the backdrop
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      // Check if click is on the backdrop (the fixed overlay div)
-      const target = event.target as HTMLElement;
-      if (
-        modalRef.current &&
-        target.classList.contains('fixed') &&
-        target.classList.contains('inset-0') &&
-        !modalRef.current.contains(target)
-      ) {
-        if (hasUnsavedChanges) {
-          const shouldClose = window.confirm(
-            'You have unsaved changes. Do you want to save before closing?'
-          );
-          if (shouldClose) {
-            handleSave();
-          } else {
-            onClose();
-          }
-        } else {
-          onClose();
-        }
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, hasUnsavedChanges, onClose]);
 
   const handleSave = () => {
     onSave(formData);
@@ -258,10 +224,30 @@ export function OpportunityModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
+    <div 
+      className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'
+      onClick={(e) => {
+        // Only close if clicking the backdrop itself
+        if (e.target === e.currentTarget) {
+          if (hasUnsavedChanges) {
+            const shouldClose = window.confirm(
+              'You have unsaved changes. Do you want to save before closing?'
+            );
+            if (shouldClose) {
+              handleSave();
+            } else {
+              onClose();
+            }
+          } else {
+            onClose();
+          }
+        }
+      }}
+    >
       <div
         ref={modalRef}
         className='bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col'
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
