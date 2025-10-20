@@ -148,6 +148,17 @@ export function OpportunityModal({
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
+        // Check if the click is on a stage button (prevent closing)
+        const target = event.target as HTMLElement;
+        if (target.closest('button[type="button"]') && target.closest('button[type="button"]')?.textContent?.includes('Lead') || 
+            target.closest('button[type="button"]')?.textContent?.includes('Qualified') ||
+            target.closest('button[type="button"]')?.textContent?.includes('Proposal') ||
+            target.closest('button[type="button"]')?.textContent?.includes('Negotiation') ||
+            target.closest('button[type="button"]')?.textContent?.includes('Closed Won') ||
+            target.closest('button[type="button"]')?.textContent?.includes('Closed Lost')) {
+          return; // Don't close modal if clicking stage buttons
+        }
+        
         if (hasUnsavedChanges) {
           const shouldClose = window.confirm(
             'You have unsaved changes. Do you want to save before closing?'

@@ -1,5 +1,5 @@
 import { DollarSign, Edit2, Trash2, User } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useKanbanStore } from '../../app/store/ui/kanban.store';
 import { Button } from '../../components/ui';
 import { Card, CardContent } from '../../components/ui/card';
@@ -156,6 +156,24 @@ export default function SalesPipelineUnified() {
   const [isOpportunityModalOpen, setIsOpportunityModalOpen] = useState(false);
   const [modalOpportunity, setModalOpportunity] =
     useState<ModalOpportunity | undefined>(undefined);
+
+  // Load opportunities from localStorage on mount
+  useEffect(() => {
+    const savedOpportunities = localStorage.getItem('pipeline-opportunities');
+    if (savedOpportunities) {
+      try {
+        const parsed = JSON.parse(savedOpportunities);
+        setOpportunities(parsed);
+      } catch (error) {
+        console.error('Failed to parse saved opportunities:', error);
+      }
+    }
+  }, []);
+
+  // Save opportunities to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('pipeline-opportunities', JSON.stringify(opportunities));
+  }, [opportunities]);
 
   const moduleId = 'pipeline';
   const config = getConfig(moduleId);
