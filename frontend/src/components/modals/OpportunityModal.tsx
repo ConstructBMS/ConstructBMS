@@ -141,7 +141,6 @@ export function OpportunityModal({
     }
   }, [formData, opportunity]);
 
-
   const handleSave = () => {
     onSave(formData);
     setIsEditing(false);
@@ -224,9 +223,9 @@ export function OpportunityModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <div 
+    <div
       className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'
-      onClick={(e) => {
+      onClick={e => {
         // Only close if clicking the backdrop itself
         if (e.target === e.currentTarget) {
           if (hasUnsavedChanges) {
@@ -247,7 +246,7 @@ export function OpportunityModal({
       <div
         ref={modalRef}
         className='bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col'
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
@@ -373,16 +372,16 @@ export function OpportunityModal({
                                     ? { backgroundColor: stageColor }
                                     : {}
                                 }
-                                 onClick={e => {
-                                   const next = {
-                                     ...formData,
-                                     stage: stage.id,
-                                     updatedAt: new Date().toISOString(),
-                                   };
-                                   setFormData(next);
-                                   // Persist immediately so kanban/card update
-                                   onSave(next);
-                                 }}
+                                onClick={e => {
+                                  const next = {
+                                    ...formData,
+                                    stage: stage.id,
+                                    updatedAt: new Date().toISOString(),
+                                  };
+                                  setFormData(next);
+                                  // Persist immediately so kanban/card update
+                                  onSave(next);
+                                }}
                               >
                                 {stage.name}
                               </button>
