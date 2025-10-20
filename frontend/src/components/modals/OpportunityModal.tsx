@@ -150,15 +150,30 @@ export function OpportunityModal({
       ) {
         // Check if the click is on a stage button (prevent closing)
         const target = event.target as HTMLElement;
-        if (target.closest('button[type="button"]') && target.closest('button[type="button"]')?.textContent?.includes('Lead') || 
-            target.closest('button[type="button"]')?.textContent?.includes('Qualified') ||
-            target.closest('button[type="button"]')?.textContent?.includes('Proposal') ||
-            target.closest('button[type="button"]')?.textContent?.includes('Negotiation') ||
-            target.closest('button[type="button"]')?.textContent?.includes('Closed Won') ||
-            target.closest('button[type="button"]')?.textContent?.includes('Closed Lost')) {
+        if (
+          (target.closest('button[type="button"]') &&
+            target
+              .closest('button[type="button"]')
+              ?.textContent?.includes('Lead')) ||
+          target
+            .closest('button[type="button"]')
+            ?.textContent?.includes('Qualified') ||
+          target
+            .closest('button[type="button"]')
+            ?.textContent?.includes('Proposal') ||
+          target
+            .closest('button[type="button"]')
+            ?.textContent?.includes('Negotiation') ||
+          target
+            .closest('button[type="button"]')
+            ?.textContent?.includes('Closed Won') ||
+          target
+            .closest('button[type="button"]')
+            ?.textContent?.includes('Closed Lost')
+        ) {
           return; // Don't close modal if clicking stage buttons
         }
-        
+
         if (hasUnsavedChanges) {
           const shouldClose = window.confirm(
             'You have unsaved changes. Do you want to save before closing?'
@@ -329,12 +344,24 @@ export function OpportunityModal({
         >
           <TabsList className='mx-6 mt-4 overflow-x-auto no-scrollbar flex gap-2 pr-2'>
             <div className='flex gap-2 min-w-max'>
-              <TabsTrigger className='shrink-0' value='main'>Main</TabsTrigger>
-              <TabsTrigger className='shrink-0' value='activities'>Activities</TabsTrigger>
-              <TabsTrigger className='shrink-0' value='email'>Email</TabsTrigger>
-              <TabsTrigger className='shrink-0' value='calls'>Calls</TabsTrigger>
-              <TabsTrigger className='shrink-0' value='documents'>Documents</TabsTrigger>
-              <TabsTrigger className='shrink-0' value='settings'>Settings</TabsTrigger>
+              <TabsTrigger className='shrink-0' value='main'>
+                Main
+              </TabsTrigger>
+              <TabsTrigger className='shrink-0' value='activities'>
+                Activities
+              </TabsTrigger>
+              <TabsTrigger className='shrink-0' value='email'>
+                Email
+              </TabsTrigger>
+              <TabsTrigger className='shrink-0' value='calls'>
+                Calls
+              </TabsTrigger>
+              <TabsTrigger className='shrink-0' value='documents'>
+                Documents
+              </TabsTrigger>
+              <TabsTrigger className='shrink-0' value='settings'>
+                Settings
+              </TabsTrigger>
             </div>
           </TabsList>
 
@@ -377,11 +404,19 @@ export function OpportunityModal({
                                       ? 'bg-green-500 text-white'
                                       : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                                 }`}
-                                style={isActive ? { backgroundColor: stageColor } : {}}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                onClick={(e) => {
+                                style={
+                                  isActive
+                                    ? { backgroundColor: stageColor }
+                                    : {}
+                                }
+                                onMouseDown={e => e.stopPropagation()}
+                                onClick={e => {
                                   e.stopPropagation();
-                                  const next = { ...formData, stage: stage.id, updatedAt: new Date().toISOString() };
+                                  const next = {
+                                    ...formData,
+                                    stage: stage.id,
+                                    updatedAt: new Date().toISOString(),
+                                  };
                                   setFormData(next);
                                   // Persist immediately so kanban/card update
                                   onSave(next);
