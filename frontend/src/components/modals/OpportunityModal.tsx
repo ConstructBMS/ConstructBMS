@@ -227,6 +227,7 @@ export function OpportunityModal({
       className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'
       onClick={e => {
         // Only close if clicking the backdrop itself
+        console.log('Backdrop clicked:', e.target, e.currentTarget, e.target === e.currentTarget);
         if (e.target === e.currentTarget) {
           if (hasUnsavedChanges) {
             const shouldClose = window.confirm(
@@ -372,16 +373,18 @@ export function OpportunityModal({
                                     ? { backgroundColor: stageColor }
                                     : {}
                                 }
-                                onClick={e => {
-                                  const next = {
-                                    ...formData,
-                                    stage: stage.id,
-                                    updatedAt: new Date().toISOString(),
-                                  };
-                                  setFormData(next);
-                                  // Persist immediately so kanban/card update
-                                  onSave(next);
-                                }}
+                                 onClick={e => {
+                                   console.log('Stage button clicked:', stage.name, e.target);
+                                   e.stopPropagation(); // Prevent any event bubbling
+                                   const next = {
+                                     ...formData,
+                                     stage: stage.id,
+                                     updatedAt: new Date().toISOString(),
+                                   };
+                                   setFormData(next);
+                                   // Persist immediately so kanban/card update
+                                   onSave(next);
+                                 }}
                               >
                                 {stage.name}
                               </button>

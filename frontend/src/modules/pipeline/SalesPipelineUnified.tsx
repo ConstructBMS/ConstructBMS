@@ -160,10 +160,12 @@ export default function SalesPipelineUnified() {
   // Load opportunities from localStorage on mount
   useEffect(() => {
     const savedOpportunities = localStorage.getItem('pipeline-opportunities');
+    console.log('Loading opportunities from localStorage:', savedOpportunities ? 'found' : 'not found');
     if (savedOpportunities) {
       try {
         const parsed = JSON.parse(savedOpportunities);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log('Loaded opportunities:', parsed.length, 'items');
           setOpportunities(parsed);
         }
       } catch (error) {
@@ -177,6 +179,7 @@ export default function SalesPipelineUnified() {
   // Save opportunities to localStorage whenever they change
   useEffect(() => {
     if (opportunities.length > 0) {
+      console.log('Saving opportunities to localStorage:', opportunities.length, 'items');
       localStorage.setItem('pipeline-opportunities', JSON.stringify(opportunities));
     }
   }, [opportunities]);
