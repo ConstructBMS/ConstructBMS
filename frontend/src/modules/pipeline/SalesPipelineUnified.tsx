@@ -163,16 +163,22 @@ export default function SalesPipelineUnified() {
     if (savedOpportunities) {
       try {
         const parsed = JSON.parse(savedOpportunities);
-        setOpportunities(parsed);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setOpportunities(parsed);
+        }
       } catch (error) {
         console.error('Failed to parse saved opportunities:', error);
+        // Fallback to demo data if parsing fails
+        setOpportunities(demoOpportunities);
       }
     }
   }, []);
 
   // Save opportunities to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('pipeline-opportunities', JSON.stringify(opportunities));
+    if (opportunities.length > 0) {
+      localStorage.setItem('pipeline-opportunities', JSON.stringify(opportunities));
+    }
   }, [opportunities]);
 
   const moduleId = 'pipeline';

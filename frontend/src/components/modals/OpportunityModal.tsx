@@ -141,39 +141,14 @@ export function OpportunityModal({
     }
   }, [formData, opportunity]);
 
-  // Click away handler
+  // Click away handler - simplified to only close on backdrop clicks
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Only close if clicking the backdrop (not any child elements)
       if (
         modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
+        event.target === modalRef.current.parentElement
       ) {
-        // Check if the click is on a stage button (prevent closing)
-        const target = event.target as HTMLElement;
-        if (
-          (target.closest('button[type="button"]') &&
-            target
-              .closest('button[type="button"]')
-              ?.textContent?.includes('Lead')) ||
-          target
-            .closest('button[type="button"]')
-            ?.textContent?.includes('Qualified') ||
-          target
-            .closest('button[type="button"]')
-            ?.textContent?.includes('Proposal') ||
-          target
-            .closest('button[type="button"]')
-            ?.textContent?.includes('Negotiation') ||
-          target
-            .closest('button[type="button"]')
-            ?.textContent?.includes('Closed Won') ||
-          target
-            .closest('button[type="button"]')
-            ?.textContent?.includes('Closed Lost')
-        ) {
-          return; // Don't close modal if clicking stage buttons
-        }
-
         if (hasUnsavedChanges) {
           const shouldClose = window.confirm(
             'You have unsaved changes. Do you want to save before closing?'
@@ -409,18 +384,16 @@ export function OpportunityModal({
                                     ? { backgroundColor: stageColor }
                                     : {}
                                 }
-                                onMouseDown={e => e.stopPropagation()}
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  const next = {
-                                    ...formData,
-                                    stage: stage.id,
-                                    updatedAt: new Date().toISOString(),
-                                  };
-                                  setFormData(next);
-                                  // Persist immediately so kanban/card update
-                                  onSave(next);
-                                }}
+                                 onClick={e => {
+                                   const next = {
+                                     ...formData,
+                                     stage: stage.id,
+                                     updatedAt: new Date().toISOString(),
+                                   };
+                                   setFormData(next);
+                                   // Persist immediately so kanban/card update
+                                   onSave(next);
+                                 }}
                               >
                                 {stage.name}
                               </button>
