@@ -81,6 +81,7 @@ interface OpportunityModalProps {
   onClose: () => void;
   opportunity?: Opportunity;
   onSave: (opportunity: Opportunity) => void;
+  onStageChange?: (opportunity: Opportunity) => void;
   onDelete?: (opportunityId: string) => void;
 }
 
@@ -89,6 +90,7 @@ export function OpportunityModal({
   onClose,
   opportunity,
   onSave,
+  onStageChange,
   onDelete,
 }: OpportunityModalProps) {
   const [activeTab, setActiveTab] = useState('main');
@@ -179,8 +181,12 @@ export function OpportunityModal({
       updatedAt: new Date().toISOString(),
     };
     setFormData(next);
-    // Save the stage change without closing the modal
-    onSave(next);
+    // Use onStageChange if available, otherwise fall back to onSave
+    if (onStageChange) {
+      onStageChange(next);
+    } else {
+      onSave(next);
+    }
   };
 
   const handleAddActivity = () => {

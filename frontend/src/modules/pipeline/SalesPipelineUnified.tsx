@@ -443,6 +443,18 @@ export default function SalesPipelineUnified() {
             setIsOpportunityModalOpen(false);
             setModalOpportunity(undefined);
           }}
+          onStageChange={saved => {
+            console.log('Stage change triggered:', saved.id, saved.stage);
+            // Map back to local model and update state without closing modal
+            const existing = opportunities.find(o => o.id === (saved.id || ''));
+            if (existing) {
+              const updated = mapFromModalOpportunity(saved, existing);
+              console.log('Updating opportunity stage:', updated.id, updated.stage);
+              setOpportunities(prev => prev.map(o => (o.id === existing.id ? updated : o)));
+              // Update the modal opportunity to reflect the change
+              setModalOpportunity(updated);
+            }
+          }}
           onDelete={id => {
             setOpportunities(prev => prev.filter(o => o.id !== id));
           }}
