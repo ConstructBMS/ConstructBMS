@@ -1,0 +1,157 @@
+import { Email } from '../types/email';
+
+export const demoEmails: Email[] = [
+  {
+    id: '1',
+    subject: 'Project Proposal - Office Building Construction',
+    from: {
+      name: 'John Smith',
+      email: 'john.smith@acmecorp.com',
+    },
+    to: [
+      {
+        name: 'Sarah Johnson',
+        email: 'sarah.johnson@constructbms.com',
+      },
+    ],
+    body: 'Hi Sarah,\n\nI hope this email finds you well. I wanted to follow up on our discussion about the office building construction project. We are very interested in working with ConstructBMS and would like to schedule a meeting to discuss the proposal in detail.\n\nPlease let me know your availability for next week.\n\nBest regards,\nJohn Smith\nProject Manager\nACME Corporation',
+    htmlBody: '<p>Hi Sarah,</p><p>I hope this email finds you well. I wanted to follow up on our discussion about the office building construction project. We are very interested in working with ConstructBMS and would like to schedule a meeting to discuss the proposal in detail.</p><p>Please let me know your availability for next week.</p><p>Best regards,<br>John Smith<br>Project Manager<br>ACME Corporation</p>',
+    receivedAt: '2024-01-15T10:30:00Z',
+    isRead: false,
+    isImportant: true,
+    isFlagged: false,
+    folder: 'inbox',
+    labels: ['proposal', 'urgent'],
+    opportunityId: 'opp-1',
+    clientId: 'client-1',
+  },
+  {
+    id: '2',
+    subject: 'Re: Project Proposal - Office Building Construction',
+    from: {
+      name: 'Sarah Johnson',
+      email: 'sarah.johnson@constructbms.com',
+    },
+    to: [
+      {
+        name: 'John Smith',
+        email: 'john.smith@acmecorp.com',
+      },
+    ],
+    body: 'Hi John,\n\nThank you for your interest in our services. I would be happy to schedule a meeting to discuss the proposal. I have availability on Tuesday and Wednesday next week.\n\nI will send over our detailed proposal document shortly.\n\nBest regards,\nSarah Johnson\nSales Director\nConstructBMS',
+    htmlBody: '<p>Hi John,</p><p>Thank you for your interest in our services. I would be happy to schedule a meeting to discuss the proposal. I have availability on Tuesday and Wednesday next week.</p><p>I will send over our detailed proposal document shortly.</p><p>Best regards,<br>Sarah Johnson<br>Sales Director<br>ConstructBMS</p>',
+    receivedAt: '2024-01-15T14:45:00Z',
+    isRead: true,
+    isImportant: false,
+    isFlagged: false,
+    folder: 'sent',
+    labels: ['proposal', 'follow-up'],
+    opportunityId: 'opp-1',
+    clientId: 'client-1',
+  },
+  {
+    id: '3',
+    subject: 'Meeting Confirmation - Tuesday 2:00 PM',
+    from: {
+      name: 'John Smith',
+      email: 'john.smith@acmecorp.com',
+    },
+    to: [
+      {
+        name: 'Sarah Johnson',
+        email: 'sarah.johnson@constructbms.com',
+      },
+    ],
+    body: 'Hi Sarah,\n\nPerfect! Tuesday at 2:00 PM works great for us. We will meet in our conference room on the 15th floor.\n\nLooking forward to discussing the project details.\n\nBest regards,\nJohn Smith',
+    htmlBody: '<p>Hi Sarah,</p><p>Perfect! Tuesday at 2:00 PM works great for us. We will meet in our conference room on the 15th floor.</p><p>Looking forward to discussing the project details.</p><p>Best regards,<br>John Smith</p>',
+    receivedAt: '2024-01-15T16:20:00Z',
+    isRead: true,
+    isImportant: false,
+    isFlagged: true,
+    folder: 'inbox',
+    labels: ['meeting', 'confirmation'],
+    opportunityId: 'opp-1',
+    clientId: 'client-1',
+  },
+  {
+    id: '4',
+    subject: 'Contract Discussion - Payment Terms',
+    from: {
+      name: 'Mike Wilson',
+      email: 'mike.wilson@techstart.com',
+    },
+    to: [
+      {
+        name: 'David Brown',
+        email: 'david.brown@constructbms.com',
+      },
+    ],
+    body: 'Hi David,\n\nI wanted to discuss the payment terms for our upcoming project. We would prefer a milestone-based payment structure rather than monthly payments.\n\nCan we schedule a call to discuss this further?\n\nThanks,\nMike Wilson\nCEO\nTechStart Inc.',
+    htmlBody: '<p>Hi David,</p><p>I wanted to discuss the payment terms for our upcoming project. We would prefer a milestone-based payment structure rather than monthly payments.</p><p>Can we schedule a call to discuss this further?</p><p>Thanks,<br>Mike Wilson<br>CEO<br>TechStart Inc.</p>',
+    receivedAt: '2024-01-14T09:15:00Z',
+    isRead: false,
+    isImportant: true,
+    isFlagged: false,
+    folder: 'inbox',
+    labels: ['contract', 'payment'],
+    opportunityId: 'opp-2',
+    clientId: 'client-2',
+  },
+  {
+    id: '5',
+    subject: 'Project Update - Phase 1 Complete',
+    from: {
+      name: 'Lisa Chen',
+      email: 'lisa.chen@retailplus.com',
+    },
+    to: [
+      {
+        name: 'Tom Anderson',
+        email: 'tom.anderson@constructbms.com',
+      },
+    ],
+    body: 'Hi Tom,\n\nGreat news! Phase 1 of the retail space construction is complete. The team did an excellent job and everything looks fantastic.\n\nWe are ready to proceed with Phase 2. Please let me know when you can start.\n\nBest regards,\nLisa Chen\nOperations Manager\nRetailPlus',
+    htmlBody: '<p>Hi Tom,</p><p>Great news! Phase 1 of the retail space construction is complete. The team did an excellent job and everything looks fantastic.</p><p>We are ready to proceed with Phase 2. Please let me know when you can start.</p><p>Best regards,<br>Lisa Chen<br>Operations Manager<br>RetailPlus</p>',
+    receivedAt: '2024-01-13T11:30:00Z',
+    isRead: true,
+    isImportant: false,
+    isFlagged: false,
+    folder: 'inbox',
+    labels: ['project-update', 'phase-complete'],
+    opportunityId: 'opp-3',
+    clientId: 'client-3',
+  },
+  {
+    id: '6',
+    subject: 'Invoice #INV-2024-001 - Payment Due',
+    from: {
+      name: 'Accounting Team',
+      email: 'accounting@constructbms.com',
+    },
+    to: [
+      {
+        name: 'John Smith',
+        email: 'john.smith@acmecorp.com',
+      },
+    ],
+    body: 'Dear John,\n\nPlease find attached invoice #INV-2024-001 for the initial consultation services provided.\n\nPayment is due within 30 days. If you have any questions, please don\'t hesitate to contact us.\n\nThank you for your business.\n\nBest regards,\nAccounting Team\nConstructBMS',
+    htmlBody: '<p>Dear John,</p><p>Please find attached invoice #INV-2024-001 for the initial consultation services provided.</p><p>Payment is due within 30 days. If you have any questions, please don\'t hesitate to contact us.</p><p>Thank you for your business.</p><p>Best regards,<br>Accounting Team<br>ConstructBMS</p>',
+    receivedAt: '2024-01-12T08:00:00Z',
+    isRead: true,
+    isImportant: false,
+    isFlagged: false,
+    folder: 'sent',
+    labels: ['invoice', 'payment'],
+    opportunityId: 'opp-1',
+    clientId: 'client-1',
+    attachments: [
+      {
+        id: 'att-1',
+        name: 'INV-2024-001.pdf',
+        size: 245760,
+        type: 'application/pdf',
+        url: '/attachments/INV-2024-001.pdf',
+      },
+    ],
+  },
+];

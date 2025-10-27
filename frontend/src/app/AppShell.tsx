@@ -11,6 +11,7 @@ import { ThemeProvider } from '../contexts/ThemeContext.tsx';
 import type { KeyboardShortcut } from '../lib/types/core';
 import { loadDefaultRoles } from '../modules/permissions/store';
 import { chatNotificationsService } from '../services/chat-notifications.service';
+import { initializeEmailStore } from '../lib/data/email-init';
 import { AppRoutes } from './routes';
 import { useFooterStore } from './store/ui/footer.store';
 import { useSidebarStore } from './store/ui/sidebar.store';
@@ -143,6 +144,11 @@ export function AppShell() {
     loadDefaultRoles().catch(error => {
       console.error('Failed to load default permission roles:', error);
     });
+  }, []);
+
+  // Initialize email store with demo data
+  useEffect(() => {
+    initializeEmailStore();
   }, []);
 
   // Ensure page starts at top on refresh

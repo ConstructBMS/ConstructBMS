@@ -31,6 +31,7 @@ const PurchaseOrdersPage = lazy(
   () => import('../modules/purchaseOrders/PurchaseOrdersPage')
 );
 const SettingsPage = lazy(() => import('../modules/settings/SettingsPage'));
+const EmailClient = lazy(() => import('../modules/email/EmailClient'));
 const FooterBuilder = lazy(() => import('../pages/FooterBuilder'));
 const LoginPage = lazy(() => import('../pages/Login'));
 
@@ -220,6 +221,14 @@ const AppRoutes = [
     element: (
       <LazyRoute>
         <SettingsPage />
+      </LazyRoute>
+    ),
+  },
+  {
+    path: '/communications/email',
+    element: (
+      <LazyRoute>
+        <EmailClient />
       </LazyRoute>
     ),
   },

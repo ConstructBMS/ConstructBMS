@@ -17,6 +17,8 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePipelineStore } from '../../app/store/settings/pipeline.store';
+import { useEmailStore } from '../../app/store/email.store';
+import { Email } from '../../lib/types/email';
 import { Button } from '../ui';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -31,6 +33,7 @@ import {
 } from '../ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Textarea } from '../ui/textarea';
+import { EmailList } from '../email/EmailList';
 
 export interface Opportunity {
   id: string;
@@ -117,16 +120,39 @@ export function OpportunityModal({
 
   const [newTag, setNewTag] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const { settings } = usePipelineStore();
+  const { getEmailsByOpportunity, getEmailsByClient } = useEmailStore();
 
   const stages = settings.stages || [];
+  
+  // Get emails related to this opportunity or client
+  const relatedEmails = opportunity?.id 
+    ? getEmailsByOpportunity(opportunity.id)
+    : formData.customer?.id 
+    ? getEmailsByClient(formData.customer.id)
+    : [];
 
   useEffect(() => {
     if (opportunity) {
       setFormData(opportunity);
     }
   }, [opportunity]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   // Track changes to detect unsaved changes
   useEffect(() => {
@@ -254,11 +280,13 @@ export function OpportunityModal({
           }
         }
       }}
+      style={{ overflow: 'hidden' }}
     >
       <div
         ref={modalRef}
-        className='bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col'
+        className='bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-7xl h-[90vh] flex flex-col'
         onClick={e => e.stopPropagation()}
+        style={{ overflow: 'hidden' }}
       >
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
@@ -352,13 +380,13 @@ export function OpportunityModal({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-4'>
-                  {/* Clickable Progress Bar (updates immediately) */}
+                  {/* Deal Stages Progress */}
                   <div className='mt-2'>
                     <div className='flex items-center justify-between'>
                       <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                        Workflow
+                        Deal Stages
                       </span>
-                      <div className='flex items-center space-x-1 overflow-x-auto no-scrollbar p-1 rounded'>
+                      <div className='flex items-center space-x-1 p-1 rounded flex-wrap gap-2'>
                         {stages.map((stage, index) => {
                           const isActive = stage.id === formData.stage;
                           const isCompleted =
@@ -369,40 +397,30 @@ export function OpportunityModal({
                             : `#${stage.color}`;
 
                           return (
-                            <div key={stage.id} className='flex items-center'>
-                              <button
-                                type='button'
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                                  isActive
-                                    ? 'text-white'
-                                    : isCompleted
-                                      ? 'bg-green-500 text-white'
-                                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                                }`}
-                                style={
-                                  isActive
-                                    ? { backgroundColor: stageColor }
-                                    : {}
-                                }
-                                 onClick={e => {
-                                   console.log('Stage button clicked:', stage.name, e.target);
-                                   e.stopPropagation(); // Prevent any event bubbling
-                                   e.preventDefault(); // Prevent default behavior
-                                   handleStageChange(stage.id);
-                                 }}
-                              >
-                                {stage.name}
-                              </button>
-                              {index < stages.length - 1 && (
-                                <div
-                                  className={`w-2 h-0.5 mx-1 ${
-                                    isCompleted
-                                      ? 'bg-green-500'
-                                      : 'bg-gray-300 dark:bg-gray-600'
-                                  }`}
-                                />
-                              )}
-                            </div>
+                            <button
+                              key={stage.id}
+                              type='button'
+                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                                isActive
+                                  ? 'text-white shadow-lg'
+                                  : isCompleted
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                              }`}
+                              style={
+                                isActive
+                                  ? { backgroundColor: stageColor }
+                                  : {}
+                              }
+                              onClick={e => {
+                                console.log('Stage button clicked:', stage.name, e.target);
+                                e.stopPropagation(); // Prevent any event bubbling
+                                e.preventDefault(); // Prevent default behavior
+                                handleStageChange(stage.id);
+                              }}
+                            >
+                              {stage.name}
+                            </button>
                           );
                         })}
                       </div>
@@ -847,18 +865,49 @@ export function OpportunityModal({
               </Card>
             </TabsContent>
 
-            {/* Other Tabs */}
-            <TabsContent value='email'>
+            {/* Email Tab */}
+            <TabsContent value='email' className='space-y-6'>
               <Card>
                 <CardHeader>
-                  <CardTitle>Email Communications</CardTitle>
+                  <CardTitle className='flex items-center gap-2'>
+                    <Mail className='h-5 w-5' />
+                    Email Communications
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className='text-center py-8 text-gray-500'>
-                    Email functionality coming soon...
+                <CardContent className='p-0'>
+                  <div className='h-96'>
+                    <EmailList
+                      emails={relatedEmails}
+                      onEmailSelect={setSelectedEmail}
+                      selectedEmailId={selectedEmail?.id}
+                      opportunityId={opportunity?.id}
+                      clientId={formData.customer?.id}
+                    />
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Email Preview */}
+              {selectedEmail && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className='text-lg'>{selectedEmail.subject}</CardTitle>
+                    <div className='flex items-center gap-4 text-sm text-gray-600'>
+                      <span>From: {selectedEmail.from.name} &lt;{selectedEmail.from.email}&gt;</span>
+                      <span>To: {selectedEmail.to.map(t => t.name).join(', ')}</span>
+                      <span>{new Date(selectedEmail.receivedAt).toLocaleString()}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div 
+                      className='prose max-w-none'
+                      dangerouslySetInnerHTML={{ 
+                        __html: selectedEmail.htmlBody || selectedEmail.body 
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             <TabsContent value='calls'>
