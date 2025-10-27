@@ -10,6 +10,7 @@ import {
   GanttChart,
   Globe,
   LayoutDashboard,
+  Mail,
   MessageSquare,
   Settings,
   ShoppingCart,
@@ -31,6 +32,12 @@ const navigationItems = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     href: '/dashboard-home',
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    icon: Mail,
+    href: '/communications/email',
   },
   {
     id: 'pipeline',
