@@ -10,6 +10,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   Library,
+  Mail,
   MessageSquare,
   Settings,
   ShoppingCart,
@@ -33,6 +34,12 @@ const menuItems: MenuItem[] = [
     name: 'Dashboard',
     icon: 'LayoutDashboard',
     route: '/dashboard',
+  },
+  {
+    id: 'email',
+    name: 'Email',
+    icon: 'Mail',
+    route: '/communications/email',
   },
   {
     id: 'calendar',

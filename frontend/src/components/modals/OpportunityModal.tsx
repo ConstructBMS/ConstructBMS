@@ -297,11 +297,9 @@ export function OpportunityModal({
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
           <div className='flex items-center gap-4'>
             <h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
-              {isEditing
-                ? opportunity
-                  ? 'Edit Opportunity'
-                  : 'New Opportunity'
-                : formData.title}
+              {opportunity
+                ? (formData.title || 'Edit Opportunity')
+                : 'New Opportunity'}
             </h2>
             {!isEditing && (
               <Button
