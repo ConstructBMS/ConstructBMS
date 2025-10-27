@@ -286,7 +286,6 @@ export function OpportunityModal({
         ref={modalRef}
         className='bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-7xl h-[90vh] flex flex-col'
         onClick={e => e.stopPropagation()}
-        style={{ overflow: 'hidden' }}
       >
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700'>
@@ -368,7 +367,7 @@ export function OpportunityModal({
             </div>
           </TabsList>
 
-          <div className='flex-1 overflow-y-auto p-6'>
+          <div className='flex-1 overflow-y-auto p-6' style={{ maxHeight: 'calc(90vh - 200px)' }}>
             {/* Main Tab */}
             <TabsContent value='main' className='space-y-6'>
               {/* Deal Stage */}
@@ -382,10 +381,7 @@ export function OpportunityModal({
                 <CardContent className='space-y-4'>
                   {/* Deal Stages Progress */}
                   <div className='mt-2'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                        Deal Stages
-                      </span>
+                    <div className='flex items-center justify-center'>
                       <div className='flex items-center space-x-1 p-1 rounded flex-wrap gap-2'>
                         {stages.map((stage, index) => {
                           const isActive = stage.id === formData.stage;
@@ -397,30 +393,40 @@ export function OpportunityModal({
                             : `#${stage.color}`;
 
                           return (
-                            <button
-                              key={stage.id}
-                              type='button'
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                                isActive
-                                  ? 'text-white shadow-lg'
-                                  : isCompleted
-                                    ? 'bg-green-500 text-white'
-                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
-                              }`}
-                              style={
-                                isActive
-                                  ? { backgroundColor: stageColor }
-                                  : {}
-                              }
-                              onClick={e => {
-                                console.log('Stage button clicked:', stage.name, e.target);
-                                e.stopPropagation(); // Prevent any event bubbling
-                                e.preventDefault(); // Prevent default behavior
-                                handleStageChange(stage.id);
-                              }}
-                            >
-                              {stage.name}
-                            </button>
+                            <div key={stage.id} className='flex items-center'>
+                              <button
+                                type='button'
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                                  isActive
+                                    ? 'text-white shadow-lg'
+                                    : isCompleted
+                                      ? 'bg-green-500 text-white'
+                                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                }`}
+                                style={
+                                  isActive
+                                    ? { backgroundColor: stageColor }
+                                    : {}
+                                }
+                                onClick={e => {
+                                  console.log('Stage button clicked:', stage.name, e.target);
+                                  e.stopPropagation(); // Prevent any event bubbling
+                                  e.preventDefault(); // Prevent default behavior
+                                  handleStageChange(stage.id);
+                                }}
+                              >
+                                {stage.name}
+                              </button>
+                              {index < stages.length - 1 && (
+                                <div
+                                  className={`w-8 h-0.5 mx-2 ${
+                                    isCompleted
+                                      ? 'bg-green-500'
+                                      : 'bg-gray-300 dark:bg-gray-600'
+                                  }`}
+                                />
+                              )}
+                            </div>
                           );
                         })}
                       </div>
