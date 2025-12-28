@@ -1,3 +1,15 @@
+import { createBrowserRouter } from 'react-router-dom';
+import { AppShell } from '../ui/AppShell';
+import { estimatingRoutes } from '../modules/estimating/estimatingRoutes';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <AppShell />,
+    children: estimatingRoutes,
+  },
+]);
+
 import { Suspense, lazy } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { Guard } from '../lib/permissions/Guard';
